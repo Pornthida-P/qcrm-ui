@@ -1,0 +1,44 @@
+<div class="flex align-content-center justify-content-around align-items-center min-h-screen surface-100 p-8">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit(loginForm)">
+        <div class="h-full w-full">
+            <div class="border border-round p-6 surface-0 shadow-5">
+                <div class="grid">
+                    <div class="col-12">
+                        <div>
+                            <p class="text-2xl text-center">LOGIN</p>
+                            <div class="field">
+                                <label for="username"> Username </label>
+                                <input
+                                    type="text"
+                                    pInputText
+                                    formControlName="username"
+                                    class="w-full"
+                                    placeholder="Enter You Username..."
+                                />
+                            </div>
+                            <small *ngIf="username.invalid && (username.dirty || username.touched)" class="block p-error">
+                                <div *ngIf="username.errors?.['required']">Username is required.</div>
+                                <div *ngIf="username.errors?.['username']">Username should be valid.</div>
+                            </small>
+                            <div class="field">
+                                <label for="password"> Password </label>
+                                <input
+                                    type="password"
+                                    pInputText
+                                    formControlName="password"
+                                    class="w-full"
+                                    name="password"
+                                    placeholder="Enter You Password"
+                                />
+                                <small *ngIf="password.invalid && (password.dirty || password.touched)">
+                                    <div *ngIf="password.errors?.['requirde']">Password is requirde?</div>
+                                </small>
+                            </div>
+                            <button type="submit" class="border-none border-round p-2 w-full bg-primary-600 text-white">Login</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
