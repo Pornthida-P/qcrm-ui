@@ -1,0 +1,44 @@
+:root {
+    --primary: #1851b9;
+    --primary-active-color: #3498db;
+}
+
+@import 'primeng/resources/themes/lara-light-blue/theme.css';
+@import 'primeng/resources/primeng.css';
+@import 'primeflex/primeflex.css';
+@import 'primeicons/primeicons.css';
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wdth,wght@62.5..100,100..900&display=swap');
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: rgba(248, 247, 247, 0.636);
+    font-family: 'Noto Sans Thai', sans-serif;
+    height: 100%;
+}
+
+.p-sidebar {
+    background: var(--primary) !important;
+}
+
+.p-sidebar .p-sidebar-header .p-sidebar-close,
+.p-sidebar .p-sidebar-header .p-sidebar-icon {
+    color: white;
+}
+
+.btn-primary-color {
+    border: none;
+    background: var(--primary) !important;
+}
+
+.font-thai {
+    font-family: 'Noto Sans Thai', sans-serif;
+}
+
+.color-primary {
+    color: var(--primary);
+}
+
+.width100 {
+    width: 100% !important;
+}

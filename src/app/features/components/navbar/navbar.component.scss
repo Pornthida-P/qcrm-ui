@@ -1,0 +1,25 @@
+.nav {
+    background-color: var(--primary);
+}
+
+.menu-main li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.menu-main > li {
+    display: flex;
+    flex-flow: column;
+    position: relative;
+}
+
+.menu-main .li-active,
+.menu-main .li:hover {
+    background-color: var(--primary-active-color);
+    color: white;
+    border-radius: 0.5rem;
+}
+
+.w-80rem {
+    width: 80rem;
+}
