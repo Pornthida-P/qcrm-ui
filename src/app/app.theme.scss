@@ -17,12 +17,11 @@ body {
     height: 100%;
 }
 
-.p-sidebar {
+#menu .p-sidebar {
     background: var(--primary) !important;
 }
 
-.p-sidebar .p-sidebar-header .p-sidebar-close,
-.p-sidebar .p-sidebar-header .p-sidebar-icon {
+#menu .p-sidebar-close {
     color: white;
 }
 
@@ -37,8 +36,4 @@ body {
 
 .color-primary {
     color: var(--primary);
-}
-
-.width100 {
-    width: 100% !important;
 }
