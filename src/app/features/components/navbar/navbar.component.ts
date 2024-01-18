@@ -11,6 +11,7 @@ import {
     faBars,
 } from '@fortawesome/free-solid-svg-icons';
 import { faBell } from '@fortawesome/free-regular-svg-icons';
+import { MenuItem } from 'primeng/api';
 
 @Component({
     selector: 'app-navbar',
@@ -23,7 +24,9 @@ export class NavbarComponent {
     sidebarVisible: boolean = false;
     faBars = faBars;
     faBell = faBell;
-
+    searchSidebarVisible: boolean = false;
+    notificationSidebarVisible: boolean = false;
+    menus: MenuItem[] | undefined;
     value: string | undefined;
 
     ngOnInit() {
@@ -70,10 +73,51 @@ export class NavbarComponent {
             },
         ];
         this.activeMenu = this.items[0].label;
+
+        this.menus = [
+            {
+                label: 'Gannaphat',
+                items: [
+                    {
+                        label: 'ค้นหา',
+                        icon: 'pi pi-search',
+                        command: () => {
+                            this.openSearchSideBar();
+                        },
+                    },
+                    {
+                        label: 'การแจ้งเตือน',
+                        icon: 'pi pi-bell',
+                        command: () => {
+                            this.opennotificationSideBar();
+                        },
+                    },
+                    {
+                        label: 'ออกจากระบบ',
+                        icon: 'pi pi-sign-out',
+                        command: () => {
+                            this.logout();
+                        },
+                    },
+                ],
+            },
+        ];
     }
 
     setActiveMenu(menu: string) {
         this.activeMenu = menu;
         this.sidebarVisible = false;
+    }
+
+    openSearchSideBar() {
+        this.searchSidebarVisible = true;
+    }
+
+    opennotificationSideBar() {
+        this.notificationSidebarVisible = true;
+    }
+
+    logout() {
+        console.log('logout');
     }
 }

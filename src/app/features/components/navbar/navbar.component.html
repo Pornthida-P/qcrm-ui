@@ -2,25 +2,26 @@
     <div class="h-full flex flex-column">
         <div class="px-3 pb-2 pt-3 bg-white border-bottom-1 border-300">
             <div class="flex flex-row justify-content-between align-items-center">
-                <div class="lg:flex-none flex flex-row lg:mr-6">
+                <div class="lg:flex-none flex flex-row align-items-center lg:mr-6">
                     <p-button (click)="sidebarVisible = true" class="pl-3 pt-3 pb-3 flex lg:hidden" styleClass="btn-primary-color">
                         <fa-icon [icon]="faBars"></fa-icon>
                     </p-button>
-                    <img src="./assets/nea-qcrm-ui/image/logo_CRM.png" class="w-12rem lg:w-9rem" />
+                    <img src="./assets/nea-qcrm-ui/image/logo_CRM.png" class="w-12rem h-4rem lg:w-9rem" />
                 </div>
-                <div class="lg:flex-grow-1 lg:ml-8 lg:mr-6">
-                    <span class="p-input-icon-left w-full">
+                <div class="hidden md:flex lg:flex lg:flex-grow-1 lg:ml-8 lg:mr-6">
+                    <span class="p-input-icon-left w-full" (click)="opsearch.toggle($event)">
                         <i class="pi pi-search color-primary font-semibold"></i>
                         <input type="text" pInputText [(ngModel)]="value" placeholder="ค้นหา..." ngClass="font-thai w-full" />
                     </span>
                 </div>
                 <div class="lg:flex-none flex flex-row align-items-center gap-4">
-                    <fa-icon [icon]="faBell"></fa-icon>
-                    <div class="flex flex-column text-right">
+                    <fa-icon [icon]="faBell" class="hidden md:flex lg:flex" (click)="opnotification.toggle($event)"></fa-icon>
+                    <div class="hidden md:flex lg:flex flex-column text-right">
                         <p class="m-0 font-semibold">Ganpaphat</p>
                         <p class="m-0">Admin</p>
                     </div>
-                    <p-avatar styleClass="mr-2" size="large" shape="circle"></p-avatar>
+                    <p-avatar styleClass="mr-2" size="large" shape="circle" (click)="menu.toggle($event)"></p-avatar>
+                    <p-menu #menu [model]="menus" [popup]="true" styleClass="mt-3 font-thai" class="flex md:hidden lg:hidden"> </p-menu>
                 </div>
             </div>
         </div>
@@ -41,7 +42,7 @@
                     </ul>
                 </div>
                 <div class="flex lg:hidden">
-                    <p-sidebar [(visible)]="sidebarVisible" styleClass="nav">
+                    <p-sidebar id="menu" [(visible)]="sidebarVisible" styleClass="nav">
                         <ul class="p-4 menu-main">
                             <div *ngFor="let item of items">
                                 <li class="px-2 py-3" [class.li-active]="item.label === activeMenu" (click)="setActiveMenu(item.label)">
@@ -62,4 +63,27 @@
             </div>
         </div>
     </div>
+    <p-sidebar id="search" [(visible)]="searchSidebarVisible" [fullScreen]="true">
+        <div>
+            <span class="p-input-icon-left w-full">
+                <i class="pi pi-search color-primary font-semibold"></i>
+                <input type="text" pInputText [(ngModel)]="value" placeholder="ค้นหา..." ngClass="font-thai w-full" />
+            </span>
+        </div>
+    </p-sidebar>
+    <p-sidebar id="notification" [(visible)]="notificationSidebarVisible" [fullScreen]="true">
+        <div>
+            <p class="m-0">การแจ้งเตือน</p>
+        </div>
+    </p-sidebar>
+    <p-overlayPanel #opnotification>
+        <ng-template pTemplate="content">
+            <h4>Custom Content</h4>
+        </ng-template>
+    </p-overlayPanel>
+    <p-overlayPanel #opsearch>
+        <ng-template pTemplate="content">
+            <h4>Custom Content</h4>
+        </ng-template>
+    </p-overlayPanel>
 </div>

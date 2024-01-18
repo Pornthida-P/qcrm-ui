@@ -10,6 +10,8 @@ import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
 import { InputTextModule } from 'primeng/inputtext';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MenuModule } from 'primeng/menu';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 
 @NgModule({
     declarations: [NavbarComponent],
@@ -24,6 +26,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
         InputTextModule,
         FormsModule,
         ReactiveFormsModule,
+        MenuModule,
+        OverlayPanelModule,
     ],
 })
 export class NavbarModule {}
