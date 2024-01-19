@@ -9,11 +9,14 @@
 @import 'primeicons/primeicons.css';
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wdth,wght@62.5..100,100..900&display=swap');
 
+* {
+    font-family: 'Noto Sans Thai', sans-serif;
+}
+
 body {
     margin: 0;
     padding: 0;
     background-color: rgba(248, 247, 247, 0.636);
-    font-family: 'Noto Sans Thai', sans-serif;
     height: 100%;
 }
 
@@ -30,10 +33,21 @@ body {
     background: var(--primary) !important;
 }
 
-.font-thai {
-    font-family: 'Noto Sans Thai', sans-serif;
-}
-
 .color-primary {
     color: var(--primary);
+}
+
+.btn-color-primary {
+    background-color: var(--primary);
+    border: none;
+}
+
+#survey .p-dropdown-label {
+    font-family: 'Noto Sans Thai', sans-serif !important;
+}
+
+.empty-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

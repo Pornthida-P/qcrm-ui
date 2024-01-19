@@ -11,7 +11,7 @@
                 <div class="hidden md:flex lg:flex lg:flex-grow-1 lg:ml-8 lg:mr-6">
                     <span class="p-input-icon-left w-full" (click)="opsearch.toggle($event)">
                         <i class="pi pi-search color-primary font-semibold"></i>
-                        <input type="text" pInputText [(ngModel)]="value" placeholder="ค้นหา..." ngClass="font-thai w-full" />
+                        <input type="text" pInputText [(ngModel)]="value" placeholder="ค้นหา..." ngClass="w-full" />
                     </span>
                 </div>
                 <div class="lg:flex-none flex flex-row align-items-center gap-4">
@@ -21,7 +21,7 @@
                         <p class="m-0">Admin</p>
                     </div>
                     <p-avatar styleClass="mr-2" size="large" shape="circle" (click)="menu.toggle($event)"></p-avatar>
-                    <p-menu #menu [model]="menus" [popup]="true" styleClass="mt-3 font-thai" class="flex md:hidden lg:hidden"> </p-menu>
+                    <p-menu #menu [model]="menus" [popup]="true" styleClass="mt-3" class="flex md:hidden lg:hidden"> </p-menu>
                 </div>
             </div>
         </div>
@@ -67,7 +67,7 @@
         <div>
             <span class="p-input-icon-left w-full">
                 <i class="pi pi-search color-primary font-semibold"></i>
-                <input type="text" pInputText [(ngModel)]="value" placeholder="ค้นหา..." ngClass="font-thai w-full" />
+                <input type="text" pInputText [(ngModel)]="value" placeholder="ค้นหา..." ngClass="w-full" />
             </span>
         </div>
     </p-sidebar>
