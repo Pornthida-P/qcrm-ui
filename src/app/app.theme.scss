@@ -3,12 +3,6 @@
     --primary-active-color: #3498db;
 }
 
-@import 'primeng/resources/themes/lara-light-blue/theme.css';
-@import 'primeng/resources/primeng.css';
-@import 'primeflex/primeflex.css';
-@import 'primeicons/primeicons.css';
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wdth,wght@62.5..100,100..900&display=swap');
-
 * {
     font-family: 'Noto Sans Thai', sans-serif;
 }
@@ -50,4 +44,15 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 160px;
+}
+
+.p-tooltip > .p-tooltip-text {
+    font-size: 12px;
 }
