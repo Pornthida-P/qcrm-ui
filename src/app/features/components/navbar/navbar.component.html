@@ -27,11 +27,11 @@
         </div>
         <div class="h-full">
             <div class="flex flex-column lg:flex-row h-full">
-                <div class="nav hidden lg:flex">
+                <div class="nav hidden lg:flex w-22rem">
                     <ul class="p-4 menu-main">
                         <div *ngFor="let item of items">
                             <li class="px-2 py-3" [class.li-active]="item.label === activeMenu" (click)="setActiveMenu(item.label)">
-                                <a [routerLink]="[item.routerLink]" class="text-white no-underline flex flex-row gap-2">
+                                <a [routerLink]="[item.routerLink]" class="text-white no-underline flex flex-row gap-3">
                                     <div class="w-1">
                                         <fa-icon [icon]="item.icon"></fa-icon>
                                     </div>
@@ -57,7 +57,7 @@
                         </ul>
                     </p-sidebar>
                 </div>
-                <div class="p-4">
+                <div class="p-4 w-full">
                     <router-outlet></router-outlet>
                 </div>
             </div>

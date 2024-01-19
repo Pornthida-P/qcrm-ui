@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
     faChartColumn,
     faFileLines,
@@ -18,7 +18,7 @@ import { MenuItem } from 'primeng/api';
     templateUrl: './navbar.component.html',
     styleUrls: ['./navbar.component.scss'],
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
     items: any;
     activeMenu!: string;
     sidebarVisible: boolean = false;
