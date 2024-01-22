@@ -1,7 +1,7 @@
 <div class="h-full">
     <div class="bg-white border-round-lg shadow-2 w-full pb-4 h-full">
         <div class="p-4 flex flex-column md:flex-row lg:flex-row gap-4 align-items-center">
-            <p class="m-0 text-2xl flex-none">การติดตามประเมินผล</p>
+            <p class="m-0 text-2xl flex-none">แบบฟอร์มสำรวจ</p>
             <div class="flex flex-grow-1 flex-nowrap w-full">
                 <span class="p-input-icon-left w-full">
                     <i class="pi pi-search color-primary font-semibold"></i>
@@ -27,6 +27,7 @@
                 icon="pi pi-plus"
                 class="flex-none flex md:hidden lg:flex"
                 styleClass="font-thai btn-color-primary"
+                (click)="formManage()"
             ></p-button>
             <p-button icon="pi pi-plus" class="flex-none hidden md:flex lg:hidden" styleClass="font-thai btn-color-primary"></p-button>
         </div>
@@ -51,7 +52,7 @@
                             <a pTooltip="{{ surveyForms.survey_form }}">{{ surveyForms.survey_form }}</a>
                         </td>
                         <td>{{ surveyForms.save_date }}</td>
-                        <td>{{ surveyForms.name }}</td>
+                        <td><a href="">{{ surveyForms.name }}</a></td>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="emptymessage">

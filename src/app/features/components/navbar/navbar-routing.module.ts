@@ -17,38 +17,48 @@ const routes: Routes = [
             {
                 path: 'contacts',
                 loadChildren: () => import('../../pages/contacts/contacts.module').then((m) => m.ContactsModule),
-                title: 'Home',
+                title: 'Contacts',
             },
             {
                 path: 'survey',
                 loadChildren: () => import('../../pages/survey/survey.module').then((m) => m.SurveyModule),
-                title: 'Home',
+                title: 'Survey',
             },
             {
                 path: 'survey/form',
-                loadChildren: () => import('../../pages/survey-form/survey-form.module').then((m) => m.SurveyFormModule),
-                title: 'Home',
+                children: [
+                    {
+                      path: '',
+                      loadChildren: () => import('../../pages/survey-form/survey-form.module').then((m) => m.SurveyFormModule),
+                      title: 'Survey Form',
+                    },
+                    {
+                      path: 'new',
+                      loadChildren: () => import('../../pages/manage-survey-form/manage-survey-form.module').then((m) => m.ManageSurveyFormModule),
+                      title: 'New Survey Form',
+                    },
+                  ]
             },
             {
                 path: 'call',
                 loadChildren: () => import('../../pages/call/call.module').then((m) => m.CallModule),
-                title: 'Home',
+                title: 'Call',
             },
             {
                 path: 'e-learning',
                 loadChildren: () => import('../../pages/e-learning/e-learning.module').then((m) => m.ELearningModule),
-                title: 'Home',
+                title: 'E-Learning',
             },
             {
                 path: 'training',
                 loadChildren: () => import('../../pages/training/training.module').then((m) => m.TrainingModule),
-                title: 'Home',
+                title: 'Training',
             },
             {
                 path: 'products',
                 loadChildren: () => import('../../pages/products/products.module').then((m) => m.ProductsModule),
-                title: 'Home',
-            },
+                title: 'Products',
+          },
             {
                 path: '',
                 redirectTo: '/home',
