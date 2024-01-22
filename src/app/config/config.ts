@@ -4,4 +4,7 @@ export const config = {
             login: '/login',
         },
     },
+    file: {
+        type: '.xlsx',
+    },
 };

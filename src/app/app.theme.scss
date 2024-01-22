@@ -56,3 +56,16 @@ body {
 .p-tooltip > .p-tooltip-text {
     font-size: 12px;
 }
+
+.p-checkbox .p-checkbox-box.p-highlight {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+
+.p-checkbox .p-checkbox-box.p-highlight:hover {
+    border-color: var(--primary);
+}
+
+.p-inputtext:enabled:hover {
+    border-color: var(--primary);
+}
