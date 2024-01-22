@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
-
+import { ActivatedRoute, Router } from '@angular/router';
 @Component({
   selector: 'app-survey-form',
   templateUrl: './survey-form.component.html',
@@ -16,6 +16,11 @@ export class SurveyFormComponent implements OnInit{
   filterOption!: any[];
   selectedFilter: any | undefined;
   faPenToSquare = faPenToSquare;
+
+  constructor(
+    private router: Router,
+    private activatedRoute: ActivatedRoute
+  ) {}
 
   ngOnInit() {
 
@@ -45,6 +50,10 @@ export class SurveyFormComponent implements OnInit{
             save_date: '25 ก.ย., 2023 10:40',
         },
     ];
-}
+  }
+
+  formManage() {
+    this.router.navigate(['/survey/form/new']);
+  }
 
 }

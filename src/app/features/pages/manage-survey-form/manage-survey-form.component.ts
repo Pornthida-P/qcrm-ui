@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { FormioForm } from 'angular-formio';
 
 @Component({
   selector: 'app-manage-survey-form',
@@ -6,5 +7,8 @@ import { Component } from '@angular/core';
   styleUrls: ['./manage-survey-form.component.scss']
 })
 export class ManageSurveyFormComponent {
+  form: any = {};
+  onChange(event: any) {
+  }
 
 }
