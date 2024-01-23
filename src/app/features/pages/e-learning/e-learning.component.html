@@ -52,14 +52,14 @@
                         <td>
                             <p-tableCheckbox [value]="survey"></p-tableCheckbox>
                         </td>
-                        <td>{{ survey.name }}</td>
+                        <td (click)="showSideBar(survey)" class="sidebar">{{ survey.name }}</td>
                         <td>{{ survey.referenceNumber }}</td>
                         <td>{{ survey.trainingStartDate | date : 'dd/MM/yyyy  HH:mm' }}</td>
                         <td>{{ survey.trainingEndDate | date : 'dd/MM/yyyy  HH:mm' }}</td>
                         <!-- <td>{{ survey.startDate }}</td> -->
                         <!-- <td>{{ survey.endDate }}</td> -->
                         <td>{{ survey.province }}</td>
-                        <td class="text-center"><fa-icon [icon]="faPenToSquare"></fa-icon></td>
+                        <td class="text-center" type="button" (click)="showSideBar(survey)"><fa-icon [icon]="faPenToSquare"></fa-icon></td>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="emptymessage">
@@ -76,6 +76,68 @@
                 currentPageReportTemplate="Showing {{ firstItem }} to {{ lastItem }} of {{ totalItems }} entries"
                 (onPageChange)="pageChange($event)"
             ></p-paginator>
+            <p-sidebar [(visible)]="displaySideBar" position="right" [baseZIndex]="10000">
+                <div class="flex flex-row-reverse flex-wrap">
+                    <div class="p-2" type="button"><fa-icon [icon]="faArrowRight" size="lg"></fa-icon></div>
+                    <div class="p-2" type="button"><fa-icon [icon]="faArrowLeft" size="lg"></fa-icon></div>
+                </div>
+                <div>
+                    <h4>ชื่อหลักสูตร</h4>
+                    <h5 class="font-b">{{ detailItem?.name || emptyItem }}</h5>
+                </div>
+                <div class="grid pt-4">
+                    <div class="col">
+                        <div>เลขที่อ้างอิง (ระบบ Drive)</div>
+                        <div class="font-b">{{ detailItem?.referenceNumber || emptyItem }}</div>
+                    </div>
+                    <div class="col">
+                        <div>จำนวนรับสมัคร</div>
+                        <div class="font-b">{{ detailItem?.maxApplicants || emptyItem }}</div>
+                    </div>
+                </div>
+                <div class="grid pt-2">
+                    <div class="col">
+                        <div>วันที่เปิดรับสมัคร</div>
+                        <div class="font-b">{{ detailItem?.startDate | date : 'dd/MM/yyyy  HH:mm' }}</div>
+                    </div>
+                    <div class="col">
+                        <div>วันที่ปิดรับสมัคร</div>
+                        <div class="font-b">{{ detailItem?.endDate | date : 'dd/MM/yyyy  HH:mm' }}</div>
+                    </div>
+                </div>
+                <div class="grid pt-2">
+                    <div class="col">
+                        <div>วันที่เปิดอบรม</div>
+                        <div class="font-b">{{ detailItem?.trainingStartDate | date : 'dd/MM/yyyy  HH:mm' }}</div>
+                    </div>
+                    <div class="col">
+                        <div>วันที่ปิดอบรม</div>
+                        <div class="font-b">{{ detailItem?.trainingEndDate | date : 'dd/MM/yyyy  HH:mm' }}</div>
+                    </div>
+                </div>
+                <div class="grid pt-2">
+                    <div class="col">
+                        <div>จังหวัด</div>
+                        <div class="font-b">{{ detailItem?.province || emptyItem }}</div>
+                    </div>
+                    <div class="col">
+                        <div>สถานที่</div>
+                        <div class="font-b">{{ detailItem?.location || emptyItem }}</div>
+                    </div>
+                </div>
+                <div class="grid pt-2">
+                    <div class="col">
+                        <div>ค่าใช้จ่าย</div>
+                        <div class="font-b">{{ detailItem?.cost || emptyItem }}</div>
+                    </div>
+                </div>
+                <div class="grid pt-2">
+                    <div class="col">
+                        <div>รายละเอียด</div>
+                        <div class="font-b">{{ detailItem?.description || emptyItem }}</div>
+                    </div>
+                </div>
+            </p-sidebar>
         </div>
     </div>
 </div>
