@@ -1,1 +1,81 @@
-<p>e-learning works!</p>
+<div class="h-full">
+    <div class="bg-white border-round-lg shadow-2 w-full pb-4 h-full">
+        <div class="p-4 flex flex-column md:flex-row lg:flex-row gap-4 align-items-center">
+            <p class="m-0 text-2xl flex-none">หลักสูตร E-learning</p>
+            <div class="flex flex-grow-1 flex-nowrap w-full">
+                <span class="p-input-icon-left w-full">
+                    <i class="pi pi-search color-primary font-semibold"></i>
+                    <input
+                        type="text"
+                        pInputText
+                        [(ngModel)]="value"
+                        placeholder="ค้นหา..."
+                        ngClass="font-thai w-full border-noround-right"
+                    />
+                </span>
+                <p-dropdown
+                    id="survey"
+                    [options]="filterOption"
+                    [(ngModel)]="selectedFilter"
+                    optionLabel="name"
+                    [showClear]="false"
+                    styleClass="h-full border-noround-left"
+                ></p-dropdown>
+            </div>
+            <p-button icon="pi pi-plus" class="flex-none hidden md:flex lg:hidden" styleClass="font-thai btn-color-primary"></p-button>
+        </div>
+        <div>
+            <p-table
+                [value]="surveys"
+                [(selection)]="selectedSurvey"
+                dataKey="code"
+                [tableStyle]="{ 'min-width': '50rem' }"
+                styleClass="p-datatable-sm"
+            >
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 4rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th style="width: 40%">ชื่อหลักสูตร</th>
+                        <th style="width: 10%">เลขที่อ้างอิง (ระบบ Drive)</th>
+                        <th style="width: 16%">วันที่เปิดอบรม</th>
+                        <th style="width: 16%">วันที่ปิดอบรม</th>
+                        <!-- <th style="width: 20%">วันที่เปิดรับสมัคร</th> -->
+                        <!-- <th style="width: 20%">วันที่ปิดรับสมัคร</th> -->
+                        <th style="width: 10%">จังหวัด</th>
+                        <th>จัดการ</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-survey>
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="survey"></p-tableCheckbox>
+                        </td>
+                        <td>{{ survey.name }}</td>
+                        <td>{{ survey.referenceNumber }}</td>
+                        <td>{{ survey.trainingStartDate | date : 'dd/MM/yyyy  HH:mm' }}</td>
+                        <td>{{ survey.trainingEndDate | date : 'dd/MM/yyyy  HH:mm' }}</td>
+                        <!-- <td>{{ survey.startDate }}</td> -->
+                        <!-- <td>{{ survey.endDate }}</td> -->
+                        <td>{{ survey.province }}</td>
+                        <td class="text-center"><fa-icon [icon]="faPenToSquare"></fa-icon></td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="7">No data found.</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            <p-paginator
+                [rows]="pageSize"
+                [totalRecords]="totalItems"
+                [rowsPerPageOptions]="pageSizeOptions"
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="Showing {{ firstItem }} to {{ lastItem }} of {{ totalItems }} entries"
+                (onPageChange)="pageChange($event)"
+            ></p-paginator>
+        </div>
+    </div>
+</div>
