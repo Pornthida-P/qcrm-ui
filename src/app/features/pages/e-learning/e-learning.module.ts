@@ -10,6 +10,7 @@ import { TableModule } from 'primeng/table';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { TooltipModule } from 'primeng/tooltip';
 import {PaginatorModule} from 'primeng/paginator';
+import {SidebarModule} from 'primeng/sidebar';
 
 @NgModule({
     declarations: [ELearningComponent],
@@ -30,6 +31,7 @@ import {PaginatorModule} from 'primeng/paginator';
         FontAwesomeModule,
         TooltipModule,
         PaginatorModule,
+        SidebarModule,
     ],
 })
 export class ELearningModule {}

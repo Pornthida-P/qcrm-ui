@@ -1,0 +1,11 @@
+.sidebar {
+    cursor: pointer; /* เปลี่ยน cursor เป็น pointer เมื่อชี้ไปที่ cell */
+}
+
+::ng-deep .p-sidebar {
+    width: 500px;
+}
+
+.font-b {
+    color: rgb(0, 0, 0);
+}
