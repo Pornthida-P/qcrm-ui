@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { faPenToSquare, faArrowRight, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { ELearningService } from 'src/app/services/e-learning/e-learning.service';
+import { Paginator } from 'primeng/paginator';
 
 @Component({
     selector: 'app-e-learning',
@@ -8,11 +9,13 @@ import { ELearningService } from 'src/app/services/e-learning/e-learning.service
     styleUrls: ['./e-learning.component.scss'],
 })
 export class ELearningComponent {
+    @ViewChild('paginator') paginator: Paginator | undefined;
+
     value: string | undefined;
     filterOption!: any[];
     selectedFilter: any | undefined;
-    surveys: any[] = [];
-    selectedSurvey: any | undefined;
+    course: any[] = [];
+    selectedCourse: any | undefined;
     faPenToSquare = faPenToSquare;
     faArrowRight = faArrowRight;
     faArrowLeft = faArrowLeft;
@@ -26,6 +29,7 @@ export class ELearningComponent {
     displaySideBar: boolean = false;
     detailItem: any = undefined;
     emptyItem: String = 'ว่าง';
+    itemIdex: number = 0;
 
     constructor(private eLearningService: ELearningService) {}
 
@@ -42,7 +46,7 @@ export class ELearningComponent {
 
     async getElearn(firstItem: number, pageSize: number) {
         await this.eLearningService.getELearning(firstItem, pageSize).subscribe((res: any) => {
-            this.surveys = res;
+            this.course = res;
         });
     }
 
@@ -53,18 +57,51 @@ export class ELearningComponent {
     }
 
     async pageChange(event: any): Promise<void> {
+        console.log(event);
         if (!(this.firstItem == event.first && this.lastItem && event.first + event.rows && this.pageSize == event.rows)) {
             this.firstItem = event.first + 1;
             this.lastItem = event.first + event.rows;
             if (this.lastItem > this.totalItems) this.lastItem = this.totalItems;
             this.pageSize = event.rows;
             await this.getElearn(event.first, event.rows);
+            console.log('Before pageChange');
         }
     }
 
-    showSideBar(value: any) {
-        console.log(value);
-        this.detailItem = value;
+    showSideBar(value: number) {
+        this.itemIdex = value;
+        this.detailItem = this.course[this.itemIdex];
         this.displaySideBar = true;
+        console.log(this.itemIdex);
+    }
+
+    async changeSideBar(value: string, event: any) {
+        if (value == 'right') {
+            if (this.itemIdex >= this.pageSize - 1) {
+                if (this.paginator) {
+                    console.log('Before changePageToNext');
+
+                    await this.paginator.changePageToNext(event);
+                    console.log('After changePageToNext');
+
+                }
+                console.log('Before showSideBar');
+
+                this.showSideBar(0);
+                console.log('After showSideBar');
+
+            } else {
+                this.showSideBar(this.itemIdex + 1);
+            }
+        } else if (value == 'left') {
+            if (this.itemIdex == 0) {
+                if (this.paginator) {
+                    await this.paginator.changePageToPrev(event);
+                }
+                this.showSideBar(this.pageSize);
+            } else {
+                this.showSideBar(this.itemIdex - 1);
+            }
+        }
     }
 }
