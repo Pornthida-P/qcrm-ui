@@ -25,65 +25,63 @@
             <p-button icon="pi pi-plus" class="flex-none hidden md:flex lg:hidden" styleClass="font-thai btn-color-primary"></p-button>
         </div>
         <div>
-            <p-table
-                [value]="course"
-                [(selection)]="selectedCourse"
-                dataKey="code"
-                [tableStyle]="{ 'min-width': '50rem' }"
-                styleClass="p-datatable-sm"
-            >
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th style="width: 4rem">
-                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-                        </th>
-                        <th style="width: 40%">ชื่อหลักสูตร</th>
-                        <th style="width: 10%">เลขที่อ้างอิง (ระบบ Drive)</th>
-                        <th style="width: 16%">วันที่เปิดอบรม</th>
-                        <th style="width: 16%">วันที่ปิดอบรม</th>
-                        <!-- <th style="width: 20%">วันที่เปิดรับสมัคร</th> -->
-                        <!-- <th style="width: 20%">วันที่ปิดรับสมัคร</th> -->
-                        <th style="width: 10%">จังหวัด</th>
-                        <th>จัดการ</th>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-course let-i="rowIndex">
-                    <tr>
-                        <td>
-                            <p-tableCheckbox [value]="course"></p-tableCheckbox>
-                        </td>
-                        <td (click)="showSideBar(i)" class="sidebar">{{ course.name }}</td>
-                        <td>{{ course.referenceNumber }}</td>
-                        <td>{{ course.trainingStartDate | date : 'dd/MM/yyyy  HH:mm' }}</td>
-                        <td>{{ course.trainingEndDate | date : 'dd/MM/yyyy  HH:mm' }}</td>
-                        <!-- <td>{{ course.startDate }}</td> -->
-                        <!-- <td>{{ course.endDate }}</td> -->
-                        <td>{{ course.province }}</td>
-                        <td class="text-center" type="button" (click)="showSideBar(i)"><fa-icon [icon]="faPenToSquare"></fa-icon></td>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="emptymessage">
-                    <tr>
-                        <td colspan="7">No data found.</td>
-                    </tr>
-                </ng-template>
-            </p-table>
-            <p-paginator
-                #paginator
-                [rows]="pageSize"
-                [totalRecords]="totalItems"
-                [rowsPerPageOptions]="pageSizeOptions"
-                [showCurrentPageReport]="true"
-                currentPageReportTemplate="Showing {{ firstItem }} to {{ lastItem }} of {{ totalItems }} entries"
-                (onPageChange)="pageChange($event)"
-            ></p-paginator>
+            <div class="d-flex align-items-center">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%">ชื่อหลักสูตร</th>
+                            <th style="width: 10%">เลขที่อ้างอิง (ระบบ Drive)</th>
+                            <th style="width: 16%">วันที่เปิดอบรม</th>
+                            <th style="width: 16%">วันที่ปิดอบรม</th>
+                            <!-- <th style="width: 20%">วันที่เปิดรับสมัคร</th> -->
+                            <!-- <th style="width: 20%">วันที่ปิดรับสมัคร</th> -->
+                            <th style="width: 10%">จังหวัด</th>
+                            <th style="width: 1%">จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let course of course; let i = index">
+                            <td (click)="showSideBar(i)" class="sidebar">
+                                {{ course.name | slice : 0 : 50 }}{{ course.name.length > 50 ? '...' : '' }}
+                            </td>
+                            <td>{{ course.referenceNumber }}</td>
+                            <td>{{ course.trainingStartDate | date : 'dd/MM/yyyy  HH:mm' }}</td>
+                            <td>{{ course.trainingEndDate | date : 'dd/MM/yyyy  HH:mm' }}</td>
+                            <!-- <td>{{ course.startDate }}</td> -->
+                            <!-- <td>{{ course.endDate }}</td> -->
+                            <td>{{ course.province }}</td>
+                            <td class="text-center" type="button" (click)="showSideBar(i)"><fa-icon [icon]="faPenToSquare"></fa-icon></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <ul class="pagination sidebar justify-content-center">
+                <li class="page-item" [class.disabled]="currentPage == 1">
+                    <a class="page-link custom-link" (click)="pageChange(currentPage - 1)" aria-label="Previous">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+                <li *ngFor="let page of pages" class="page-item" [class.active]="currentPage == page">
+                    <a class="page-link custom-link" (click)="pageChange(page)">{{ page }}</a>
+                </li>
+                <li class="page-item" [class.disabled]="currentPage == totalPages">
+                    <a class="page-link custom-link" (click)="pageChange(currentPage + 1)" aria-label="Next">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+                <li class="page-item ms-3">
+                    <select class="form-select" [(ngModel)]="pageSize" (change)="pageSizeChange()">
+                        <option *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}</option>
+                    </select>
+                </li>
+            </ul>
             <p-sidebar [(visible)]="displaySideBar" position="right" [baseZIndex]="10000">
                 <div class="flex flex-row-reverse flex-wrap">
                     <div class="p-2" type="button">
-                        <fa-icon [icon]="faArrowRight" (click)="changeSideBar('right', $event)" size="lg"></fa-icon>
+                        <fa-icon *ngIf="visibleRightSideBar" [icon]="faArrowRight" (click)="changeSideBar('right')" size="lg"></fa-icon>
                     </div>
                     <div class="p-2" type="button">
-                        <fa-icon [icon]="faArrowLeft" (click)="changeSideBar('left', $event)" size="lg"></fa-icon>
+                        <fa-icon *ngIf="visibleLeftSideBar" [icon]="faArrowLeft" (click)="changeSideBar('left')" size="lg"></fa-icon>
                     </div>
                 </div>
                 <div class="p-3">

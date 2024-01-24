@@ -1,7 +1,11 @@
 .sidebar {
     cursor: pointer; /* เปลี่ยน cursor เป็น pointer เมื่อชี้ไปที่ cell */
 }
-
+.table td.sidebar {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
 ::ng-deep .p-sidebar {
     width: 500px;
 }
@@ -9,3 +13,6 @@
 .font-b {
     color: rgb(0, 0, 0);
 }
+
+@import '~bootstrap/dist/css/bootstrap.min.css';
+
