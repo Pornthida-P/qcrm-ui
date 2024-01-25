@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import { faPenToSquare, faTrashCan} from '@fortawesome/free-solid-svg-icons';
 import { ActivatedRoute, Router } from '@angular/router';
+import { config } from 'src/app/config/config';
+import * as XLSX from 'xlsx';
+import Swal from 'sweetalert2'
 @Component({
   selector: 'app-survey-form',
   templateUrl: './survey-form.component.html',
@@ -9,13 +12,16 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class SurveyFormComponent implements OnInit{
 
   surveyForms!: any[]
-  selectedSurveyForms: any | undefined;
+  selectedSurveyForms: any = [];
 
   value: string | undefined;
 
   filterOption!: any[];
   selectedFilter: any | undefined;
   faPenToSquare = faPenToSquare;
+  faTrashCan = faTrashCan;
+
+  fileType: string = config.file.type;
 
   constructor(
     private router: Router,
@@ -55,5 +61,32 @@ export class SurveyFormComponent implements OnInit{
   formManage() {
     this.router.navigate(['/survey/form/new']);
   }
+
+  exportExcel() {
+    if (this.selectedSurveyForms.length != 0) {
+        const columns = [['เลขที่การทำแบบสำรวจ', 'ชื่อผู้ติดตามและประเมินผลฯ', 'แบบฟอร์มสำรวจ', 'ประจำปี (ค.ศ.)', 'วันที่บันทึก']];
+        const wb = XLSX.utils.book_new();
+        const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet([]);
+        XLSX.utils.sheet_add_aoa(ws, columns);
+
+        XLSX.utils.sheet_add_json(ws, this.selectedSurveyForms, { origin: 'A2', skipHeader: true });
+
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+        XLSX.writeFile(wb, `การติดตามและประเมินผล${this.fileType}`);
+    }
+  }
+
+  editSurveyForms() {
+    console.log('edit', this.selectedSurveyForms);
+  }
+
+  deleteSurveyForms() {
+    console.log('delete', this.selectedSurveyForms);
+  }
+
+  onSelectionChangeForms(value: any[]) {
+    console.log(this.selectedSurveyForms);
+}
 
 }

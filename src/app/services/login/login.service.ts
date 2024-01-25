@@ -13,27 +13,22 @@ export class LoginService {
     private keyIsLogined = 'isLogined';
 
     constructor(private router: Router, private http: HttpClient) {
-        const statusLogin = localStorage.getItem(this.keyIsLogined);
-        if (statusLogin) {
-            this.isLoginedSubject.next(true);
-        } else {
-            this.isLoginedSubject.next(false);
-        }
+        this.updateIsLogined();
     }
 
     baseUrl: string = `${environment.api.url}`;
 
-    private headers = new HttpHeaders({
-        'Content-Type': 'application/json',
-        Authorization: 'Basic ' + btoa('username:password'),
-    });
+    private updateIsLogined() {
+        const statusLogin = localStorage.getItem(this.keyIsLogined);
+        this.isLoginedSubject.next(statusLogin === 'true');
+    }
 
     isLogined(): Observable<boolean> {
         return this.isLoginedSubject.asObservable();
     }
 
     login() {
-        localStorage.setItem(this.keyIsLogined, 'true');
+        localStorage.setItem(this.keyIsLogined, JSON.stringify(true));
         this.isLoginedSubject.next(true);
         this.router.navigate(['/home']);
     }
@@ -48,15 +43,15 @@ export class LoginService {
     }
 
     getLogin(username: string, password: string) {
-        return this.http.post(
-            `${this.baseUrl}${config.api.path.login}`,
-            {
-                username: username,
-                password: password,
-            },
-            {
-                headers: this.headers,
-            },
-        );
+        const credentials = btoa(`${username}:${password}`);
+
+        const headers = new HttpHeaders({
+            'Content-Type': 'application/json',
+            Authorization: `Basic ${credentials}`,
+        });
+
+        const body = {};
+
+        return this.http.post(`${this.baseUrl}${config.api.path.login}`, body, { headers });
     }
 }

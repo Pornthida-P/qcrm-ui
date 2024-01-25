@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { NavbarComponent } from './navbar.component';
-import { AuthGuard } from '../guards/auth.guard';
+import { AuthGuard } from 'src/app/core/guard/auth.guard';
 
 const routes: Routes = [
     {
@@ -25,7 +25,7 @@ const routes: Routes = [
                 title: 'Survey',
             },
             {
-                path: 'survey/form',
+                path: 'surveyform',
                 children: [
                     {
                         path: '',
