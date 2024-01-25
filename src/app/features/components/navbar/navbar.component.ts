@@ -52,7 +52,7 @@ export class NavbarComponent implements OnInit {
             {
                 label: 'แบบฟอร์มสำรวจ',
                 icon: faFilePen,
-                routerLink: '/survey/form',
+                routerLink: '/surveyform',
             },
             {
                 label: 'การโทร',
