@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { catchError, throwError } from 'rxjs';
 import { ContactService } from 'src/app/services/contact/contact.service';
-import { ELearningService } from 'src/app/services/e-learning/e-learning.service';
+import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 
 @Component({
     selector: 'app-contacts',
@@ -25,7 +26,7 @@ export class ContactsComponent {
     firstItem = 1;
     lastItem = 10;
 
-    constructor(private contactServices: ContactService) {}
+    constructor(private contactServices: ContactService, private sweetalertServices: SweetAlertService) {}
 
     ngOnInit() {
         this.filterOption = [
@@ -37,17 +38,16 @@ export class ContactsComponent {
         this.getPage();
     }
 
-    async findAll(): Promise<void> {
-        const item = await this.contactServices.findAll().toPromise();
-        console.log(item);
-    }
-
-    async findById(): Promise<void> {
-        const item = await this.contactServices.findById('5eba12ff8b7a869a5').toPromise();
-    }
-
     async findByPage(page: number, offset: number) {
-        this.item = await this.contactServices.findByPage(page, offset).toPromise();
+        this.item = await this.contactServices
+            .findByPage(page, offset)
+            .pipe(
+                catchError((error) => {
+                    this.handleContactError(error);
+                    return throwError(error);
+                }),
+            )
+            .toPromise();
     }
 
     async getPage() {
@@ -62,5 +62,26 @@ export class ContactsComponent {
             this.pageSize = event.rows;
             await this.findByPage(event.first, event.rows);
         }
+    }
+
+    handleContactError(error: any) {
+        let errorMessage: string;
+        let title: string;
+        let route: string;
+
+        switch (error.status) {
+            case 401:
+                title = 'Authentication Error';
+                errorMessage = 'Your session has expired. Please log in again.';
+                route = 'login';
+                break;
+            default:
+                title = 'Contact Error';
+                errorMessage = 'Failed to load contacts. Please try again later.';
+                route = '';
+                break;
+        }
+
+        this.sweetalertServices.getSwal('error', title, errorMessage, false, route);
     }
 }
