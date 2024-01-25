@@ -33,31 +33,33 @@
                             <th style="width: 10%">เลขที่อ้างอิง (ระบบ Drive)</th>
                             <th style="width: 16%">วันที่เปิดอบรม</th>
                             <th style="width: 16%">วันที่ปิดอบรม</th>
-                            <!-- <th style="width: 20%">วันที่เปิดรับสมัคร</th> -->
-                            <!-- <th style="width: 20%">วันที่ปิดรับสมัคร</th> -->
                             <th style="width: 10%">จังหวัด</th>
                             <th style="width: 1%">จัดการ</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr *ngFor="let course of course; let i = index">
-                            <td (click)="showSideBar(i)" class="sidebar" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+                            <td
+                                (click)="showSideBar(i)"
+                                class="sidebar"
+                                data-bs-toggle="offcanvas"
+                                data-bs-target="#offcanvasRight"
+                                aria-controls="offcanvasRight"
+                            >
                                 {{ course.name | slice : 0 : 50 }}{{ course.name.length > 50 ? '...' : '' }}
                             </td>
                             <td>{{ course.referenceNumber }}</td>
                             <td>{{ course.trainingStartDate | date : 'dd/MM/yyyy  HH:mm' }}</td>
                             <td>{{ course.trainingEndDate | date : 'dd/MM/yyyy  HH:mm' }}</td>
-                            <!-- <td>{{ course.startDate }}</td> -->
-                            <!-- <td>{{ course.endDate }}</td> -->
                             <td>{{ course.province }}</td>
-                            <td class="text-center" type="button" (click)="showSideBar(i)"><fa-icon [icon]="faPenToSquare"></fa-icon></td>
+                            <td class="text-center" type="button" (click)="editPage(course)"><fa-icon [icon]="faPenToSquare"></fa-icon></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
             <ul class="pagination sidebar justify-content-center">
                 <li class="page-item" [class.disabled]="currentPage == 1">
-                    <a class="page-link custom-link" (click)="pageChange(currentPage - 1)" aria-label="Previous">
+                    <a class="page-link custom-link preBtn" (click)="pageChange(currentPage - 1)" aria-label="Previous">
                         <i class="fas fa-chevron-left"></i>
                     </a>
                 </li>
@@ -65,28 +67,31 @@
                     <a class="page-link custom-link" (click)="pageChange(page)">{{ page }}</a>
                 </li>
                 <li class="page-item" [class.disabled]="currentPage == totalPages">
-                    <a class="page-link custom-link" (click)="pageChange(currentPage + 1)" aria-label="Next">
+                    <a class="page-link custom-link nextBtn" (click)="pageChange(currentPage + 1)" aria-label="Next">
                         <i class="fas fa-chevron-right"></i>
                     </a>
                 </li>
                 <li class="page-item ms-3">
-                    <select class="form-select rounded-0"  aria-label="Default select example" [(ngModel)]="pageSize" (change)="pageSizeChange()">
+                    <select class="form-select" aria-label="Default select example" [(ngModel)]="pageSize" (change)="pageSizeChange()">
                         <option class="dropdown-item" *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}</option>
                     </select>
                 </li>
             </ul>
-            
+
             <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
                 <div class="offcanvas-body">
-                    <div class="flex flex-row-reverse flex-wrap">
-                        <div *ngIf="visibleRightSideBar" class="p-2" type="button" (click)="changeSideBar('right')">
-                            <fa-icon [icon]="faArrowRight" size="lg"></fa-icon>
+                    <div class="flex flex flex-wrap">
+                        <div class="p-2 flex-grow-1" type="button" (click)="editPage(detailItem)">
+                            <fa-icon [icon]="faPenToSquare" size="lg"></fa-icon>
                         </div>
                         <div *ngIf="visibleLeftSideBar" class="p-2" type="button" (click)="changeSideBar('left')">
                             <fa-icon [icon]="faArrowLeft" size="lg"></fa-icon>
                         </div>
+                        <div *ngIf="visibleRightSideBar" class="p-2" type="button" (click)="changeSideBar('right')">
+                            <fa-icon [icon]="faArrowRight" size="lg"></fa-icon>
+                        </div>
                     </div>
-                    <div class="p-3">
+                    <div class="p-5">
                         <div>
                             <h4>ชื่อหลักสูตร</h4>
                             <h5 class="font-b">{{ detailItem?.name || emptyItem }}</h5>

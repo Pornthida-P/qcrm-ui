@@ -28,16 +28,17 @@ const routes: Routes = [
                 path: 'survey/form',
                 children: [
                     {
-                      path: '',
-                      loadChildren: () => import('../../pages/survey-form/survey-form.module').then((m) => m.SurveyFormModule),
-                      title: 'Survey Form',
+                        path: '',
+                        loadChildren: () => import('../../pages/survey-form/survey-form.module').then((m) => m.SurveyFormModule),
+                        title: 'Survey Form',
                     },
                     {
-                      path: 'new',
-                      loadChildren: () => import('../../pages/manage-survey-form/manage-survey-form.module').then((m) => m.ManageSurveyFormModule),
-                      title: 'New Survey Form',
+                        path: 'new',
+                        loadChildren: () =>
+                            import('../../pages/manage-survey-form/manage-survey-form.module').then((m) => m.ManageSurveyFormModule),
+                        title: 'New Survey Form',
                     },
-                  ]
+                ],
             },
             {
                 path: 'call',
@@ -46,8 +47,18 @@ const routes: Routes = [
             },
             {
                 path: 'e-learning',
-                loadChildren: () => import('../../pages/e-learning/e-learning.module').then((m) => m.ELearningModule),
-                title: 'E-Learning',
+                children: [
+                    {
+                        path: '',
+                        loadChildren: () => import('../../pages/e-learning/e-learning.module').then((m) => m.ELearningModule),
+                        title: 'E-Learning',
+                    },
+                    {
+                        path: 'edit',
+                        loadChildren: () => import('../../pages/e-learning-edit/e-learning-edit.module').then((m) => m.ELearningEditModule),
+                        title: 'E-Learning Edit',
+                    },
+                ],
             },
             {
                 path: 'training',
@@ -58,7 +69,7 @@ const routes: Routes = [
                 path: 'products',
                 loadChildren: () => import('../../pages/products/products.module').then((m) => m.ProductsModule),
                 title: 'Products',
-          },
+            },
             {
                 path: '',
                 redirectTo: '/home',

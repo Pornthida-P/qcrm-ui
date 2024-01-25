@@ -1,4 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { faPenToSquare, faArrowRight, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { ELearningService } from 'src/app/services/e-learning/e-learning.service';
 
@@ -18,12 +19,11 @@ export class ELearningComponent {
     faArrowLeft = faArrowLeft;
 
     pageSizeOptions = [10, 20];
-    firstItem = 0;
     pageSize = 10;
     currentPage = 1;
     totalItems = 0;
     totalPages = 0;
-    pagesToShow = 5;
+    pagesToShow = 3;
 
     visibleRightSideBar: boolean = true;
     visibleLeftSideBar: boolean = true;
@@ -31,28 +31,37 @@ export class ELearningComponent {
     emptyItem: String = 'ว่าง';
     itemIdex: number = 0;
 
-    constructor(private eLearningService: ELearningService) {}
+    constructor(private eLearningService: ELearningService, private router: Router, private activeRoute: ActivatedRoute) {}
 
     ngOnInit() {
         this.filterOption = [
             { name: 'ทั้งหมด', code: 'all' },
             { name: 'Only My', code: 'me' },
         ];
-        this.selectedFilter = this.filterOption[0];
 
-        this.getElearn(this.firstItem, this.pageSize);
+        this.activeRoute.queryParams.subscribe((params) => {
+            if (params['cb'] != undefined && params['cb'] != '') {
+                const cbArray = params['cb'].split(',').map(Number);
+                this.pageSize = cbArray[0];
+                this.currentPage = cbArray[1];
+                this.totalItems = cbArray[2];
+                this.totalPages = cbArray[3];
+            }
+        });
+        this.selectedFilter = this.filterOption[0];
+        this.getElearn((this.currentPage - 1) * this.pageSize, this.pageSize);
         this.getPage();
     }
 
-    async getElearn(firstItem: number, pageSize: number) {
-        await this.eLearningService.getELearning(firstItem, pageSize).subscribe((res: any) => {
+    async getElearn(page: number, pageSize: number) {
+        await this.eLearningService.getELearning(page, pageSize).subscribe((res: any) => {
             this.course = res;
         });
     }
 
-    async getElearnSideBar(firstItem: number, pageSize: number, value: string) {
+    async getElearnSideBar(page: number, pageSize: number, value: string) {
         await this.eLearningService
-            .getELearning(firstItem, pageSize)
+            .getELearning(page, pageSize)
             .subscribe((res: any) => {
                 this.course = res;
             })
@@ -80,6 +89,7 @@ export class ELearningComponent {
     }
 
     async pageChange(page: number) {
+        console.log(`${this.pageSize},${this.currentPage},${this.totalItems},${this.totalPages}`);
         if (page != this.currentPage) {
             if (page >= 1 && page <= this.totalPages) {
                 this.currentPage = page;
@@ -127,5 +137,12 @@ export class ELearningComponent {
                 this.showSideBar(this.itemIdex - 1);
             }
         }
+    }
+
+    editPage(item: any) {
+        console.log('go to editpage');
+        console.log(item);
+        const cb = `${this.pageSize},${this.currentPage},${this.totalItems},${this.totalPages}`;
+        this.router.navigate(['/e-learning/edit'], { queryParams: { itemId: item.activityTopicId, cb: cb } });
     }
 }
