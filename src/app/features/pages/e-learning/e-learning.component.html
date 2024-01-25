@@ -41,7 +41,7 @@
                     </thead>
                     <tbody>
                         <tr *ngFor="let course of course; let i = index">
-                            <td (click)="showSideBar(i)" class="sidebar">
+                            <td (click)="showSideBar(i)" class="sidebar" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
                                 {{ course.name | slice : 0 : 50 }}{{ course.name.length > 50 ? '...' : '' }}
                             </td>
                             <td>{{ course.referenceNumber }}</td>
@@ -70,79 +70,82 @@
                     </a>
                 </li>
                 <li class="page-item ms-3">
-                    <select class="form-select" [(ngModel)]="pageSize" (change)="pageSizeChange()">
-                        <option *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}</option>
+                    <select class="form-select rounded-0"  aria-label="Default select example" [(ngModel)]="pageSize" (change)="pageSizeChange()">
+                        <option class="dropdown-item" *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}</option>
                     </select>
                 </li>
             </ul>
-            <p-sidebar [(visible)]="displaySideBar" position="right" [baseZIndex]="10000">
-                <div class="flex flex-row-reverse flex-wrap">
-                    <div class="p-2" type="button">
-                        <fa-icon *ngIf="visibleRightSideBar" [icon]="faArrowRight" (click)="changeSideBar('right')" size="lg"></fa-icon>
+            
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+                <div class="offcanvas-body">
+                    <div class="flex flex-row-reverse flex-wrap">
+                        <div *ngIf="visibleRightSideBar" class="p-2" type="button" (click)="changeSideBar('right')">
+                            <fa-icon [icon]="faArrowRight" size="lg"></fa-icon>
+                        </div>
+                        <div *ngIf="visibleLeftSideBar" class="p-2" type="button" (click)="changeSideBar('left')">
+                            <fa-icon [icon]="faArrowLeft" size="lg"></fa-icon>
+                        </div>
                     </div>
-                    <div class="p-2" type="button">
-                        <fa-icon *ngIf="visibleLeftSideBar" [icon]="faArrowLeft" (click)="changeSideBar('left')" size="lg"></fa-icon>
+                    <div class="p-3">
+                        <div>
+                            <h4>ชื่อหลักสูตร</h4>
+                            <h5 class="font-b">{{ detailItem?.name || emptyItem }}</h5>
+                        </div>
+                        <div class="grid pt-4">
+                            <div class="col">
+                                <div>เลขที่อ้างอิง (ระบบ Drive)</div>
+                                <div class="font-b">{{ detailItem?.referenceNumber || emptyItem }}</div>
+                            </div>
+                            <div class="col">
+                                <div>จำนวนรับสมัคร</div>
+                                <div class="font-b">{{ detailItem?.maxApplicants || emptyItem }}</div>
+                            </div>
+                        </div>
+                        <div class="grid pt-2">
+                            <div class="col">
+                                <div>วันที่เปิดรับสมัคร</div>
+                                <div class="font-b">{{ (detailItem?.startDate | date : 'dd/MM/yyyy  HH:mm') || emptyItem }}</div>
+                            </div>
+                            <div class="col">
+                                <div>วันที่ปิดรับสมัคร</div>
+                                <div class="font-b">{{ (detailItem?.endDate | date : 'dd/MM/yyyy  HH:mm') || emptyItem }}</div>
+                            </div>
+                        </div>
+                        <div class="grid pt-2">
+                            <div class="col">
+                                <div>วันที่เปิดอบรม</div>
+                                <div class="font-b">{{ (detailItem?.trainingStartDate | date : 'dd/MM/yyyy  HH:mm') || emptyItem }}</div>
+                            </div>
+                            <div class="col">
+                                <div>วันที่ปิดอบรม</div>
+                                <div class="font-b">{{ (detailItem?.trainingEndDate | date : 'dd/MM/yyyy  HH:mm') || emptyItem }}</div>
+                            </div>
+                        </div>
+                        <div class="grid pt-2">
+                            <div class="col">
+                                <div>จังหวัด</div>
+                                <div class="font-b">{{ detailItem?.province || emptyItem }}</div>
+                            </div>
+                            <div class="col">
+                                <div>สถานที่</div>
+                                <div class="font-b">{{ detailItem?.location || emptyItem }}</div>
+                            </div>
+                        </div>
+                        <div class="grid pt-2">
+                            <div class="col">
+                                <div>ค่าใช้จ่าย</div>
+                                <div class="font-b">{{ detailItem?.cost || emptyItem }}</div>
+                            </div>
+                        </div>
+                        <div class="grid pt-2">
+                            <div class="col">
+                                <div>รายละเอียด</div>
+                                <div class="font-b">{{ detailItem?.description || emptyItem }}</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="p-3">
-                    <div>
-                        <h4>ชื่อหลักสูตร</h4>
-                        <h5 class="font-b">{{ detailItem?.name || emptyItem }}</h5>
-                    </div>
-                    <div class="grid pt-4">
-                        <div class="col">
-                            <div>เลขที่อ้างอิง (ระบบ Drive)</div>
-                            <div class="font-b">{{ detailItem?.referenceNumber || emptyItem }}</div>
-                        </div>
-                        <div class="col">
-                            <div>จำนวนรับสมัคร</div>
-                            <div class="font-b">{{ detailItem?.maxApplicants || emptyItem }}</div>
-                        </div>
-                    </div>
-                    <div class="grid pt-2">
-                        <div class="col">
-                            <div>วันที่เปิดรับสมัคร</div>
-                            <div class="font-b">{{ (detailItem?.startDate | date : 'dd/MM/yyyy  HH:mm') || emptyItem }}</div>
-                        </div>
-                        <div class="col">
-                            <div>วันที่ปิดรับสมัคร</div>
-                            <div class="font-b">{{ (detailItem?.endDate | date : 'dd/MM/yyyy  HH:mm') || emptyItem }}</div>
-                        </div>
-                    </div>
-                    <div class="grid pt-2">
-                        <div class="col">
-                            <div>วันที่เปิดอบรม</div>
-                            <div class="font-b">{{ (detailItem?.trainingStartDate | date : 'dd/MM/yyyy  HH:mm') || emptyItem }}</div>
-                        </div>
-                        <div class="col">
-                            <div>วันที่ปิดอบรม</div>
-                            <div class="font-b">{{ (detailItem?.trainingEndDate | date : 'dd/MM/yyyy  HH:mm') || emptyItem }}</div>
-                        </div>
-                    </div>
-                    <div class="grid pt-2">
-                        <div class="col">
-                            <div>จังหวัด</div>
-                            <div class="font-b">{{ detailItem?.province || emptyItem }}</div>
-                        </div>
-                        <div class="col">
-                            <div>สถานที่</div>
-                            <div class="font-b">{{ detailItem?.location || emptyItem }}</div>
-                        </div>
-                    </div>
-                    <div class="grid pt-2">
-                        <div class="col">
-                            <div>ค่าใช้จ่าย</div>
-                            <div class="font-b">{{ detailItem?.cost || emptyItem }}</div>
-                        </div>
-                    </div>
-                    <div class="grid pt-2">
-                        <div class="col">
-                            <div>รายละเอียด</div>
-                            <div class="font-b">{{ detailItem?.description || emptyItem }}</div>
-                        </div>
-                    </div>
-                </div>
-            </p-sidebar>
+            </div>
         </div>
     </div>
 </div>

@@ -6,13 +6,28 @@
     white-space: nowrap;
     text-overflow: ellipsis;
   }
-::ng-deep .p-sidebar {
-    width: 500px;
+
+.offcanvas{
+    width: 500px !important;
 }
 
 .font-b {
     color: rgb(0, 0, 0);
 }
 
-@import '~bootstrap/dist/css/bootstrap.min.css';
+.custom-link {
+    color: rgb(0, 0, 0);
+}
 
+.custom-link:hover{
+    color: #666666;
+}
+
+.page-item.active a.page-link.custom-link {
+    color: #ffffff;
+    background-color: #666666;
+    border-color: #666666;
+}
+
+
+// @import '~bootstrap/dist/css/bootstrap.min.css';

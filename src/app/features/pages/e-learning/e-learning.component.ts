@@ -27,7 +27,6 @@ export class ELearningComponent {
 
     visibleRightSideBar: boolean = true;
     visibleLeftSideBar: boolean = true;
-    displaySideBar: boolean = false;
     detailItem: any = undefined;
     emptyItem: String = 'ว่าง';
     itemIdex: number = 0;
@@ -104,9 +103,9 @@ export class ELearningComponent {
     }
 
     showSideBar(value: number) {
+        console.log('shoSideBar');
         this.itemIdex = value;
         this.detailItem = this.course[this.itemIdex];
-        this.displaySideBar = true;
         this.visibleLeftSideBar = true;
         this.visibleRightSideBar = true;
 
