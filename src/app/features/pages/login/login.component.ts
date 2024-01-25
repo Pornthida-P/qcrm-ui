@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { catchError, throwError } from 'rxjs';
+import { catchError, tap, throwError } from 'rxjs';
 import { LoginService } from 'src/app/services/login/login.service';
+import { TokenService } from 'src/app/services/token/token.service';
+import { UserService } from 'src/app/services/user/user.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -15,7 +17,12 @@ export class LoginComponent {
 
     loginForm: FormGroup;
 
-    constructor(private fb: FormBuilder, private router: Router, private loginService: LoginService) {
+    constructor(
+        private fb: FormBuilder,
+        private loginService: LoginService,
+        private userServices: UserService,
+        private tokenServices: TokenService,
+    ) {
         this.loginForm = this.fb.group({
             username: new FormControl('', [Validators.required]),
             password: new FormControl('', [Validators.required]),
@@ -30,9 +37,7 @@ export class LoginComponent {
         return this.loginForm.controls['password'];
     }
 
-    ngOnInit(): void {
-        // localStorage.removeItem(config.constant.accessToken);
-    }
+    ngOnInit(): void {}
 
     onSubmit(form: FormGroup) {
         const username = form.value.username;
@@ -41,18 +46,17 @@ export class LoginComponent {
             this.loginService
                 .getLogin(username, password)
                 .pipe(
+                    tap((res: any) => {
+                        this.userServices.setDataUser(res.user);
+                        this.tokenServices.setDataToken(res.token);
+                        this.loginService.login();
+                    }),
                     catchError((error) => {
-                        if (error.status === 401) {
-                            this.getSwal('error', 'username or password is incorrect', '', false, '');
-                        } else {
-                            this.getSwal('error', 'An error occurred', '', false, '');
-                        }
+                        this.handleLoginError(error);
                         return throwError(error);
                     }),
                 )
-                .subscribe((res) => {
-                    this.loginService.login();
-                });
+                .subscribe();
         }
     }
 
@@ -64,5 +68,13 @@ export class LoginComponent {
             showConfirmButton: showButton,
             confirmButtonColor: '#0a6ebd',
         });
+    }
+
+    private handleLoginError(error: any) {
+        if (error.status === 401) {
+            this.getSwal('error', 'username or password is incorrect', '', false, '');
+        } else {
+            this.getSwal('error', 'An error occurred', '', false, '');
+        }
     }
 }
