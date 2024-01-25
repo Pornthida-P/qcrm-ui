@@ -12,6 +12,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { faBell } from '@fortawesome/free-regular-svg-icons';
 import { MenuItem } from 'primeng/api';
+import { UserService } from 'src/app/services/user/user.service';
 
 @Component({
     selector: 'app-navbar',
@@ -28,6 +29,8 @@ export class NavbarComponent implements OnInit {
     notificationSidebarVisible: boolean = false;
     menus: MenuItem[] | undefined;
     value: string | undefined;
+
+    constructor(private userServices: UserService) {}
 
     ngOnInit() {
         this.items = [
@@ -49,7 +52,7 @@ export class NavbarComponent implements OnInit {
             {
                 label: 'แบบฟอร์มสำรวจ',
                 icon: faFilePen,
-                routerLink: '/survey/form',
+                routerLink: '/surveyform',
             },
             {
                 label: 'การโทร',
@@ -102,6 +105,10 @@ export class NavbarComponent implements OnInit {
                 ],
             },
         ];
+
+        this.userServices.getDataUser().subscribe((user) => {
+            console.log(user);
+        });
     }
 
     setActiveMenu(menu: string) {

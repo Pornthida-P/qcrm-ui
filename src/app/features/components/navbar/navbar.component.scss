@@ -13,11 +13,14 @@
     position: relative;
 }
 
-.menu-main .li-active,
-.menu-main .li:hover {
+.menu-main .li-active {
     background-color: var(--primary-active-color);
     color: white;
     border-radius: 0.5rem;
+}
+
+.menu-main .li-menu:hover {
+    text-shadow: rgba(150, 163, 230, 0.9) 0px 0px 7px;
 }
 
 .w-80rem {
