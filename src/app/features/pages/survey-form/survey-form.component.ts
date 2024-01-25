@@ -59,7 +59,7 @@ export class SurveyFormComponent implements OnInit{
   }
 
   formManage() {
-    this.router.navigate(['/survey/form/new']);
+    this.router.navigate(['/surveyform/new']);
   }
 
   exportExcel() {
