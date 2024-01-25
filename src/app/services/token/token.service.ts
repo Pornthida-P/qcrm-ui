@@ -24,4 +24,8 @@ export class TokenService {
             localStorage.removeItem(this.storageKey);
         }
     }
+
+    clearDataToken() {
+        localStorage.removeItem(this.storageKey);
+    }
 }
