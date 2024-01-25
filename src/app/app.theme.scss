@@ -71,6 +71,27 @@ body {
     border-color: var(--primary);
 }
 
+.color-red {
+  color: red;
+}
+
+.bg-cl-edit {
+  background-color: #1851b9;
+  color: #fff;
+}
+
+.bg-cl-delete {
+  background-color: #EC5365;
+  color: #fff;
+}
+
+.color-white {
+  color: #fff;
+}
+
+.bd-radius {
+  border-radius: 6px;
+
 .cursor-pointer {
     cursor: pointer;
 }
