@@ -23,11 +23,6 @@ export class LoginService {
 
     baseUrl: string = `${environment.api.url}`;
 
-    private headers = new HttpHeaders({
-        'Content-Type': 'application/json',
-        Authorization: 'Basic ' + btoa('username:password'),
-    });
-
     isLogined(): Observable<boolean> {
         return this.isLoginedSubject.asObservable();
     }
@@ -48,15 +43,15 @@ export class LoginService {
     }
 
     getLogin(username: string, password: string) {
-        return this.http.post(
-            `${this.baseUrl}${config.api.path.login}`,
-            {
-                username: username,
-                password: password,
-            },
-            {
-                headers: this.headers,
-            },
-        );
+        const credentials = btoa(`${username}:${password}`);
+
+        const headers = new HttpHeaders({
+            'Content-Type': 'application/json',
+            Authorization: `Basic ${credentials}`,
+        });
+
+        const body = {};
+
+        return this.http.post(`${this.baseUrl}${config.api.path.login}`, body, { headers });
     }
 }
