@@ -29,4 +29,9 @@ export class UserService {
 
         this.userDataSubject.next(value);
     }
+
+    clearDataUser() {
+        localStorage.removeItem(this.storageKey);
+        this.userDataSubject.next(null);
+    }
 }

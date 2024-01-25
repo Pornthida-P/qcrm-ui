@@ -1,6 +1,7 @@
 :root {
     --primary: #1851b9;
     --primary-active-color: #3498db;
+    --color-sky: #a1d9ff;
 }
 
 * {
@@ -68,4 +69,8 @@ body {
 
 .p-inputtext:enabled:hover {
     border-color: var(--primary);
+}
+
+.cursor-pointer {
+    cursor: pointer;
 }

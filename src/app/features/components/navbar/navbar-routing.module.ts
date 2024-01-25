@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { NavbarComponent } from './navbar.component';
-import { AuthGuard } from '../guards/auth.guard';
+import { AuthGuard } from 'src/app/core/guard/auth.guard';
 
 const routes: Routes = [
     {
@@ -25,19 +25,20 @@ const routes: Routes = [
                 title: 'Survey',
             },
             {
-                path: 'survey/form',
+                path: 'surveyform',
                 children: [
                     {
-                      path: '',
-                      loadChildren: () => import('../../pages/survey-form/survey-form.module').then((m) => m.SurveyFormModule),
-                      title: 'Survey Form',
+                        path: '',
+                        loadChildren: () => import('../../pages/survey-form/survey-form.module').then((m) => m.SurveyFormModule),
+                        title: 'Survey Form',
                     },
                     {
-                      path: 'new',
-                      loadChildren: () => import('../../pages/manage-survey-form/manage-survey-form.module').then((m) => m.ManageSurveyFormModule),
-                      title: 'New Survey Form',
+                        path: 'new',
+                        loadChildren: () =>
+                            import('../../pages/manage-survey-form/manage-survey-form.module').then((m) => m.ManageSurveyFormModule),
+                        title: 'New Survey Form',
                     },
-                  ]
+                ],
             },
             {
                 path: 'call',
@@ -58,7 +59,7 @@ const routes: Routes = [
                 path: 'products',
                 loadChildren: () => import('../../pages/products/products.module').then((m) => m.ProductsModule),
                 title: 'Products',
-          },
+            },
             {
                 path: '',
                 redirectTo: '/home',

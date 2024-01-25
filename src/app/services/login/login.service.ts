@@ -13,22 +13,22 @@ export class LoginService {
     private keyIsLogined = 'isLogined';
 
     constructor(private router: Router, private http: HttpClient) {
-        const statusLogin = localStorage.getItem(this.keyIsLogined);
-        if (statusLogin) {
-            this.isLoginedSubject.next(true);
-        } else {
-            this.isLoginedSubject.next(false);
-        }
+        this.updateIsLogined();
     }
 
     baseUrl: string = `${environment.api.url}`;
+
+    private updateIsLogined() {
+        const statusLogin = localStorage.getItem(this.keyIsLogined);
+        this.isLoginedSubject.next(statusLogin === 'true');
+    }
 
     isLogined(): Observable<boolean> {
         return this.isLoginedSubject.asObservable();
     }
 
     login() {
-        localStorage.setItem(this.keyIsLogined, 'true');
+        localStorage.setItem(this.keyIsLogined, JSON.stringify(true));
         this.isLoginedSubject.next(true);
         this.router.navigate(['/home']);
     }
