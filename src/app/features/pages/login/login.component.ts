@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { catchError, tap, throwError } from 'rxjs';
 import { LoginService } from 'src/app/services/login/login.service';
 import { TokenService } from 'src/app/services/token/token.service';
@@ -37,7 +36,11 @@ export class LoginComponent {
         return this.loginForm.controls['password'];
     }
 
-    ngOnInit(): void {}
+    ngOnInit(): void {
+        this.userServices.clearDataUser();
+        this.tokenServices.clearDataToken();
+        this.loginService.logout();
+    }
 
     onSubmit(form: FormGroup) {
         const username = form.value.username;
@@ -60,6 +63,14 @@ export class LoginComponent {
         }
     }
 
+    private handleLoginError(error: any) {
+        if (error.status === 401) {
+            this.getSwal('error', 'username or password is incorrect', '', false, '');
+        } else {
+            this.getSwal('error', 'An error occurred', '', false, '');
+        }
+    }
+
     getSwal(icon: any, title: string, text: string, showButton: boolean, route: string) {
         Swal.fire({
             icon: icon,
@@ -68,13 +79,5 @@ export class LoginComponent {
             showConfirmButton: showButton,
             confirmButtonColor: '#0a6ebd',
         });
-    }
-
-    private handleLoginError(error: any) {
-        if (error.status === 401) {
-            this.getSwal('error', 'username or password is incorrect', '', false, '');
-        } else {
-            this.getSwal('error', 'An error occurred', '', false, '');
-        }
     }
 }
