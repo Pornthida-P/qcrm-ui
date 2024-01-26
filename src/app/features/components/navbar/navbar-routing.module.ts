@@ -47,8 +47,18 @@ const routes: Routes = [
             },
             {
                 path: 'e-learning',
-                loadChildren: () => import('../../pages/e-learning/e-learning.module').then((m) => m.ELearningModule),
-                title: 'E-Learning',
+                children: [
+                    {
+                        path: '',
+                        loadChildren: () => import('../../pages/e-learning/e-learning.module').then((m) => m.ELearningModule),
+                        title: 'E-Learning',
+                    },
+                    {
+                        path: 'edit',
+                        loadChildren: () => import('../../pages/e-learning-edit/e-learning-edit.module').then((m) => m.ELearningEditModule),
+                        title: 'E-Learning Edit',
+                    },
+                ],
             },
             {
                 path: 'training',

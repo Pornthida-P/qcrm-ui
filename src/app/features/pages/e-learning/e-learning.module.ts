@@ -6,7 +6,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
-import { TableModule } from 'primeng/table';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { TooltipModule } from 'primeng/tooltip';
 import {PaginatorModule} from 'primeng/paginator';
@@ -27,7 +26,6 @@ import {SidebarModule} from 'primeng/sidebar';
         InputTextModule,
         ButtonModule,
         DropdownModule,
-        TableModule,
         FontAwesomeModule,
         TooltipModule,
         PaginatorModule,
