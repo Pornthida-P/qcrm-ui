@@ -21,7 +21,6 @@ import { UserService } from 'src/app/services/user/user.service';
 })
 export class NavbarComponent implements OnInit {
     items: any;
-    activeMenu!: string;
     sidebarVisible: boolean = false;
     faBars = faBars;
     faBell = faBell;
@@ -75,7 +74,6 @@ export class NavbarComponent implements OnInit {
                 routerLink: '/products',
             },
         ];
-        this.activeMenu = this.items[0].label;
 
         this.menus = [
             {
@@ -109,11 +107,6 @@ export class NavbarComponent implements OnInit {
         this.userServices.getDataUser().subscribe((user) => {
             console.log(user);
         });
-    }
-
-    setActiveMenu(menu: string) {
-        this.activeMenu = menu;
-        this.sidebarVisible = false;
     }
 
     openSearchSideBar() {
