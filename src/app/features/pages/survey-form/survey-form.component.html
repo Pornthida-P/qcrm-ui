@@ -81,13 +81,18 @@
                   @for (form of forms$ | async; track form.no) {
                   <tr>
                       <td scope="row"><input type="checkbox" value="form"/></td>
-                      <td class="text-ellipsis">{{ form.survey_form }}</td>
+                      <td [ngbTooltip]="form.survey_form"
+                        placement="bottom"
+                        class="text-ellipsis"
+                      >
+                      {{ form.survey_form }}
+                    </td>
                       <td>{{ form.save_date }}</td>
-                      <td>{{ form.save_by }}</td>
+                      <td><a href="">{{ form.save_by }}</a></td>
                       <td class="text-center">
-                        <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                          <button type="button" class="btn bg-cl-edit"><fa-icon [icon]="faPenToSquare"></fa-icon></button>
-                          <button type="button" class="btn bg-cl-delete"><fa-icon [icon]="faTrashCan"></fa-icon></button>
+                        <div class="btn-table" role="group">
+                            <button type="button" class="btn btn-outline-success me-2" placement="top" ngbTooltip="Edit"><fa-icon [icon]="faPenToSquare"></fa-icon></button>
+                            <button type="button" class="btn btn-outline-danger" placement="top" ngbTooltip="Delete"><fa-icon [icon]="faTrashCan"></fa-icon></button>
                         </div>
                       </td>
                   </tr>
