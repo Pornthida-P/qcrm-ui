@@ -5,7 +5,6 @@ import { LoginService } from 'src/app/services/login/login.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { TokenService } from 'src/app/services/token/token.service';
 import { UserService } from 'src/app/services/user/user.service';
-import Swal from 'sweetalert2';
 
 @Component({
     selector: 'app-login',
