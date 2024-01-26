@@ -1,9 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, QueryList, ViewChildren, AfterViewInit } from '@angular/core';
 import { faPenToSquare, faTrashCan} from '@fortawesome/free-solid-svg-icons';
 import { ActivatedRoute, Router } from '@angular/router';
 import { config } from 'src/app/config/config';
 import * as XLSX from 'xlsx';
 import Swal from 'sweetalert2'
+import { SurveyForm } from 'src/app/shared/interface/survey-form';
+import { Observable } from 'rxjs';
+import { SurveyFormService } from 'src/app/services/survey-form/survey-form.service';
+import { NgbdSortableHeader, SortEvent } from './sortable.directive';
 @Component({
   selector: 'app-survey-form',
   templateUrl: './survey-form.component.html',
@@ -18,15 +22,22 @@ export class SurveyFormComponent implements OnInit{
 
   filterOption!: any[];
   selectedFilter: any | undefined;
+  selectedForm: any | undefined;
   faPenToSquare = faPenToSquare;
   faTrashCan = faTrashCan;
 
   fileType: string = config.file.type;
+  forms$: Observable<SurveyForm[]>;
+  total$: Observable<number>;
+
+    @ViewChildren(NgbdSortableHeader) headers!: QueryList<NgbdSortableHeader>;
 
   constructor(
     private router: Router,
-    private activatedRoute: ActivatedRoute
-  ) {}
+    public surveyFormService: SurveyFormService) {
+      this.forms$ = surveyFormService.forms$;
+      this.total$ = surveyFormService.total$;
+  }
 
   ngOnInit() {
 
@@ -36,35 +47,27 @@ export class SurveyFormComponent implements OnInit{
     ];
     this.selectedFilter = this.filterOption[0];
 
-    this.surveyForms = [
-        {
-            name: 'Admin',
-            survey_form:
-                'แบบสำรวจติดตามและประเมินผลเพื่อพัฒนาศักยภาพด้านการค้าระหว่างประเทศ "สถาบันพัฒนาผู้ประกอบการการค้ายุคใหม่(NEA) กรมส่งเสริมการค้าระหว่างประเทศ กระทรวงพาณิชย์” สำหรับประเภทผู้ประกอบการรุ่นใหม่ (นิสิต/นักศึกษา) ที่เข้าร่วมโครงการใน FromGen Z to be CEO 2023',
-            save_date: '25 ก.ย., 2023 10:24',
-        },
-        {
-            name: 'Admin',
-            survey_form:
-                'แบบสำรวจติดตามและประเมินผลเพื่อพัฒนาศักยภาพด้านการค้าระหว่างประเทศ "สถาบันพัฒนาผู้ประกอบการการค้ายุคใหม่(NEA) กรมส่งเสริมการค้าระหว่างประเทศ กระทรวงพาณิชย์” สำหรับประเภทผู้ประกอบการรุ่นใหม่ (นิสิต/นักศึกษา) ที่เข้าร่วมโครงการใน FromGen Z to be CEO 2023',
-            save_date: '25 ก.ย., 2023 10:30',
-        },
-        {
-            name: 'Admin',
-            survey_form:
-                'แบบสำรวจติดตามและประเมินผลเพื่อพัฒนาศักยภาพด้านการค้าระหว่างประเทศ "สถาบันพัฒนาผู้ประกอบการการค้ายุคใหม่(NEA) กรมส่งเสริมการค้าระหว่างประเทศ กระทรวงพาณิชย์” สำหรับประเภทผู้ประกอบการรุ่นใหม่ (นิสิต/นักศึกษา) ที่เข้าร่วมโครงการใน FromGen Z to be CEO 2023',
-            save_date: '25 ก.ย., 2023 10:40',
-        },
-    ];
   }
 
   formManage() {
     this.router.navigate(['/surveyform/new']);
   }
 
+  onSort({ column, direction }: SortEvent) {
+    // resetting other headers
+    this.headers.forEach((header) => {
+        if (header.sortable !== column) {
+            header.direction = '';
+        }
+    });
+
+    this.surveyFormService.sortColumn = column;
+    this.surveyFormService.sortDirection = direction;
+  }
+
   exportExcel() {
     if (this.selectedSurveyForms.length != 0) {
-        const columns = [['เลขที่การทำแบบสำรวจ', 'ชื่อผู้ติดตามและประเมินผลฯ', 'แบบฟอร์มสำรวจ', 'ประจำปี (ค.ศ.)', 'วันที่บันทึก']];
+        const columns = [['แบบฟอร์มสำรวจ', 'วันที่บันทึก', 'แบบฟอร์มสำรวจ', 'บันทึกโดย']];
         const wb = XLSX.utils.book_new();
         const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet([]);
         XLSX.utils.sheet_add_aoa(ws, columns);
@@ -73,7 +76,7 @@ export class SurveyFormComponent implements OnInit{
 
         XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
 
-        XLSX.writeFile(wb, `การติดตามและประเมินผล${this.fileType}`);
+        XLSX.writeFile(wb, `แบบฟอร์มสำรวจ${this.fileType}`);
     }
   }
 
@@ -87,6 +90,5 @@ export class SurveyFormComponent implements OnInit{
 
   onSelectionChangeForms(value: any[]) {
     console.log(this.selectedSurveyForms);
-}
-
+  }
 }

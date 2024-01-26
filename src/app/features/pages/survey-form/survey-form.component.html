@@ -1,148 +1,113 @@
-<div class="h-full">
-    <div class="bg-white border-round-lg shadow-2 w-full h-full">
-        <div class="p-4 flex flex-column md:flex-row lg:flex-row gap-4 align-items-center">
-            <p class="m-0 text-2xl flex-none">แบบฟอร์มสำรวจ</p>
-            <div class="flex flex-grow-1 flex-nowrap w-full">
-                <span class="p-input-icon-left w-full">
-                    <i class="pi pi-search color-primary font-semibold"></i>
-                    <input
-                        type="text"
-                        pInputText
-                        [(ngModel)]="value"
-                        placeholder="ค้นหา..."
-                        ngClass="font-thai w-full border-noround-right"
-                    />
-                </span>
-                <!-- <p-dropdown
-                  id="survey"
-                  [options]="filterOption"
-                  [(ngModel)]="selectedFilter"
-                  optionLabel="name"
-                  [showClear]="false"
-                  styleClass="h-full border-noround-left"
-              ></p-dropdown> -->
-            </div>
-            <!-- <p-button
-              label="สร้างแบบสำรวจ"
-              icon="pi pi-plus"
-              class="flex-none flex md:hidden lg:flex"
-              styleClass="font-thai btn-color-primary bd-radius"
-              (click)="formManage()"
-          ></p-button>
-          <p-button icon="pi pi-plus" class="flex-none hidden md:flex lg:hidden" styleClass="font-thai btn-color-primary"></p-button> -->
-        </div>
-        <div *ngIf="selectedSurveyForms.length != 0">
-            <div class="flex p-3 bg-gray-50">
-                <button
-                    type="button"
-                    pButton
-                    pRipple
-                    icon="pi pi-file-excel"
-                    (click)="exportExcel()"
-                    class="p-button-success mr-2"
-                    pTooltip="XLS"
-                    tooltipPosition="bottom"
-                ></button>
-                <button
-                    type="button"
-                    pButton
-                    pRipple
-                    icon="pi pi-pencil"
-                    (click)="editSurveyForms()"
-                    class="p-button-warning mr-2"
-                    pTooltip="Edit"
-                    tooltipPosition="bottom"
-                ></button>
-                <button
-                    type="button"
-                    pButton
-                    pRipple
-                    icon="pi pi-trash"
-                    (click)="deleteSurveyForms()"
-                    class="p-button-danger ml-auto"
-                    pTooltip="Delete"
-                    tooltipPosition="bottom"
-                ></button>
-            </div>
-        </div>
-        <div>
-            <!-- <p-table
-              #dt
-              [value]="surveyForms"
-              [(selection)]="selectedSurveyForms"
-              (selectionChange)="onSelectionChangeForms($event)"
-              dataKey="no"
-              [tableStyle]="{ 'min-width': '50rem' }"
-              styleClass="p-datatable-sm"
-              [paginator]="true"
-              [rows]="10"
-              [showCurrentPageReport]="true"
-              currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-              [rowsPerPageOptions]="[10, 25, 50]"
-          >
-              <ng-template pTemplate="header">
+<div class="h-100">
+  <div class="bg-white rounded shadow w-100 h-100">
+      <div class="p-4 d-flex flex-column justify-content-between flex-md-row flex-lg-row gap-4 align-items-center w-100">
+          <p class="m-0 d-flex fs-5">แบบฟอร์มสำรวจ</p>
+          <div class="d-flex flex-nowrap flex-grow-1">
+              <div class="input-group">
+                  <span class="input-group-text bg-white border border-end-0 color-primary" id="basic-addon1">
+                      <i class="fa-solid fa-magnifying-glass"></i>
+                  </span>
+                  <input
+                      id="table-complete-search"
+                      type="text"
+                      class="form-control border border-start-0 shadow-none"
+                      name="searchTerm"
+                      [(ngModel)]="surveyFormService.searchTerm"
+                      placeholder="ค้นหา..."
+                      aria-describedby="basic-addon1"
+                      style="width: 70%"
+                  />
+                  <select class="form-select shadow-none" aria-label="Default select example" [(ngModel)]="selectedFilter">
+                      <option *ngFor="let op of filterOption" [value]="op.code">
+                          {{ op.name }}
+                      </option>
+                  </select>
+              </div>
+          </div>
+          <button class="d-flex align-items-center gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white" (click)="formManage()">
+              <i class="fa-solid fa-plus"></i>
+              สร้างแบบสำรวจ
+          </button>
+          <div class="d-none d-md-flex d-lg-none p-2 btn-primary-color rounded text-white" (click)="formManage()">
+              <i class="fa-solid fa-plus"></i>
+          </div>
+      </div>
+      <!-- <div *ngIf="selectedForm.length != 0">
+          <div class="flex p-3 bg-gray-50">
+              <button
+                  type="button"
+                  pButton
+                  pRipple
+                  icon="pi pi-file-excel"
+                  (click)="exportExcel()"
+                  class="p-button-success mr-2"
+                  pTooltip="XLS"
+                  tooltipPosition="bottom"
+              ></button>
+              <button
+                  type="button"
+                  pButton
+                  pRipple
+                  icon="pi pi-pencil"
+                  (click)="editSurveys()"
+                  class="p-button-warning mr-2"
+                  pTooltip="Edit"
+                  tooltipPosition="bottom"
+              ></button>
+              <button
+                  type="button"
+                  pButton
+                  pRipple
+                  icon="pi pi-trash"
+                  (click)="deleteSurvey()"
+                  class="p-button-danger ml-auto"
+                  pTooltip="Delete"
+                  tooltipPosition="bottom"
+              ></button>
+          </div>
+      </div> -->
+      <div class="table-responsive">
+          <table class="table">
+              <thead class="table-light">
                   <tr>
-                      <th style="width: 4rem"></th>
-                      <th style="min-width: 600px" pSortableColumn="survey_form">
-                          <div class="flex flex-row flex-nowrap align-items-center">
-                              <p class="m-0">ชื่อแบบฟอร์ม</p>
-                              <p-sortIcon field="survey_form"></p-sortIcon>
-                          </div>
-                      </th>
-                      <th style="min-width: 200px" pSortableColumn="save_date">
-                          <div class="flex flex-row flex-nowrap align-items-center">
-                              <p class="m-0">วันที่บันทึก</p>
-                              <p-sortIcon field="save_date"></p-sortIcon>
-                          </div>
-                      </th>
-                      <th style="min-width: 200px" pSortableColumn="name">
-                          <div class="flex flex-row flex-nowrap align-items-center">
-                              <p class="m-0">บันทึกโดย</p>
-                              <p-sortIcon field="name"></p-sortIcon>
-                          </div>
-                      </th>
-                      <th>จัดการ</th>
+                      <th scope="col" style="width: 4rem"></th>
+                      <th scope="col" style="width: 70%" sortable="survey_form" (sort)="onSort($event)">แบบฟอร์มสำรวจ</th>
+                      <th scope="col" style="width: 15%" sortable="save_date" (sort)="onSort($event)">วันที่บันทึก</th>
+                      <th scope="col" style="width: 15%" sortable="save_by" (sort)="onSort($event)">บันทึกโดย</th>
+                      <th scope="col">จัดการ</th>
                   </tr>
+              </thead>
+              <tbody>
+                  @for (form of forms$ | async; track form.no) {
                   <tr>
-                      <th style="min-width: 20px">
-                          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-                      </th>
-                      <th>
-                          <p-columnFilter type="text" field="survey_form"></p-columnFilter>
-                      </th>
-                      <th>
-                          <p-columnFilter type="text" field="save_date"></p-columnFilter>
-                      </th>
-                      <th>
-                          <p-columnFilter type="text" field="name"></p-columnFilter>
-                      </th>
-                      <th></th>
+                      <td scope="row"><input type="checkbox" value="form"/></td>
+                      <td class="text-ellipsis">{{ form.survey_form }}</td>
+                      <td>{{ form.save_date }}</td>
+                      <td>{{ form.save_by }}</td>
+                      <td class="text-center">
+                        <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                          <button type="button" class="btn bg-cl-edit"><fa-icon [icon]="faPenToSquare"></fa-icon></button>
+                          <button type="button" class="btn bg-cl-delete"><fa-icon [icon]="faTrashCan"></fa-icon></button>
+                        </div>
+                      </td>
                   </tr>
-              </ng-template>
-              <ng-template pTemplate="body" let-surveyForms>
-                <tr>
-                    <td>
-                        <p-tableCheckbox [value]="surveyForms"></p-tableCheckbox>
-                    </td>
-                    <td>
-                        <a pTooltip="{{ surveyForms.survey_form }}">{{ surveyForms.survey_form }}</a>
-                    </td>
-                    <td>{{ surveyForms.save_date }}</td>
-                    <td><a href="">{{ surveyForms.name }}</a></td>
-                    <td class="text-center">
-                      <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                        <button type="button" class="btn bg-cl-edit"><fa-icon [icon]="faPenToSquare"></fa-icon></button>
-                        <button type="button" class="btn bg-cl-delete"><fa-icon [icon]="faTrashCan"></fa-icon></button>
-                      </div>
-                    </td>
-                </tr>
-            </ng-template>
-              <ng-template pTemplate="emptymessage">
+                  } @empty {
                   <tr>
-                      <td colspan="7">No data found.</td>
+                      <td colspan="6" style="text-align: center">No countries found</td>
                   </tr>
-              </ng-template>
-          </p-table> -->
-        </div>
-    </div>
+                  }
+              </tbody>
+          </table>
+          <div class="d-flex justify-content-between p-3">
+              <ngb-pagination [collectionSize]="(total$ | async)!" [(page)]="surveyFormService.page" [pageSize]="surveyFormService.pageSize">
+              </ngb-pagination>
+
+              <select class="form-select" style="width: auto" name="pageSize" [(ngModel)]="surveyFormService.pageSize">
+                  <option [ngValue]="10">10</option>
+                  <option [ngValue]="50">50</option>
+                  <option [ngValue]="100">100</option>
+              </select>
+          </div>
+      </div>
+  </div>
 </div>
