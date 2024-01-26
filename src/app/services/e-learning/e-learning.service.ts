@@ -10,8 +10,8 @@ export class ELearningService {
     constructor(private http: HttpClient) {}
     baseUrl: string = `${environment.api.url}`;
 
-    getELearning(page: number, limit: number) {
-        return this.http.get(`${this.baseUrl}${config.api.path.elearning}/${page}/${limit}`);
+    getELearning(page: number, limit: number, sortId: string) {
+        return this.http.get(`${this.baseUrl}${config.api.path.elearning}/${page}/${limit}/${sortId}`);
     }
 
     getELearningPage() {

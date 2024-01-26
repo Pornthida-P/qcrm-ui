@@ -3,7 +3,7 @@ export const config = {
         path: {
             login: '/login',
 
-            elearning: '/api/e-learning',
+            elearning: '/e-learning',
         },
     },
     file: {
