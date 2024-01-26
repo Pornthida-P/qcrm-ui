@@ -1,72 +1,72 @@
 <div class="h-full">
-  <div class="bg-white border-round-lg shadow-2 w-full h-full">
-      <div class="p-4 flex flex-column md:flex-row lg:flex-row gap-4 align-items-center">
-          <p class="m-0 text-2xl flex-none">แบบฟอร์มสำรวจ</p>
-          <div class="flex flex-grow-1 flex-nowrap w-full">
-              <span class="p-input-icon-left w-full">
-                  <i class="pi pi-search color-primary font-semibold"></i>
-                  <input
-                      type="text"
-                      pInputText
-                      [(ngModel)]="value"
-                      placeholder="ค้นหา..."
-                      ngClass="font-thai w-full border-noround-right"
-                  />
-              </span>
-              <p-dropdown
+    <div class="bg-white border-round-lg shadow-2 w-full h-full">
+        <div class="p-4 flex flex-column md:flex-row lg:flex-row gap-4 align-items-center">
+            <p class="m-0 text-2xl flex-none">แบบฟอร์มสำรวจ</p>
+            <div class="flex flex-grow-1 flex-nowrap w-full">
+                <span class="p-input-icon-left w-full">
+                    <i class="pi pi-search color-primary font-semibold"></i>
+                    <input
+                        type="text"
+                        pInputText
+                        [(ngModel)]="value"
+                        placeholder="ค้นหา..."
+                        ngClass="font-thai w-full border-noround-right"
+                    />
+                </span>
+                <!-- <p-dropdown
                   id="survey"
                   [options]="filterOption"
                   [(ngModel)]="selectedFilter"
                   optionLabel="name"
                   [showClear]="false"
                   styleClass="h-full border-noround-left"
-              ></p-dropdown>
-          </div>
-          <p-button
+              ></p-dropdown> -->
+            </div>
+            <!-- <p-button
               label="สร้างแบบสำรวจ"
               icon="pi pi-plus"
               class="flex-none flex md:hidden lg:flex"
               styleClass="font-thai btn-color-primary bd-radius"
               (click)="formManage()"
           ></p-button>
-          <p-button icon="pi pi-plus" class="flex-none hidden md:flex lg:hidden" styleClass="font-thai btn-color-primary"></p-button>
-      </div>
-      <div *ngIf="selectedSurveyForms.length != 0">
-          <div class="flex p-3 bg-gray-50">
-              <button
-                  type="button"
-                  pButton
-                  pRipple
-                  icon="pi pi-file-excel"
-                  (click)="exportExcel()"
-                  class="p-button-success mr-2"
-                  pTooltip="XLS"
-                  tooltipPosition="bottom"
-              ></button>
-              <button
-                  type="button"
-                  pButton
-                  pRipple
-                  icon="pi pi-pencil"
-                  (click)="editSurveyForms()"
-                  class="p-button-warning mr-2"
-                  pTooltip="Edit"
-                  tooltipPosition="bottom"
-              ></button>
-              <button
-                  type="button"
-                  pButton
-                  pRipple
-                  icon="pi pi-trash"
-                  (click)="deleteSurveyForms()"
-                  class="p-button-danger ml-auto"
-                  pTooltip="Delete"
-                  tooltipPosition="bottom"
-              ></button>
-          </div>
-      </div>
-      <div>
-          <p-table
+          <p-button icon="pi pi-plus" class="flex-none hidden md:flex lg:hidden" styleClass="font-thai btn-color-primary"></p-button> -->
+        </div>
+        <div *ngIf="selectedSurveyForms.length != 0">
+            <div class="flex p-3 bg-gray-50">
+                <button
+                    type="button"
+                    pButton
+                    pRipple
+                    icon="pi pi-file-excel"
+                    (click)="exportExcel()"
+                    class="p-button-success mr-2"
+                    pTooltip="XLS"
+                    tooltipPosition="bottom"
+                ></button>
+                <button
+                    type="button"
+                    pButton
+                    pRipple
+                    icon="pi pi-pencil"
+                    (click)="editSurveyForms()"
+                    class="p-button-warning mr-2"
+                    pTooltip="Edit"
+                    tooltipPosition="bottom"
+                ></button>
+                <button
+                    type="button"
+                    pButton
+                    pRipple
+                    icon="pi pi-trash"
+                    (click)="deleteSurveyForms()"
+                    class="p-button-danger ml-auto"
+                    pTooltip="Delete"
+                    tooltipPosition="bottom"
+                ></button>
+            </div>
+        </div>
+        <div>
+            <!-- <p-table
               #dt
               [value]="surveyForms"
               [(selection)]="selectedSurveyForms"
@@ -142,7 +142,7 @@
                       <td colspan="7">No data found.</td>
                   </tr>
               </ng-template>
-          </p-table>
-      </div>
-  </div>
+          </p-table> -->
+        </div>
+    </div>
 </div>

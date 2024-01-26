@@ -1,14 +1,12 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { SurveyComponent } from './survey.component';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { InputTextModule } from 'primeng/inputtext';
-import { ButtonModule } from 'primeng/button';
-import { DropdownModule } from 'primeng/dropdown';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { TableModule } from 'primeng/table';
-import { TooltipModule } from 'primeng/tooltip';
+import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
+import { SurveyService } from 'src/app/services/survey/survey.service';
+import { NgbdSortableHeader } from './sortable.directive';
 
 @NgModule({
     declarations: [SurveyComponent],
@@ -22,12 +20,10 @@ import { TooltipModule } from 'primeng/tooltip';
         ]),
         FormsModule,
         ReactiveFormsModule,
-        InputTextModule,
-        ButtonModule,
-        DropdownModule,
-        TableModule,
         FontAwesomeModule,
-        TooltipModule,
+        NgbPaginationModule,
+        NgbdSortableHeader,
     ],
+    providers: [SurveyService, DecimalPipe],
 })
 export class SurveyModule {}

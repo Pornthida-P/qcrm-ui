@@ -10,12 +10,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Formio, FormioModule } from '@formio/angular';
 import bootstrap4 from '@formio/bootstrap/bootstrap4';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TokenInterceptor } from './core/interceptor/token.interceptor';
 (Formio as any).use(bootstrap4);
 
 @NgModule({
     declarations: [AppComponent, FooterComponent, UserComponent],
-    imports: [BrowserModule, AppRoutingModule, HttpClientModule, BrowserAnimationsModule, FontAwesomeModule, FormioModule],
+    imports: [BrowserModule, AppRoutingModule, HttpClientModule, BrowserAnimationsModule, FontAwesomeModule, FormioModule, NgbModule],
     providers: [
         {
             provide: HTTP_INTERCEPTORS,
