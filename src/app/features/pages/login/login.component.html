@@ -1,40 +1,37 @@
-<div class="flex align-content-center justify-content-around align-items-center min-h-screen surface-100 p-8">
+<div class="d-flex align-content-center justify-content-around align-items-center min-vh-100 surface-100 p-8">
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit(loginForm)">
-        <div class="h-full w-full">
-            <div class="border border-round p-6 surface-0 shadow-5">
-                <div class="grid">
+        <div class="h-100 w-100">
+            <div class="border rounded-2 p-5 shadow" style="width: 24rem">
+                <div class="row">
+                    <div class="col-12 d-flex justify-content-center">
+                        <img src="./assets/nea-qcrm-ui/image/survey.jpg" class="w-100" />
+                    </div>
                     <div class="col-12">
                         <div>
-                            <p class="text-2xl text-center">LOGIN</p>
-                            <div class="field">
-                                <label for="username"> Username </label>
+                            <p class="fs-3 text-center">เข้าสู่ระบบ</p>
+                            <div class="mb-3">
+                                <label for="username" class="form-label">ชื่อผู้ใช้งาน </label>
                                 <input
+                                    id="username"
                                     type="text"
-                                    pInputText
                                     formControlName="username"
-                                    class="w-full"
-                                    placeholder="Enter You Username..."
+                                    class="form-control w-100"
+                                    placeholder="กรอกชื่อผู้ใช้งานของคุณ"
+                                    required
                                 />
                             </div>
-                            <small *ngIf="username.invalid && (username.dirty || username.touched)" class="block p-error">
-                                <div *ngIf="username.errors?.['required']">Username is required.</div>
-                                <div *ngIf="username.errors?.['username']">Username should be valid.</div>
-                            </small>
-                            <div class="field">
-                                <label for="password"> Password </label>
+                            <div class="mb-3">
+                                <label for="password" class="form-label"> รหัสผ่าน </label>
                                 <input
+                                    id="password"
                                     type="password"
-                                    pInputText
                                     formControlName="password"
-                                    class="w-full"
+                                    class="form-control w-100"
                                     name="password"
-                                    placeholder="Enter You Password"
+                                    placeholder="กรอกรหัสผ่านของคุณ"
                                 />
-                                <small *ngIf="password.invalid && (password.dirty || password.touched)">
-                                    <div *ngIf="password.errors?.['requirde']">Password is requirde?</div>
-                                </small>
                             </div>
-                            <button type="submit" class="border-none border-round p-2 w-full bg-primary-600 text-white">Login</button>
+                            <button type="submit" class="border-0 rounded p-2 w-100 btn-primary-color text-white">เข้าสู่ระบบ</button>
                         </div>
                     </div>
                 </div>
