@@ -3,13 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ELearningComponent } from './e-learning.component';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { InputTextModule } from 'primeng/inputtext';
-import { ButtonModule } from 'primeng/button';
-import { DropdownModule } from 'primeng/dropdown';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { TooltipModule } from 'primeng/tooltip';
-import {PaginatorModule} from 'primeng/paginator';
-import {SidebarModule} from 'primeng/sidebar';
 
 @NgModule({
     declarations: [ELearningComponent],
@@ -23,13 +17,7 @@ import {SidebarModule} from 'primeng/sidebar';
         ]),
         FormsModule,
         ReactiveFormsModule,
-        InputTextModule,
-        ButtonModule,
-        DropdownModule,
         FontAwesomeModule,
-        TooltipModule,
-        PaginatorModule,
-        SidebarModule,
     ],
 })
 export class ELearningModule {}

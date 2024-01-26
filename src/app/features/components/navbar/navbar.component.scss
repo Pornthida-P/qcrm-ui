@@ -2,6 +2,13 @@
     background-color: var(--primary);
 }
 
+.nav-img {
+    height: 3rem;
+}
+
+.menu-main {
+    width: 18rem;
+}
 .menu-main li {
     list-style: none;
     margin: 0;
@@ -15,20 +22,12 @@
     position: relative;
 }
 
-.menu-main .li-active {
+.menu-main .li-active,
+.menu-main .li:hover {
     background-color: var(--primary-active-color);
     color: white;
     border-radius: 0.5rem;
 }
-
 .menu-main .li-menu:hover {
     text-shadow: rgba(150, 163, 230, 0.9) 0px 0px 7px;
-}
-
-.view-content {
-    overflow-y: scroll;
-}
-
-.w-80rem {
-    width: 80rem;
 }

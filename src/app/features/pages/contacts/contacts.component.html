@@ -13,19 +13,19 @@
                         ngClass="font-thai w-full border-noround-right"
                     />
                 </span>
-                <p-dropdown
+                <!-- <p-dropdown
                     id="contact"
                     [options]="filterOption"
                     [(ngModel)]="selectedFilter"
                     optionLabel="name"
                     [showClear]="false"
                     styleClass="h-full border-noround-left"
-                ></p-dropdown>
+                ></p-dropdown> -->
             </div>
-            <p-button icon="pi pi-plus" class="flex-none hidden md:flex lg:hidden" styleClass="font-thai btn-color-primary"></p-button>
+            <!-- <p-button icon="pi pi-plus" class="flex-none hidden md:flex lg:hidden" styleClass="font-thai btn-color-primary"></p-button> -->
         </div>
         <div>
-            <p-table
+            <!-- <p-table
                 [value]="item"
                 [(selection)]="selectedSurvey"
                 dataKey="code"
@@ -73,7 +73,7 @@
                 [showCurrentPageReport]="true"
                 currentPageReportTemplate="Showing {{ firstItem }} to {{ lastItem }} of {{ totalPage }} entries"
                 (onPageChange)="pageChange($event)"
-            ></p-paginator>
+            ></p-paginator> -->
         </div>
     </div>
 </div>

@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { SurveyService } from 'src/app/services/survey/survey.service';
 import * as XLSX from 'xlsx';
 import { config } from 'src/app/config/config';
+import { Survey } from 'src/app/shared/interface/survey';
+import { Observable } from 'rxjs';
+import { NgbdSortableHeader, SortEvent } from './sortable.directive';
 
 @Component({
     selector: 'app-survey',
@@ -13,25 +15,45 @@ export class SurveyComponent implements OnInit {
     value: string | undefined;
     filterOption!: any[];
     selectedFilter: any | undefined;
-    surveys!: any[];
     selectedSurvey: any = [];
     fileType: string = config.file.type;
-    faPenToSquare = faPenToSquare;
+    surveys!: Survey[];
+    surveys$: Observable<Survey[]>;
+    total$: Observable<number>;
 
-    constructor(private surveyService: SurveyService) {}
+    @ViewChildren(NgbdSortableHeader) headers!: QueryList<NgbdSortableHeader>;
+
+    constructor(public surveyService: SurveyService) {
+        this.surveys$ = surveyService.surveys$;
+        this.total$ = surveyService.total$;
+    }
 
     ngOnInit() {
         this.filterOption = [
             { name: 'ทั้งหมด', code: 'all' },
             { name: 'Only My', code: 'me' },
         ];
-        this.selectedFilter = this.filterOption[0];
-
-        this.surveys = this.surveyService.getData();
+        this.selectedFilter = this.filterOption[0].code;
     }
 
-    onSelectionChange(value: any[]) {
-        console.log(this.selectedSurvey);
+    onSort({ column, direction }: SortEvent) {
+        // resetting other headers
+        this.headers.forEach((header) => {
+            if (header.sortable !== column) {
+                header.direction = '';
+            }
+        });
+
+        this.surveyService.sortColumn = column;
+        this.surveyService.sortDirection = direction;
+    }
+
+    checkAll(ev: any) {}
+
+    isAllChecked() {}
+
+    onSelectionChange(value: any) {
+        console.log(value);
     }
 
     editSurveys() {

@@ -1,34 +1,36 @@
-<div class="h-full">
-    <div class="bg-white border-round-lg shadow-2 w-full h-full">
-        <div class="p-4 flex flex-column md:flex-row lg:flex-row gap-4 align-items-center">
-            <p class="m-0 text-2xl flex-none">การติดตามประเมินผล</p>
-            <div class="flex flex-grow-1 flex-nowrap w-full">
-                <span class="p-input-icon-left w-full">
-                    <i class="pi pi-search color-primary font-semibold"></i>
+<div class="h-100">
+    <div class="bg-white rounded shadow w-100 h-100">
+        <div class="p-4 d-flex flex-column justify-content-between flex-md-row flex-lg-row gap-4 align-items-center w-100">
+            <p class="m-0 d-flex fs-5">การติดตามประเมินผล</p>
+            <div class="d-flex flex-nowrap flex-grow-1">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border border-end-0 color-primary" id="basic-addon1">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
                     <input
+                        id="table-complete-search"
                         type="text"
-                        pInputText
-                        [(ngModel)]="value"
+                        class="form-control border border-start-0 shadow-none"
+                        name="searchTerm"
+                        [(ngModel)]="surveyService.searchTerm"
                         placeholder="ค้นหา..."
-                        ngClass="font-thai w-full border-noround-right"
+                        aria-describedby="basic-addon1"
+                        style="width: 70%"
                     />
-                </span>
-                <p-dropdown
-                    id="survey"
-                    [options]="filterOption"
-                    [(ngModel)]="selectedFilter"
-                    optionLabel="name"
-                    [showClear]="false"
-                    styleClass="h-full border-noround-left"
-                ></p-dropdown>
+                    <select class="form-select shadow-none" aria-label="Default select example" [(ngModel)]="selectedFilter">
+                        <option *ngFor="let op of filterOption" [value]="op.code">
+                            {{ op.name }}
+                        </option>
+                    </select>
+                </div>
             </div>
-            <p-button
-                label="สร้างแบบสำรวจ"
-                icon="pi pi-plus"
-                class="flex-none flex md:hidden lg:flex"
-                styleClass="font-thai btn-color-primary"
-            ></p-button>
-            <p-button icon="pi pi-plus" class="flex-none hidden md:flex lg:hidden" styleClass="font-thai btn-color-primary"></p-button>
+            <button class="d-flex align-items-center gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white">
+                <i class="fa-solid fa-plus"></i>
+                สร้างแบบสำรวจ
+            </button>
+            <div class="d-none d-md-flex d-lg-none p-2 btn-primary-color rounded text-white">
+                <i class="fa-solid fa-plus"></i>
+            </div>
         </div>
         <div *ngIf="selectedSurvey.length != 0">
             <div class="flex p-3 bg-gray-50">
@@ -64,97 +66,47 @@
                 ></button>
             </div>
         </div>
-        <div>
-            <p-table
-                #dt
-                [value]="surveys"
-                [(selection)]="selectedSurvey"
-                (selectionChange)="onSelectionChange($event)"
-                dataKey="no"
-                [tableStyle]="{ 'min-width': '50rem' }"
-                styleClass="p-datatable-sm"
-                [paginator]="true"
-                [rows]="10"
-                [showCurrentPageReport]="true"
-                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-                [rowsPerPageOptions]="[10, 25, 50]"
-            >
-                <ng-template pTemplate="header">
+        <div class="table-responsive">
+            <table class="table">
+                <thead class="table-light">
                     <tr>
-                        <th style="width: 4rem"></th>
-                        <th style="width: 15%" pSortableColumn="no">
-                            <div class="flex flex-row flex-nowrap align-items-center">
-                                <p class="m-0">เลขที่การทำแบบสำรวจ</p>
-                                <p-sortIcon field="no"></p-sortIcon>
-                            </div>
-                        </th>
-                        <th style="width: 18%" pSortableColumn="name">
-                            <div class="flex flex-row flex-nowrap align-items-center">
-                                <p class="m-0">ชื่อผู้ติดตามและประเมินผลฯ</p>
-                                <p-sortIcon field="name"></p-sortIcon>
-                            </div>
-                        </th>
-                        <th style="width: 34%" pSortableColumn="survey_form">
-                            <div class="flex flex-row flex-nowrap align-items-center">
-                                <p class="m-0">แบบฟอร์มสำรวจ</p>
-                                <p-sortIcon field="survey_form"></p-sortIcon>
-                            </div>
-                        </th>
-                        <th style="width: 15%" pSortableColumn="year">
-                            <div class="flex flex-row flex-nowrap align-items-center">
-                                <p class="m-0">ประจำปี (ค.ศ.)</p>
-                                <p-sortIcon field="year"></p-sortIcon>
-                            </div>
-                        </th>
-                        <th style="width: 18%" pSortableColumn="save_date">
-                            <div class="flex flex-row flex-nowrap align-items-center">
-                                <p class="m-0">วันที่บันทึก</p>
-                                <p-sortIcon field="save_date"></p-sortIcon>
-                            </div>
-                        </th>
-                        <th>จัดการ</th>
+                        <th scope="col" style="width: 4rem"></th>
+                        <th scope="col" style="width: 17%" sortable="no" (sort)="onSort($event)">เลขที่การทำแบบสำรวจ</th>
+                        <th scope="col" style="width: 20%" sortable="name" (sort)="onSort($event)">ชื่อผู้ติดตามและประเมินผลฯ</th>
+                        <th scope="col" style="width: 34%" sortable="survey_form" (sort)="onSort($event)">แบบฟอร์มสำรวจ</th>
+                        <th scope="col" style="width: 11%" sortable="year" (sort)="onSort($event)">ประจำปี (ค.ศ.)</th>
+                        <th scope="col" style="width: 18%" sortable="save_date" (sort)="onSort($event)">วันที่บันทึก</th>
+                        <th scope="col">จัดการ</th>
                     </tr>
+                </thead>
+                <tbody>
+                    @for (survey of surveys$ | async; track survey.no) {
                     <tr>
-                        <th style="width: 4rem">
-                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
-                        </th>
-                        <th>
-                            <p-columnFilter type="text" field="no"></p-columnFilter>
-                        </th>
-                        <th>
-                            <p-columnFilter type="text" field="name"></p-columnFilter>
-                        </th>
-                        <th>
-                            <p-columnFilter type="text" field="survey_form"></p-columnFilter>
-                        </th>
-                        <th>
-                            <p-columnFilter type="text" field="year"></p-columnFilter>
-                        </th>
-                        <th></th>
-                        <th></th>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-survey>
-                    <tr>
-                        <td>
-                            <p-tableCheckbox [value]="survey"></p-tableCheckbox>
-                        </td>
+                        <td scope="row"><input type="checkbox" value="survey" (change)="onSelectionChange(survey)" /></td>
                         <td>{{ survey.no }}</td>
                         <td>{{ survey.name }}</td>
-                        <td>
-                            <a pTooltip="{{ survey.survey_form }}">{{ survey.survey_form }}</a>
-                        </td>
+                        <td class="text-ellipsis">{{ survey.survey_form }}</td>
                         <td>{{ survey.year }}</td>
                         <td>{{ survey.save_date }}</td>
-                        <td class="text-center"><fa-icon [icon]="faPenToSquare"></fa-icon></td>
+                        <td class="text-center"><i class="fa-solid fa-pen-to-square"></i></td>
                     </tr>
-                </ng-template>
-                <ng-template pTemplate="emptymessage">
+                    } @empty {
                     <tr>
-                        <td colspan="7">No data found.</td>
+                        <td colspan="6" style="text-align: center">No countries found</td>
                     </tr>
-                </ng-template>
-            </p-table>
+                    }
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-between p-3">
+                <ngb-pagination [collectionSize]="(total$ | async)!" [(page)]="surveyService.page" [pageSize]="surveyService.pageSize">
+                </ngb-pagination>
+
+                <select class="form-select" style="width: auto" name="pageSize" [(ngModel)]="surveyService.pageSize">
+                    <option [ngValue]="10">10</option>
+                    <option [ngValue]="50">50</option>
+                    <option [ngValue]="100">100</option>
+                </select>
+            </div>
         </div>
     </div>
 </div>

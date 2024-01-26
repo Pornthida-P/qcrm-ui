@@ -1,50 +1,135 @@
-<div class="h-screen">
-    <div class="h-full flex flex-column">
-        <div class="px-3 py-2 bg-white border-bottom-1 border-300">
-            <div class="flex flex-row justify-content-between align-items-center">
-                <div class="lg:flex-none flex flex-row align-items-center lg:mr-6">
-                    <p-button (click)="sidebarVisible = true" class="pl-3 pt-3 pb-3 flex lg:hidden" styleClass="btn-primary-color">
-                        <fa-icon [icon]="faBars"></fa-icon>
-                    </p-button>
-                    <img src="./assets/nea-qcrm-ui/image/logo_CRM.png" class="w-auto h-3rem" />
-                </div>
-                <div class="hidden md:flex lg:flex lg:flex-grow-1 lg:ml-8 lg:mr-6">
-                    <span class="p-input-icon-left w-full" (click)="opsearch.toggle($event)">
-                        <i class="pi pi-search color-primary font-semibold"></i>
-                        <input type="text" pInputText [(ngModel)]="value" placeholder="ค้นหา..." ngClass="w-full" />
+<!-- <div class="min-vh-100"> -->
+<div class="vh-100 d-flex flex-column" *ngIf="!searchSidebarVisible && !notificationSidebarVisible">
+    <div class="px-3 pb-2 pt-3 bg-white border-bottom border-2 border-light-subtle">
+        <div class="d-flex flex-row justify-content-between align-items-center">
+            <div class="flex-lg-none d-flex flex-row align-items-center me-lg-6">
+                <button
+                    type="button"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasNav"
+                    aria-controls="offcanvasNav"
+                    class="btn px-3 d-sm-flex d-xl-none btn-primary-color text-white rounded"
+                >
+                    <fa-icon [icon]="faBars"></fa-icon>
+                </button>
+                <img src="./assets/nea-qcrm-ui/image/logo_CRM.png" class="nav-img" />
+            </div>
+            <div class="d-none d-md-flex flex-md-grow-1 ms-md-5 me-md-5">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border border-end-0 color-primary" id="basic-addon1">
+                        <i class="fa-solid fa-magnifying-glass"></i>
                     </span>
+                    <input
+                        type="text"
+                        class="form-control border border-start-0 shadow-none"
+                        [(ngModel)]="value"
+                        placeholder="ค้นหา..."
+                        aria-describedby="basic-addon1"
+                        [ngbPopover]="popContentSearch"
+                        popoverClass="border rounded popover-search"
+                    />
+                    <ng-template #popContentSearch>
+                        <div class="d-flex flex-column">
+                            <p>Result 1</p>
+                            <p>Result 2</p>
+                            <p>Result 3</p>
+                        </div>
+                    </ng-template>
                 </div>
-                <div class="lg:flex-none flex flex-row align-items-center gap-4">
-                    <fa-icon [icon]="faBell" class="hidden md:flex lg:flex" (click)="opnotification.toggle($event)"></fa-icon>
-                    <div class="hidden md:flex lg:flex flex-column text-right">
-                        <p class="m-0 font-semibold">Ganpaphat</p>
-                        <p class="m-0">Admin</p>
+            </div>
+            <div class="flex-lg-none d-flex flex-row align-items-center gap-4">
+                <i
+                    class="fa-regular fa-bell d-none d-md-flex"
+                    id="notification"
+                    [ngbPopover]="popContentNotification"
+                    popoverClass="border rounded popover-notification"
+                ></i>
+                <ng-template #popContentNotification>
+                    <div class="d-flex flex-column">
+                        <p>Notification 1</p>
+                        <p>Notification 2</p>
+                        <p>Notification 3</p>
                     </div>
-                    <p-avatar styleClass="mr-2" size="large" shape="circle" (click)="menu.toggle($event)"></p-avatar>
-                    <p-menu #menu [model]="menus" [popup]="true" styleClass="mt-3" class="flex md:hidden lg:hidden"> </p-menu>
+                </ng-template>
+                <div class="d-none d-md-flex d-lg-flex flex-column text-end">
+                    <p class="m-0 fw-semibold">Ganpaphat</p>
+                    <p class="m-0">Admin</p>
+                </div>
+                <div class="dropdown">
+                    <div class="d-sm-flex d-md-none">
+                        <div
+                            class="btn bg-secondary-subtle rounded-circle me-2 p-4"
+                            id="dropdownMenu"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                        ></div>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
+                            <li class="dropdown-item">Ganpaphat</li>
+                            <li><hr class="dropdown-divider" /></li>
+                            <div *ngFor="let item of menuUser">
+                                <li (click)="item.click()">
+                                    <a class="dropdown-item">
+                                        <fa-icon [icon]="item.icon" class="pe-2"></fa-icon>
+                                        {{ item.label }}
+                                    </a>
+                                </li>
+                            </div>
+                        </ul>
+                    </div>
+                    <div class="d-none d-md-flex">
+                        <div
+                            class="btn bg-secondary-subtle rounded-circle me-2 p-4"
+                            id="dropdownMenuNoneSm"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                        ></div>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuNoneSm">
+                            <div *ngFor="let item of menuUserNoneSm">
+                                <li (click)="item.click()">
+                                    <a class="dropdown-item">
+                                        <fa-icon [icon]="item.icon" class="pe-2"></fa-icon>
+                                        {{ item.label }}
+                                    </a>
+                                </li>
+                            </div>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="h-full">
-            <div class="flex flex-column lg:flex-row h-full">
-                <div class="nav hidden lg:flex w-22rem">
-                    <ul class="p-4 w-full menu-main">
-                        <div *ngFor="let item of items">
-                            <li class="li-menu p-3 cursor-pointer" [routerLink]="[item.routerLink]" [routerLinkActive]="['li-active']">
-                                <a class="text-white no-underline flex flex-row gap-3">
+    </div>
+    <div class="h-100">
+        <div class="h-100 d-flex flex-column flex-lg-row">
+            <div class="nav d-none d-xl-flex">
+                <ul class="p-4 menu-main">
+                    <div *ngFor="let item of items">
+                        <li class="px-2 py-3" [class.li-active]="item.label === activeMenu" (click)="setActiveMenu(item.label)">
+                            <a [routerLink]="[item.routerLink]" class="text-white text-decoration-none d-flex flex-row gap-3">
+                                <div>
                                     <fa-icon [icon]="item.icon"></fa-icon>
-                                    <span>{{ item.label }}</span>
-                                </a>
-                            </li>
-                        </div>
-                    </ul>
-                </div>
-                <div class="flex lg:hidden">
-                    <p-sidebar id="menu" [(visible)]="sidebarVisible" styleClass="nav">
+                                </div>
+                                {{ item.label }}</a
+                            >
+                        </li>
+                    </div>
+                </ul>
+            </div>
+            <div class="d-sm-flex d-xl-none">
+                <div class="offcanvas offcanvas-start nav" tabindex="-1" id="offcanvasNav" aria-labelledby="offcanvasNavLabel">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title" id="offcanvasNavLabel"></h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
                         <ul class="p-4 menu-main">
                             <div *ngFor="let item of items">
-                                <li class="px-2 py-3" [routerLink]="[item.routerLink]" [routerLinkActive]="['li-active']">
-                                    <a [routerLink]="[item.routerLink]" class="text-white no-underline flex flex-row gap-2">
+                                <li
+                                    class="px-2 py-3"
+                                    [class.li-active]="item.label === activeMenu"
+                                    (click)="setActiveMenu(item.label)"
+                                    data-bs-dismiss="offcanvas"
+                                >
+                                    <a [routerLink]="[item.routerLink]" class="text-white text-decoration-none d-flex flex-row gap-2">
                                         <div class="w-1">
                                             <fa-icon [icon]="item.icon"></fa-icon>
                                         </div>
@@ -53,35 +138,39 @@
                                 </li>
                             </div>
                         </ul>
-                    </p-sidebar>
+                    </div>
                 </div>
-                <div class="view-content p-4 w-full">
-                    <router-outlet></router-outlet>
-                </div>
+            </div>
+            <div class="p-4 w-100 overflow-scroll">
+                <router-outlet></router-outlet>
             </div>
         </div>
     </div>
-    <p-sidebar id="search" [(visible)]="searchSidebarVisible" [fullScreen]="true">
-        <div>
-            <span class="p-input-icon-left w-full">
-                <i class="pi pi-search color-primary font-semibold"></i>
-                <input type="text" pInputText [(ngModel)]="value" placeholder="ค้นหา..." ngClass="w-full" />
+</div>
+<div *ngIf="searchSidebarVisible">
+    <div class="vw-100 vh-100 bg-white d-flex flex-column p-3 gap-2">
+        <div class="text-end">
+            <i class="fa-solid fa-xmark" (click)="closeSearchSideBar()"></i>
+        </div>
+        <div class="input-group">
+            <span class="input-group-text bg-white border border-end-0 color-primary" id="basic-addon1">
+                <i class="fa-solid fa-magnifying-glass"></i>
             </span>
+            <input
+                type="text"
+                class="form-control w-100 border border-start-0 shadow-none"
+                [(ngModel)]="value"
+                placeholder="ค้นหา..."
+                aria-describedby="basic-addon1"
+            />
         </div>
-    </p-sidebar>
-    <p-sidebar id="notification" [(visible)]="notificationSidebarVisible" [fullScreen]="true">
-        <div>
-            <p class="m-0">การแจ้งเตือน</p>
+    </div>
+</div>
+<div *ngIf="notificationSidebarVisible">
+    <div class="vw-100 vh-100 bg-white d-flex flex-column p-3 gap-2">
+        <div class="text-end">
+            <i class="fa-solid fa-xmark" (click)="closeNotificationSideBar()"></i>
         </div>
-    </p-sidebar>
-    <p-overlayPanel #opnotification>
-        <ng-template pTemplate="content">
-            <h4>Custom Content</h4>
-        </ng-template>
-    </p-overlayPanel>
-    <p-overlayPanel #opsearch>
-        <ng-template pTemplate="content">
-            <h4>Custom Content</h4>
-        </ng-template>
-    </p-overlayPanel>
+        <p class="m-0">การแจ้งเตือน</p>
+    </div>
 </div>
