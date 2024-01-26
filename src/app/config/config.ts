@@ -4,7 +4,10 @@ export const config = {
             login: '/login',
 
             elearning: '/api/e-learning',
-        },
+
+            surveyForm: '/api/qsurvey',
+
+            },
     },
     file: {
         type: '.xlsx',
