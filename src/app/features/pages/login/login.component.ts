@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { catchError, tap, throwError } from 'rxjs';
 import { LoginService } from 'src/app/services/login/login.service';
+import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { TokenService } from 'src/app/services/token/token.service';
 import { UserService } from 'src/app/services/user/user.service';
 import Swal from 'sweetalert2';
@@ -21,6 +22,7 @@ export class LoginComponent {
         private loginService: LoginService,
         private userServices: UserService,
         private tokenServices: TokenService,
+        private sweetalertServices: SweetAlertService,
     ) {
         this.loginForm = this.fb.group({
             username: new FormControl('', [Validators.required]),
@@ -63,21 +65,21 @@ export class LoginComponent {
         }
     }
 
-    private handleLoginError(error: any) {
-        if (error.status === 401) {
-            this.getSwal('error', 'username or password is incorrect', '', false, '');
-        } else {
-            this.getSwal('error', 'An error occurred', '', false, '');
-        }
-    }
+    handleLoginError(error: any) {
+        let errorMessage: string;
+        let title: string;
 
-    getSwal(icon: any, title: string, text: string, showButton: boolean, route: string) {
-        Swal.fire({
-            icon: icon,
-            title: title,
-            text: text,
-            showConfirmButton: showButton,
-            confirmButtonColor: '#0a6ebd',
-        });
+        switch (error.status) {
+            case 401:
+                title = 'Login Error';
+                errorMessage = 'Username or password is incorrect';
+                break;
+            default:
+                title = 'Login Error';
+                errorMessage = 'Login failed. Please try again';
+                break;
+        }
+
+        this.sweetalertServices.getSwal('error', title, errorMessage, false, '');
     }
 }

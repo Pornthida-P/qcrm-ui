@@ -1,7 +1,14 @@
 :root {
-    --primary: #1851b9;
-    --primary-active-color: #3498db;
-    --color-sky: #a1d9ff;
+    --primary: #3066be;
+    --primary-active-color: #60afff;
+    --color-blue-dark: #003c71;
+    --color-light-sky: #28c2ff;
+    --color-lighter-red: #ec5365;
+    --color-lighter-green: #53ec62;
+    --color-white: #ffffff;
+    --color-black: #000;
+
+    --background-color: #f8f7f7a2;
 }
 
 * {
@@ -11,7 +18,7 @@
 body {
     margin: 0;
     padding: 0;
-    background-color: rgba(248, 247, 247, 0.636);
+    background-color: var(--background-color);
     height: 100%;
 }
 
@@ -20,7 +27,7 @@ body {
 }
 
 #menu .p-sidebar-close {
-    color: white;
+    color: var(--color-white);
 }
 
 .btn-primary-color {
@@ -72,21 +79,21 @@ body {
 }
 
 .color-red {
-  color: red;
+    color: var(--color-lighter-red);
 }
 
 .bg-cl-edit {
-  background-color: #1851b9;
-  color: #fff;
+    background-color: var(--primary);
+    color: var(--color-white);
 }
 
 .bg-cl-delete {
-  background-color: #EC5365;
-  color: #fff;
+    background-color: var(--color-lighter-red);
+    color: var(--color-white);
 }
 
 .color-white {
-  color: #fff;
+    color: var(--color-white);
 }
 
 .bd-radius {
