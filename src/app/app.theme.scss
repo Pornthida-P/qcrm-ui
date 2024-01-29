@@ -97,3 +97,7 @@ th[sortable].desc:before {
 .cursor-pointer {
     cursor: pointer;
 }
+
+.formio-component-datagrid {
+  overflow: unset !important;
+}
