@@ -7,6 +7,10 @@ export const config = {
 
             surveyForm: '/api/qsurvey',
 
+            manageForm: {
+                  save: '/api/manage'
+                }
+
             },
     },
     file: {
