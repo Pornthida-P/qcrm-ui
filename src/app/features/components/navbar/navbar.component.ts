@@ -1,19 +1,10 @@
-import { Component, HostListener, OnInit } from '@angular/core';
-import {
-    faChartColumn,
-    faFileLines,
-    faComments,
-    faFilePen,
-    faPhoneVolume,
-    faBookOpen,
-    faLayerGroup,
-    faBagShopping,
-    faBars,
-    faMagnifyingGlass,
-    faArrowRightFromBracket,
-} from '@fortawesome/free-solid-svg-icons';
+import { Component, OnInit } from '@angular/core';
+import { faBars, faMagnifyingGlass, faArrowRightFromBracket, faGear } from '@fortawesome/free-solid-svg-icons';
 import { faBell } from '@fortawesome/free-regular-svg-icons';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs';
+import { UserService } from 'src/app/services/user/user.service';
+import { User } from 'src/app/shared/interface/user.interface';
 
 @Component({
     selector: 'app-navbar',
@@ -21,76 +12,28 @@ import { Router } from '@angular/router';
     styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent implements OnInit {
-    items: any;
-    activeMenu!: string;
-    sidebarVisible: boolean = false;
-    faBars = faBars;
     searchSidebarVisible: boolean = false;
     notificationSidebarVisible: boolean = false;
     menuUser: any;
     menuUserNoneSm: any;
     value: string | undefined;
-    currentPath!: string;
+    hideSidebar: boolean = false;
+    userData: User | null = null;
 
-    constructor(private router: Router) {}
+    profileError: string = '/assets/nea-qcrm-ui/image/profile/user.jpg';
+
+    faBars = faBars;
+
+    constructor(private router: Router, private userService: UserService) {}
 
     ngOnInit() {
-        this.items = [
-            {
-                label: 'หน้าแรก',
-                icon: faChartColumn,
-                routerLink: '/home',
-            },
-            {
-                label: 'ฐานข้อมูลผู้ติดต่อ',
-                icon: faFileLines,
-                routerLink: '/contacts',
-            },
-            {
-                label: 'การติดตามและประเมินผล',
-                icon: faComments,
-                routerLink: '/survey',
-            },
-            {
-                label: 'แบบฟอร์มสำรวจ',
-                icon: faFilePen,
-                routerLink: '/surveyform',
-            },
-            {
-                label: 'การโทร',
-                icon: faPhoneVolume,
-                routerLink: '/call',
-            },
-            {
-                label: 'หลักสูตร E-Learning',
-                icon: faBookOpen,
-                routerLink: '/e-learning',
-            },
-            {
-                label: 'โครงการอบรม / สัมนา',
-                icon: faLayerGroup,
-                routerLink: '/training',
-            },
-            {
-                label: 'ประเภทสินค้า',
-                icon: faBagShopping,
-                routerLink: '/products',
-            },
-        ];
-        this.activeMenu = this.items[0].label;
+        this.router.events
+            .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+            .subscribe((event: NavigationEnd) => {
+                this.hideSidebar = event.url.includes('/setting');
+            });
 
-        this.currentPath = this.router.url;
-
-        if (this.currentPath && this.items) {
-            const menuItem = this.items.find((i: any) => i.routerLink === this.currentPath);
-            if (menuItem) {
-                this.activeMenu = menuItem.label;
-            } else {
-                this.activeMenu = this.items.find(
-                    (i: any) => `${i.routerLink}/new` === this.currentPath || `${i.routerLink}/edit` === this.currentPath,
-                ).label;
-            }
-        }
+        this.getUserData();
 
         this.menuUser = [
             {
@@ -104,6 +47,11 @@ export class NavbarComponent implements OnInit {
                 click: () => this.openNotificationSideBar(),
             },
             {
+                label: 'ตั้งค่า',
+                icon: faGear,
+                click: () => this.onClickSetting(),
+            },
+            {
                 label: 'ออกจากระบบ',
                 icon: faArrowRightFromBracket,
                 click: () => this.logout(),
@@ -112,6 +60,11 @@ export class NavbarComponent implements OnInit {
 
         this.menuUserNoneSm = [
             {
+                label: 'ตั้งค่า',
+                icon: faGear,
+                click: () => this.onClickSetting(),
+            },
+            {
                 label: 'ออกจากระบบ',
                 icon: faArrowRightFromBracket,
                 click: () => this.logout(),
@@ -119,25 +72,11 @@ export class NavbarComponent implements OnInit {
         ];
     }
 
-    @HostListener('window:popstate', ['$event'])
-    onPopState(event: any) {
-        const currentPath = event.currentTarget.location.pathname;
-
-        if (currentPath && this.items) {
-            const menuItem = this.items.find((i: any) => i.routerLink === this.currentPath);
-            if (menuItem) {
-                this.activeMenu = menuItem.label;
-            } else {
-                this.activeMenu = this.items.find(
-                    (i: any) => `${i.routerLink}/new` === this.currentPath || `${i.routerLink}/edit` === this.currentPath,
-                ).label;
-            }
-        }
-    }
-
-    setActiveMenu(menu: string) {
-        this.activeMenu = menu;
-        this.sidebarVisible = false;
+    getUserData() {
+        this.userService.getDataUser().subscribe((user: User | null) => {
+            console.log(user);
+            this.userData = user;
+        });
     }
 
     openSearchSideBar() {
@@ -157,7 +96,17 @@ export class NavbarComponent implements OnInit {
         this.notificationSidebarVisible = false;
     }
 
+    onClickSetting() {
+        this.router.navigate(['setting']);
+    }
+
+    handleProfileError(event: any) {
+        if (event) {
+            event.target.src = this.profileError;
+        }
+    }
+
     logout() {
-        console.log('logout');
+        this.router.navigate(['login']);
     }
 }

@@ -6,9 +6,10 @@ import { NavbarComponent } from './navbar.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { SidebarComponent } from '../sidebar/sidebar.component';
 
 @NgModule({
-    declarations: [NavbarComponent],
+    declarations: [NavbarComponent, SidebarComponent],
     imports: [CommonModule, NavbarRoutingModule, FontAwesomeModule, FormsModule, ReactiveFormsModule, NgbPopoverModule],
 })
 export class NavbarModule {}
