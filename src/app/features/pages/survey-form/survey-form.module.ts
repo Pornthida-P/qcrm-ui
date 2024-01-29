@@ -8,6 +8,9 @@ import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { SurveyFormService } from 'src/app/services/survey-form/survey-form.service';
 import { NgbdSortableHeader } from './sortable.directive';
 import * as bootstrap from 'bootstrap';
+import { HttpClientModule } from '@angular/common/http';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+
 @NgModule({
     declarations: [SurveyFormComponent],
     imports: [
@@ -23,6 +26,8 @@ import * as bootstrap from 'bootstrap';
         ]),
         NgbPaginationModule,
       NgbdSortableHeader,
+      HttpClientModule,
+      NgbTooltipModule,
     ],
     providers: [SurveyFormService, DecimalPipe],
 })
