@@ -31,6 +31,9 @@ export class ELearningComponent {
     emptyItem: String = 'ว่าง';
     itemIdex: number = 0;
 
+    sortId: string = '-';
+    sortOrder: string = 'ASC';
+    sortIcon: string = '';
     constructor(private eLearningService: ELearningService, private router: Router, private activeRoute: ActivatedRoute) {}
 
     ngOnInit() {
@@ -54,14 +57,14 @@ export class ELearningComponent {
     }
 
     async getElearn(page: number, pageSize: number) {
-        await this.eLearningService.getELearning(page, pageSize).subscribe((res: any) => {
+        await this.eLearningService.getELearning(page, pageSize, `${this.sortId},${this.sortOrder}`).subscribe((res: any) => {
             this.course = res;
         });
     }
 
     async getElearnSideBar(page: number, pageSize: number, value: string) {
         await this.eLearningService
-            .getELearning(page, pageSize)
+            .getELearning(page, pageSize, `${this.sortId},${this.sortOrder}`)
             .subscribe((res: any) => {
                 this.course = res;
             })
@@ -79,6 +82,7 @@ export class ELearningComponent {
 
     get pages(): number[] {
         var page: number[] = [];
+        console.log(this.currentPage);
         this.totalPages = Math.ceil(this.totalItems / this.pageSize);
         for (var i = -this.pagesToShow; i <= this.pagesToShow; i++) {
             if (this.currentPage + i > 0 && this.currentPage + i <= this.totalPages) {
@@ -121,6 +125,21 @@ export class ELearningComponent {
 
         if (this.itemIdex == 0 && this.currentPage == 1) this.visibleLeftSideBar = false;
         if (this.itemIdex == this.course.length - 1 && this.currentPage == this.totalPages) this.visibleRightSideBar = false;
+    }
+
+    sort(value: string) {
+        if (this.sortId == value) {
+            if (this.sortIcon == 'fa-solid fa-sort-down') {
+                this.sortIcon = 'fa-solid fa-sort-up';
+                this.sortOrder = 'DESC';
+            } else {
+                this.sortIcon = 'fa-solid fa-sort-down';
+                this.sortOrder = 'ASC';
+            }
+        } else {
+            this.sortId = value;
+        }
+        this.getElearn((this.currentPage - 1) * this.pageSize, this.pageSize);
     }
 
     async changeSideBar(value: string) {
