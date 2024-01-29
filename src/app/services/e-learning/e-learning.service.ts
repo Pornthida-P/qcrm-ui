@@ -14,6 +14,10 @@ export class ELearningService {
         return this.http.get(`${this.baseUrl}${config.api.path.elearning}/${page}/${limit}/${sortId}`);
     }
 
+    getELearningById(topicId: string) {
+        return this.http.get(`${this.baseUrl}${config.api.path.elearning}/findById/${topicId}`);
+    }
+
     getELearningPage() {
         return this.http.get(`${this.baseUrl}${config.api.path.elearning}/page`);
     }
