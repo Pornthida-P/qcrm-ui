@@ -1,9 +1,20 @@
-<div>
-  <div class="d-bt-back">
-    <button type="button" (click)="submit()" class="btn btn-outline-primary bt-back">บันทึก</button>
-    <button type="button" (click)="prev()" class="btn btn-outline-danger bt-back">ย้อนกลับ</button>
-  </div>
-  <div>
-      <form-builder [form]="form" (change)="onChange($event)"></form-builder>
-  </div>
+<div class="h-100">
+    <div class="bg-white rounded shadow w-100 h-100 d-flex flex-column p-4 overflow-auto">
+        <div class="d-bt-back">
+            <button type="button" (click)="submit()" class="btn btn-outline-primary bt-back">บันทึก</button>
+            <button type="button" (click)="prev()" class="btn btn-outline-danger bt-back">ย้อนกลับ</button>
+        </div>
+        <div class="flex flex-column">
+            <p class="mb-3 fs-5">ข้อมูลทั่วไป</p>
+            <form class="mb-3 p-2">
+                <label for="inputFormName" class="form-label">ชื่อแบบฟอร์ม</label>
+                <input type="text" class="form-control" [(ngModel)]="formName" name="formName" id="inputFormName" required />
+            </form>
+            <p class="mb-3" class="bg-primary-color rounded p-2 text-white fs-5">สร้าง</p>
+            <div class="p-2">
+                <p class="mb-3">แบบฟอร์ม</p>
+                <form-builder [form]="form" (change)="onChange($event)"></form-builder>
+            </div>
+        </div>
+    </div>
 </div>
