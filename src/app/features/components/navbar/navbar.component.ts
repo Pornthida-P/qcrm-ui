@@ -27,12 +27,6 @@ export class NavbarComponent implements OnInit {
     constructor(private router: Router, private userService: UserService) {}
 
     ngOnInit() {
-        this.router.events
-            .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
-            .subscribe((event: NavigationEnd) => {
-                this.hideSidebar = event.url.includes('/setting');
-            });
-
         this.getUserData();
 
         this.menuUser = [
@@ -74,9 +68,15 @@ export class NavbarComponent implements OnInit {
 
     getUserData() {
         this.userService.getDataUser().subscribe((user: User | null) => {
-            console.log(user);
             this.userData = user;
         });
+
+        this.router.events
+            .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+            .subscribe((event: NavigationEnd) => {
+                console.log(event.url);
+                this.hideSidebar = event.url.includes('/setting');
+            });
     }
 
     openSearchSideBar() {
