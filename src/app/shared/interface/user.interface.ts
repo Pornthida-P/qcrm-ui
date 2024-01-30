@@ -3,5 +3,6 @@ export interface User {
     username: string;
     email: string;
     profile: string;
+    group: string;
     role: string;
 }
