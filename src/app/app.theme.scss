@@ -27,6 +27,10 @@ body {
     background: var(--primary) !important;
 }
 
+.bg-primary-color {
+    background: var(--primary) !important;
+}
+
 .color-primary {
     color: var(--primary) !important;
 }
@@ -41,11 +45,15 @@ body {
     width: 100% !important;
 }
 
+.w-max-ellipsis {
+    max-width: 160px;
+}
+
 .text-ellipsis {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 160px;
+    width: 100%;
 }
 
 th[sortable] {
@@ -103,5 +111,9 @@ th[sortable].desc:before {
 }
 
 .formio-component-datagrid {
-  overflow: unset !important;
+    overflow: unset !important;
+}
+
+.h-minus-navbar {
+    height: calc(100vh - 66px);
 }

@@ -1,10 +1,12 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { ManageSurveyFormComponent } from './manage-survey-form.component';
 import { RouterModule } from '@angular/router';
 import { Formio, FormioModule } from '@formio/angular';
 import bootstrap4 from '@formio/bootstrap/bootstrap4';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SurveyFormService } from 'src/app/services/survey-form/survey-form.service';
 
 (Formio as any).use(bootstrap4);
 (Formio as any).icons = 'fontawesome';
@@ -21,6 +23,9 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
             },
         ]),
         FontAwesomeModule,
+        FormsModule,
+        ReactiveFormsModule,
     ],
+    providers: [SurveyFormService, DecimalPipe],
 })
 export class ManageSurveyFormModule {}

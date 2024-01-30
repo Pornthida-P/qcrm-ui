@@ -14,7 +14,7 @@ import { NgbdSortableHeader, SortEvent } from './sortable.directive';
     styleUrls: ['./survey-form.component.scss'],
 })
 export class SurveyFormComponent implements OnInit {
-    surveyForms!: any[];
+    surveyForms!: any;
     selectedSurveyForms: any = [];
 
     value: string | undefined;
@@ -48,6 +48,7 @@ export class SurveyFormComponent implements OnInit {
             { name: 'Only My', code: 'me' },
         ];
         this.selectedFilter = this.filterOption[0];
+        this.getForm();
     }
 
     formManage() {
@@ -89,7 +90,13 @@ export class SurveyFormComponent implements OnInit {
         console.log('delete', this.selectedSurveyForms);
     }
 
-  onSelectionChangeForms(value: any[]) {
-    console.log(this.selectedSurveyForms);
-  }
+    onSelectionChangeForms(value: any[]) {
+        console.log(this.selectedSurveyForms);
+    }
+
+    getForm() {
+        this.surveyFormService.getSurveyForm().subscribe((res) => {
+            this.surveyForms = res;
+        });
+    }
 }
