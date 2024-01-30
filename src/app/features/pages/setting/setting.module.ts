@@ -1,18 +1,12 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { SettingComponent } from './setting.component';
-import { RouterModule } from '@angular/router';
+import { SettingRoutingModule } from './setting-routing.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
     declarations: [SettingComponent],
-    imports: [
-        CommonModule,
-        RouterModule.forChild([
-            {
-                path: '',
-                component: SettingComponent,
-            },
-        ]),
-    ],
+    imports: [CommonModule, FontAwesomeModule, SettingRoutingModule, FormsModule, ReactiveFormsModule],
 })
 export class SettingModule {}

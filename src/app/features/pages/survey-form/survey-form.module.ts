@@ -7,7 +7,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { SurveyFormService } from 'src/app/services/survey-form/survey-form.service';
 import { NgbdSortableHeader } from './sortable.directive';
-import * as bootstrap from 'bootstrap';
+
 @NgModule({
     declarations: [SurveyFormComponent],
     imports: [
@@ -22,7 +22,7 @@ import * as bootstrap from 'bootstrap';
             },
         ]),
         NgbPaginationModule,
-      NgbdSortableHeader,
+        NgbdSortableHeader,
     ],
     providers: [SurveyFormService, DecimalPipe],
 })
