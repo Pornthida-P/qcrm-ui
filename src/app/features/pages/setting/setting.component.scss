@@ -1,0 +1,17 @@
+.sidebar-list:hover {
+    background-color: var(--primary);
+
+    .text-menu {
+        color: var(--color-white);
+    }
+}
+
+.li-active {
+    .text-menu {
+        color: var(--primary);
+    }
+}
+
+.text-menu {
+    color: var(--color-black);
+}

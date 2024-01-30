@@ -1,0 +1,12 @@
+.profile {
+    width: 150px;
+    height: 150px;
+    margin: auto 0;
+    outline: 5px solid var(--primary);
+}
+
+.profile-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+}

@@ -1,0 +1,41 @@
+<div class="sidebar d-none d-xl-flex">
+    <ul class="p-4 menu-main">
+        <div *ngFor="let item of items">
+            <li class="px-2 py-3 cursor-pointer" [routerLink]="[item.routerLink]" [routerLinkActive]="'li-active'">
+                <a class="text-white text-decoration-none d-flex flex-row gap-3">
+                    <div>
+                        <fa-icon [icon]="item.icon"></fa-icon>
+                    </div>
+                    {{ item.label }}</a
+                >
+            </li>
+        </div>
+    </ul>
+</div>
+<div class="d-sm-flex d-xl-none">
+    <div class="offcanvas offcanvas-start sidebar" tabindex="-1" id="offcanvasNav" aria-labelledby="offcanvasNavLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasNavLabel"></h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="p-4 menu-main">
+                <div *ngFor="let item of items">
+                    <li
+                        class="px-2 py-3 cursor-pointer"
+                        [routerLink]="[item.routerLink]"
+                        [routerLinkActive]="'li-active'"
+                        data-bs-dismiss="offcanvas"
+                    >
+                        <a class="text-white text-decoration-none d-flex flex-row gap-2">
+                            <div class="w-1">
+                                <fa-icon [icon]="item.icon"></fa-icon>
+                            </div>
+                            {{ item.label }}</a
+                        >
+                    </li>
+                </div>
+            </ul>
+        </div>
+    </div>
+</div>

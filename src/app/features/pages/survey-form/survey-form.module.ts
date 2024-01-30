@@ -25,9 +25,9 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
             },
         ]),
         NgbPaginationModule,
-      NgbdSortableHeader,
-      HttpClientModule,
-      NgbTooltipModule,
+        NgbdSortableHeader,
+        HttpClientModule,
+        NgbTooltipModule,
     ],
     providers: [SurveyFormService, DecimalPipe],
 })

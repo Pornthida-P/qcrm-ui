@@ -6,28 +6,14 @@
     height: 3rem;
 }
 
-.menu-main {
-    width: 18rem;
-}
-.menu-main li {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    border-radius: 0.5rem;
-    transition: background-color 0.2s ease-in;
-}
-.menu-main > li {
-    display: flex;
-    flex-flow: column;
-    position: relative;
+.profile {
+    outline: 3px solid var(--primary);
 }
 
-.menu-main .li-active,
-.menu-main .li:hover {
-    background-color: var(--primary-active-color);
-    color: white;
-    border-radius: 0.5rem;
-}
-.menu-main .li-menu:hover {
-    text-shadow: rgba(150, 163, 230, 0.9) 0px 0px 7px;
+.profile-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
 }

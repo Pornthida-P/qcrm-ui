@@ -1,6 +1,6 @@
 <!-- <div class="min-vh-100"> -->
 <div class="vh-100 d-flex flex-column" *ngIf="!searchSidebarVisible && !notificationSidebarVisible">
-    <div class="px-3 pb-2 pt-3 bg-white border-bottom border-2 border-light-subtle">
+    <div class="px-3 py-2 bg-white border-bottom border-2 border-light-subtle">
         <div class="d-flex flex-row justify-content-between align-items-center">
             <div class="flex-lg-none d-flex flex-row align-items-center me-lg-6">
                 <button
@@ -12,7 +12,7 @@
                 >
                     <fa-icon [icon]="faBars"></fa-icon>
                 </button>
-                <img src="./assets/nea-qcrm-ui/image/logo_CRM.png" class="nav-img" />
+                <img src="./assets/nea-qcrm-ui/image/logo_CRM.png" class="nav-img cursor-pointer" [routerLink]="'home'" />
             </div>
             <div class="d-none d-md-flex flex-md-grow-1 ms-md-5 me-md-5">
                 <div class="input-group">
@@ -51,24 +51,31 @@
                         <p>Notification 3</p>
                     </div>
                 </ng-template>
-                <div class="d-none d-md-flex d-lg-flex flex-column text-end">
-                    <p class="m-0 fw-semibold">Ganpaphat</p>
-                    <p class="m-0">Admin</p>
+                <div class="d-none d-md-flex d-lg-flex flex-column cursor-default text-end">
+                    <p class="m-0 fw-semibold">{{ userData?.username }}</p>
+                    <p class="m-0">{{ userData?.role }}</p>
                 </div>
                 <div class="dropdown">
                     <div class="d-sm-flex d-md-none">
                         <div
-                            class="btn bg-secondary-subtle rounded-circle me-2 p-4"
+                            class="btn bg-secondary-subtle rounded-circle position-relative overflow-hidden me-2 p-4"
                             id="dropdownMenu"
                             data-bs-toggle="dropdown"
                             aria-expanded="false"
-                        ></div>
+                        >
+                            <img
+                                class="profile-image"
+                                [src]="userData?.profile"
+                                [alt]="userData?.username"
+                                (error)="handleProfileError($event)"
+                            />
+                        </div>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
-                            <li class="dropdown-item">Ganpaphat</li>
+                            <li class="dropdown-item">{{ userData?.username }}</li>
                             <li><hr class="dropdown-divider" /></li>
                             <div *ngFor="let item of menuUser">
                                 <li (click)="item.click()">
-                                    <a class="dropdown-item">
+                                    <a class="dropdown-item cursor-pointer">
                                         <fa-icon [icon]="item.icon" class="pe-2"></fa-icon>
                                         {{ item.label }}
                                     </a>
@@ -78,15 +85,22 @@
                     </div>
                     <div class="d-none d-md-flex">
                         <div
-                            class="btn bg-secondary-subtle rounded-circle me-2 p-4"
+                            class="profile bg-secondary-subtle rounded-circle position-relative overflow-hidden me-2 p-4 cursor-pointer"
                             id="dropdownMenuNoneSm"
                             data-bs-toggle="dropdown"
                             aria-expanded="false"
-                        ></div>
+                        >
+                            <img
+                                class="profile-image"
+                                [src]="userData?.profile"
+                                [alt]="userData?.username"
+                                (error)="handleProfileError($event)"
+                            />
+                        </div>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuNoneSm">
                             <div *ngFor="let item of menuUserNoneSm">
                                 <li (click)="item.click()">
-                                    <a class="dropdown-item">
+                                    <a class="dropdown-item cursor-pointer">
                                         <fa-icon [icon]="item.icon" class="pe-2"></fa-icon>
                                         {{ item.label }}
                                     </a>
@@ -100,47 +114,7 @@
     </div>
     <div class="h-100">
         <div class="h-100 d-flex flex-column flex-lg-row">
-            <div class="nav d-none d-xl-flex">
-                <ul class="p-4 menu-main">
-                    <div *ngFor="let item of items">
-                        <li class="px-2 py-3" [class.li-active]="item.label === activeMenu" (click)="setActiveMenu(item.label)">
-                            <a [routerLink]="[item.routerLink]" class="text-white text-decoration-none d-flex flex-row gap-3">
-                                <div>
-                                    <fa-icon [icon]="item.icon"></fa-icon>
-                                </div>
-                                {{ item.label }}</a
-                            >
-                        </li>
-                    </div>
-                </ul>
-            </div>
-            <div class="d-sm-flex d-xl-none">
-                <div class="offcanvas offcanvas-start nav" tabindex="-1" id="offcanvasNav" aria-labelledby="offcanvasNavLabel">
-                    <div class="offcanvas-header">
-                        <h5 class="offcanvas-title" id="offcanvasNavLabel"></h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                    </div>
-                    <div class="offcanvas-body">
-                        <ul class="p-4 menu-main">
-                            <div *ngFor="let item of items">
-                                <li
-                                    class="px-2 py-3"
-                                    [class.li-active]="item.label === activeMenu"
-                                    (click)="setActiveMenu(item.label)"
-                                    data-bs-dismiss="offcanvas"
-                                >
-                                    <a [routerLink]="[item.routerLink]" class="text-white text-decoration-none d-flex flex-row gap-2">
-                                        <div class="w-1">
-                                            <fa-icon [icon]="item.icon"></fa-icon>
-                                        </div>
-                                        {{ item.label }}</a
-                                    >
-                                </li>
-                            </div>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            <app-sidebar *ngIf="!hideSidebar"></app-sidebar>
             <div class="p-4 w-100 overflow-scroll">
                 <router-outlet></router-outlet>
             </div>
