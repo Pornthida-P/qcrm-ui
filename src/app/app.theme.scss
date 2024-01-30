@@ -31,8 +31,12 @@ body {
     background: var(--primary) !important;
 }
 
-.color-primary {
-    color: var(--primary) !important;
+.btn-primary-color {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-primary-color:hover {
+    background-color: var(--primary-active-color) !important;
 }
 
 .popover-search {
@@ -80,10 +84,6 @@ th[sortable].desc:before {
     -ms-transform: rotate(180deg);
 }
 
-.color-red {
-    color: var(--color-lighter-red);
-}
-
 .bg-cl-edit {
     background-color: var(--primary);
     color: var(--color-white);
@@ -98,8 +98,32 @@ th[sortable].desc:before {
     color: var(--color-white);
 }
 
+.color-primary {
+    color: var(--primary);
+}
+
+.color-red {
+    color: var(--color-lighter-red);
+}
+
 .bd-radius {
     border-radius: 6px;
+}
+
+.profile {
+    position: relative;
+    overflow: hidden;
+    border-radius: 50%;
+    background-color: var(--primary);
+    max-width: 100%;
+    display: block;
+    transition: 0.2s ease;
+
+    .profile-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
 }
 
 .cursor-pointer {

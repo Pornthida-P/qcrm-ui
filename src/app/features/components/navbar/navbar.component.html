@@ -57,14 +57,9 @@
                 </div>
                 <div class="dropdown">
                     <div class="d-sm-flex d-md-none">
-                        <div
-                            class="btn bg-secondary-subtle rounded-circle position-relative overflow-hidden me-2 p-4"
-                            id="dropdownMenu"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false"
-                        >
+                        <div class="profile cursor-pointer" id="dropdownMenu" data-bs-toggle="dropdown" aria-expanded="false">
                             <img
-                                class="profile-image"
+                                class="profile-image img-fluid"
                                 [src]="userData?.profile"
                                 [alt]="userData?.username"
                                 (error)="handleProfileError($event)"
@@ -84,14 +79,9 @@
                         </ul>
                     </div>
                     <div class="d-none d-md-flex">
-                        <div
-                            class="profile bg-secondary-subtle rounded-circle position-relative overflow-hidden me-2 p-4 cursor-pointer"
-                            id="dropdownMenuNoneSm"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false"
-                        >
+                        <div class="profile cursor-pointer" id="dropdownMenuNoneSm" data-bs-toggle="dropdown" aria-expanded="false">
                             <img
-                                class="profile-image"
+                                class="profile-image img-fluid"
                                 [src]="userData?.profile"
                                 [alt]="userData?.username"
                                 (error)="handleProfileError($event)"
