@@ -5,19 +5,19 @@
             <div class="sidebar card overflow-hidden">
                 <ul class="p-0 m-0">
                     <li
+                        *ngFor="let item of menuSetting"
                         class="sidebar-list cursor-pointer list-unstyled p-4 m-0"
                         [routerLink]="[item.routerLink]"
                         [routerLinkActive]="'li-active'"
-                        *ngFor="let item of menuSetting"
                     >
                         <a class="text-menu text-decoration-none">
-                            <fa-icon [icon]="item?.icon" class="pe-2"></fa-icon>
+                            <fa-icon *ngIf="item?.icon" [icon]="item.icon" class="pe-2"></fa-icon>
                             {{ item.label }}
                         </a>
                     </li>
 
                     <li class="sidebar-list cursor-pointer list-unstyled p-4 m-0" (click)="logout()">
-                        <fa-icon [icon]="menuLogout?.icon" class="pe-2"></fa-icon>
+                        <fa-icon *ngIf="menuLogout?.icon" [icon]="menuLogout.icon" class="pe-2"></fa-icon>
                         <a class="text-menu text-decoration-none">{{ menuLogout?.label }}</a>
                     </li>
                 </ul>
