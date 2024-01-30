@@ -1,0 +1,30 @@
+<!-- appearance-management.component.html -->
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 p-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="m-0">Appearance Management</h2>
+            </div>
+        </div>
+        <div class="col-md-12 px-4 pt-2 pb-4">
+            <div class="card px-3 py-2">
+                <div class="card-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="backgroundColor" class="form-label">Background Color</label>
+                            <input type="color" class="form-control" id="backgroundColor" [(ngModel)]="appearance.backgroundColor" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="textColor" class="form-label">Text Color</label>
+                            <input type="color" class="form-control" id="textColor" [(ngModel)]="appearance.textColor" />
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
