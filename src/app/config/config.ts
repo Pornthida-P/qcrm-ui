@@ -5,7 +5,8 @@ export const config = {
             elearning: '/e-learning',
             surveyForm: {
                 baseUrl: '/survey-form',
-            },
+        },
+        call: '/call'
         },
     },
     file: {

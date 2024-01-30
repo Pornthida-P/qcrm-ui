@@ -117,3 +117,22 @@ th[sortable].desc:before {
 .h-minus-navbar {
     height: calc(100vh - 66px);
 }
+
+.offcanvas {
+  width: 40% !important;
+  padding: 10px;
+}
+
+.row-side {
+  padding: 10px 0 10px 0;
+}
+
+.call-side-detail {
+  border-radius: 8px;
+  margin-top: 2%;
+}
+
+.call-side-change-by {
+  border-radius: 8px;
+  margin-top: 4%;
+}
