@@ -1,6 +1,9 @@
-<div class="d-bt-back">
-  <button type="button" (click)="prev()" class="btn btn-outline-danger bt-back">Back</button>
-</div>
 <div>
-    <form-builder [form]="form" (change)="onChange($event)"></form-builder>
+  <div class="d-bt-back">
+    <button type="button" (click)="submit()" class="btn btn-outline-primary bt-back">บันทึก</button>
+    <button type="button" (click)="prev()" class="btn btn-outline-danger bt-back">ย้อนกลับ</button>
+  </div>
+  <div>
+      <form-builder [form]="form" (change)="onChange($event)"></form-builder>
+  </div>
 </div>

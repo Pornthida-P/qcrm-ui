@@ -13,28 +13,21 @@
                         ngClass="font-thai w-full border-noround-right"
                     />
                 </span>
-                <!-- <p-dropdown
-                    id="course"
-                    [options]="filterOption"
-                    [(ngModel)]="selectedFilter"
-                    optionLabel="name"
-                    [showClear]="false"
-                    styleClass="h-full border-noround-left"
-                ></p-dropdown> -->
             </div>
-            <!-- <p-button icon="pi pi-plus" class="flex-none hidden md:flex lg:hidden" styleClass="font-thai btn-color-primary"></p-button> -->
         </div>
         <div>
             <div class="d-flex align-items-center">
                 <table class="table">
                     <thead>
                         <tr>
-                            <th style="width: 30%">ชื่อหลักสูตร</th>
-                            <th style="width: 10%">เลขที่อ้างอิง (ระบบ Drive)</th>
-                            <th style="width: 16%">วันที่เปิดอบรม</th>
-                            <th style="width: 16%">วันที่ปิดอบรม</th>
-                            <th style="width: 10%">จังหวัด</th>
-                            <th style="width: 1%">จัดการ</th>
+                            <th style="width: 30%">
+                                <a (click)="sort('name')">ชื่อหลักสูตร </a><i *ngIf="sortId == 'name'" class="{{ sortIcon }}"></i>
+                            </th>
+                            <th style="width: 10%"><a (click)="sort('referenceNumber')">เลขที่อ้างอิง (ระบบ Drive)</a><i *ngIf="sortId == 'referenceNumber'" class="{{ sortIcon }}"></i></th>
+                            <th style="width: 16%"><a (click)="sort('trainingStartDate')">วันที่เปิดอบรม</a><i *ngIf="sortId == 'trainingStartDate'" class="{{ sortIcon }}"></i></th>
+                            <th style="width: 16%"><a (click)="sort('trainingEndDate')">วันที่ปิดอบรม</a><i *ngIf="sortId == 'trainingEndDate'" class="{{ sortIcon }}"></i></th>
+                            <th style="width: 10%"><a (click)="sort('province')">จังหวัด</a><i *ngIf="sortId == 'province'" class="{{ sortIcon }}"></i></th>
+                            <th style="width: 1%"><a>จัดการ</a></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -59,16 +52,26 @@
             </div>
             <ul class="pagination sidebar justify-content-center">
                 <li class="page-item" [class.disabled]="currentPage == 1">
-                    <a class="page-link custom-link preBtn" (click)="pageChange(currentPage - 1)" aria-label="Previous">
-                        <i class="fas fa-chevron-left"></i>
+                    <a class="page-link custom-link preBtn" (click)="pageChange(1)" aria-label="Previous">
+                        <i class="fa-solid fa-angles-left"></i>
+                    </a>
+                </li>
+                <li class="page-item" [class.disabled]="currentPage == 1">
+                    <a class="page-link custom-link" (click)="pageChange(currentPage - 1)" aria-label="Previous">
+                        <i class="fa-solid fa-angle-left"></i>
                     </a>
                 </li>
                 <li *ngFor="let page of pages" class="page-item" [class.active]="currentPage == page">
                     <a class="page-link custom-link" (click)="pageChange(page)">{{ page }}</a>
                 </li>
                 <li class="page-item" [class.disabled]="currentPage == totalPages">
-                    <a class="page-link custom-link nextBtn" (click)="pageChange(currentPage + 1)" aria-label="Next">
-                        <i class="fas fa-chevron-right"></i>
+                    <a class="page-link custom-link" (click)="pageChange(currentPage + 1)" aria-label="Next">
+                        <i class="fa-solid fa-angle-right"></i>
+                    </a>
+                </li>
+                <li class="page-item" [class.disabled]="currentPage == totalPages">
+                    <a class="page-link custom-link nextBtn" (click)="pageChange(totalPages)" aria-label="Next">
+                        <i class="fa-solid fa-angles-right"></i>
                     </a>
                 </li>
                 <li class="page-item ms-3">

@@ -1,11 +1,73 @@
 <div class="h-full">
     <div class="bg-white border-round-lg shadow-2 w-full pb-4 h-full">
+        <button (click)="backPage()">BACK</button>
         <div class="p-4 flex flex-column md:flex-row lg:flex-row gap-4 align-items-center">
             <p class="m-0 text-2xl flex-none">หลักสูตร E-learning</p>
         </div>
         <div>
             <div class="d-flex align-items-center"></div>
         </div>
-        <button (click)="backPage()">BACK</button>
+        <div>
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <label>ชื่อหลักสูตร</label>
+                        <input type="text" class="form-control" id="fullName" placeholder="Enter full name" value="{{ detailItem?.name || '' }}">
+                    </div>
+                </div>
+                <div class="row pt-4">
+                    <div class="col">
+                        <label>เลขที่อ้างอิง (ระบบ Drive)</label>
+                        <input type="text" class="form-control" id="referenceNumber" placeholder="Enter reference number" value="{{ detailItem?.referenceNumber || '' }}">
+                    </div>
+                    <div class="col">
+                        <label>จำนวนรับสมัคร</label>
+                        <input type="text" class="form-control" id="maxApplicants" placeholder="Enter max applicants" value="{{ detailItem?.maxApplicants || '' }}">
+                    </div>
+                </div>
+                <div class="row pt-4">
+                    <div class="col">
+                        <div>วันที่เปิดรับสมัคร</div>
+                        <div class="font-b">{{ (detailItem?.startDate | date : 'dd/MM/yyyy  HH:mm') || emptyItem }}</div>
+                    </div>
+                    <div class="col">
+                        <div>วันที่ปิดรับสมัคร</div>
+                        <div class="font-b">{{ (detailItem?.endDate | date : 'dd/MM/yyyy  HH:mm') || emptyItem }}</div>
+                    </div>
+                </div>
+                <div class="row pt-4">
+                    <div class="col">
+                        <div>วันที่เปิดอบรม</div>
+                        <div class="font-b">{{ (detailItem?.trainingStartDate | date : 'dd/MM/yyyy  HH:mm') || emptyItem }}</div>
+                    </div>
+                    <div class="col">
+                        <div>วันที่ปิดอบรม</div>
+                        <div class="font-b">{{ (detailItem?.trainingEndDate | date : 'dd/MM/yyyy  HH:mm') || emptyItem }}</div>
+                    </div>
+                </div>
+                <div class="row pt-4">
+                    <div class="col">
+                        <label>จังหวัด</label>
+                        <input type="text" class="form-control" id="province" placeholder="Enter province" value="{{ detailItem?.province || '' }}">
+                    </div>
+                    <div class="col">
+                        <label>สถานที่</label>
+                        <input type="text" class="form-control" id="location" placeholder="Enter location" value="{{ detailItem?.location || '' }}">
+                    </div>
+                </div>
+                <div class="row pt-4">
+                    <div class="col">
+                        <label>ค่าใช้จ่าย</label>
+                        <input type="text" class="form-control" id="cost" placeholder="Enter cost" value="{{ detailItem?.cost || '' }}">
+                    </div>
+                </div>
+                <div class="row pt-4">
+                    <div class="col">
+                        <label>รายละเอียด</label>
+                        <textarea class="form-control" id="description" placeholder="Enter description" value="{{ detailItem?.description || '' }}"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

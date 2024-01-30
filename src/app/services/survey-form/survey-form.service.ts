@@ -1,11 +1,14 @@
 import { Injectable, PipeTransform } from '@angular/core';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
 
 import { SurveyForm } from 'src/app/shared/interface/survey-form';
 import { DecimalPipe } from '@angular/common';
 import { debounceTime, delay, switchMap, tap } from 'rxjs/operators';
 import { SortColumn, SortDirection } from 'src/app/features/pages/survey-form/sortable.directive';
-
+import { environment } from 'src/environments/environment';
+import { config } from 'src/app/config/config';
+import { map } from 'rxjs/operators';
 interface SearchResult {
     forms: SurveyForm[];
     total: number;
@@ -43,6 +46,7 @@ function matches(form: SurveyForm, term: string, pipe: PipeTransform) {
 @Injectable({
     providedIn: 'root',
 })
+
 export class SurveyFormService {
     private _loading$ = new BehaviorSubject<boolean>(true);
     private _search$ = new Subject<void>();
@@ -57,7 +61,10 @@ export class SurveyFormService {
         sortDirection: '',
     };
 
-    constructor(private pipe: DecimalPipe) {
+    baseUrl: string = `${environment.api.url}`;
+
+  constructor(private pipe: DecimalPipe, private http: HttpClient) {
+    this.baseUrl = `${environment.api.url}${config.api.path.surveyForm}`;
         this._search$
             .pipe(
                 tap(() => this._loading$.next(true)),
@@ -115,43 +122,53 @@ export class SurveyFormService {
     }
 
     private _search(): Observable<SearchResult> {
-        const { sortColumn, sortDirection, pageSize, page, searchTerm } = this._state;
+      const { sortColumn, sortDirection, pageSize, page, searchTerm } = this._state;
 
-        // 1. sort
-        let forms = sort(this.getData(), sortColumn, sortDirection);
+      return this.getData().pipe(
+          map((forms: SurveyForm[]) => {
+              // 1. sort
+              forms = sort(forms, sortColumn, sortDirection);
 
-        // 2. filter
-        forms = forms.filter((survey) => matches(survey, searchTerm, this.pipe));
-        const total = forms.length;
+              // 2. filter
+              forms = forms.filter((survey) => matches(survey, searchTerm, this.pipe));
+              const total = forms.length;
 
-        // 3. paginate
-        forms = forms.slice((page - 1) * pageSize, (page - 1) * pageSize + pageSize);
-        return of({ forms, total });
+              // 3. paginate
+              forms = forms.slice((page - 1) * pageSize, (page - 1) * pageSize + pageSize);
+
+              return { forms, total };
+          })
+      );
     }
 
-    getData() {
-        return [
-            {
-                no: 1,
-                save_by: 'Admin',
-                survey_form:
-                    'แบบสำรวจติดตามและประเมินผลเพื่อพัฒนาศักยภาพด้านการค้าระหว่างประเทศ "สถาบันพัฒนาผู้ประกอบการการค้ายุคใหม่(NEA) กรมส่งเสริมการค้าระหว่างประเทศ กระทรวงพาณิชย์” สำหรับประเภทผู้ประกอบการรุ่นใหม่ (นิสิต/นักศึกษา) ที่เข้าร่วมโครงการใน FromGen Z to be CEO 2023',
-                save_date: '25 ก.ย., 2023 10:24',
-            },
-            {
-                no: 2,
-                save_by: 'Admin',
-                survey_form:
-                    'แบบสำรวจติดตามและประเมินผลเพื่อพัฒนาศักยภาพด้านการค้าระหว่างประเทศ "สถาบันพัฒนาผู้ประกอบการการค้ายุคใหม่(NEA) กรมส่งเสริมการค้าระหว่างประเทศ กระทรวงพาณิชย์” สำหรับประเภทผู้ประกอบการรุ่นใหม่ (นิสิต/นักศึกษา) ที่เข้าร่วมโครงการใน FromGen Z to be CEO 2023',
-                save_date: '25 ก.ย., 2023 10:30',
-            },
-            {
-                no: 3,
-                save_by: 'Admin',
-                survey_form:
-                    'แบบสำรวจติดตามและประเมินผลเพื่อพัฒนาศักยภาพด้านการค้าระหว่างประเทศ "สถาบันพัฒนาผู้ประกอบการการค้ายุคใหม่(NEA) กรมส่งเสริมการค้าระหว่างประเทศ กระทรวงพาณิชย์” สำหรับประเภทผู้ประกอบการรุ่นใหม่ (นิสิต/นักศึกษา) ที่เข้าร่วมโครงการใน FromGen Z to be CEO 2023',
-                save_date: '25 ก.ย., 2023 10:40',
-            },
-        ];
-    }
+    // getData(): Observable<SurveyForm[]> {
+    //   return this.http.get<SurveyForm[]>(`${this.baseUrl}/page`);
+    // }
+
+    getData(): Observable<SurveyForm[]>  {
+      return of ([
+          {
+              no: 1,
+              save_by: 'Admin',
+              survey_form:
+                  'แบบสำรวจติดตามและประเมินผลเพื่อพัฒนาศักยภาพด้านการค้าระหว่างประเทศ "สถาบันพัฒนาผู้ประกอบการการค้ายุคใหม่(NEA) กรมส่งเสริมการค้าระหว่างประเทศ กระทรวงพาณิชย์” สำหรับประเภทผู้ประกอบการรุ่นใหม่ (นิสิต/นักศึกษา) ที่เข้าร่วมโครงการใน FromGen Z to be CEO 2023',
+              save_date: '25 ก.ย., 2023 10:24',
+          },
+          {
+              no: 2,
+              save_by: 'Admin',
+              survey_form:
+                  'แบบสำรวจติดตามและประเมินผลเพื่อพัฒนาศักยภาพด้านการค้าระหว่างประเทศ "สถาบันพัฒนาผู้ประกอบการการค้ายุคใหม่(NEA) กรมส่งเสริมการค้าระหว่างประเทศ กระทรวงพาณิชย์” สำหรับประเภทผู้ประกอบการรุ่นใหม่ (นิสิต/นักศึกษา) ที่เข้าร่วมโครงการใน FromGen Z to be CEO 2023',
+              save_date: '25 ก.ย., 2023 10:30',
+          },
+          {
+              no: 3,
+              save_by: 'Admin',
+              survey_form:
+                  'แบบสำรวจติดตามและประเมินผลเพื่อพัฒนาศักยภาพด้านการค้าระหว่างประเทศ "สถาบันพัฒนาผู้ประกอบการการค้ายุคใหม่(NEA) กรมส่งเสริมการค้าระหว่างประเทศ กระทรวงพาณิชย์” สำหรับประเภทผู้ประกอบการรุ่นใหม่ (นิสิต/นักศึกษา) ที่เข้าร่วมโครงการใน FromGen Z to be CEO 2023',
+              save_date: '25 ก.ย., 2023 10:40',
+          },
+      ]);
+  }
+
 }

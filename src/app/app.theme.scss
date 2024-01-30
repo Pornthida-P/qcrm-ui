@@ -101,3 +101,7 @@ th[sortable].desc:before {
 .cursor-default {
     cursor: default;
 }
+
+.formio-component-datagrid {
+  overflow: unset !important;
+}

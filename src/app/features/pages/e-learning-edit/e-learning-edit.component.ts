@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ELearningService } from 'src/app/services/e-learning/e-learning.service';
 
 @Component({
     selector: 'app-e-learning-edit',
@@ -7,15 +8,33 @@ import { ActivatedRoute, Router } from '@angular/router';
     styleUrl: './e-learning-edit.component.scss',
 })
 export class ELearningEditComponent {
-    constructor(private route: ActivatedRoute, private router: Router) {}
+    constructor(private route: ActivatedRoute, private router: Router, private eLearningService: ELearningService) {}
 
     cb: string = '';
+    detailItem: any = undefined;
+    itemId: string = '';
+    emptyItem: String = 'ว่าง';
+    startDate = new Date();
+
+    item = {
+        startDate: new Date(),
+    };
+    title = 'appBootstrap';
+
+    model:any;
+
     ngOnInit() {
         this.route.queryParams.subscribe((params) => {
-            const itemId: any = params['itemId'];
+            this.itemId = params['itemId'];
             this.cb = params['cb'];
-            console.log('Received item:');
-            console.log(itemId);
+        });
+        this.getElearn(this.itemId);
+        console.log(this.detailItem);
+    }
+
+    async getElearn(itemId: string) {
+        await this.eLearningService.getELearningById(itemId).subscribe((res: any) => {
+            this.detailItem = res[0];
         });
     }
 
