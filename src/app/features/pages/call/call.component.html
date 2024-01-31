@@ -54,21 +54,24 @@
                     </thead>
                     <tbody>
                         <ng-container *ngIf="(calls | searchFilter : valueSearch : selectedFilter)?.length > 0; else noDataTemplate">
-                            <tr *ngFor="let calls of calls | searchFilter : valueSearch : selectedFilter; let i = index">
+                            <tr *ngFor="let calls of calls | searchFilter : valueSearch : selectedFilter; let i = index" >
                                 <td scope="row"><input type="checkbox" [value]="calls" /></td>
+                                <td>
+                                    {{ calls.time | date : 'dd/MM/yyyy HH:mm' }}
+                                </td>
                                 <td
                                     (click)="showSideBar(i)"
-                                    class="sidebar"
+                                    class="sidebar cursor-pointer"
                                     data-bs-toggle="offcanvas"
                                     data-bs-target="#offcanvasRight"
                                     aria-controls="offcanvasRight"
                                 >
-                                    {{ calls.time | date : 'dd/MM/yyyy HH:mm' }}
-                                    <!-- {{ calls.time | slice : 0 : 50 }}{{ calls.time.length > 50 ? '...' : '' }} -->
+                                <div class="" ngbTooltip="คลิกดูรายละเอียด"
+                                placement="bottom">
+                                  {{ calls.mobilePhone }}
+                                </div>
                                 </td>
-                                <td>{{ calls.mobilePhone }}</td>
                                 <td>{{ calls.typePhone }}</td>
-                                <!-- <td>{{ calls.typePhone | date : 'dd/MM/yyyy  HH:mm' }}</td> -->
                                 <td class="w-max-ellipsis">
                                     <div [ngbTooltip]="calls.subject" placement="bottom" class="text-ellipsis">
                                         {{ calls.subject }}
@@ -93,32 +96,42 @@
                         </ng-container>
                         <ng-template #noDataTemplate>
                           <tr>
-                              <td colspan="4" class="text-center">ไม่มีข้อมูล</td>
+                              <td colspan="9" class="text-center"><span class="color-gray">ไม่มีข้อมูล</span></td>
                           </tr>
                       </ng-template>
                     </tbody>
                 </table>
             </div>
             <ul class="pagination sidebar justify-content-center">
-                <li class="page-item" [class.disabled]="currentPage == 1">
-                    <a class="page-link custom-link preBtn" (click)="pageChange(currentPage - 1)" aria-label="Previous">
-                        <i class="fas fa-chevron-left"></i>
-                    </a>
-                </li>
-                <li *ngFor="let page of pages" class="page-item" [class.active]="currentPage == page">
-                    <a class="page-link custom-link" (click)="pageChange(page)">{{ page }}</a>
-                </li>
-                <li class="page-item" [class.disabled]="currentPage == totalPages">
-                    <a class="page-link custom-link nextBtn" (click)="pageChange(currentPage + 1)" aria-label="Next">
-                        <i class="fas fa-chevron-right"></i>
-                    </a>
-                </li>
-                <li class="page-item ms-3">
-                    <select class="form-select" aria-label="Default select example" [(ngModel)]="pageSize" (change)="pageSizeChange()">
-                        <option class="dropdown-item" *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}</option>
-                    </select>
-                </li>
-            </ul>
+              <li class="page-item" [class.disabled]="currentPage == 1">
+                  <a class="page-link custom-link preBtn" (click)="pageChange(1)" aria-label="Previous">
+                      <i class="fa-solid fa-angles-left"></i>
+                  </a>
+              </li>
+              <li class="page-item" [class.disabled]="currentPage == 1">
+                  <a class="page-link custom-link" (click)="pageChange(currentPage - 1)" aria-label="Previous">
+                      <i class="fa-solid fa-angle-left"></i>
+                  </a>
+              </li>
+              <li *ngFor="let page of pages" class="page-item" [class.active]="currentPage == page">
+                  <a class="page-link custom-link" (click)="pageChange(page)">{{ page }}</a>
+              </li>
+              <li class="page-item" [class.disabled]="currentPage == totalPages">
+                  <a class="page-link custom-link" (click)="pageChange(currentPage + 1)" aria-label="Next">
+                      <i class="fa-solid fa-angle-right"></i>
+                  </a>
+              </li>
+              <li class="page-item" [class.disabled]="currentPage == totalPages">
+                  <a class="page-link custom-link nextBtn" (click)="pageChange(totalPages)" aria-label="Next">
+                      <i class="fa-solid fa-angles-right"></i>
+                  </a>
+              </li>
+              <li class="page-item ms-3">
+                  <select class="form-select" aria-label="Default select example" [(ngModel)]="pageSize" (change)="pageSizeChange()">
+                      <option class="dropdown-item" *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}</option>
+                  </select>
+              </li>
+          </ul>
 
             <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
                 <div class="offcanvas-body">
