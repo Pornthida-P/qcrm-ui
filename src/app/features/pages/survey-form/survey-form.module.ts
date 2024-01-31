@@ -1,17 +1,18 @@
 import { NgModule } from '@angular/core';
-import { CommonModule, DecimalPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { SurveyFormComponent } from './survey-form.component';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { SurveyFormService } from 'src/app/services/survey-form/survey-form.service';
-import { NgbdSortableHeader } from './sortable.directive';
 import { HttpClientModule } from '@angular/common/http';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
+import { SearchPipe } from './survey-form.component';
+
 @NgModule({
-    declarations: [SurveyFormComponent],
+    declarations: [SurveyFormComponent, SearchPipe],
     imports: [
         CommonModule,
         FormsModule,
@@ -24,10 +25,9 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
             },
         ]),
         NgbPaginationModule,
-        NgbdSortableHeader,
         HttpClientModule,
         NgbTooltipModule,
     ],
-    providers: [SurveyFormService, DecimalPipe],
+    providers: [SurveyFormService],
 })
 export class SurveyFormModule {}

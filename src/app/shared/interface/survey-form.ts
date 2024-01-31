@@ -1,6 +1,6 @@
 export interface SurveyForm {
-    no: number;
-    survey_form: string;
-    save_date: string;
-    save_by: string;
+    surveyFormId: number;
+    name: string;
+    createdAt: string;
+    createdBy: string;
 }

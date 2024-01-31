@@ -74,7 +74,6 @@ export class NavbarComponent implements OnInit {
         this.router.events
             .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
             .subscribe((event: NavigationEnd) => {
-                console.log(event.url);
                 this.hideSidebar = event.url.includes('/setting');
             });
     }
