@@ -23,10 +23,21 @@
                             <th style="width: 30%">
                                 <a (click)="sort('name')">ชื่อหลักสูตร </a><i *ngIf="sortId == 'name'" class="{{ sortIcon }}"></i>
                             </th>
-                            <th style="width: 10%"><a (click)="sort('referenceNumber')">เลขที่อ้างอิง (ระบบ Drive)</a><i *ngIf="sortId == 'referenceNumber'" class="{{ sortIcon }}"></i></th>
-                            <th style="width: 16%"><a (click)="sort('trainingStartDate')">วันที่เปิดอบรม</a><i *ngIf="sortId == 'trainingStartDate'" class="{{ sortIcon }}"></i></th>
-                            <th style="width: 16%"><a (click)="sort('trainingEndDate')">วันที่ปิดอบรม</a><i *ngIf="sortId == 'trainingEndDate'" class="{{ sortIcon }}"></i></th>
-                            <th style="width: 10%"><a (click)="sort('province')">จังหวัด</a><i *ngIf="sortId == 'province'" class="{{ sortIcon }}"></i></th>
+                            <th style="width: 10%">
+                                <a (click)="sort('referenceNumber')">เลขที่อ้างอิง (ระบบ Drive)</a
+                                ><i *ngIf="sortId == 'referenceNumber'" class="{{ sortIcon }}"></i>
+                            </th>
+                            <th style="width: 16%">
+                                <a (click)="sort('trainingStartDate')">วันที่เปิดอบรม</a
+                                ><i *ngIf="sortId == 'trainingStartDate'" class="{{ sortIcon }}"></i>
+                            </th>
+                            <th style="width: 16%">
+                                <a (click)="sort('trainingEndDate')">วันที่ปิดอบรม</a
+                                ><i *ngIf="sortId == 'trainingEndDate'" class="{{ sortIcon }}"></i>
+                            </th>
+                            <th style="width: 10%">
+                                <a (click)="sort('province')">จังหวัด</a><i *ngIf="sortId == 'province'" class="{{ sortIcon }}"></i>
+                            </th>
                             <th style="width: 1%"><a>จัดการ</a></th>
                         </tr>
                     </thead>
