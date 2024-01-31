@@ -9,7 +9,7 @@ import { ELearningService } from 'src/app/services/e-learning/e-learning.service
     styleUrls: ['./e-learning.component.scss'],
 })
 export class ELearningComponent {
-    value: string | undefined;
+    value: string = '';
     filterOption!: any[];
     selectedFilter: any | undefined;
     course: any[] = [];
@@ -57,14 +57,14 @@ export class ELearningComponent {
     }
 
     async getElearn(page: number, pageSize: number) {
-        await this.eLearningService.getELearning(page, pageSize, `${this.sortId},${this.sortOrder}`).subscribe((res: any) => {
+        await this.eLearningService.getELearning(page, pageSize, `${this.sortId},${this.sortOrder}`, this.value).subscribe((res: any) => {
             this.course = res;
         });
     }
 
     async getElearnSideBar(page: number, pageSize: number, value: string) {
         await this.eLearningService
-            .getELearning(page, pageSize, `${this.sortId},${this.sortOrder}`)
+            .getELearning(page, pageSize, `${this.sortId},${this.sortOrder}`, this.value)
             .subscribe((res: any) => {
                 this.course = res;
             })
@@ -75,14 +75,13 @@ export class ELearningComponent {
     }
 
     async getPage() {
-        await this.eLearningService.getELearningPage().subscribe((res: any) => {
+        await this.eLearningService.getELearningPage(this.value).subscribe((res: any) => {
             this.totalItems = res.count;
         });
     }
 
     get pages(): number[] {
         var page: number[] = [];
-        console.log(this.currentPage);
         this.totalPages = Math.ceil(this.totalItems / this.pageSize);
         for (var i = -this.pagesToShow; i <= this.pagesToShow; i++) {
             if (this.currentPage + i > 0 && this.currentPage + i <= this.totalPages) {
@@ -133,11 +132,13 @@ export class ELearningComponent {
                 this.sortIcon = 'fa-solid fa-sort-up';
                 this.sortOrder = 'DESC';
             } else {
-                this.sortIcon = 'fa-solid fa-sort-down';
-                this.sortOrder = 'ASC';
+                this.sortId = '-'
+                this.sortIcon = '';
             }
         } else {
             this.sortId = value;
+            this.sortIcon = 'fa-solid fa-sort-down';
+            this.sortOrder = 'ASC';
         }
         this.getElearn((this.currentPage - 1) * this.pageSize, this.pageSize);
     }
@@ -159,9 +160,12 @@ export class ELearningComponent {
     }
 
     editPage(item: any) {
-        console.log('go to editpage');
-        console.log(item);
         const cb = `${this.pageSize},${this.currentPage},${this.totalItems},${this.totalPages}`;
         this.router.navigate(['/e-learning/edit'], { queryParams: { itemId: item.activityTopicId, cb: cb } });
+    }
+
+    onSearchChange() {
+        this.getElearn((this.currentPage - 1) * this.pageSize, this.pageSize);
+        this.getPage();
     }
 }

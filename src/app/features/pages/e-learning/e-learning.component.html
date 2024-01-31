@@ -9,6 +9,7 @@
                         type="text"
                         pInputText
                         [(ngModel)]="value"
+                        (ngModelChange)="onSearchChange()"
                         placeholder="ค้นหา..."
                         ngClass="font-thai w-full border-noround-right"
                     />
@@ -23,10 +24,21 @@
                             <th style="width: 30%">
                                 <a (click)="sort('name')">ชื่อหลักสูตร </a><i *ngIf="sortId == 'name'" class="{{ sortIcon }}"></i>
                             </th>
-                            <th style="width: 10%"><a (click)="sort('referenceNumber')">เลขที่อ้างอิง (ระบบ Drive)</a><i *ngIf="sortId == 'referenceNumber'" class="{{ sortIcon }}"></i></th>
-                            <th style="width: 16%"><a (click)="sort('trainingStartDate')">วันที่เปิดอบรม</a><i *ngIf="sortId == 'trainingStartDate'" class="{{ sortIcon }}"></i></th>
-                            <th style="width: 16%"><a (click)="sort('trainingEndDate')">วันที่ปิดอบรม</a><i *ngIf="sortId == 'trainingEndDate'" class="{{ sortIcon }}"></i></th>
-                            <th style="width: 10%"><a (click)="sort('province')">จังหวัด</a><i *ngIf="sortId == 'province'" class="{{ sortIcon }}"></i></th>
+                            <th style="width: 10%">
+                                <a (click)="sort('referenceNumber')">เลขที่อ้างอิง (ระบบ Drive)</a
+                                ><i *ngIf="sortId == 'referenceNumber'" class="{{ sortIcon }}"></i>
+                            </th>
+                            <th style="width: 16%">
+                                <a (click)="sort('trainingStartDate')">วันที่เปิดอบรม</a
+                                ><i *ngIf="sortId == 'trainingStartDate'" class="{{ sortIcon }}"></i>
+                            </th>
+                            <th style="width: 16%">
+                                <a (click)="sort('trainingEndDate')">วันที่ปิดอบรม</a
+                                ><i *ngIf="sortId == 'trainingEndDate'" class="{{ sortIcon }}"></i>
+                            </th>
+                            <th style="width: 10%">
+                                <a (click)="sort('province')">จังหวัด</a><i *ngIf="sortId == 'province'" class="{{ sortIcon }}"></i>
+                            </th>
                             <th style="width: 1%"><a>จัดการ</a></th>
                         </tr>
                     </thead>
@@ -83,14 +95,14 @@
 
             <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
                 <div class="offcanvas-body">
-                    <div class="flex flex flex-wrap">
-                        <div class="p-2 flex-grow-1" type="button" (click)="editPage(detailItem)">
+                    <div class="d-flex flex-wrap">
+                        <div class="p-2 flex-grow-1" (click)="editPage(detailItem)" role="button">
                             <fa-icon [icon]="faPenToSquare" size="lg"></fa-icon>
                         </div>
-                        <div *ngIf="visibleLeftSideBar" class="p-2" type="button" (click)="changeSideBar('left')">
+                        <div *ngIf="visibleLeftSideBar" class="p-2" (click)="changeSideBar('left')" role="button">
                             <fa-icon [icon]="faArrowLeft" size="lg"></fa-icon>
                         </div>
-                        <div *ngIf="visibleRightSideBar" class="p-2" type="button" (click)="changeSideBar('right')">
+                        <div *ngIf="visibleRightSideBar" class="p-2" (click)="changeSideBar('right')" role="button">
                             <fa-icon [icon]="faArrowRight" size="lg"></fa-icon>
                         </div>
                     </div>
@@ -99,7 +111,7 @@
                             <h4>ชื่อหลักสูตร</h4>
                             <h5 class="font-b">{{ detailItem?.name || emptyItem }}</h5>
                         </div>
-                        <div class="grid pt-4">
+                        <div class="row pt-4">
                             <div class="col">
                                 <div>เลขที่อ้างอิง (ระบบ Drive)</div>
                                 <div class="font-b">{{ detailItem?.referenceNumber || emptyItem }}</div>
@@ -109,7 +121,7 @@
                                 <div class="font-b">{{ detailItem?.maxApplicants || emptyItem }}</div>
                             </div>
                         </div>
-                        <div class="grid pt-2">
+                        <div class="row pt-2">
                             <div class="col">
                                 <div>วันที่เปิดรับสมัคร</div>
                                 <div class="font-b">{{ (detailItem?.startDate | date : 'dd/MM/yyyy  HH:mm') || emptyItem }}</div>
@@ -119,7 +131,7 @@
                                 <div class="font-b">{{ (detailItem?.endDate | date : 'dd/MM/yyyy  HH:mm') || emptyItem }}</div>
                             </div>
                         </div>
-                        <div class="grid pt-2">
+                        <div class="row pt-2">
                             <div class="col">
                                 <div>วันที่เปิดอบรม</div>
                                 <div class="font-b">{{ (detailItem?.trainingStartDate | date : 'dd/MM/yyyy  HH:mm') || emptyItem }}</div>
@@ -129,7 +141,7 @@
                                 <div class="font-b">{{ (detailItem?.trainingEndDate | date : 'dd/MM/yyyy  HH:mm') || emptyItem }}</div>
                             </div>
                         </div>
-                        <div class="grid pt-2">
+                        <div class="row pt-2">
                             <div class="col">
                                 <div>จังหวัด</div>
                                 <div class="font-b">{{ detailItem?.province || emptyItem }}</div>
@@ -139,13 +151,13 @@
                                 <div class="font-b">{{ detailItem?.location || emptyItem }}</div>
                             </div>
                         </div>
-                        <div class="grid pt-2">
+                        <div class="row pt-2">
                             <div class="col">
                                 <div>ค่าใช้จ่าย</div>
                                 <div class="font-b">{{ detailItem?.cost || emptyItem }}</div>
                             </div>
                         </div>
-                        <div class="grid pt-2">
+                        <div class="row pt-2">
                             <div class="col">
                                 <div>รายละเอียด</div>
                                 <div class="font-b">{{ detailItem?.description || emptyItem }}</div>
