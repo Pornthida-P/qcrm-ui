@@ -20,17 +20,17 @@ export class CallService {
     return of([
       {
         no: 1,
-        time: '20 ม.ค. 2023 12.12',
+        time: '2024/01/15 12:12:12',
         mobilePhone: '0611457951',
         typePhone: 'Inbound',
-        subject: 'ติดตามและประเมินผล',
+        subject: 'ติดตามและประเมินผลประเมินผลโครงการ',
         detail: 'โทรสำรวจติดตามและประเมินผลโครงการBizTalk เจาะลึกตลาดซาอุ',
-        solutions: '',
-        agent: 'agent05'
+        solutions: 'โทรสำรวจติดตามและประเมินผลโครงการBizTalk เจาะลึกตลาดซาอุ',
+        agent: 'admin'
       },
       {
         no: 2,
-        time: '20 ม.ค. 2023 15.12',
+        time: '2024/01/16 13:13:13',
         mobilePhone: '0921457951',
         typePhone: 'Outbound',
         subject: 'ติดตามและประเมินผล',
@@ -40,7 +40,7 @@ export class CallService {
       },
       {
         no: 3,
-        time: '21 ม.ค. 2023 12.12',
+        time: '2024/01/17 14:14:14',
         mobilePhone: '0611457951',
         typePhone: 'Inbound',
         subject: 'ติดตามและประเมินผล',
@@ -50,7 +50,7 @@ export class CallService {
       },
       {
         no: 4,
-        time: '22 ม.ค. 2023 17.17',
+        time: '2024/01/18 15:15:15',
         mobilePhone: '068888888',
         typePhone: 'Outbound',
         subject: 'ติดตามและประเมินผล',
@@ -60,7 +60,7 @@ export class CallService {
       },
       {
         no: 5,
-        time: '25 ม.ค. 2023 18.18',
+        time: '2024/01/19 16:16:16',
         mobilePhone: '0645457951',
         typePhone: 'Inbound',
         subject: 'ติดตามและประเมินผล',
@@ -75,17 +75,17 @@ export class CallService {
     const data = [
       {
         no: 1,
-        time: '20 ม.ค. 2023 12.12',
+        time: '2024/01/15 12:12:12',
         mobilePhone: '0611457951',
         typePhone: 'Inbound',
         subject: 'ติดตามและประเมินผล',
         detail: 'โทรสำรวจติดตามและประเมินผลโครงการBizTalk เจาะลึกตลาดซาอุ',
         solutions: '',
-        agent: 'agent05'
+        agent: 'admin'
       },
       {
         no: 2,
-        time: '20 ม.ค. 2023 15.12',
+        time: '2024/01/16 13:13:13',
         mobilePhone: '0921457951',
         typePhone: 'Outbound',
         subject: 'ติดตามและประเมินผล',
@@ -95,7 +95,7 @@ export class CallService {
       },
       {
         no: 3,
-        time: '21 ม.ค. 2023 12.12',
+        time: '2024/01/17 14:14:14',
         mobilePhone: '0611457951',
         typePhone: 'Inbound',
         subject: 'ติดตามและประเมินผล',
@@ -105,7 +105,7 @@ export class CallService {
       },
       {
         no: 4,
-        time: '22 ม.ค. 2023 17.17',
+        time: '2024/01/18 15:15:15',
         mobilePhone: '068888888',
         typePhone: 'Outbound',
         subject: 'ติดตามและประเมินผล',
@@ -115,7 +115,7 @@ export class CallService {
       },
       {
         no: 5,
-        time: '25 ม.ค. 2023 18.18',
+        time: '2024/01/19 16:16:16',
         mobilePhone: '0645457951',
         typePhone: 'Inbound',
         subject: 'ติดตามและประเมินผล',
