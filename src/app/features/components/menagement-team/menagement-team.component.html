@@ -12,21 +12,18 @@
                     <div class="card mb-3" *ngFor="let groupMember of groupMembers">
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-8 col-xl-9">
+                                <div class="col-md-6 col-xl-8">
                                     <div class="row">
-                                        <div class="col-8">
+                                        <div class="col-6">
                                             <div class="group">
                                                 <p class="m-1">
                                                     {{ groupMember?.groupName }}
                                                 </p>
                                             </div>
                                         </div>
-                                        <div class="col-4">
+                                        <div class="col-6">
                                             <div class="member d-flex justify-content-end">
-                                                <div
-                                                    class="profile rounded-circle position-relative overflow-hidden"
-                                                    *ngFor="let member of groupMember?.members"
-                                                >
+                                                <div class="profile" *ngFor="let member of groupMember?.members">
                                                     <img
                                                         class="profile-image img-fluid"
                                                         [src]="member?.profile"
@@ -38,9 +35,19 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-4 col-xl-3">
-                                    <div class="group-length">
-                                        <p class="m-1 text-end">{{ groupMember?.members?.length }} Members</p>
+                                <div class="col-md-3 col-xl-2">
+                                    <div class="group-length d-flex justify-content-end">
+                                        <p class="m-1">{{ groupMember?.members?.length }} Members</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-xl-2">
+                                    <div class="action d-flex justify-content-end">
+                                        <button type="button" class="btn">
+                                            <fa-icon [icon]="faEdit" class="color-primary"></fa-icon>
+                                        </button>
+                                        <button type="button" class="btn">
+                                            <fa-icon [icon]="faTrash" class="color-red"></fa-icon>
+                                        </button>
                                     </div>
                                 </div>
                             </div>

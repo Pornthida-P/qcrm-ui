@@ -1,0 +1,42 @@
+<div class="card p-3">
+    <div class="row p-2">
+        <div class="col-6">
+            <p class="card-title fs-2">{{ title }}</p>
+        </div>
+        <div class="col-6 d-flex justify-content-end align-items-center">
+            <button type="button" class="btn btn-primary-color text-white">
+                <fa-icon [icon]="faPlus"></fa-icon>
+                เพิ่ม
+            </button>
+        </div>
+    </div>
+    <div class="row p-2">
+        <div class="col-sm-12 col-md-6 col-xl-6">
+            <mat-card class="inline-calendar-card">
+                <mat-calendar
+                    #calendar
+                    [dateClass]="dateClass"
+                    [(selected)]="selectedCalendarDate"
+                    (selectedChange)="onSelectedDateChanged()"
+                ></mat-calendar>
+            </mat-card>
+        </div>
+        <div class="col-sm-12 col-md-6 col-xl-6 max-height-100">
+            <div *ngIf="selectedCalendarDate">
+                <div *ngIf="!events || events.length === 0; else eventsContent">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <p class="card-text text-center p-5">ไม่มี Event</p>
+                        </div>
+                    </div>
+                </div>
+
+                <ng-template #eventsContent>
+                    <div *ngFor="let event of events" class="card mb-4">
+                        <app-calendar-card [event]="event"></app-calendar-card>
+                    </div>
+                </ng-template>
+            </div>
+        </div>
+    </div>
+</div>

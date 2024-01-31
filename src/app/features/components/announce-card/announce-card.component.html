@@ -1,0 +1,63 @@
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12 d-flex justify-content-end gap-2">
+                <span class="fs-6 color-primary cursor-pointer">
+                    <fa-icon [icon]="faEdit"></fa-icon>
+                </span>
+                <span class="fs-6 color-red cursor-pointer">
+                    <fa-icon [icon]="faTrash"></fa-icon>
+                </span>
+            </div>
+        </div>
+
+        <div class="row d-flex justify-content-center align-items-center my-2">
+            <div class="col-sm-3 col-md-2 d-flex justify-content-center">
+                <span class="fs-5 color-primary"><fa-icon [icon]="faThumbtack"></fa-icon></span>
+            </div>
+            <div class="col-sm-9 col-md-10">
+                <p class="card-title fs-5">{{ card?.title }}</p>
+            </div>
+        </div>
+
+        <div class="row d-flex justify-content-center align-items-center my-2">
+            <div class="col-sm-3 col-md-2 d-flex justify-content-center"></div>
+            <div class="col-sm-9 col-md-10">
+                <p class="card-text fs-7">{{ card?.startDate | date : 'medium' }}</p>
+                <p class="card-text fs-7">{{ card?.endDate | date : 'medium' }}</p>
+            </div>
+        </div>
+
+        <div class="row d-flex justify-content-center align-items-center my-2">
+            <div class="col-sm-3 col-md-2 d-flex justify-content-center">
+                <span class="fs-5 color-primary"><fa-icon [icon]="faList"></fa-icon></span>
+            </div>
+            <div class="col-sm-9 col-md-10">
+                <p class="card-text fs-6">{{ card?.description }}</p>
+            </div>
+        </div>
+
+        <div class="row d-flex justify-content-center align-items-center my-2">
+            <div class="col-sm-3 col-md-2 d-flex justify-content-center">
+                <span class="fs-5 color-primary"><fa-icon [icon]="faPapercilp"></fa-icon></span>
+            </div>
+            <div class="col-sm-9 col-md-10">
+                <p class="card-text fs-6">จำนวน {{ card?.attachment?.length }} ไฟล์</p>
+            </div>
+        </div>
+
+        <div class="row d-flex justify-content-center align-items-center">
+            <div class="col-sm-3 col-md-2 d-flex justify-content-center"></div>
+            <div class="col-sm-9 col-md-10">
+                <ul class="list-unstyled m-0">
+                    <li *ngFor="let attachment of card?.attachment" class="d-flex align-items-center gap-3 my-1">
+                        <div class="file-info cursor-pointer" (click)="onclickAttachment(attachment.fileUrl)">
+                            <p class="fs-7">{{ attachment?.fileName }}</p>
+                            <p class="fs-8">{{ attachment?.fileType }}</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
