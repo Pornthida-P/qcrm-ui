@@ -15,8 +15,11 @@
 
 .card-text,
 .card-title {
-    margin: 0;
     cursor: default;
+}
+
+p {
+    margin: 0;
 }
 
 mat-card {

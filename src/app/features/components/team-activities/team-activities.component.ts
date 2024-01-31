@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatCalendar, MatCalendarCellClassFunction } from '@angular/material/datepicker';
 import { faCalendarAlt, faEdit, faList, faLocationDot, faPlusCircle, faTrash, faUserGroup } from '@fortawesome/free-solid-svg-icons';
+import { CalendarEvent } from 'src/app/shared/interface/calendar.interface';
 import * as moment from 'moment';
 
 @Component({
@@ -11,20 +12,12 @@ import * as moment from 'moment';
 export class TeamActivitiesComponent implements OnInit {
     @ViewChild(MatCalendar, { static: false }) calendar!: MatCalendar<Date>;
     selectedCalendarDate: Date | null = new Date();
-    calendarDateEvents: Map<string, any> = new Map();
+    calendarDateEvents: Map<string, CalendarEvent[]> = new Map();
     events: any = [];
 
-    faCalendar = faCalendarAlt;
-    faList = faList;
-    faLocation = faLocationDot;
-    faUserGroup = faUserGroup;
-    faEdit = faEdit;
-    faTrash = faTrash;
     faPlus = faPlusCircle;
 
     title: string = 'Team Activities';
-
-    profileError: string = '/assets/nea-qcrm-ui/image/profile/user.jpg';
 
     ngOnInit(): void {
         this.calendarDateEvents.set('2024-02-15', [
@@ -115,13 +108,11 @@ export class TeamActivitiesComponent implements OnInit {
         const selectedDateStr = moment(this.selectedCalendarDate).format('YYYY-MM-DD');
 
         if (this.calendarDateEvents.has(selectedDateStr)) {
-            this.events.push(...this.calendarDateEvents.get(selectedDateStr));
-        }
-    }
+            const eventsForSelectedDate = this.calendarDateEvents.get(selectedDateStr);
 
-    handleProfileError(event: any) {
-        if (event) {
-            event.target.src = this.profileError;
+            if (eventsForSelectedDate) {
+                this.events.push(...eventsForSelectedDate);
+            }
         }
     }
 }
