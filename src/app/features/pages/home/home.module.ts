@@ -8,9 +8,11 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { HomeComponent } from './home.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AnnounceComponent } from '../../components/announce/announce.component';
+import { AnnounceListComponent } from '../../components/announce-list/announce-list.component';
+import { AnnounceCardComponent } from '../../components/announce-card/announce-card.component';
 
 @NgModule({
-    declarations: [HomeComponent, TeamActivitiesComponent, AnnounceComponent],
+    declarations: [HomeComponent, TeamActivitiesComponent, AnnounceComponent, AnnounceListComponent, AnnounceCardComponent],
     imports: [
         MatCardModule,
         MatDatepickerModule,

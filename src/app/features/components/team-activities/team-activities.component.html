@@ -1,104 +1,124 @@
-<div class="row p-3">
-    <div class="col-md-6">
-        <mat-card class="inline-calendar-card">
-            <mat-calendar
-                #calendar
-                [dateClass]="dateClass"
-                [(selected)]="selectedCalendarDate"
-                (selectedChange)="onSelectedDateChanged()"
-            ></mat-calendar>
-        </mat-card>
+<div class="card p-3">
+    <div class="row p-2">
+        <div class="col-sm-12 col-md-12 col-xl-12">
+            <p class="fs-2 m-0">{{ title }}</p>
+        </div>
     </div>
-    <div class="col-md-6 max-height-500">
-        <div *ngIf="selectedCalendarDate">
-            <div *ngIf="!events || events.length === 0; else eventsContent">
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <p class="card-text text-center p-5">ไม่มี Event</p>
+    <div class="row">
+        <div class="col-sm-12 col-md-6 col-xl-6">
+            <mat-card class="inline-calendar-card">
+                <mat-calendar
+                    #calendar
+                    [dateClass]="dateClass"
+                    [(selected)]="selectedCalendarDate"
+                    (selectedChange)="onSelectedDateChanged()"
+                ></mat-calendar>
+            </mat-card>
+        </div>
+        <div class="col-sm-12 col-md-6 col-xl-6 max-height-100">
+            <div *ngIf="selectedCalendarDate">
+                <div *ngIf="!events || events.length === 0; else eventsContent">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <p class="card-text text-center p-5">ไม่มี Event</p>
+                        </div>
                     </div>
                 </div>
+
+                <ng-template #eventsContent>
+                    <div *ngFor="let event of events" class="card mb-4">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-12 col-md-12 col-xl-12 d-flex justify-content-end gap-2">
+                                    <span class="fs-6 color-primary cursor-pointer">
+                                        <fa-icon [icon]="faEdit"></fa-icon>
+                                    </span>
+                                    <span class="fs-6 color-red cursor-pointer">
+                                        <fa-icon [icon]="faTrash"></fa-icon>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="row d-flex justify-content-center align-items-center my-2">
+                                <div class="col-sm-3 col-md-2 d-flex justify-content-center">
+                                    <span class="fs-5 color-primary"><fa-icon [icon]="faCalendar"></fa-icon></span>
+                                </div>
+                                <div class="col-sm-9 col-md-10">
+                                    <p class="card-title fs-5">{{ event?.title }}</p>
+                                </div>
+                            </div>
+
+                            <div class="row d-flex justify-content-center align-items-center my-2">
+                                <div class="col-sm-3 col-md-2 d-flex justify-content-center"></div>
+                                <div class="col-sm-9 col-md-10">
+                                    <p class="card-text fs-7">{{ event?.datetime | date : 'medium' }}</p>
+                                </div>
+                            </div>
+
+                            <div class="row d-flex justify-content-center align-items-center my-2">
+                                <div class="col-sm-3 col-md-2 d-flex justify-content-center">
+                                    <span class="fs-5 color-primary"><fa-icon [icon]="faLocation"></fa-icon></span>
+                                </div>
+                                <div class="col-sm-9 col-md-10">
+                                    <p class="card-text fs-6">{{ event?.location }}</p>
+                                </div>
+                            </div>
+
+                            <div class="row d-flex justify-content-center align-items-center my-2">
+                                <div class="col-sm-3 col-md-2 d-flex justify-content-center">
+                                    <span class="fs-5 color-primary"><fa-icon [icon]="faList"></fa-icon></span>
+                                </div>
+                                <div class="col-sm-9 col-md-10">
+                                    <p class="card-text fs-6">{{ event?.description }}</p>
+                                </div>
+                            </div>
+
+                            <div class="row d-flex justify-content-center align-items-center my-2">
+                                <div class="col-sm-3 col-md-2 d-flex justify-content-center">
+                                    <span class="fs-5 color-primary"><fa-icon [icon]="faUserGroup"></fa-icon></span>
+                                </div>
+                                <div class="col-sm-9 col-md-10">
+                                    <p class="card-text fs-6">จำนวนผู้เข้าร่วม {{ event?.members.length }} คน</p>
+                                </div>
+                            </div>
+                            <div class="row d-flex justify-content-center align-items-center">
+                                <div class="col-sm-3 col-md-2 d-flex justify-content-center"></div>
+                                <div class="col-sm-9 col-md-10">
+                                    <ul class="list-unstyled m-0">
+                                        <li *ngFor="let member of event?.members" class="d-flex align-items-center gap-3 my-1">
+                                            <div class="profile">
+                                                <img
+                                                    class="profile-image img-fluid"
+                                                    [src]="member.profile"
+                                                    [alt]="member.username"
+                                                    (error)="handleProfileError($event)"
+                                                />
+                                            </div>
+                                            <div class="user-info">
+                                                <p class="card-text fs-7">{{ member?.username }}</p>
+                                                <p class="card-text fs-8">{{ member?.role }}</p>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="row p-5">
+                                <div class="col-sm-12 col-md-12">
+                                    <span class="fs-5">
+                                        <button type="button" class="btn btn-primary-color text-white w-100">
+                                            <fa-icon class="cursor-pointer" [icon]="faPlus"></fa-icon> เพิ่ม Event ใหม่
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
             </div>
-
-            <ng-template #eventsContent>
-                <div *ngFor="let event of events" class="card mb-4">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-12 d-flex justify-content-end gap-2">
-                                <span class="fs-6 color-primary cursor-pointer">
-                                    <fa-icon [icon]="faEdit"></fa-icon>
-                                </span>
-                                <span class="fs-6 color-red cursor-pointer">
-                                    <fa-icon [icon]="faTrash"></fa-icon>
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="row d-flex justify-content-center align-items-center my-2">
-                            <div class="col-md-2 d-flex justify-content-center">
-                                <span class="fs-5 color-primary"><fa-icon [icon]="faCalendar"></fa-icon></span>
-                            </div>
-                            <div class="col-md-10">
-                                <p class="card-title fs-5">{{ event?.title }}</p>
-                            </div>
-                        </div>
-
-                        <div class="row d-flex justify-content-center align-items-center my-2">
-                            <div class="col-md-2 d-flex justify-content-center"></div>
-                            <div class="col-md-10">
-                                <p class="card-text fs-7">{{ event?.datetime | date : 'medium' }}</p>
-                            </div>
-                        </div>
-
-                        <div class="row d-flex justify-content-center align-items-center my-2">
-                            <div class="col-md-2 d-flex justify-content-center">
-                                <span class="fs-5 color-primary"><fa-icon [icon]="faLocation"></fa-icon></span>
-                            </div>
-                            <div class="col-md-10">
-                                <p class="card-text fs-6">{{ event?.location }}</p>
-                            </div>
-                        </div>
-
-                        <div class="row d-flex justify-content-center align-items-center my-2">
-                            <div class="col-md-2 d-flex justify-content-center">
-                                <span class="fs-5 color-primary"><fa-icon [icon]="faList"></fa-icon></span>
-                            </div>
-                            <div class="col-md-10">
-                                <p class="card-text fs-6">{{ event?.description }}</p>
-                            </div>
-                        </div>
-
-                        <div class="row d-flex justify-content-center align-items-center my-2">
-                            <div class="col-md-2 d-flex justify-content-center">
-                                <span class="fs-5 color-primary"><fa-icon [icon]="faUserGroup"></fa-icon></span>
-                            </div>
-                            <div class="col-md-10">
-                                <p class="card-text fs-6">จำนวนผู้เข้าร่วม {{ event?.members.length }} คน</p>
-                            </div>
-                        </div>
-                        <div class="row d-flex justify-content-center align-items-center">
-                            <div class="col-md-2 d-flex justify-content-center"></div>
-                            <div class="col-md-10">
-                                <ul class="list-unstyled m-0">
-                                    <li *ngFor="let member of event?.members" class="d-flex align-items-center gap-3 my-1">
-                                        <div class="profile">
-                                            <img
-                                                class="profile-image img-fluid"
-                                                [src]="member.profile"
-                                                [alt]="member.username"
-                                                (error)="handleProfileError($event)"
-                                            />
-                                        </div>
-                                        <div class="user-info">
-                                            <p class="card-text fs-7">{{ member?.username }}</p>
-                                            <p class="card-text fs-8">{{ member?.role }}</p>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </ng-template>
         </div>
     </div>
 </div>

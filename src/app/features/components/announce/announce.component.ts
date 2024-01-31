@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { faBullhorn } from '@fortawesome/free-solid-svg-icons';
+import { faBullhorn, faEdit } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'app-announce',
@@ -11,16 +11,19 @@ export class AnnounceComponent {
 
     announcements = [
         {
-            announceTitle: 'ประกาศ 1',
+            id: '1',
+            title: 'ประกาศ 1',
             description: 'ข้อความประกาศ 1',
-        },
-        {
-            announceTitle: 'ประกาศ 2',
-            description: 'ข้อความประกาศ 2',
+            startDate: '2021-01-01',
+            endDate: '2021-01-01',
+            createAt: '2021-01-01T00:00:00',
+            createById: '1',
         },
     ];
 
     marqueeText = '';
+
+    faEdit = faEdit;
 
     ngOnInit(): void {
         this.updateMarqueeText();
@@ -31,9 +34,9 @@ export class AnnounceComponent {
             this.marqueeText = this.announcements
                 .map((announce, index, array) => {
                     if (index < array.length - 1) {
-                        return `${announce.announceTitle} : ${announce.description} <span class="marquee-space">|</span>`;
+                        return `<strong>${announce.title}</strong> : ${announce.description} <span class="marquee-space"></span>`;
                     } else {
-                        return `${announce.announceTitle} : ${announce.description}`;
+                        return `<strong>${announce.title}</strong> : ${announce.description}`;
                     }
                 })
                 .join('');

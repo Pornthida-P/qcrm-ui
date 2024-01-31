@@ -1,0 +1,15 @@
+<div *ngIf="cards && cards.length > 0; else noCards">
+    <div class="row">
+        <div class="col-md-6" *ngFor="let card of cards">
+            <app-announce-card [card]="card"></app-announce-card>
+        </div>
+    </div>
+</div>
+
+<ng-template #noCards>
+    <div class="row p-4">
+        <div class="col-md-12">
+            <p class="m-0 text-center">ไม่มีการ์ด</p>
+        </div>
+    </div>
+</ng-template>

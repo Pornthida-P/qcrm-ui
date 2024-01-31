@@ -1,13 +1,30 @@
 <div class="h-100">
     <div class="bg-white rounded shadow w-100 h-100 d-flex flex-column p-4 overflow-auto">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-12">
                 <app-announce></app-announce>
             </div>
         </div>
         <div class="row">
-            <div class="col-md-5"></div>
-            <div class="col-md-7"><app-team-activities></app-team-activities></div>
+            <div class="col-sm-12 col-md-12 col-xl-6">
+                <ng-container *ngFor="let type of cardTypes">
+                    <div class="card p-3 mb-4">
+                        <div class="row p-2">
+                            <div class="col-12">
+                                <p class="fs-2 m-0">{{ type.title }}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <app-announce-list [cards]="getCardsByType(type.key)"></app-announce-list>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+            <div class="col-sm-12 col-md-12 col-xl-6">
+                <app-team-activities></app-team-activities>
+            </div>
         </div>
     </div>
 </div>

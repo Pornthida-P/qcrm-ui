@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatCalendar, MatCalendarCellClassFunction } from '@angular/material/datepicker';
-import { faCalendarAlt, faEdit, faList, faLocationDot, faTrash, faUserGroup } from '@fortawesome/free-solid-svg-icons';
+import { faCalendarAlt, faEdit, faList, faLocationDot, faPlusCircle, faTrash, faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import * as moment from 'moment';
 
 @Component({
@@ -20,6 +20,9 @@ export class TeamActivitiesComponent implements OnInit {
     faUserGroup = faUserGroup;
     faEdit = faEdit;
     faTrash = faTrash;
+    faPlus = faPlusCircle;
+
+    title: string = 'Team Activities';
 
     profileError: string = '/assets/nea-qcrm-ui/image/profile/user.jpg';
 
