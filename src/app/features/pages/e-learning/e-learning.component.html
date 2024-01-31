@@ -1,19 +1,31 @@
 <div class="h-full">
     <div class="bg-white border-round-lg shadow-2 w-full pb-4 h-full">
-        <div class="p-4 flex flex-column md:flex-row lg:flex-row gap-4 align-items-center">
-            <p class="m-0 text-2xl flex-none">หลักสูตร E-learning</p>
-            <div class="flex flex-grow-1 flex-nowrap w-full">
-                <span class="p-input-icon-left w-full">
-                    <i class="pi pi-search color-primary font-semibold"></i>
+        <div class="p-4 d-flex flex-column justify-content-between flex-md-row flex-lg-row gap-4 align-items-center w-100">
+            <p class="m-0 d-flex fs-5">หลักสูตร E-learning</p>
+            <div class="d-flex flex-nowrap flex-grow-1">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border border-end-0 color-primary" id="basic-addon1">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
                     <input
+                        id="table-complete-search"
                         type="text"
+                        class="form-control border border-start-0 shadow-none"
                         pInputText
                         [(ngModel)]="value"
                         (ngModelChange)="onSearchChange()"
                         placeholder="ค้นหา..."
-                        ngClass="font-thai w-full border-noround-right"
+                        aria-describedby="basic-addon1"
+                        style="width: 70%"
                     />
-                </span>
+                </div>
+            </div>
+            <button class="d-flex align-items-center gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white">
+                <i class="fa-solid fa-plus"></i>
+                สร้างหลักสูตร
+            </button>
+            <div class="d-none d-md-flex d-lg-none p-2 btn-primary-color rounded text-white">
+                <i class="fa-solid fa-plus"></i>
             </div>
         </div>
         <div>
@@ -63,7 +75,10 @@
                 </table>
             </div>
             <ul class="pagination sidebar justify-content-center">
-                <li class="page-item" [class.disabled]="currentPage == 1">
+                <li class="text-center d-flex align-items-center">
+                    <a class=""></a>
+                </li>
+                <li class="page-item ms-3" [class.disabled]="currentPage == 1">
                     <a class="page-link custom-link preBtn" (click)="pageChange(1)" aria-label="Previous">
                         <i class="fa-solid fa-angles-left"></i>
                     </a>

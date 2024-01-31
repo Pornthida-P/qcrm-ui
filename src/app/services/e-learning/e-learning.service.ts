@@ -10,15 +10,15 @@ export class ELearningService {
     constructor(private http: HttpClient) {}
     baseUrl: string = `${environment.api.url}`;
 
-    getELearning(page: number, limit: number, sortId: string, search: string) {
-        return this.http.get(`${this.baseUrl}${config.api.path.elearning}/${page}/${limit}/${sortId}?s=${search}`);
+    getELearning(page: number, limit: number, sortId: string, search: string, fliter: string) {
+        return this.http.get(`${this.baseUrl}${config.api.path.elearning}/${page}/${limit}/${sortId}?s=${search}&f=${fliter}`);
     }
 
     getELearningById(topicId: string) {
         return this.http.get(`${this.baseUrl}${config.api.path.elearning}/findById/${topicId}`);
     }
 
-    getELearningPage(search: string) {
-        return this.http.get(`${this.baseUrl}${config.api.path.elearning}/page?s=${search}`);
+    getELearningPage(search: string, fliter: string) {
+        return this.http.get(`${this.baseUrl}${config.api.path.elearning}/page?s=${search}&f=${fliter}`);
     }
 }

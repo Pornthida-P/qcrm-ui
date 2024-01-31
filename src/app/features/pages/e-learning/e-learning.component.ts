@@ -41,6 +41,7 @@ export class ELearningComponent {
             { name: 'ทั้งหมด', code: 'all' },
             { name: 'Only My', code: 'me' },
         ];
+        this.selectedFilter = this.filterOption[0].code;
 
         this.activeRoute.queryParams.subscribe((params) => {
             if (params['cb'] != undefined && params['cb'] != '') {
@@ -51,20 +52,22 @@ export class ELearningComponent {
                 this.totalPages = cbArray[3];
             }
         });
-        this.selectedFilter = this.filterOption[0];
+
         this.getElearn((this.currentPage - 1) * this.pageSize, this.pageSize);
         this.getPage();
     }
 
     async getElearn(page: number, pageSize: number) {
-        await this.eLearningService.getELearning(page, pageSize, `${this.sortId},${this.sortOrder}`, this.value).subscribe((res: any) => {
-            this.course = res;
-        });
+        await this.eLearningService
+            .getELearning(page, pageSize, `${this.sortId},${this.sortOrder}`, this.value, this.selectedFilter)
+            .subscribe((res: any) => {
+                this.course = res;
+            });
     }
 
     async getElearnSideBar(page: number, pageSize: number, value: string) {
         await this.eLearningService
-            .getELearning(page, pageSize, `${this.sortId},${this.sortOrder}`, this.value)
+            .getELearning(page, pageSize, `${this.sortId},${this.sortOrder}`, this.value, this.selectedFilter)
             .subscribe((res: any) => {
                 this.course = res;
             })
@@ -75,7 +78,7 @@ export class ELearningComponent {
     }
 
     async getPage() {
-        await this.eLearningService.getELearningPage(this.value).subscribe((res: any) => {
+        await this.eLearningService.getELearningPage(this.value, this.selectedFilter).subscribe((res: any) => {
             this.totalItems = res.count;
         });
     }
@@ -116,7 +119,6 @@ export class ELearningComponent {
     }
 
     showSideBar(value: number) {
-        console.log('shoSideBar');
         this.itemIdex = value;
         this.detailItem = this.course[this.itemIdex];
         this.visibleLeftSideBar = true;
@@ -132,7 +134,7 @@ export class ELearningComponent {
                 this.sortIcon = 'fa-solid fa-sort-up';
                 this.sortOrder = 'DESC';
             } else {
-                this.sortId = '-'
+                this.sortId = '-';
                 this.sortIcon = '';
             }
         } else {
