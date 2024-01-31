@@ -30,13 +30,12 @@ export class ManageSurveyFormComponent {
     }
 
     submit() {
-        console.log(this.formName, this.form);
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
         if (userData) {
             const data = {
                 name: this.formName,
                 form: this.form,
-                createBy: userData.userId,
+                createdBy: userData.userId,
             };
 
             this.surveyFormService
