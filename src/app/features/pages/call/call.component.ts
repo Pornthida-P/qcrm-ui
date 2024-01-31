@@ -1,14 +1,72 @@
-import { Component } from '@angular/core';
+import { Component, Pipe, PipeTransform, OnInit } from '@angular/core';
 import { faPenToSquare, faTrashCan, faArrowRight, faArrowLeft, faCircleXmark, } from '@fortawesome/free-solid-svg-icons';
 import { CallService } from 'src/app/services/call/call.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Call } from 'src/app/shared/interface/call';
+import { UserService } from 'src/app/services/user/user.service';
+import { User } from 'src/app/shared/interface/user.interface';
+@Pipe({
+  name: 'searchFilter',
+})
+
+//search รวมทุก field
+export class SearchPipe implements PipeTransform {
+  transform(value: any, args: any, filter: any): any {
+      if (value) {
+          return value.filter((val: Call) => {
+              if (filter === 'all') {
+                  if (!args) return true;
+                  return Object.values(val).some(field => field && field.toString().toLocaleLowerCase().includes(args));
+              } else {
+                  return Object.values(val).some(field => field && field.toString().toLocaleLowerCase().includes(filter));
+              }
+          });
+      }
+  }
+}
+
+// search ทีละ field
+// export class SearchPipe implements PipeTransform {
+//   transform(value: any, args: any, filter: any): any {
+//       if (value) {
+//           return value.filter((val: Call) => {
+//               switch (filter) {
+//                   case 'all':
+//                       if (!args) return true;
+//                       else return val.mobilePhone.toLocaleLowerCase().includes(args)
+//                           || val.agent.toLocaleLowerCase().includes(args)
+//                           || val.solutions.toLocaleLowerCase().includes(args)
+//                           || val.detail.toLocaleLowerCase().includes(args)
+//                           || val.subject.toLocaleLowerCase().includes(args)
+//                           || val.typePhone.toLocaleLowerCase().includes(args)
+//                           || val.time.toLocaleLowerCase().includes(args);
+//                   default:
+//                       if (!args) return val.agent.toLocaleLowerCase().includes(filter)
+//                           || val.solutions.toLocaleLowerCase().includes(filter)
+//                           || val.detail.toLocaleLowerCase().includes(filter)
+//                           || val.subject.toLocaleLowerCase().includes(filter)
+//                           || val.typePhone.toLocaleLowerCase().includes(filter)
+//                           || val.time.toLocaleLowerCase().includes(filter);
+//                       else return val.agent.toLocaleLowerCase().includes(filter)
+//                           && val.mobilePhone.toLocaleLowerCase().includes(args)
+//                           && val.solutions.toLocaleLowerCase().includes(filter)
+//                           && val.detail.toLocaleLowerCase().includes(filter)
+//                           && val.subject.toLocaleLowerCase().includes(filter)
+//                           && val.typePhone.toLocaleLowerCase().includes(filter)
+//                           && val.time.toLocaleLowerCase().includes(filter);
+//               }
+//           });
+//       }
+//   }
+// }
+
 
 @Component({
   selector: 'app-call',
   templateUrl: './call.component.html',
   styleUrls: ['./call.component.scss']
 })
-export class CallComponent {
+export class CallComponent implements OnInit{
 
   value: string | undefined;
 
@@ -37,14 +95,20 @@ export class CallComponent {
   filterOption!: any[];
   selectedFilter: any | undefined;
 
+  valueSearch!: string;
 
-  constructor(private callService: CallService, private router: Router, private activeRoute: ActivatedRoute) {
+  userData: any;
+
+  constructor(private callService: CallService, private router: Router, private activeRoute: ActivatedRoute, private userService: UserService) {
   }
 
   ngOnInit() {
+
+    this.getUserData()
+
     this.filterOption = [
       { name: 'ทั้งหมด', code: 'all' },
-      { name: 'Only My', code: 'me' },
+      { name: 'Only My', code: this.userData.username },
     ];
 
     this.activeRoute.queryParams.subscribe((params) => {
@@ -56,7 +120,7 @@ export class CallComponent {
         this.totalPages = cbArray[3];
       }
     });
-    this.selectedFilter = this.filterOption[0];
+    this.selectedFilter = this.filterOption[0].code;
     this.getCallsData((this.currentPage - 1) * this.pageSize, this.pageSize);
     this.getPage();
   }
@@ -92,7 +156,7 @@ export class CallComponent {
     console.log('go to editpage');
     console.log(item);
     const cb = `${this.pageSize},${this.currentPage},${this.totalItems},${this.totalPages}`;
-    this.router.navigate(['/e-learning/edit'], { queryParams: { itemId: item.activityTopicId, cb: cb } });
+    this.router.navigate(['/'], { queryParams: { itemId: item.activityTopicId, cb: cb } });
   }
 
   async pageChange(page: number) {
@@ -150,6 +214,20 @@ export class CallComponent {
   getPage() {
     this.callService.getCallsPage().subscribe((res: any) => {
       this.totalItems = res.count;
+    });
+  }
+
+  search() {
+    this.calls.filter((item: any) => item.mobilePhone.toLowerCase().includes(this.valueSearch.toLowerCase()));
+  }
+
+  createCall() {
+    this.router.navigate(['/call/create']);
+  }
+
+  getUserData() {
+    this.userService.getDataUser().subscribe((user: User | null) => {
+        this.userData = user;
     });
   }
 }
