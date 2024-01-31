@@ -1,22 +1,46 @@
-import { Component, ElementRef, EventEmitter, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, OnInit, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { SurveyFormService } from 'src/app/services/survey-form/survey-form.service';
-import { Subject, catchError, tap } from 'rxjs';
+import { Subject, catchError, filter, tap } from 'rxjs';
 import { FormioRefreshValue } from '@formio/angular';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 @Component({
     selector: 'app-manage-survey-form',
     templateUrl: './manage-survey-form.component.html',
     styleUrls: ['./manage-survey-form.component.scss'],
 })
-export class ManageSurveyFormComponent {
+export class ManageSurveyFormComponent implements OnInit {
     form: any = {};
     formName!: string;
     isFormSelected: boolean = false;
     typeForm: string[] = ['addComponent', 'saveComponent'];
+    surveyFormId: string = '';
+    cb: string = '';
+    detailItem: any = undefined;
 
-    constructor(private _location: Location, private surveyFormService: SurveyFormService, private sweetalertServices: SweetAlertService) {
+    constructor(
+        private _location: Location,
+        private surveyFormService: SurveyFormService,
+        private sweetalertServices: SweetAlertService,
+        private route: ActivatedRoute,
+    ) {
         this.form = { components: [] };
+    }
+    ngOnInit(): void {
+        this.route.queryParams.subscribe((params) => {
+            this.surveyFormId = params['itemId'];
+            this.cb = params['cb'];
+        });
+        this.getSurveyById(this.surveyFormId);
+    }
+
+    async getSurveyById(surveyFormId: string) {
+        await this.surveyFormService.getSurveyFormById(surveyFormId).subscribe((res: any) => {
+            this.detailItem = res[0];
+            this.formName = this.detailItem.name;
+            this.form = JSON.parse(this.detailItem.form);
+        });
     }
 
     onChange(event: any) {
@@ -30,27 +54,50 @@ export class ManageSurveyFormComponent {
     }
 
     submit() {
-        console.log(this.formName, this.form);
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
         if (userData) {
-            const data = {
-                name: this.formName,
-                form: this.form,
-                createBy: userData.userId,
-            };
+            if (this.detailItem) {
+                const data = {
+                    id: this.detailItem.surveyFormId,
+                    name: this.formName,
+                    form: this.form,
+                    description: null,
+                    modifiedBy: userData.userId,
+                };
 
-            this.surveyFormService
-                .createSurveyForm(data)
-                .pipe(
-                    tap((res) => {
-                        this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '');
-                    }),
-                    catchError((error) => {
-                        this.handleError(error);
-                        throw error;
-                    }),
-                )
-                .subscribe();
+                this.surveyFormService
+                    .editSurveyForm(data)
+                    .pipe(
+                        tap((res) => {
+                            this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/surveyform');
+                        }),
+                        catchError((error) => {
+                            this.handleError(error);
+                            throw error;
+                        }),
+                    )
+                    .subscribe();
+            } else {
+                const data = {
+                    name: this.formName,
+                    form: this.form,
+                    description: null,
+                    createdBy: userData.userId,
+                };
+
+                this.surveyFormService
+                    .createSurveyForm(data)
+                    .pipe(
+                        tap((res) => {
+                            this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '');
+                        }),
+                        catchError((error) => {
+                            this.handleError(error);
+                            throw error;
+                        }),
+                    )
+                    .subscribe();
+            }
         }
     }
 

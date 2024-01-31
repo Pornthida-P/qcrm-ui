@@ -38,12 +38,29 @@ const routes: Routes = [
                             import('../../pages/manage-survey-form/manage-survey-form.module').then((m) => m.ManageSurveyFormModule),
                         title: 'New Survey Form',
                     },
+                    {
+                        path: 'edit',
+                        loadChildren: () =>
+                            import('../../pages/manage-survey-form/manage-survey-form.module').then((m) => m.ManageSurveyFormModule),
+                        title: 'Edit Survey Form',
+                    },
                 ],
             },
             {
                 path: 'call',
-                loadChildren: () => import('../../pages/call/call.module').then((m) => m.CallModule),
-                title: 'Call',
+                children: [
+                  {
+                      path: '',
+                      loadChildren: () => import('../../pages/call/call.module').then((m) => m.CallModule),
+                      title: 'Call',
+                  },
+                  {
+                      path: 'create',
+                      loadChildren: () =>
+                          import('../../pages/create-call/create-call.module').then((m) => m.CreateCallModule),
+                      title: 'Create Call',
+                  },
+              ],
             },
             {
                 path: 'e-learning',

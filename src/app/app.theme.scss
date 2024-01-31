@@ -157,3 +157,46 @@ th[sortable].desc:before {
 .fs-10 {
     font-size: 0.5rem !important;
 }
+
+.offcanvas {
+    width: 40% !important;
+    padding: 10px;
+}
+
+.row-side {
+    padding: 10px 0 10px 0;
+}
+
+.call-side-detail {
+    border-radius: 8px;
+    margin-top: 2%;
+}
+
+.call-side-change-by {
+    border-radius: 8px;
+    margin-top: 4%;
+}
+
+.custom-link {
+    color: #000 !important;
+}
+
+.page-item.active a.page-link.custom-link {
+    color: #ffffff !important;
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.nextBtn {
+    border-top-right-radius: 0.5rem !important;
+    border-bottom-right-radius: 0.5rem !important;
+}
+
+.preBtn {
+    border-top-left-radius: 0.5rem !important;
+    border-bottom-left-radius: 0.5rem !important;
+}
+
+.color-gray {
+  color: #acabab;
+}
