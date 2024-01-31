@@ -48,8 +48,19 @@ const routes: Routes = [
             },
             {
                 path: 'call',
-                loadChildren: () => import('../../pages/call/call.module').then((m) => m.CallModule),
-                title: 'Call',
+                children: [
+                  {
+                      path: '',
+                      loadChildren: () => import('../../pages/call/call.module').then((m) => m.CallModule),
+                      title: 'Call',
+                  },
+                  {
+                      path: 'create',
+                      loadChildren: () =>
+                          import('../../pages/create-call/create-call.module').then((m) => m.CreateCallModule),
+                      title: 'Create Call',
+                  },
+              ],
             },
             {
                 path: 'e-learning',
