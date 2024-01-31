@@ -1,0 +1,59 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 p-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="m-0">Team Management</h2>
+                <button type="button" class="btn btn-primary-color text-white">Add Team Member</button>
+            </div>
+        </div>
+        <div class="col-md-12 px-4 pt-2 pb-4">
+            <div *ngIf="groupMembers && groupMembers.length > 0; else noGroups">
+                <ul class="team-list list-unstyled px-3 py-2">
+                    <div class="card mb-3" *ngFor="let groupMember of groupMembers">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-8 col-xl-9">
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <div class="group">
+                                                <p class="m-1">
+                                                    {{ groupMember?.groupName }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="member d-flex justify-content-end">
+                                                <div
+                                                    class="profile rounded-circle position-relative overflow-hidden"
+                                                    *ngFor="let member of groupMember?.members"
+                                                >
+                                                    <img
+                                                        class="profile-image img-fluid"
+                                                        [src]="member?.profile"
+                                                        [alt]="member?.username"
+                                                        (error)="handleProfileError($event)"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-xl-3">
+                                    <div class="group-length">
+                                        <p class="m-1 text-end">{{ groupMember?.members?.length }} Members</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ul>
+            </div>
+
+            <ng-template #noGroups>
+                <div class="no-group p-3">
+                    <p class="m-0 text-center">No groups available.</p>
+                </div>
+            </ng-template>
+        </div>
+    </div>
+</div>

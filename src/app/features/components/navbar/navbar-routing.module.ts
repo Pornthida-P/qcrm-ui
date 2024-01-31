@@ -71,6 +71,11 @@ const routes: Routes = [
                 title: 'Products',
             },
             {
+                path: 'setting',
+                loadChildren: () => import('../../pages/setting/setting.module').then((m) => m.SettingModule),
+                title: 'Products',
+            },
+            {
                 path: '',
                 redirectTo: '/home',
                 pathMatch: 'full',

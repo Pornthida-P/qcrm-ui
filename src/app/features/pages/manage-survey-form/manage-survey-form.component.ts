@@ -1,34 +1,79 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
-import { ManageSurveyFormService } from 'src/app/services/manage-survey-form/manage-survey-form.service';
+import { SurveyFormService } from 'src/app/services/survey-form/survey-form.service';
+import { Subject, catchError, tap } from 'rxjs';
+import { FormioRefreshValue } from '@formio/angular';
+import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 @Component({
-  selector: 'app-manage-survey-form',
-  templateUrl: './manage-survey-form.component.html',
-  styleUrls: ['./manage-survey-form.component.scss'],
+    selector: 'app-manage-survey-form',
+    templateUrl: './manage-survey-form.component.html',
+    styleUrls: ['./manage-survey-form.component.scss'],
 })
 export class ManageSurveyFormComponent {
+    form: any = {};
+    formName!: string;
+    isFormSelected: boolean = false;
+    typeForm: string[] = ['addComponent', 'saveComponent'];
 
-  constructor(private _location: Location, private manageSurveyFormService: ManageSurveyFormService ) {}
+    constructor(private _location: Location, private surveyFormService: SurveyFormService, private sweetalertServices: SweetAlertService) {
+        this.form = { components: [] };
+    }
 
-  form: any = {};
-  isFormSelected: boolean = false;
-
-  typeForm: string[] = ['addComponent', 'saveComponent'];
     onChange(event: any) {
-        if (this.typeForm.includes(event.type)) console.log(event.form);
+        // if (this.typeForm.includes(event.type)) {
+        //     this.surveyForm = JSON.stringify(event.form, null, 4);
+        // }
     }
 
-  prev() {
-    this._location.back();
-  }
-
-  submit() {
-    if (this.isFormSelected) {
-      this.manageSurveyFormService.saveForm
-      console.log('Submit clicked with selected form:', this.form);
-    } else {
-      console.log('Please select a form before submitting.');
+    prev() {
+        this._location.back();
     }
-  }
 
+    submit() {
+        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        if (userData) {
+            const data = {
+                name: this.formName,
+                form: this.form,
+                createdBy: userData.userId,
+            };
+
+            this.surveyFormService
+                .createSurveyForm(data)
+                .pipe(
+                    tap((res) => {
+                        this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '');
+                    }),
+                    catchError((error) => {
+                        this.handleError(error);
+                        throw error;
+                    }),
+                )
+                .subscribe();
+        }
+    }
+
+    handleError(error: any) {
+        let icon: string;
+        let errorMessage: string;
+        let title: string;
+        let route: string;
+
+        switch (error.status) {
+            case 401:
+                icon = 'warning';
+                title = 'warning Authentication';
+                errorMessage = 'Your session has expired. Please log in again.';
+                route = 'login';
+                break;
+            default:
+                icon = 'error';
+                title = 'Survey Form Error';
+                errorMessage = 'Failed to load survey forms. Please try again later.';
+                route = '';
+                break;
+        }
+
+        this.sweetalertServices.getSwal(icon, title, errorMessage, false, route);
+    }
 }
