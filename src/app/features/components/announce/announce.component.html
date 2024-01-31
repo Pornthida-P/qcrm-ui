@@ -1,0 +1,11 @@
+<div class="row py-1 px-5" *ngIf="announcements.length > 0">
+    <div class="col-md-2 col-xl-1 d-flex flex-row gap-2">
+        <fa-icon class="color-primary" [icon]="faAnnounce"></fa-icon>
+        <p class="color-primary m-0">ประกาศ :</p>
+    </div>
+    <div class="col-md-10 col-xl-11">
+        <marquee class="fs-7" behavior="scroll" direction="left" scrollamount="8">
+            <p [innerHTML]="marqueeText"></p>
+        </marquee>
+    </div>
+</div>
