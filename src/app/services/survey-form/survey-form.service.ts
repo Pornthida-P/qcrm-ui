@@ -19,15 +19,23 @@ export class SurveyFormService {
         return this.http.post(`${this.baseUrl}${config.api.path.surveyForm.baseUrl}`, data);
     }
 
+    editSurveyForm(data: any) {
+        return this.http.put(`${this.baseUrl}${config.api.path.surveyForm.baseUrl}`, data);
+    }
+
+    deleteSurveyForm(id: string) {
+        return this.http.delete(`${this.baseUrl}${config.api.path.surveyForm.baseUrl}/${id}`);
+    }
+
     getSurveyFormByPage(page: number, limit: number, sortId: string) {
         return this.http.get(`${this.baseUrl}${config.api.path.surveyForm.baseUrl}/${page}/${limit}/${sortId}`);
     }
 
     getSurveyFormById(id: string) {
-        return this.http.get(`${this.baseUrl}${config.api.path.surveyForm.baseUrl}/find/${id}`);
+        return this.http.get(`${this.baseUrl}${config.api.path.surveyForm.baseUrl}${config.api.path.surveyForm.find}/${id}`);
     }
 
     countSurveyForm() {
-        return this.http.get(`${this.baseUrl}${config.api.path.surveyForm.baseUrl}/count`);
+        return this.http.get(`${this.baseUrl}${config.api.path.surveyForm.baseUrl}${config.api.path.surveyForm.count}`);
     }
 }

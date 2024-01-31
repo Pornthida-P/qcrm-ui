@@ -1,10 +1,12 @@
 import { Component, OnInit, Pipe, PipeTransform } from '@angular/core';
-import { faArrowLeft, faArrowRight, faPenToSquare, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faArrowRight, faPenToSquare, faTrashCan, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { ActivatedRoute, Router } from '@angular/router';
 import { config } from 'src/app/config/config';
 import * as XLSX from 'xlsx';
 import { SurveyFormService } from 'src/app/services/survey-form/survey-form.service';
 import { SurveyForm } from 'src/app/shared/interface/survey-form';
+import { catchError, tap } from 'rxjs';
+import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 
 @Pipe({
     name: 'searchFilter',
@@ -39,12 +41,14 @@ export class SurveyFormComponent implements OnInit {
     filterOption!: any[];
     selectedFilter: any | undefined;
     selectedForm: any | undefined;
-    faPenToSquare = faPenToSquare;
-    faTrashCan = faTrashCan;
 
     fileType: string = config.file.type;
+
+    faPenToSquare = faPenToSquare;
+    faTrashCan = faTrashCan;
     faArrowRight = faArrowRight;
     faArrowLeft = faArrowLeft;
+    faCircleXmark = faCircleXmark;
 
     pageSizeOptions = [10, 20];
     pageSize = 10;
@@ -63,7 +67,12 @@ export class SurveyFormComponent implements OnInit {
     sortOrder: string = 'ASC';
     sortIcon: string = '';
 
-    constructor(private router: Router, public surveyFormService: SurveyFormService, private activeRoute: ActivatedRoute) {}
+    constructor(
+        private router: Router,
+        public surveyFormService: SurveyFormService,
+        private activeRoute: ActivatedRoute,
+        private sweetalertServices: SweetAlertService,
+    ) {}
 
     ngOnInit() {
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
@@ -185,9 +194,25 @@ export class SurveyFormComponent implements OnInit {
         }
     }
 
-    editPage(item: any) {
+    edit(item: any) {
         const cb = `${this.pageSize},${this.currentPage},${this.totalItems},${this.totalPages}`;
-        this.router.navigate(['/surveyform/edit'], { queryParams: { itemId: item.activityTopicId, cb: cb } });
+        this.router.navigate(['/surveyform/edit'], { queryParams: { itemId: item.surveyFormId, cb: cb } });
+    }
+
+    deleteForm(id: string) {
+        this.surveyFormService
+            .deleteSurveyForm(id)
+            .pipe(
+                tap((res) => {
+                    this.sweetalertServices.getSwal('success', 'Delete data success.', '', false, '');
+                    window.location.reload();
+                }),
+                catchError((error) => {
+                    this.handleError(error);
+                    throw error;
+                }),
+            )
+            .subscribe();
     }
 
     formManage() {
@@ -209,19 +234,27 @@ export class SurveyFormComponent implements OnInit {
         }
     }
 
-    editSurveyForms() {
-        console.log('edit', this.selectedSurveyForms);
-    }
+    handleError(error: any) {
+        let icon: string;
+        let errorMessage: string;
+        let title: string;
+        let route: string;
 
-    deleteSurveyForms() {
-        console.log('delete', this.selectedSurveyForms);
-    }
+        switch (error.status) {
+            case 401:
+                icon = 'warning';
+                title = 'warning Authentication';
+                errorMessage = 'Your session has expired. Please log in again.';
+                route = 'login';
+                break;
+            default:
+                icon = 'error';
+                title = 'Survey Form Error';
+                errorMessage = 'Failed to load survey forms. Please try again later.';
+                route = '';
+                break;
+        }
 
-    onSelectionChangeForms(value: any[]) {
-        console.log(this.selectedSurveyForms);
-    }
-
-    search() {
-        this.surveyForms.filter((item: any) => item.name.toLowerCase().includes(this.valueSearch.toLowerCase()));
+        this.sweetalertServices.getSwal(icon, title, errorMessage, false, route);
     }
 }
