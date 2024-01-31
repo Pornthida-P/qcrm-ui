@@ -85,7 +85,11 @@
                         <td scope="row"><input type="checkbox" value="survey" (change)="onSelectionChange(survey)" /></td>
                         <td>{{ survey.no }}</td>
                         <td>{{ survey.name }}</td>
-                        <td class="text-ellipsis">{{ survey.survey_form }}</td>
+                        <td class="w-max-ellipsis">
+                            <div class="text-ellipsis">
+                                {{ survey.survey_form }}
+                            </div>
+                        </td>
                         <td>{{ survey.year }}</td>
                         <td>{{ survey.save_date }}</td>
                         <td class="text-center"><i class="fa-solid fa-pen-to-square"></i></td>

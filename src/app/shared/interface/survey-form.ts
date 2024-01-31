@@ -3,4 +3,6 @@ export interface SurveyForm {
     name: string;
     createdAt: string;
     createdBy: string;
+    modifiedBy: string;
+    modifiedAt: string;
 }
