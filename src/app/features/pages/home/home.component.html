@@ -7,20 +7,7 @@
         </div>
         <div class="row">
             <div class="col-sm-12 col-md-12 col-xl-6">
-                <ng-container *ngFor="let type of cardTypes">
-                    <div class="card p-3 mb-4">
-                        <div class="row p-2">
-                            <div class="col-12">
-                                <p class="fs-2 m-0">{{ type.title }}</p>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <app-announce-list [cards]="getCardsByType(type.key)"></app-announce-list>
-                            </div>
-                        </div>
-                    </div>
-                </ng-container>
+                <app-announce-list></app-announce-list>
             </div>
             <div class="col-sm-12 col-md-12 col-xl-6">
                 <app-team-activities></app-team-activities>

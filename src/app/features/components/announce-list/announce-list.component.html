@@ -1,15 +1,34 @@
-<div *ngIf="cards && cards.length > 0; else noCards">
-    <div class="row">
-        <div class="col-md-6" *ngFor="let card of cards">
-            <app-announce-card [card]="card"></app-announce-card>
+<ng-container *ngFor="let type of cardTypes">
+    <div class="card p-3 mb-4">
+        <div class="row p-2">
+            <div class="col-6">
+                <p class="card-title fs-2">{{ type.title }}</p>
+            </div>
+            <div class="col-6 d-flex justify-content-end align-items-center">
+                <button type="button" class="btn btn-primary-color text-white">
+                    <fa-icon [icon]="faPlus"></fa-icon>
+                    เพิ่ม
+                </button>
+            </div>
         </div>
-    </div>
-</div>
+        <div class="row">
+            <div class="col-12">
+                <div *ngIf="getCardsByType(type.key).length > 0; else noCards">
+                    <div class="row">
+                        <div class="col-md-6 py-2" *ngFor="let card of getCardsByType(type.key)">
+                            <app-announce-card [card]="card"></app-announce-card>
+                        </div>
+                    </div>
+                </div>
 
-<ng-template #noCards>
-    <div class="row p-4">
-        <div class="col-md-12">
-            <p class="m-0 text-center">ไม่มีการ์ด</p>
+                <ng-template #noCards>
+                    <div class="row p-4">
+                        <div class="col-md-12">
+                            <p class="text-center">ไม่มีการ์ด</p>
+                        </div>
+                    </div>
+                </ng-template>
+            </div>
         </div>
     </div>
-</ng-template>
+</ng-container>

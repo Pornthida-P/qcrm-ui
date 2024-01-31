@@ -1,16 +1,24 @@
-import { Component, Input } from '@angular/core';
-import { faCalendarAlt, faEdit, faList, faTrash, faUserGroup } from '@fortawesome/free-solid-svg-icons';
+import { Component, Input, OnInit } from '@angular/core';
+import { faCalendarAlt, faEdit, faList, faPaperclip, faThumbtack, faTrash, faUserGroup } from '@fortawesome/free-solid-svg-icons';
+import { AnnounceCard } from 'src/app/shared/interface/announce.interface';
 
 @Component({
     selector: 'app-announce-card',
     templateUrl: './announce-card.component.html',
     styleUrl: './announce-card.component.scss',
 })
-export class AnnounceCardComponent {
-    @Input() card: any;
+export class AnnounceCardComponent implements OnInit {
+    @Input() card?: AnnounceCard;
+
     faEdit = faEdit;
     faTrash = faTrash;
-    faCalendar = faCalendarAlt;
+    faThumbtack = faThumbtack;
     faList = faList;
-    faUserGroup = faUserGroup;
+    faPapercilp = faPaperclip;
+
+    ngOnInit(): void {}
+
+    onclickAttachment(url: string) {
+        window.open(url, '_blank');
+    }
 }

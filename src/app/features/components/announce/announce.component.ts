@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { faBullhorn, faEdit } from '@fortawesome/free-solid-svg-icons';
+import { Announce } from 'src/app/shared/interface/announce.interface';
 
 @Component({
     selector: 'app-announce',
@@ -9,23 +10,25 @@ import { faBullhorn, faEdit } from '@fortawesome/free-solid-svg-icons';
 export class AnnounceComponent {
     faAnnounce = faBullhorn;
 
-    announcements = [
-        {
-            id: '1',
-            title: 'ประกาศ 1',
-            description: 'ข้อความประกาศ 1',
-            startDate: '2021-01-01',
-            endDate: '2021-01-01',
-            createAt: '2021-01-01T00:00:00',
-            createById: '1',
-        },
-    ];
+    announcements: Announce[] = [];
 
     marqueeText = '';
 
     faEdit = faEdit;
 
     ngOnInit(): void {
+        this.announcements = [
+            {
+                id: '1',
+                title: 'ประกาศ 1',
+                description: 'ข้อความประกาศ 1',
+                startDate: '2021-01-01',
+                endDate: '2021-01-01',
+                createAt: '2021-01-01T00:00:00',
+                createById: '1',
+            },
+        ];
+
         this.updateMarqueeText();
     }
 
