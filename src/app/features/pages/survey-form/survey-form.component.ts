@@ -7,6 +7,7 @@ import { SurveyFormService } from 'src/app/services/survey-form/survey-form.serv
 import { SurveyForm } from 'src/app/shared/interface/survey-form';
 import { catchError, tap } from 'rxjs';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
+import Swal from 'sweetalert2';
 
 @Pipe({
     name: 'searchFilter',
@@ -130,7 +131,6 @@ export class SurveyFormComponent implements OnInit {
     }
 
     async pageChange(page: number) {
-        console.log(`${this.pageSize},${this.currentPage},${this.totalItems},${this.totalPages}`);
         if (page != this.currentPage) {
             if (page >= 1 && page <= this.totalPages) {
                 this.currentPage = page;
@@ -200,19 +200,30 @@ export class SurveyFormComponent implements OnInit {
     }
 
     deleteForm(id: string) {
-        this.surveyFormService
-            .deleteSurveyForm(id)
-            .pipe(
-                tap((res) => {
-                    this.sweetalertServices.getSwal('success', 'Delete data success.', '', false, '');
-                    window.location.reload();
-                }),
-                catchError((error) => {
-                    this.handleError(error);
-                    throw error;
-                }),
-            )
-            .subscribe();
+        Swal.fire({
+            icon: 'warning',
+            title: 'Do you want to delete this form?',
+            showCancelButton: true,
+            confirmButtonColor: '#3066be',
+            cancelButtonColor: '#ec5365',
+            width: '50%',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this.surveyFormService
+                    .deleteSurveyForm(id)
+                    .pipe(
+                        tap((res) => {
+                            this.sweetalertServices.getSwal('success', 'Delete data success.', '', false, '');
+                            window.location.reload();
+                        }),
+                        catchError((error) => {
+                            this.handleError(error);
+                            throw error;
+                        }),
+                    )
+                    .subscribe();
+            }
+        });
     }
 
     formManage() {
