@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { faCalendarAlt, faList, faLocationDot, faUserGroup, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { ModalCalendarService } from 'src/app/services/modal-calendar/modal-calendar.service';
 import { CalendarEvent } from 'src/app/shared/interface/calendar.interface';
 
 @Component({
@@ -19,11 +20,23 @@ export class CalendarCardComponent implements OnInit {
     faEdit = faEdit;
     faTrash = faTrash;
 
+    constructor(private modalCalendarService: ModalCalendarService) {}
+
     ngOnInit(): void {}
 
     handleProfileError(event: any) {
         if (event) {
             event.target.src = this.profileError;
         }
+    }
+
+    onClickEditEvent(event: CalendarEvent | undefined) {
+        if (event) {
+            this.modalCalendarService.openDialog('edit', event);
+        }
+    }
+
+    onClickDeleteEvent() {
+        console.log(`Delete Event`);
     }
 }
