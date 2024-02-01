@@ -4,7 +4,7 @@
             <p class="card-title fs-2">{{ title }}</p>
         </div>
         <div class="col-6 d-flex justify-content-end align-items-center">
-            <button type="button" class="btn btn-primary-color text-white">
+            <button type="button" class="btn btn-primary-color text-white" (click)="onClickAddEvent()">
                 <fa-icon [icon]="faPlus"></fa-icon>
                 เพิ่ม
             </button>
@@ -32,7 +32,7 @@
                 </div>
 
                 <ng-template #eventsContent>
-                    <div *ngFor="let event of events" class="card mb-4">
+                    <div *ngFor="let event of events" class="mb-4">
                         <app-calendar-card [event]="event"></app-calendar-card>
                     </div>
                 </ng-template>

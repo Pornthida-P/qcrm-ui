@@ -3,6 +3,7 @@ import { MatCalendar, MatCalendarCellClassFunction } from '@angular/material/dat
 import { faCalendarAlt, faEdit, faList, faLocationDot, faPlusCircle, faTrash, faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import { CalendarEvent } from 'src/app/shared/interface/calendar.interface';
 import * as moment from 'moment';
+import { ModalCalendarService } from 'src/app/services/modal-calendar/modal-calendar.service';
 
 @Component({
     selector: 'app-team-activities',
@@ -18,6 +19,8 @@ export class TeamActivitiesComponent implements OnInit {
     faPlus = faPlusCircle;
 
     title: string = 'Team Activities';
+
+    constructor(private modalCalendarService: ModalCalendarService) {}
 
     ngOnInit(): void {
         this.calendarDateEvents.set('2024-02-15', [
@@ -114,5 +117,9 @@ export class TeamActivitiesComponent implements OnInit {
                 this.events.push(...eventsForSelectedDate);
             }
         }
+    }
+
+    onClickAddEvent() {
+        this.modalCalendarService.openDialog('add');
     }
 }
