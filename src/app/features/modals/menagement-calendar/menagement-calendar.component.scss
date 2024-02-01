@@ -1,0 +1,41 @@
+.profile {
+    width: 30px;
+    height: 30px;
+    outline: 2px solid var(--primary);
+}
+
+.profile:hover {
+    outline: 3px solid var(--primary-active-color);
+}
+
+.form-label {
+    margin: 0;
+}
+
+.input-date {
+    height: 100%;
+}
+
+.input-group-text {
+    padding: 0;
+    max-width: 38px !important;
+    max-height: 38px !important;
+}
+
+::ng-deep {
+    .mdc-icon-button {
+        padding: 6px !important;
+        max-width: 38px !important;
+        max-height: 38px !important;
+        margin: auto;
+    }
+
+    .mat-pseudo-checkbox,
+    .mat-mdc-select-value-text {
+        display: none !important;
+    }
+
+    .card-text {
+        margin: 0;
+    }
+}
