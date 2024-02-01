@@ -27,6 +27,12 @@ body {
     background: var(--primary) !important;
 }
 
+.btn-primary {
+    //formio
+    border: none !important;
+    background: var(--primary) !important;
+}
+
 .bg-primary-color {
     background: var(--primary) !important;
 }
@@ -198,5 +204,5 @@ th[sortable].desc:before {
 }
 
 .color-gray {
-  color: #acabab;
+    color: #acabab;
 }

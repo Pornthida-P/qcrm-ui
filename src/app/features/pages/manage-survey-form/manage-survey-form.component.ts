@@ -1,10 +1,9 @@
-import { Component, ElementRef, EventEmitter, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { SurveyFormService } from 'src/app/services/survey-form/survey-form.service';
-import { Subject, catchError, filter, tap } from 'rxjs';
-import { FormioRefreshValue } from '@formio/angular';
+import { catchError, tap } from 'rxjs';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 @Component({
     selector: 'app-manage-survey-form',
     templateUrl: './manage-survey-form.component.html',
@@ -17,22 +16,35 @@ export class ManageSurveyFormComponent implements OnInit {
     typeForm: string[] = ['addComponent', 'saveComponent'];
     surveyFormId: string = '';
     cb: string = '';
+    state: string = '';
     detailItem: any = undefined;
+    copyDetailItem: any = undefined;
 
     constructor(
         private _location: Location,
         private surveyFormService: SurveyFormService,
         private sweetalertServices: SweetAlertService,
         private route: ActivatedRoute,
+        private router: Router,
     ) {
         this.form = { components: [] };
     }
     ngOnInit(): void {
-        this.route.queryParams.subscribe((params) => {
-            this.surveyFormId = params['itemId'];
-            this.cb = params['cb'];
-        });
-        this.getSurveyById(this.surveyFormId);
+        const state = history.state;
+        if (state.itemId) {
+            this.surveyFormId = state.itemId;
+            this.state = state.state;
+            this.cb = state.cb;
+        } else {
+            this.route.queryParams.subscribe((params) => {
+                this.surveyFormId = params['itemId'];
+                this.cb = params['cb'];
+            });
+        }
+
+        if (this.surveyFormId) {
+            this.getSurveyById(this.surveyFormId);
+        }
     }
 
     async getSurveyById(surveyFormId: string) {
@@ -44,19 +56,31 @@ export class ManageSurveyFormComponent implements OnInit {
     }
 
     onChange(event: any) {
-        // if (this.typeForm.includes(event.type)) {
-        //     this.surveyForm = JSON.stringify(event.form, null, 4);
-        // }
+        console.log('Submission changed!', event);
+        if (event.data) {
+            console.log(event.data);
+            // this.data = event.data;
+        }
+    }
+
+    onSubmit(submission: any) {
+        console.log(submission); // This will print out the full submission from Form.io API.
     }
 
     prev() {
         this._location.back();
+        this.state = '';
+    }
+
+    copy() {
+        const cb = this.cb;
+        this.router.navigate(['/surveyform/new'], { state: { state: 'copy', itemId: this.surveyFormId, cb: cb } });
     }
 
     submit() {
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
         if (userData) {
-            if (this.detailItem) {
+            if (this.detailItem && this.state != 'copy') {
                 const data = {
                     id: this.detailItem.surveyFormId,
                     name: this.formName,
@@ -89,7 +113,7 @@ export class ManageSurveyFormComponent implements OnInit {
                     .createSurveyForm(data)
                     .pipe(
                         tap((res) => {
-                            this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '');
+                            this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/surveyform');
                         }),
                         catchError((error) => {
                             this.handleError(error);
