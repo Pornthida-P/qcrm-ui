@@ -95,15 +95,15 @@ th[sortable].desc:before {
 }
 
 .color-white {
-    color: var(--color-white);
+    color: var(--color-white) !important;
 }
 
 .color-primary {
-    color: var(--primary);
+    color: var(--primary) !important;
 }
 
 .color-red {
-    color: var(--color-lighter-red);
+    color: var(--color-lighter-red) !important;
 }
 
 .bd-radius {
