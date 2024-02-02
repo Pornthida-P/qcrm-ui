@@ -5,51 +5,51 @@
                 <span class="fs-6 color-primary cursor-pointer" (click)="onClickEditEvent(event)">
                     <fa-icon [icon]="faEdit"></fa-icon>
                 </span>
-                <span class="fs-6 color-red cursor-pointer" (click)="onClickDeleteEvent()">
+                <span class="fs-6 color-red cursor-pointer" (click)="onClickDeleteEvent(event)">
                     <fa-icon [icon]="faTrash"></fa-icon>
                 </span>
             </div>
         </div>
 
-        <div class="row d-flex justify-content-center align-items-center my-2">
+        <div class="row d-flex justify-content-center my-2">
             <div class="col-md-2 d-flex justify-content-center">
                 <span class="fs-5 color-primary"><fa-icon [icon]="faCalendar"></fa-icon></span>
             </div>
-            <div class="col-md-10">
+            <div class="col-md-10 d-flex align-items-center">
                 <p class="card-title fs-5">{{ event?.title }}</p>
             </div>
         </div>
 
-        <div class="row d-flex justify-content-center align-items-center my-2">
+        <div class="row d-flex justify-content-center my-2">
             <div class="col-md-2 d-flex justify-content-center"></div>
-            <div class="col-md-10">
+            <div class="col-md-10 d-flex align-items-center">
                 <p class="card-text fs-7">{{ event?.datetime | date : 'medium' }}</p>
             </div>
         </div>
 
-        <div class="row d-flex justify-content-center align-items-center my-2">
+        <div class="row d-flex justify-content-center my-2">
             <div class="col-md-2 d-flex justify-content-center">
                 <span class="fs-5 color-primary"><fa-icon [icon]="faLocation"></fa-icon></span>
             </div>
-            <div class="col-md-10">
+            <div class="col-md-10 d-flex align-items-center">
                 <p class="card-text fs-6">{{ event?.location }}</p>
             </div>
         </div>
 
-        <div class="row d-flex justify-content-center align-items-center my-2">
+        <div class="row d-flex justify-content-center my-2">
             <div class="col-md-2 d-flex justify-content-center">
                 <span class="fs-5 color-primary"><fa-icon [icon]="faList"></fa-icon></span>
             </div>
-            <div class="col-md-10">
-                <p class="card-text fs-6">{{ event?.description }}</p>
+            <div class="col-md-10 d-flex align-items-center">
+                <p class="card-text fs-6" [innerText]="event?.description"></p>
             </div>
         </div>
 
-        <div class="row d-flex justify-content-center align-items-center my-2">
+        <div class="row d-flex justify-content-center my-2">
             <div class="col-md-2 d-flex justify-content-center">
                 <span class="fs-5 color-primary"><fa-icon [icon]="faUserGroup"></fa-icon></span>
             </div>
-            <div class="col-md-10">
+            <div class="col-md-10 d-flex align-items-center">
                 <p class="card-text fs-6">จำนวนผู้เข้าร่วม {{ event?.members?.length }} คน</p>
             </div>
         </div>
