@@ -1,7 +1,11 @@
 import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { faCalendarAlt, faXmark } from '@fortawesome/free-solid-svg-icons';
+import * as moment from 'moment';
+import { catchError, tap } from 'rxjs';
+import { CalendarEventService } from 'src/app/services/calendar-event/calendar-event.service';
+import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { CalendarEvent } from 'src/app/shared/interface/calendar.interface';
 import { User } from 'src/app/shared/interface/user.interface';
@@ -26,6 +30,8 @@ export class MenagementCalendarComponent implements OnInit {
     constructor(
         private fb: FormBuilder,
         private userService: UserService,
+        private calendarService: CalendarEventService,
+        private sweetalertServices: SweetAlertService,
         private cdRef: ChangeDetectorRef,
         public dialogRef: MatDialogRef<MenagementCalendarComponent>,
         @Inject(MAT_DIALOG_DATA) public data: { mode: 'add' | 'edit'; eventData?: CalendarEvent },
@@ -34,32 +40,28 @@ export class MenagementCalendarComponent implements OnInit {
     ngOnInit(): void {
         this.initializeForm();
         this.getUserData();
-
-        this.members = [
-            { userId: '1', username: 'admin', email: 'admin@convergence.co.th', profile: '', group: 'developer', role: 'admin' },
-            { userId: '2', username: 'Jon Doe', email: 'jondoe@convergence.co.th', profile: '', group: 'developer', role: 'agent' },
-        ];
-
-        this.selectedMembers = this.members.filter((member) => member?.userId === this.userData?.userId);
-        this.calendarEvent.get('members')!.setValue(this.selectedMembers);
+        this.getMembers();
     }
 
     initializeForm(): void {
         if (this.data.mode === 'edit' && this.data.eventData) {
+            console.log(this.data.eventData);
             this.calendarEvent = this.fb.group({
+                eventId: [this.data.eventData.eventId],
                 title: [this.data.eventData.title, Validators.required],
                 location: [this.data.eventData.location],
-                datetime: [this.data.eventData.datetime, Validators.required],
-                description: [this.data.eventData.description],
-                members: [new FormControl(this.data.eventData.members)],
+                datetime: [new Date(this.data.eventData.datetime).toISOString(), Validators.required],
+                description: [this.data.eventData.description, Validators.required],
+                members: [[], Validators.required],
             });
         } else {
             this.calendarEvent = this.fb.group({
+                eventId: [''],
                 title: ['', Validators.required],
                 location: [''],
-                datetime: [new Date(), Validators.required],
-                description: [''],
-                members: [new FormControl()],
+                datetime: [new Date().toISOString(), Validators.required],
+                description: ['', Validators.required],
+                members: [[], Validators.required],
             });
         }
     }
@@ -68,6 +70,31 @@ export class MenagementCalendarComponent implements OnInit {
         this.userService.getDataUser().subscribe((user: User | null) => {
             this.userData = user;
         });
+    }
+
+    async getMembers() {
+        this.userService
+            .getAllUser()
+            .pipe(
+                tap((members) => {
+                    this.members = members;
+
+                    if (this.data.mode === 'edit' && this.data.eventData) {
+                        this.selectedMembers = members.filter((member) => {
+                            return this.data.eventData?.members.some((eventMember) => eventMember.userId === member.userId);
+                        });
+                        this.calendarEvent.get('members')!.setValue(this.selectedMembers);
+                    } else {
+                        this.selectedMembers = members.filter((member) => member.userId === this.userData?.userId);
+                        this.calendarEvent.get('members')!.setValue(this.selectedMembers);
+                    }
+                }),
+                catchError((error) => {
+                    this.handleContactError(error);
+                    throw error;
+                }),
+            )
+            .subscribe();
     }
 
     onMemberSelectionChange(event: any): void {
@@ -80,7 +107,34 @@ export class MenagementCalendarComponent implements OnInit {
             return;
         }
 
-        console.log(this.calendarEvent.value);
+        const formData = this.calendarEvent.value;
+        formData.datetime = moment(formData.datetime).format('YYYY-MM-DD HH:mm:ss');
+        formData.createdAt = moment().format('YYYY-MM-DD HH:mm:ss');
+        formData.createdById = this.userData?.userId;
+
+        if (this.data.mode === 'add') {
+            this.calendarService
+                .addCalendarEvent(formData)
+                .pipe(
+                    catchError((error) => {
+                        this.handleContactError(error);
+                        throw error;
+                    }),
+                )
+                .subscribe(() => this.dialogRef.close());
+        }
+
+        if (this.data.mode === 'edit') {
+            this.calendarService
+                .updateCalendarEvent(formData.eventId, formData)
+                .pipe(
+                    catchError((error) => {
+                        this.handleContactError(error);
+                        throw error;
+                    }),
+                )
+                .subscribe(() => this.dialogRef.close());
+        }
     }
 
     onClickClose() {
@@ -91,5 +145,36 @@ export class MenagementCalendarComponent implements OnInit {
         if (event) {
             event.target.src = this.profileError;
         }
+    }
+
+    handleContactError(error: any) {
+        let icon: string;
+        let errorMessage: string;
+        let title: string;
+        let route: string;
+
+        switch (error.status) {
+            case 401:
+                icon = 'warning';
+                title = 'Warning Authentication';
+                errorMessage = 'Your session has expired. Please log in again.';
+                route = 'login';
+                break;
+            case 400:
+                icon = 'warning';
+                title = 'Calendar Event Error';
+                errorMessage = 'Invalid data. Please check your input and try again.';
+                route = '';
+                break;
+            default:
+                icon = 'error';
+                title = 'Calendar Event Error';
+                errorMessage = `Failed to ${this.data.mode} calendar event. Please try again later.`;
+                route = '';
+                break;
+        }
+
+        this.dialogRef.close();
+        this.sweetalertServices.getSwal(icon, title, errorMessage, false, route);
     }
 }
