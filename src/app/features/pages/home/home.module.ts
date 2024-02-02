@@ -16,6 +16,7 @@ import { MenagementCalendarComponent } from '../../modals/menagement-calendar/me
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { ProfileListComponent } from '../../components/profile-list/profile-list.component';
+import { AngularEditorModule } from '@kolkov/angular-editor';
 
 @NgModule({
     declarations: [
@@ -38,6 +39,7 @@ import { ProfileListComponent } from '../../components/profile-list/profile-list
         MatDatepickerModule,
         MatNativeDateModule,
         MatSelectModule,
+        AngularEditorModule,
         RouterModule.forChild([
             {
                 path: '',

@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { faCalendarAlt, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { AngularEditorConfig } from '@kolkov/angular-editor';
 import * as moment from 'moment';
 import { catchError, tap } from 'rxjs';
 import { CalendarEventService } from 'src/app/services/calendar-event/calendar-event.service';
@@ -26,6 +27,56 @@ export class MenagementCalendarComponent implements OnInit {
 
     faXmark = faXmark;
     faCalendar = faCalendarAlt;
+
+    editorConfig: AngularEditorConfig = {
+        editable: true,
+        spellcheck: true,
+        height: '150px',
+        minHeight: '0',
+        maxHeight: 'auto',
+        width: 'auto',
+        minWidth: '0',
+        translate: 'yes',
+        enableToolbar: true,
+        showToolbar: true,
+        placeholder: '',
+        defaultParagraphSeparator: '',
+        defaultFontName: '',
+        defaultFontSize: '',
+        fonts: [
+            { class: 'arial', name: 'Arial' },
+            { class: 'times-new-roman', name: 'Times New Roman' },
+            { class: 'calibri', name: 'Calibri' },
+            { class: 'comic-sans-ms', name: 'Comic Sans MS' },
+        ],
+        customClasses: [
+            {
+                name: 'quote',
+                class: 'quote',
+            },
+            {
+                name: 'redText',
+                class: 'redText',
+            },
+            {
+                name: 'titleText',
+                class: 'titleText',
+                tag: 'h1',
+            },
+        ],
+        sanitize: true,
+        toolbarPosition: 'top',
+        toolbarHiddenButtons: [
+            ['font'],
+            ['insertImage'],
+            ['insertVideo'],
+            ['insertHorizontalRule'],
+            ['removeFormat'],
+            ['toggleEditor'],
+            ['backgroundColor'],
+            ['customClasses'],
+        ],
+    };
 
     constructor(
         private fb: FormBuilder,

@@ -41,7 +41,8 @@
 
             <div class="my-3">
                 <label for="description" class="form-label">Description</label>
-                <textarea class="form-control" id="description" formControlName="description" name="description" rows="5"></textarea>
+                <!-- <textarea class="form-control" id="description" formControlName="description" name="description" rows="5"></textarea> -->
+                <angular-editor formControlName="description" [config]="editorConfig"></angular-editor>
             </div>
 
             <div class="my-3">
