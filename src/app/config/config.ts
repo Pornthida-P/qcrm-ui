@@ -10,7 +10,7 @@ export const config = {
             calendarEvent: {
                 findAll: '/calendar-event',
                 findById: '/calendar-event/:id',
-                findByDate: '/calendar-event/date/:date',
+                findByDate: '/calendar-event/date',
                 findByMember: '/calendar-event/member/:id',
                 add: '/calendar-event/add',
                 update: '/calendar-event/update',

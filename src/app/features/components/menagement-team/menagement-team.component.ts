@@ -12,7 +12,7 @@ export class MenagementTeamComponent implements OnInit {
     faTrash = faTrash;
     groupMembers: any[] = [];
 
-    profileError: string = '/assets/nea-qcrm-ui/image/profile/user.jpg';
+    profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
 
     ngOnInit(): void {
         this.groupMembers = [

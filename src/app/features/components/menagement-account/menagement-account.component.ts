@@ -16,7 +16,7 @@ export class MenagementAccountComponent implements OnInit {
         role: 'agent',
     };
 
-    profileError: string = '/assets/nea-qcrm-ui/image/profile/user.jpg';
+    profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
 
     ngOnInit(): void {}
 

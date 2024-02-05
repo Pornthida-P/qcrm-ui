@@ -14,7 +14,7 @@ import { CalendarEvent } from 'src/app/shared/interface/calendar.interface';
 export class CalendarCardComponent implements OnInit {
     @Input() event?: CalendarEvent;
 
-    profileError: string = '/assets/nea-qcrm-ui/image/profile/user.jpg';
+    profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
 
     faCalendar = faCalendarAlt;
     faList = faList;

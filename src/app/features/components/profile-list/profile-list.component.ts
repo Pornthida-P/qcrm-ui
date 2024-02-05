@@ -9,7 +9,7 @@ import { User } from 'src/app/shared/interface/user.interface';
 export class ProfileListComponent {
     @Input() member?: User;
 
-    profileError: string = '/assets/nea-qcrm-ui/image/profile/user.jpg';
+    profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
 
     handleProfileError(event: any) {
         if (event) {

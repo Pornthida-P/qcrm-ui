@@ -23,7 +23,7 @@ export class MenagementCalendarComponent implements OnInit {
     userData: User | null = null;
     selectedMembers: User[] = [];
 
-    profileError: string = '/assets/nea-qcrm-ui/image/profile/user.jpg';
+    profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
 
     faXmark = faXmark;
     faCalendar = faCalendarAlt;
@@ -101,7 +101,8 @@ export class MenagementCalendarComponent implements OnInit {
                 eventId: [this.data.eventData.eventId],
                 title: [this.data.eventData.title, Validators.required],
                 location: [this.data.eventData.location],
-                datetime: [new Date(this.data.eventData.datetime).toISOString(), Validators.required],
+                startDate: [new Date(this.data.eventData.startDate).toISOString(), Validators.required],
+                endDate: [new Date(this.data.eventData.startDate).toISOString(), Validators.required],
                 description: [this.data.eventData.description, Validators.required],
                 members: [[], Validators.required],
             });
@@ -110,7 +111,8 @@ export class MenagementCalendarComponent implements OnInit {
                 eventId: [''],
                 title: ['', Validators.required],
                 location: [''],
-                datetime: [new Date().toISOString(), Validators.required],
+                startDate: [new Date().toISOString(), Validators.required],
+                endDate: [new Date().toISOString(), Validators.required],
                 description: ['', Validators.required],
                 members: [[], Validators.required],
             });

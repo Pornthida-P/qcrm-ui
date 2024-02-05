@@ -16,7 +16,7 @@ import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.serv
 export class TeamActivitiesComponent implements OnInit {
     @ViewChild(MatCalendar, { static: false }) calendar!: MatCalendar<Date>;
     selectedCalendarDate: Date | null = new Date();
-    calendarDateEvents: Map<string, CalendarEvent[]> = new Map();
+    calendarDateEvents: CalendarEvent[] = [];
     events: any = [];
 
     faPlus = faPlusCircle;
@@ -33,6 +33,7 @@ export class TeamActivitiesComponent implements OnInit {
         this.calendarService.onRefreshData().subscribe(() => {
             this.refreshData();
         });
+        this.onSelectedDateChanged();
     }
 
     findAllEvents() {
@@ -40,19 +41,7 @@ export class TeamActivitiesComponent implements OnInit {
             .getAllCalendarEvent()
             .pipe(
                 tap((events) => {
-                    events.forEach((event: CalendarEvent) => {
-                        const eventDateStr = moment(event.datetime).format('YYYY-MM-DD');
-
-                        if (this.calendarDateEvents.has(eventDateStr)) {
-                            const eventsForDate = this.calendarDateEvents.get(eventDateStr);
-
-                            if (eventsForDate) {
-                                eventsForDate.push(event);
-                            }
-                        } else {
-                            this.calendarDateEvents.set(eventDateStr, [event]);
-                        }
-                    });
+                    this.calendarDateEvents = events;
                     this.onSelectedDateChanged();
                 }),
                 catchError((error) => {
@@ -66,9 +55,27 @@ export class TeamActivitiesComponent implements OnInit {
     dateClass: MatCalendarCellClassFunction<Date> = (cellDate, view) => {
         const cellDateStr = moment(cellDate).format('YYYY-MM-DD');
 
-        if (this.calendarDateEvents.has(cellDateStr) && view === 'month') {
-            return 'highlight-date';
+        if (view === 'month') {
+            for (const event of this.calendarDateEvents) {
+                const startDate = moment(event.startDate, 'YYYY-MM-DD').toDate();
+                const endDate = moment(event.endDate, 'YYYY-MM-DD').toDate();
+
+                if (cellDate >= startDate && cellDate <= endDate) {
+                    if (cellDateStr === moment(startDate).format('YYYY-MM-DD') && cellDateStr === moment(endDate).format('YYYY-MM-DD')) {
+                        return 'mat-calendar-body-comparison-start mat-calendar-body-comparison-end mat-calendar-body-in-comparison-range';
+                    }
+                    if (cellDateStr === moment(startDate).format('YYYY-MM-DD')) {
+                        return 'mat-calendar-body-comparison-start mat-calendar-body-in-comparison-range';
+                    }
+                    if (cellDateStr === moment(endDate).format('YYYY-MM-DD')) {
+                        return 'mat-calendar-body-comparison-end mat-calendar-body-in-comparison-range';
+                    } else {
+                        return 'mat-calendar-body-in-comparison-range';
+                    }
+                }
+            }
         }
+
         return '';
     };
 
@@ -85,13 +92,18 @@ export class TeamActivitiesComponent implements OnInit {
     onEvent() {
         const selectedDateStr = moment(this.selectedCalendarDate).format('YYYY-MM-DD');
 
-        if (this.calendarDateEvents.has(selectedDateStr)) {
-            const eventsForSelectedDate = this.calendarDateEvents.get(selectedDateStr);
-
-            if (eventsForSelectedDate) {
-                this.events.push(...eventsForSelectedDate);
-            }
-        }
+        this.calendarService
+            .findByDate(selectedDateStr)
+            .pipe(
+                tap((events) => {
+                    this.events = events;
+                }),
+                catchError((error) => {
+                    this.handleContactError(error);
+                    throw error;
+                }),
+            )
+            .subscribe(() => {});
     }
 
     onClickAddEvent() {
@@ -100,7 +112,7 @@ export class TeamActivitiesComponent implements OnInit {
 
     refreshData() {
         this.events = [];
-        this.calendarDateEvents = new Map<string, CalendarEvent[]>();
+        this.calendarDateEvents = [];
         this.findAllEvents();
     }
 

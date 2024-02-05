@@ -4,7 +4,8 @@ export interface CalendarEvent {
     eventId: number;
     title: string;
     location?: string;
-    datetime: string;
+    startDate: string;
+    endDate: string;
     description: string;
     members: User[];
 }

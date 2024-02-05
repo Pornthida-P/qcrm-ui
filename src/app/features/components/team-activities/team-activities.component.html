@@ -11,7 +11,7 @@
         </div>
     </div>
     <div class="row p-2">
-        <div class="col-sm-12 col-md-6 col-xl-6">
+        <div class="col-sm-6 col-md-4">
             <mat-card class="inline-calendar-card">
                 <mat-calendar
                     #calendar
@@ -21,7 +21,7 @@
                 ></mat-calendar>
             </mat-card>
         </div>
-        <div class="col-sm-12 col-md-6 col-xl-6 max-height-100">
+        <div class="col-sm-6 col-md-8 max-height-100">
             <div *ngIf="selectedCalendarDate">
                 <div *ngIf="!events || events.length === 0; else eventsContent">
                     <div class="card mb-4">

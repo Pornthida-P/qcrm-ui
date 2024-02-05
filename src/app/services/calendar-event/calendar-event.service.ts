@@ -18,6 +18,10 @@ export class CalendarEventService {
         return this.http.get(`${this.baseUrl}${config.api.path.calendarEvent.findAll}`);
     }
 
+    findByDate(date: string): Observable<any> {
+        return this.http.get(`${this.baseUrl}${config.api.path.calendarEvent.findByDate}/${date}`);
+    }
+
     addCalendarEvent(data: CalendarEvent): Observable<any> {
         return this.http.post(`${this.baseUrl}${config.api.path.calendarEvent.add}`, data).pipe(tap(() => this.refreshDataSubject.next()));
     }

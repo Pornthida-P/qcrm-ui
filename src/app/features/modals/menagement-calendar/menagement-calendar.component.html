@@ -15,25 +15,45 @@
             </div>
 
             <div class="row my-3">
-                <div class="col-sm-12 col-md-6">
+                <div class="col-sm-12 col-md-12">
                     <label for="location" class="form-label">Location</label>
                     <input type="text" class="form-control" id="location" formControlName="location" name="location" />
                 </div>
+            </div>
 
+            <div class="row my-3">
                 <div class="col-sm-12 col-md-6">
-                    <label for="datepicker" class="form-label">Date and Time</label>
+                    <label for="datepicker" class="form-label">Start Date</label>
                     <div class="input-group">
                         <input
                             matInput
-                            [matDatepicker]="picker"
-                            formControlName="datetime"
+                            [matDatepicker]="startDatePicker"
+                            formControlName="startDate"
                             name="datetime"
                             required
                             class="input-date form-control"
                         />
                         <span class="input-group-text">
-                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                            <mat-datepicker #picker></mat-datepicker>
+                            <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+                            <mat-datepicker #startDatePicker></mat-datepicker>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-md-6">
+                    <label for="datepicker" class="form-label">End Date</label>
+                    <div class="input-group">
+                        <input
+                            matInput
+                            [matDatepicker]="endDatePicker"
+                            formControlName="endDate"
+                            name="datetime"
+                            required
+                            class="input-date form-control"
+                        />
+                        <span class="input-group-text">
+                            <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+                            <mat-datepicker #endDatePicker></mat-datepicker>
                         </span>
                     </div>
                 </div>
