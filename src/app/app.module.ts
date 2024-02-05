@@ -12,11 +12,23 @@ import { Formio, FormioModule } from '@formio/angular';
 import bootstrap4 from '@formio/bootstrap/bootstrap4';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TokenInterceptor } from './core/interceptor/token.interceptor';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 (Formio as any).use(bootstrap4);
 
 @NgModule({
     declarations: [AppComponent, FooterComponent, UserComponent],
-    imports: [BrowserModule, AppRoutingModule, HttpClientModule, BrowserAnimationsModule, FontAwesomeModule, FormioModule, NgbModule],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        HttpClientModule,
+        BrowserAnimationsModule,
+        FontAwesomeModule,
+        FormioModule,
+        NgbModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+    ],
     providers: [
         {
             provide: HTTP_INTERCEPTORS,

@@ -20,7 +20,7 @@ export class NavbarComponent implements OnInit {
     hideSidebar: boolean = false;
     userData: User | null = null;
 
-    profileError: string = '/assets/nea-qcrm-ui/image/profile/user.jpg';
+    profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
 
     faBars = faBars;
 

@@ -1,5 +1,3 @@
-<!-- appearance-management.component.html -->
-
 <div class="container">
     <div class="row">
         <div class="col-md-12 p-4">
@@ -10,25 +8,20 @@
         <div class="col-md-12 px-4 pt-2 pb-4">
             <div class="card px-3 py-2">
                 <div class="card-body">
-                    <form>
-                        <div class="mb-3">
-                            <label for="backgroundColor" class="form-label">Background Color</label>
-                            <input
-                                type="color"
-                                class="form-control"
-                                id="backgroundColor"
-                                [(ngModel)]="appearance.backgroundColor"
-                                name="backgroundColor"
-                            />
+                    <div class="row">
+                        <div class="col-12">
+                            <p class="card-title fs-2">Color Theme</p>
                         </div>
-
-                        <div class="mb-3">
-                            <label for="textColor" class="form-label">Text Color</label>
-                            <input type="color" class="form-control" id="textColor" [(ngModel)]="appearance.textColor" name="textColor" />
+                    </div>
+                    <div class="color-palette p-4 d-flex justify-content-center">
+                        <div class="color-pair" *ngFor="let pair of colorPairs">
+                            <div
+                                class="color"
+                                [style.background]="getLinearGradient(pair.color1, pair.color2)"
+                                (click)="changeTheme(pair.color1, pair.color2)"
+                            ></div>
                         </div>
-
-                        <button type="button" class="btn btn-primary-color text-white">Save</button>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>

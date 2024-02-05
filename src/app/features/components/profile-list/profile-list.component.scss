@@ -8,11 +8,7 @@
     outline: 3px solid var(--primary-active-color);
 }
 
-.card-text,
-.card-title {
-    cursor: default;
-}
-
-p {
+.label {
     margin: 0;
+    cursor: default;
 }

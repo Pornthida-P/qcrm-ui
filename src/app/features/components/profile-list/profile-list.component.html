@@ -1,0 +1,9 @@
+<div class="d-flex align-items-center gap-3">
+    <div class="profile">
+        <img class="profile-image img-fluid" [src]="member?.profile" [alt]="member?.username" (error)="handleProfileError($event)" />
+    </div>
+    <div class="user-info">
+        <p class="label fs-7">{{ member?.username }}</p>
+        <p class="label fs-8">{{ member?.role }}</p>
+    </div>
+</div>

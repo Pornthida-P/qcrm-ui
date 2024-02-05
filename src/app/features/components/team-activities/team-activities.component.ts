@@ -3,6 +3,10 @@ import { MatCalendar, MatCalendarCellClassFunction } from '@angular/material/dat
 import { faCalendarAlt, faEdit, faList, faLocationDot, faPlusCircle, faTrash, faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import { CalendarEvent } from 'src/app/shared/interface/calendar.interface';
 import * as moment from 'moment';
+import { ModalCalendarService } from 'src/app/services/modal-calendar/modal-calendar.service';
+import { CalendarEventService } from 'src/app/services/calendar-event/calendar-event.service';
+import { catchError, tap } from 'rxjs';
+import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 
 @Component({
     selector: 'app-team-activities',
@@ -12,85 +16,66 @@ import * as moment from 'moment';
 export class TeamActivitiesComponent implements OnInit {
     @ViewChild(MatCalendar, { static: false }) calendar!: MatCalendar<Date>;
     selectedCalendarDate: Date | null = new Date();
-    calendarDateEvents: Map<string, CalendarEvent[]> = new Map();
+    calendarDateEvents: CalendarEvent[] = [];
     events: any = [];
 
     faPlus = faPlusCircle;
 
     title: string = 'Team Activities';
 
+    constructor(
+        private modalCalendarService: ModalCalendarService,
+        private calendarService: CalendarEventService,
+        private sweetalertServices: SweetAlertService,
+    ) {}
+
     ngOnInit(): void {
-        this.calendarDateEvents.set('2024-02-15', [
-            {
-                title: 'Meeting',
-                location: 'Conference Room',
-                datetime: '2024-02-15T10:00:00',
-                description: 'Team meeting',
-                members: [
-                    {
-                        userId: '2',
-                        username: 'Jukkrit',
-                        email: 'jukkrit@convergence.co.th',
-                        profile: '',
-                        group: 'developer',
-                        role: 'agent',
-                    },
-                ],
-            },
-        ]);
-
-        this.calendarDateEvents.set('2024-01-31', [
-            {
-                title: 'อบรมสัมนา',
-                location: 'ฉะเชิงเทรา',
-                datetime: '2024-01-31T18:30:00',
-                description: 'Description for Event 2',
-                members: [
-                    {
-                        userId: '2',
-                        username: 'Jukkrit',
-                        email: 'jukkrit@convergence.co.th',
-                        profile: '',
-                        group: 'developer',
-                        role: 'agent',
-                    },
-                    {
-                        userId: '1',
-                        username: 'admin',
-                        email: 'admin@convergence.co.th',
-                        profile: '',
-                        group: 'developer',
-                        role: 'admin',
-                    },
-                ],
-            },
-            {
-                title: 'เรียนรู้เพิ่มเติม',
-                location: 'กรุงเทพ',
-                datetime: '2024-02-20T20:00:00',
-                description: 'Description for Event 3',
-                members: [
-                    {
-                        userId: '1',
-                        username: 'admin',
-                        email: 'admin@convergence.co.th',
-                        profile: '',
-                        group: 'developer',
-                        role: 'admin',
-                    },
-                ],
-            },
-        ]);
-
+        this.calendarService.onRefreshData().subscribe(() => {
+            this.refreshData();
+        });
         this.onSelectedDateChanged();
+    }
+
+    findAllEvents() {
+        this.calendarService
+            .getAllCalendarEvent()
+            .pipe(
+                tap((events) => {
+                    this.calendarDateEvents = events;
+                    this.onSelectedDateChanged();
+                }),
+                catchError((error) => {
+                    this.handleContactError(error);
+                    throw error;
+                }),
+            )
+            .subscribe();
     }
 
     dateClass: MatCalendarCellClassFunction<Date> = (cellDate, view) => {
         const cellDateStr = moment(cellDate).format('YYYY-MM-DD');
 
-        if (this.calendarDateEvents.has(cellDateStr) && view === 'month') {
-            return 'highlight-date';
+        if (view === 'month') {
+            for (const event of this.calendarDateEvents) {
+                const startDate = moment(event.startDate, 'YYYY-MM-DD').toDate();
+                const endDate = moment(event.endDate, 'YYYY-MM-DD').toDate();
+
+                if (cellDate >= startDate && cellDate <= endDate) {
+                    if (cellDateStr === moment(startDate).format('YYYY-MM-DD') && cellDateStr === moment(endDate).format('YYYY-MM-DD')) {
+                        return 'mat-calendar-body-comparison-start mat-calendar-body-comparison-end mat-calendar-body-in-comparison-range';
+                    }
+                    if (cellDateStr === moment(startDate).format('YYYY-MM-DD')) {
+                        return 'mat-calendar-body-comparison-start mat-calendar-body-in-comparison-range';
+                    }
+                    if (cellDateStr === moment(endDate).format('YYYY-MM-DD')) {
+                        return 'mat-calendar-body-comparison-end mat-calendar-body-in-comparison-range';
+                    } else {
+                        return 'mat-calendar-body-in-comparison-range';
+                    }
+                }
+            }
         }
+
         return '';
     };
 
@@ -107,12 +92,51 @@ export class TeamActivitiesComponent implements OnInit {
     onEvent() {
         const selectedDateStr = moment(this.selectedCalendarDate).format('YYYY-MM-DD');
 
-        if (this.calendarDateEvents.has(selectedDateStr)) {
-            const eventsForSelectedDate = this.calendarDateEvents.get(selectedDateStr);
+        this.calendarService
+            .findByDate(selectedDateStr)
+            .pipe(
+                tap((events) => {
+                    this.events = events;
+                }),
+                catchError((error) => {
+                    this.handleContactError(error);
+                    throw error;
+                }),
+            )
+            .subscribe(() => {});
+    }
 
-            if (eventsForSelectedDate) {
-                this.events.push(...eventsForSelectedDate);
-            }
+    onClickAddEvent() {
+        this.modalCalendarService.openDialog('add');
+    }
+
+    refreshData() {
+        this.events = [];
+        this.calendarDateEvents = [];
+        this.findAllEvents();
+    }
+
+    handleContactError(error: any) {
+        let icon: string;
+        let errorMessage: string;
+        let title: string;
+        let route: string;
+
+        switch (error.status) {
+            case 401:
+                icon = 'warning';
+                title = 'Warning Authentication';
+                errorMessage = 'Your session has expired. Please log in again.';
+                route = 'login';
+                break;
+            default:
+                icon = 'error';
+                title = 'Calendar Event Error';
+                errorMessage = 'Failed to add calendar event. Please try again later.';
+                route = '';
+                break;
         }
+
+        this.sweetalertServices.getSwal(icon, title, errorMessage, false, route);
     }
 }
