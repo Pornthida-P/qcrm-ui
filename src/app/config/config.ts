@@ -22,7 +22,10 @@ export const config = {
                 find: '/find',
                 count: '/count',
             },
-            call: '/call',
+            call: {
+              url: '/call',
+              count: '/count',
+            }
         },
     },
     file: {
