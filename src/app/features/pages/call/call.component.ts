@@ -99,6 +99,10 @@ export class CallComponent implements OnInit{
 
   userData: any;
 
+  sortId: string = '-';
+  sortOrder: string = 'ASC';
+  sortIcon: string = '';
+
   constructor(private callService: CallService, private router: Router, private activeRoute: ActivatedRoute, private userService: UserService) {
   }
 
@@ -125,8 +129,8 @@ export class CallComponent implements OnInit{
     this.getPage();
   }
 
-  getCallsData(page: number, pageSize: number) {
-    this.callService.getCalls(page, pageSize).subscribe((res: any) => {
+  async getCallsData(page: number, pageSize: number) {
+   await this.callService.getCallsPage(page, pageSize, `${this.sortId},${this.sortOrder}`).subscribe((res: any) => {
       this.calls = Object.values(res);
     })
   }
@@ -212,7 +216,7 @@ export class CallComponent implements OnInit{
   }
 
   getPage() {
-    this.callService.getCallsPage().subscribe((res: any) => {
+    this.callService.getCallsCount().subscribe((res: any) => {
       this.totalItems = res.count;
     });
   }
