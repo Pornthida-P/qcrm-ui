@@ -6,11 +6,21 @@
             </div>
         </div>
         <div class="row">
-            <!-- <div class="col-sm-12 col-md-12 col-xl-6">
-                <app-announce-list></app-announce-list>
-            </div> -->
+            <div class="col-12 d-flex justify-content-center align-items-center p-2">
+                <mat-button-toggle-group name="viewType" aria-label="View Type" [(ngModel)]="selectedViewType">
+                    <mat-button-toggle value="calendar">
+                        <fa-icon [icon]="faCalendar"></fa-icon>
+                    </mat-button-toggle>
+                    <mat-button-toggle value="list">
+                        <fa-icon [icon]="faList"></fa-icon>
+                    </mat-button-toggle>
+                </mat-button-toggle-group>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-12">
-                <app-team-activities></app-team-activities>
+                <app-announce-list *ngIf="selectedViewType === 'list'"></app-announce-list>
+                <app-team-activities *ngIf="selectedViewType === 'calendar'"></app-team-activities>
             </div>
         </div>
     </div>
