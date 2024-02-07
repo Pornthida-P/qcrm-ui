@@ -35,19 +35,17 @@
                 <i class="fa-solid fa-plus"></i>
             </div>
         </div>
-        <!-- <div *ngIf="selectedForm.length != 0">
-          <div class="flex p-3 bg-gray-50">
-              <button
-                  type="button"
-                  pButton
-                  pRipple
-                  icon="pi pi-file-excel"
-                  (click)="exportExcel()"
-                  class="p-button-success mr-2"
-                  pTooltip="XLS"
-                  tooltipPosition="bottom"
-              ></button>
-              <button
+        <div *ngIf="checkedValues.length != 0">
+            <div class="d-flex p-3 bg-body-tertiary">
+                <button
+                    class="d-flex align-items-center me-2 d-md-none d-lg-flex rounded p-2 text-white btn btn-warning"
+                    (click)="exportExcel()"
+                    placement="top"
+                    ngbTooltip="Export to Excel"
+                >
+                    <i class="fa-solid fa-file"></i>
+                </button>
+                <!--<button
                   type="button"
                   pButton
                   pRipple
@@ -56,24 +54,25 @@
                   class="p-button-warning mr-2"
                   pTooltip="Edit"
                   tooltipPosition="bottom"
-              ></button>
-              <button
-                  type="button"
-                  pButton
-                  pRipple
-                  icon="pi pi-trash"
-                  (click)="deleteSurvey()"
-                  class="p-button-danger ml-auto"
-                  pTooltip="Delete"
-                  tooltipPosition="bottom"
-              ></button>
-          </div>
-      </div> -->
+              ></button>-->
+                <button
+                    class="d-flex align-items-center d-md-none d-lg-flex rounded p-2 text-white btn btn-danger"
+                    (click)="deleteSelectForm()"
+                    placement="top"
+                    ngbTooltip="ลบ"
+                >
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
+        </div>
         <div>
             <div class="table-responsive">
                 <table class="table">
                     <thead>
                         <tr>
+                            <th class="text-center">
+                                <input type="checkbox" name="all" [checked]="isAllChecked()" (change)="checkAll($event)" />
+                            </th>
                             <th style="width: 70%" scope="col">
                                 <a (click)="sort('name')">แบบฟอร์มสำรวจ </a><i *ngIf="sortId == 'name'" class="{{ sortIcon }}"></i>
                             </th>
@@ -89,6 +88,15 @@
                     <tbody>
                         <ng-container *ngIf="(surveyForms | searchFilter : valueSearch : selectedFilter)?.length > 0; else noDataTemplate">
                             <tr *ngFor="let form of surveyForms | searchFilter : valueSearch : selectedFilter; let i = index">
+                                <td class="text-center">
+                                    <input
+                                        type="checkbox"
+                                        name="forms[]"
+                                        value="{{ form.id }}"
+                                        [(ngModel)]="form.state"
+                                        (change)="updateCheckedValues(form.surveyFormId)"
+                                    />
+                                </td>
                                 <td
                                     (click)="showSideBar(i)"
                                     class="cursor-pointer w-max-ellipsis"

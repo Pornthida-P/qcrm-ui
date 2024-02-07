@@ -38,6 +38,7 @@ export class SurveyFormComponent implements OnInit {
     surveyForms!: any;
     selectedSurveyForms: any = [];
     valueSearch!: string;
+    checkedValues: string[] = [];
 
     filterOption!: any[];
     selectedFilter: any | undefined;
@@ -95,6 +96,29 @@ export class SurveyFormComponent implements OnInit {
         this.getPage();
     }
 
+    updateCheckedValues(formId: string): void {
+        if (this.checkedValues.includes(formId)) {
+            this.checkedValues = this.checkedValues.filter((id) => id !== formId);
+        } else {
+            this.checkedValues.push(formId);
+        }
+    }
+
+    checkAll(ev: any) {
+        this.surveyForms.forEach((x: any) => {
+            x.state = ev.target.checked;
+            if (ev.target.checked) {
+                this.checkedValues.push(x.surveyFormId);
+            } else {
+                this.checkedValues = [];
+            }
+        });
+    }
+
+    isAllChecked() {
+        return this.surveyForms && this.surveyForms.every((_: any) => _.state);
+    }
+
     async getForm(page: number, pageSize: number) {
         await this.surveyFormService.getSurveyFormByPage(page, pageSize, `${this.sortId},${this.sortOrder}`).subscribe((res: any) => {
             this.surveyForms = res;
@@ -135,6 +159,7 @@ export class SurveyFormComponent implements OnInit {
             if (page >= 1 && page <= this.totalPages) {
                 this.currentPage = page;
                 await this.getForm((this.currentPage - 1) * this.pageSize, this.pageSize);
+                this.checkedValues = [];
             }
         }
     }
@@ -196,7 +221,7 @@ export class SurveyFormComponent implements OnInit {
 
     edit(item: any) {
         const cb = `${this.pageSize},${this.currentPage},${this.totalItems},${this.totalPages}`;
-        this.router.navigate(['/surveyform/edit'], { queryParams: { itemId: item.surveyFormId, cb: cb } });
+        this.router.navigate(['/surveyform/edit'], { queryParams: { key: item.surveyFormId, cb: cb } });
     }
 
     deleteForm(id: string) {
@@ -209,8 +234,41 @@ export class SurveyFormComponent implements OnInit {
             width: '50%',
         }).then((result) => {
             if (result.isConfirmed) {
+                const data = {
+                    body: [id],
+                };
                 this.surveyFormService
-                    .deleteSurveyForm(id)
+                    .deleteSurveyForm(data)
+                    .pipe(
+                        tap((res) => {
+                            this.sweetalertServices.getSwal('success', 'Delete data success.', '', false, '');
+                            window.location.reload();
+                        }),
+                        catchError((error) => {
+                            this.handleError(error);
+                            throw error;
+                        }),
+                    )
+                    .subscribe();
+            }
+        });
+    }
+
+    deleteSelectForm() {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Do you want to delete this form?',
+            showCancelButton: true,
+            confirmButtonColor: '#3066be',
+            cancelButtonColor: '#ec5365',
+            width: '50%',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const data = {
+                    body: this.checkedValues,
+                };
+                this.surveyFormService
+                    .deleteSurveyForm(data)
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.getSwal('success', 'Delete data success.', '', false, '');
@@ -231,13 +289,29 @@ export class SurveyFormComponent implements OnInit {
     }
 
     exportExcel() {
+        if (this.checkedValues.length != 0) {
+            this.selectedSurveyForms = this.surveyForms.filter((form: any) => this.checkedValues.includes(form.surveyFormId));
+        }
+
         if (this.selectedSurveyForms.length != 0) {
-            const columns = [['แบบฟอร์มสำรวจ', 'วันที่บันทึก', 'แบบฟอร์มสำรวจ', 'บันทึกโดย']];
+            const processedForms = this.selectedSurveyForms.reduce(
+                (acc: any, cur: any) => [
+                    ...acc,
+                    {
+                        name: cur.name,
+                        createdAt: cur.createdAt,
+                        createdBy: cur.createdBy,
+                    },
+                ],
+                [],
+            );
+
+            const columns = [['แบบฟอร์มสำรวจ', 'วันที่บันทึก', 'บันทึกโดย']];
             const wb = XLSX.utils.book_new();
             const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet([]);
             XLSX.utils.sheet_add_aoa(ws, columns);
 
-            XLSX.utils.sheet_add_json(ws, this.selectedSurveyForms, { origin: 'A2', skipHeader: true });
+            XLSX.utils.sheet_add_json(ws, processedForms, { origin: 'A2', skipHeader: true });
 
             XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
 

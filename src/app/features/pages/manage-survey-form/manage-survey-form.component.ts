@@ -37,7 +37,7 @@ export class ManageSurveyFormComponent implements OnInit {
             this.cb = state.cb;
         } else {
             this.route.queryParams.subscribe((params) => {
-                this.surveyFormId = params['itemId'];
+                this.surveyFormId = params['key'];
                 this.cb = params['cb'];
             });
         }
