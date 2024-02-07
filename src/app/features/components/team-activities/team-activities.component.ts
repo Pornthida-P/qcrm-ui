@@ -53,26 +53,13 @@ export class TeamActivitiesComponent implements OnInit {
     }
 
     dateClass: MatCalendarCellClassFunction<Date> = (cellDate, view) => {
-        const cellDateStr = moment(cellDate).format('YYYY-MM-DD');
-
         if (view === 'month') {
-            for (const event of this.calendarDateEvents) {
-                const startDate = moment(event.startDate, 'YYYY-MM-DD').toDate();
-                const endDate = moment(event.endDate, 'YYYY-MM-DD').toDate();
+            const eventsToday = this.calendarDateEvents.filter((event) => {
+                return cellDate >= new Date(event.startDate) && cellDate <= new Date(event.endDate);
+            });
 
-                if (cellDate >= startDate && cellDate <= endDate) {
-                    if (cellDateStr === moment(startDate).format('YYYY-MM-DD') && cellDateStr === moment(endDate).format('YYYY-MM-DD')) {
-                        return 'mat-calendar-body-comparison-start mat-calendar-body-comparison-end mat-calendar-body-in-comparison-range';
-                    }
-                    if (cellDateStr === moment(startDate).format('YYYY-MM-DD')) {
-                        return 'mat-calendar-body-comparison-start mat-calendar-body-in-comparison-range';
-                    }
-                    if (cellDateStr === moment(endDate).format('YYYY-MM-DD')) {
-                        return 'mat-calendar-body-comparison-end mat-calendar-body-in-comparison-range';
-                    } else {
-                        return 'mat-calendar-body-in-comparison-range';
-                    }
-                }
+            if (eventsToday.length > 0) {
+                return 'highlight-date';
             }
         }
 
