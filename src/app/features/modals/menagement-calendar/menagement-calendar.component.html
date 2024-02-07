@@ -8,93 +8,174 @@
                 <fa-icon class="fs-2" [icon]="faXmark"></fa-icon>
             </a>
         </div>
-        <form class="col-12" [formGroup]="calendarEvent">
-            <div class="my-3">
-                <label for="title" class="form-label">Title</label>
-                <input type="text" class="form-control" id="title" formControlName="title" name="title" required />
-            </div>
 
-            <div class="row my-3">
-                <div class="col-sm-12 col-md-12">
-                    <label for="location" class="form-label">Location</label>
-                    <input type="text" class="form-control" id="location" formControlName="location" name="location" />
-                </div>
-            </div>
-
-            <div class="row my-3">
-                <div class="col-sm-12 col-md-6">
-                    <label for="datepicker" class="form-label">Start Date</label>
-                    <div class="input-group">
-                        <input
-                            matInput
-                            [matDatepicker]="startDatePicker"
-                            formControlName="startDate"
-                            name="datetime"
-                            required
-                            class="input-date form-control"
-                        />
-                        <span class="input-group-text">
-                            <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
-                            <mat-datepicker #startDatePicker></mat-datepicker>
-                        </span>
-                    </div>
-                </div>
-
-                <div class="col-sm-12 col-md-6">
-                    <label for="datepicker" class="form-label">End Date</label>
-                    <div class="input-group">
-                        <input
-                            matInput
-                            [matDatepicker]="endDatePicker"
-                            formControlName="endDate"
-                            name="datetime"
-                            required
-                            class="input-date form-control"
-                        />
-                        <span class="input-group-text">
-                            <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
-                            <mat-datepicker #endDatePicker></mat-datepicker>
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="my-3">
-                <label for="description" class="form-label">Description</label>
-                <!-- <textarea class="form-control" id="description" formControlName="description" name="description" rows="5"></textarea> -->
-                <angular-editor formControlName="description" [config]="editorConfig"></angular-editor>
-            </div>
-
-            <div class="my-3">
-                <label for="members" class="form-label">Members</label>
-                <mat-select
-                    class="form-control"
-                    formControlName="members"
-                    (selectionChange)="onMemberSelectionChange($event)"
-                    name="members"
-                    multiple
-                >
-                    <mat-option *ngFor="let member of members" [value]="member">
-                        <div class="d-flex align-items-center justify-content-between gap-3 p-3">
-                            <app-profile-list [member]="member"></app-profile-list>
-                        </div>
-                    </mat-option>
-                </mat-select>
-
-                <div *ngIf="selectedMembers.length > 0" class="members my-3">
+        <div class="col-12">
+            <ul class="nav nav-tabs" id="calendarEventTab">
+                <li class="nav-item">
+                    <a class="nav-link active color-primary" id="details-tab" data-bs-toggle="tab" href="#details">Details</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link color-primary" id="attachments-tab" data-bs-toggle="tab" href="#attachments">Attachments</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="details">
                     <div class="row">
-                        <div *ngFor="let member of selectedMembers" class="col-12 mb-3">
-                            <div class="d-flex align-items-center justify-content-between gap-3 p-3 bg-light">
-                                <app-profile-list [member]="member"></app-profile-list>
+                        <form class="col-12" [formGroup]="calendarEvent">
+                            <div class="my-3">
+                                <label for="title" class="form-label">Title</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="title"
+                                    formControlName="title"
+                                    name="title"
+                                    required
+                                    [ngClass]="{
+                                        'invalid-form':
+                                            calendarEvent.get('title')?.invalid &&
+                                            (calendarEvent.get('title')?.dirty || calendarEvent.get('title')?.touched)
+                                    }"
+                                />
                             </div>
+
+                            <div class="row my-3">
+                                <div class="col-sm-12 col-md-12">
+                                    <label for="tag" class="form-label">Tag</label>
+                                    <select
+                                        class="form-select"
+                                        id="tag"
+                                        formControlName="tag"
+                                        name="tag"
+                                        [ngClass]="{
+                                            'invalid-form':
+                                                calendarEvent.get('tag')?.invalid &&
+                                                (calendarEvent.get('tag')?.dirty || calendarEvent.get('tag')?.touched)
+                                        }"
+                                    >
+                                        <option *ngFor="let tag of tags" [value]="tag.tagId">{{ tag.tagName }}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row my-3">
+                                <div class="col-sm-12 col-md-12">
+                                    <label for="location" class="form-label">Location</label>
+                                    <input type="text" class="form-control" id="location" formControlName="location" name="location" />
+                                </div>
+                            </div>
+
+                            <div class="row my-3">
+                                <div class="col-sm-12 col-md-6">
+                                    <label for="datepicker" class="form-label">Start Date</label>
+                                    <div class="input-group">
+                                        <input
+                                            matInput
+                                            [matDatepicker]="startDatePicker"
+                                            formControlName="startDate"
+                                            name="datetime"
+                                            required
+                                            class="input-date form-control"
+                                            [ngClass]="{
+                                                'invalid-form':
+                                                    calendarEvent.get('startDate')?.invalid &&
+                                                    (calendarEvent.get('startDate')?.dirty || calendarEvent.get('title')?.touched)
+                                            }"
+                                        />
+                                        <span class="input-group-text">
+                                            <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+                                            <mat-datepicker #startDatePicker></mat-datepicker>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-12 col-md-6">
+                                    <label for="datepicker" class="form-label">End Date</label>
+                                    <div class="input-group">
+                                        <input
+                                            matInput
+                                            [matDatepicker]="endDatePicker"
+                                            formControlName="endDate"
+                                            name="datetime"
+                                            required
+                                            class="input-date form-control"
+                                            [ngClass]="{
+                                                'invalid-form':
+                                                    calendarEvent.get('endDate')?.invalid &&
+                                                    (calendarEvent.get('endDate')?.dirty || calendarEvent.get('endDate')?.touched)
+                                            }"
+                                        />
+                                        <span class="input-group-text">
+                                            <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+                                            <mat-datepicker #endDatePicker></mat-datepicker>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="my-3">
+                                <label for="description" class="form-label">Description</label>
+                                <angular-editor formControlName="description" [config]="editorConfig"></angular-editor>
+                            </div>
+
+                            <div class="my-3">
+                                <label for="members" class="form-label">Members</label>
+                                <mat-select
+                                    class="form-control"
+                                    formControlName="members"
+                                    (selectionChange)="onMemberSelectionChange($event)"
+                                    name="members"
+                                    multiple
+                                    [ngClass]="{
+                                        'invalid-form':
+                                            calendarEvent.get('members')?.invalid &&
+                                            (calendarEvent.get('members')?.dirty || calendarEvent.get('members')?.touched)
+                                    }"
+                                >
+                                    <mat-option class="bg-light" *ngFor="let member of members" [value]="member">
+                                        <app-profile [member]="member"></app-profile>
+                                    </mat-option>
+                                </mat-select>
+
+                                <div *ngIf="selectedMembers.length > 0" class="members my-2">
+                                    <div class="row">
+                                        <app-profile-list
+                                            [members]="selectedMembers"
+                                            [isAction]="true"
+                                            (deleteUserId)="onDeletedMember($event)"
+                                        ></app-profile-list>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="attachments">
+                    <div class="row align-items-center my-3">
+                        <div class="col">
+                            <label for="attachments" class="form-label">Attachments list</label>
+                        </div>
+                        <div class="col-auto">
+                            <button class="btn btn-primary-color text-white" (click)="openFileInput()">
+                                <fa-icon [icon]="faPlus"></fa-icon>
+                                Add
+                            </button>
+                            <input type="file" #fileInput style="display: none" (change)="onFileSelected($event)" />
+                        </div>
+                    </div>
+                    <div class="row my-3">
+                        <div class="col">
+                            <app-attachments-list
+                                [attachments]="attachments"
+                                [isAction]="data.mode === 'edit' ? true : false"
+                            ></app-attachments-list>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="footer">
-                <button type="submit" class="btn btn-primary-color text-white" (click)="onSubmit()">Save</button>
-            </div>
-        </form>
+        </div>
+        <div class="footer">
+            <button type="submit" class="btn btn-primary-color text-white" (click)="onSubmit()">Save</button>
+        </div>
     </div>
 </div>
