@@ -1,0 +1,23 @@
+<div class="row g-2 p-2 align-items-center profile-container">
+    <div class="col-auto m-0 px-3">
+        <div class="profile">
+            <img class="profile-image img-fluid" [src]="member?.profile" [alt]="member?.username" (error)="handleProfileError($event)" />
+        </div>
+    </div>
+    <div class="col m-0">
+        <div class="user-info">
+            <p class="label fs-7">{{ member?.username }}</p>
+            <p class="label fs-8">{{ member?.role }}</p>
+        </div>
+    </div>
+    <div class="col-auto m-0">
+        <div class="user-action d-flex gap-2">
+            <button class="btn btn-primary-color text-white" (click)="onClickViewProfile(member)">
+                <fa-icon [icon]="faEye"></fa-icon>
+            </button>
+            <button *ngIf="isAction" class="btn btn-red-color text-white" (click)="onClickDeleteProfile(member)">
+                <fa-icon [icon]="faXmark"></fa-icon>
+            </button>
+        </div>
+    </div>
+</div>
