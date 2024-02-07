@@ -23,22 +23,29 @@ export class CalendarEventService {
     }
 
     addCalendarEvent(data: CalendarEvent): Observable<any> {
-        return this.http.post(`${this.baseUrl}${config.api.path.calendarEvent.add}`, data).pipe(tap(() => this.refreshDataSubject.next()));
+        return this.http.post(`${this.baseUrl}${config.api.path.calendarEvent.add}`, data).pipe(tap(() => this.onSetRefreshData()));
     }
 
     updateCalendarEvent(id: string, data: CalendarEvent): Observable<any> {
         return this.http
             .post(`${this.baseUrl}${config.api.path.calendarEvent.update}/${id}`, data)
-            .pipe(tap(() => this.refreshDataSubject.next()));
+            .pipe(tap(() => this.onSetRefreshData()));
     }
 
     deleteCalendarEvent(id: string): Observable<any> {
-        return this.http
-            .post(`${this.baseUrl}${config.api.path.calendarEvent.delete}/${id}`, {})
-            .pipe(tap(() => this.refreshDataSubject.next()));
+        return this.http.post(`${this.baseUrl}${config.api.path.calendarEvent.delete}/${id}`, {}).pipe(tap(() => this.onSetRefreshData()));
     }
 
     onRefreshData(): Observable<void> {
         return this.refreshDataSubject.asObservable();
+    }
+
+    onSetRefreshData(): void {
+        console.log('onSetRefreshData');
+        this.refreshDataSubject.next();
+    }
+
+    findAllTags(): Observable<any> {
+        return this.http.get(`${this.baseUrl}${config.api.path.calendarEvent.findAlltags}`);
     }
 }
