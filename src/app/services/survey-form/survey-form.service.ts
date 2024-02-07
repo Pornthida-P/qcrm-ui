@@ -23,8 +23,8 @@ export class SurveyFormService {
         return this.http.put(`${this.baseUrl}${config.api.path.surveyForm.baseUrl}`, data);
     }
 
-    deleteSurveyForm(id: string) {
-        return this.http.delete(`${this.baseUrl}${config.api.path.surveyForm.baseUrl}/${id}`);
+    deleteSurveyForm(data: any) {
+        return this.http.delete(`${this.baseUrl}${config.api.path.surveyForm.baseUrl}`, data);
     }
 
     getSurveyFormByPage(page: number, limit: number, sortId: string) {
