@@ -4,6 +4,7 @@ import { SurveyFormService } from 'src/app/services/survey-form/survey-form.serv
 import { catchError, tap } from 'rxjs';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { config } from 'src/app/config/config';
 @Component({
     selector: 'app-manage-survey-form',
     templateUrl: './manage-survey-form.component.html',
@@ -19,6 +20,9 @@ export class ManageSurveyFormComponent implements OnInit {
     state: string = '';
     detailItem: any = undefined;
     copyDetailItem: any = undefined;
+
+    userRole: string = '';
+    roleCanAccessCUDForm: string[] = config.roleCanAccessCUDForm;
 
     constructor(
         private _location: Location,
@@ -45,6 +49,13 @@ export class ManageSurveyFormComponent implements OnInit {
         if (this.surveyFormId) {
             this.getSurveyById(this.surveyFormId);
         }
+        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        this.userRole = userData.role;
+        console.log(this.userRole);
+    }
+
+    checkRole(): boolean {
+        return this.roleCanAccessCUDForm.includes(this.userRole);
     }
 
     async getSurveyById(surveyFormId: string) {

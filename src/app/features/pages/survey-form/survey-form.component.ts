@@ -1,5 +1,5 @@
 import { Component, OnInit, Pipe, PipeTransform } from '@angular/core';
-import { faArrowLeft, faArrowRight, faPenToSquare, faTrashCan, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faArrowRight, faPenToSquare, faTrashCan, faCircleXmark, faEye } from '@fortawesome/free-solid-svg-icons';
 import { ActivatedRoute, Router } from '@angular/router';
 import { config } from 'src/app/config/config';
 import * as XLSX from 'xlsx';
@@ -51,6 +51,7 @@ export class SurveyFormComponent implements OnInit {
     faArrowRight = faArrowRight;
     faArrowLeft = faArrowLeft;
     faCircleXmark = faCircleXmark;
+    faEye = faEye;
 
     pageSizeOptions = [10, 20];
     pageSize = 10;
@@ -64,10 +65,14 @@ export class SurveyFormComponent implements OnInit {
     detailItem: any = undefined;
     emptyItem: String = 'ว่าง';
     itemIdex: number = 0;
+    sideBarItemIndex: number = 0;
 
     sortId: string = '-';
     sortOrder: string = 'ASC';
     sortIcon: string = '';
+
+    userRole: string = '';
+    roleCanAccessCUDForm: string[] = config.roleCanAccessCUDForm;
 
     constructor(
         private router: Router,
@@ -78,6 +83,7 @@ export class SurveyFormComponent implements OnInit {
 
     ngOnInit() {
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        this.userRole = userData.role;
         this.filterOption = [
             { name: 'ทั้งหมด', code: 'all' },
             { name: 'Only My', code: userData.username },
@@ -94,6 +100,10 @@ export class SurveyFormComponent implements OnInit {
         this.selectedFilter = this.filterOption[0].code;
         this.getForm((this.currentPage - 1) * this.pageSize, this.pageSize);
         this.getPage();
+    }
+
+    checkRole(): boolean {
+        return this.roleCanAccessCUDForm.includes(this.userRole);
     }
 
     updateCheckedValues(formId: string): void {
@@ -132,8 +142,8 @@ export class SurveyFormComponent implements OnInit {
                 this.surveyForms = res;
             })
             .add(() => {
-                if (value == 'right') this.showSideBar(0);
-                else if (value == 'left') this.showSideBar(this.pageSize - 1);
+                if (value == 'right') this.showSideBar(0, this.surveyForms[0].surveyFormId);
+                else if (value == 'left') this.showSideBar(this.pageSize - 1, this.surveyForms[this.pageSize - 1].surveyFormId);
             });
     }
 
@@ -178,13 +188,15 @@ export class SurveyFormComponent implements OnInit {
         this.getForm((this.currentPage - 1) * this.pageSize, this.pageSize);
     }
 
-    showSideBar(value: number) {
+    showSideBar(value: number, itemId: string) {
         this.itemIdex = value;
-        this.detailItem = this.surveyForms[this.itemIdex];
+        this.detailItem = this.surveyForms.find((form: any) => form.surveyFormId == itemId);
+        this.sideBarItemIndex = this.surveyForms.findIndex((form: any) => form.surveyFormId == itemId);
         this.visibleLeftSideBar = true;
         this.visibleRightSideBar = true;
 
         if (this.itemIdex == 0 && this.currentPage == 1) this.visibleLeftSideBar = false;
+        if (this.itemIdex == this.surveyForms.length - 1) this.visibleRightSideBar = false;
         if (this.itemIdex == this.surveyForms.length - 1 && this.currentPage == this.totalPages) this.visibleRightSideBar = false;
     }
 
@@ -208,13 +220,15 @@ export class SurveyFormComponent implements OnInit {
             if (this.itemIdex >= this.pageSize - 1) {
                 await this.pageChangeSideBar(this.currentPage + 1, value);
             } else {
-                this.showSideBar(this.itemIdex + 1);
+                if (this.itemIdex != this.surveyForms.length - 1) {
+                    this.showSideBar(this.itemIdex + 1, this.surveyForms[this.sideBarItemIndex + 1].surveyFormId);
+                }
             }
         } else if (value == 'left') {
             if (this.itemIdex == 0) {
                 await this.pageChangeSideBar(this.currentPage - 1, value);
             } else {
-                this.showSideBar(this.itemIdex - 1);
+                this.showSideBar(this.itemIdex - 1, this.surveyForms[this.sideBarItemIndex - 1].surveyFormId);
             }
         }
     }
@@ -341,5 +355,13 @@ export class SurveyFormComponent implements OnInit {
         }
 
         this.sweetalertServices.getSwal(icon, title, errorMessage, false, route);
+    }
+
+    search() {
+        if (this.valueSearch) {
+            this.surveyForms = this.surveyForms.filter((val: SurveyForm) => {
+                return val.name.toLocaleLowerCase().includes(this.valueSearch.toLocaleLowerCase());
+            });
+        }
     }
 }

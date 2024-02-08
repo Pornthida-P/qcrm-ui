@@ -23,12 +23,13 @@ export const config = {
                 count: '/count',
             },
             call: {
-              url: '/call',
-              count: '/count',
-            }
+                url: '/call',
+                count: '/count',
+            },
         },
     },
     file: {
         type: '.xlsx',
     },
+    roleCanAccessCUDForm: ['admin', 'system', 'super admin'],
 };

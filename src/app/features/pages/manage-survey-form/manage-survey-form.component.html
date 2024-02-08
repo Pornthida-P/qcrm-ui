@@ -2,7 +2,7 @@
     <div class="bg-white rounded shadow w-100 h-100 d-flex flex-column p-4 overflow-auto">
         <div class="d-bt-back">
             <button type="button" (click)="prev()" class="btn btn-outline-danger">ย้อนกลับ</button>
-            <div class="d-flex flex-row flex-nowrap">
+            <div class="d-flex flex-row flex-nowrap" *ngIf="checkRole()">
                 <button
                     type="button"
                     (click)="copy()"
@@ -18,12 +18,21 @@
             <p class="mb-3 fs-5">ข้อมูลทั่วไป</p>
             <form class="mb-3 p-2">
                 <label for="inputFormName" class="form-label">ชื่อแบบฟอร์ม</label>
-                <input type="text" class="form-control" [(ngModel)]="formName" name="formName" id="inputFormName" required />
+                <input
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="formName"
+                    name="formName"
+                    id="inputFormName"
+                    required
+                    [disabled]="!checkRole()"
+                />
             </form>
-            <p class="mb-3" class="bg-primary-color rounded p-2 text-white fs-5">สร้าง</p>
+            <p class="mb-3" class="bg-primary-color rounded p-2 text-white fs-5" *ngIf="checkRole()">สร้าง</p>
             <div class="p-2">
                 <p class="mb-3">แบบฟอร์ม</p>
-                <form-builder id="form" [form]="form" (change)="onChange($event)"></form-builder>
+                <form-builder id="form" [form]="form" (change)="onChange($event)" *ngIf="checkRole()"></form-builder>
+                <formio [form]="form" [readOnly]="!checkRole()" *ngIf="!checkRole()"></formio>
             </div>
         </div>
     </div>
