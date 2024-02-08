@@ -19,7 +19,7 @@ export const config = {
                 findByDate: '/announcement/date/',
                 add: '/announcement/add',
                 update: '/announcement/update',
-                delete: '/announcement/delete',
+                delete: '/announcement/delete/',
             },
             calendarEvent: {
                 findAll: '/calendar-event',
