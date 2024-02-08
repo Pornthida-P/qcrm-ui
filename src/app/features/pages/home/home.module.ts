@@ -25,6 +25,7 @@ import { UserModalComponent } from '../../modals/user/user.component';
 import { MatTableModule } from '@angular/material/table';
 import { MenagementAnnounceComponent } from '../../modals/menagement-announce/menagement-announce.component';
 import { MenagementAnnounceListComponent } from '../../modals/menagement-announce-list/menagement-announce-list/menagement-announce-list.component';
+import { NgbModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
     declarations: [
@@ -56,6 +57,8 @@ import { MenagementAnnounceListComponent } from '../../modals/menagement-announc
         MatSelectModule,
         AngularEditorModule,
         MatButtonToggleModule,
+        NgbTooltipModule,
+        NgbModule,
         RouterModule.forChild([
             {
                 path: '',

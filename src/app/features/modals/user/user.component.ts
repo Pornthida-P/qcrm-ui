@@ -28,23 +28,25 @@ export class UserModalComponent implements OnInit {
     }
 
     initializeForm(): void {
+        const isViewMode = this.data.mode === 'view';
+
         if (this.data.mode === 'add') {
             this.userData = this.fb.group({
-                userId: [''],
-                username: [''],
-                email: [''],
-                group: [''],
-                role: [''],
-                profile: [''],
+                userId: [{ value: '' }],
+                username: [{ value: '' }],
+                email: [{ value: '' }],
+                group: [{ value: '' }],
+                role: [{ value: '' }],
+                profile: [{ value: '' }],
             });
         } else {
             this.userData = this.fb.group({
-                userId: [this.data.userData?.userId],
-                username: [this.data.userData?.username],
-                email: [this.data.userData?.email],
-                group: [this.data.userData?.group],
-                role: [this.data.userData?.role],
-                profile: [this.data.userData?.profile],
+                userId: [{ value: this.data.userData?.userId, disabled: isViewMode }],
+                username: [{ value: this.data.userData?.username, disabled: isViewMode }],
+                email: [{ value: this.data.userData?.email, disabled: isViewMode }],
+                group: [{ value: this.data.userData?.group, disabled: isViewMode }],
+                role: [{ value: this.data.userData?.role, disabled: isViewMode }],
+                profile: [{ value: this.data.userData?.profile, disabled: isViewMode }],
             });
         }
     }

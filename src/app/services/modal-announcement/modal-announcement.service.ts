@@ -11,7 +11,7 @@ export class ModalAnnouncementService {
     constructor(public dialog: MatDialog) {}
 
     openDialogList(mode: 'add' | 'view' | 'edit', announcement?: Announce[]): void {
-        const dialogRef = this.dialog.open(MenagementAnnounceComponent, {
+        const dialogRef = this.dialog.open(MenagementAnnounceListComponent, {
             width: '60%',
             data: { mode, announcement },
         });
@@ -22,7 +22,7 @@ export class ModalAnnouncementService {
     }
 
     openDialog(mode: 'add' | 'view' | 'edit', announcement?: Announce): void {
-        const dialogRef = this.dialog.open(MenagementAnnounceListComponent, {
+        const dialogRef = this.dialog.open(MenagementAnnounceComponent, {
             width: '60%',
             data: { mode, announcement },
         });
