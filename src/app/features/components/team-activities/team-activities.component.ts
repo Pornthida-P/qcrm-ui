@@ -33,7 +33,6 @@ export class TeamActivitiesComponent implements OnInit {
         this.calendarService.onRefreshData().subscribe(() => {
             this.refreshData();
         });
-        this.onSelectedDateChanged();
     }
 
     findAllEvents() {
