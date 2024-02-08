@@ -1,5 +1,17 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { faCalendarAlt, faList, faLocationDot, faUserGroup, faEdit, faTrash, faTag, faPaperclip } from '@fortawesome/free-solid-svg-icons';
+import { FormControl } from '@angular/forms';
+import { TooltipPosition } from '@angular/material/tooltip';
+import {
+    faCalendarAlt,
+    faList,
+    faLocationDot,
+    faUserGroup,
+    faEdit,
+    faTrash,
+    faTag,
+    faPaperclip,
+    faEye,
+} from '@fortawesome/free-solid-svg-icons';
 import { catchError } from 'rxjs';
 import { CalendarEventService } from 'src/app/services/calendar-event/calendar-event.service';
 import { ModalCalendarService } from 'src/app/services/modal-calendar/modal-calendar.service';
@@ -21,9 +33,13 @@ export class CalendarCardComponent implements OnInit {
     faList = faList;
     faLocation = faLocationDot;
     faUserGroup = faUserGroup;
+    faView = faEye;
     faEdit = faEdit;
     faTrash = faTrash;
     faPaperclip = faPaperclip;
+
+    positionOptions: TooltipPosition[] = ['below', 'above', 'left', 'right'];
+    position = new FormControl(this.positionOptions[0]);
 
     constructor(
         private modalCalendarService: ModalCalendarService,
@@ -36,6 +52,12 @@ export class CalendarCardComponent implements OnInit {
     handleProfileError(event: any) {
         if (event) {
             event.target.src = this.profileError;
+        }
+    }
+
+    onClickViewEvent(event: CalendarEvent | undefined) {
+        if (event && event?.eventId) {
+            this.modalCalendarService.openDialog('view', event);
         }
     }
 
