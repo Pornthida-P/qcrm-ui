@@ -1,11 +1,16 @@
 import { Component, Inject, OnInit } from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { faEdit, faEye, faXmark } from '@fortawesome/free-solid-svg-icons';
-import { catchError, tap } from 'rxjs';
+import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { AnnouncementService } from 'src/app/services/announcement/announcement.service';
-import { ModalAnnouncementService } from 'src/app/services/modal-announcement/modal-announcement.service';
-import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { Announce } from 'src/app/shared/interface/announce.interface';
+import { MenagementAnnounceListComponent } from '../menagement-announce-list/menagement-announce-list/menagement-announce-list.component';
+import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
+import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
+import { catchError, tap } from 'rxjs';
+import { User } from 'src/app/shared/interface/user.interface';
+import { UserService } from 'src/app/services/user/user.service';
+import * as moment from 'moment';
 
 @Component({
     selector: 'app-menagement-announce',
@@ -14,36 +19,52 @@ import { Announce } from 'src/app/shared/interface/announce.interface';
 })
 export class MenagementAnnounceComponent implements OnInit {
     title: string = 'Announcement Management';
-    announcements: Announce[] = [];
+    announceData: FormGroup = new FormGroup({});
+    startTime: NgbTimeStruct = { hour: 0, minute: 0, second: 0 };
+    endTime: NgbTimeStruct = { hour: 23, minute: 59, second: 59 };
+    userData?: User | null;
 
     faXmark = faXmark;
-    faEye = faEye;
-    faEdit = faEdit;
 
     constructor(
         private announcementService: AnnouncementService,
+        private fb: FormBuilder,
+        private userService: UserService,
         private sweetalertServices: SweetAlertService,
-        private modalAnnouncementService: ModalAnnouncementService,
-        public dialogRef: MatDialogRef<MenagementAnnounceComponent>,
-    ) {}
+        public dialogRef: MatDialogRef<MenagementAnnounceListComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: { mode: 'add' | 'view' | 'edit'; announcement?: Announce },
+    ) {
+        if (data.announcement?.startDate) {
+            const startDate = new Date(data.announcement.startDate);
+            const hour = startDate.getHours();
+            const minute = startDate.getMinutes();
+            const second = startDate.getSeconds();
+            this.startTime = { hour, minute, second };
+        }
 
-    ngOnInit(): void {
-        this.findAllAnnouncement();
+        if (data.announcement?.endDate) {
+            const endDate = new Date(data.announcement.endDate);
+            const hour = endDate.getHours();
+            const minute = endDate.getMinutes();
+            const second = endDate.getSeconds();
+            this.endTime = { hour, minute, second };
+        }
     }
 
-    findAllAnnouncement() {
-        this.announcementService
-            .findAll()
+    ngOnInit(): void {
+        this.getUserData();
+        this.initializeForm();
+    }
+
+    getUserData() {
+        this.userService
+            .getDataUser()
             .pipe(
-                tap((res: Announce[]) => {
-                    this.announcements = res;
-                }),
-                catchError((error) => {
-                    this.handleAnnounceError(error);
-                    throw error;
+                tap((res: User | null) => {
+                    this.userData = res;
                 }),
             )
-            .subscribe(() => {});
+            .subscribe();
     }
 
     onClickClose() {
@@ -51,19 +72,64 @@ export class MenagementAnnounceComponent implements OnInit {
     }
 
     onSubmit() {
-        console.log('submit');
-    }
+        if (this.announceData.invalid) {
+            this.sweetalertServices.getSwal('warning', 'Warning', 'Please fill in all required fields.', false, '');
+            return;
+        }
 
-    onClickEditAnnounce(announce: Announce) {
-        this.modalAnnouncementService.openDialog('edit', announce);
-    }
+        const form = this.announceData.value;
 
-    onClickViewAnnounce(announce: Announce) {
-        this.modalAnnouncementService.openDialog('view', announce);
-    }
+        const startDate = moment(form.startDate).set({
+            hour: this.startTime.hour,
+            minute: this.startTime.minute,
+            second: this.startTime.second,
+        });
 
-    onClickDeleteAnnounce(announce: Announce) {
-        console.log('delete');
+        const endDate = moment(form.endDate).set({
+            hour: this.endTime.hour,
+            minute: this.endTime.minute,
+            second: this.endTime.second,
+        });
+
+        form.startDate = startDate.format('YYYY-MM-DD HH:mm:ss');
+        form.endDate = endDate.format('YYYY-MM-DD HH:mm:ss');
+
+        if (!startDate.isBefore(endDate)) {
+            this.sweetalertServices.getSwal('warning', 'Warning', 'Start date must be before end date.', false, '');
+            return;
+        }
+
+        if (this.data.mode === 'add') {
+            form.createdAt = moment().format('YYYY-MM-DD HH:mm:ss');
+            form.createdById = this.userData?.userId;
+
+            this.announcementService
+                .add(form)
+                .pipe(
+                    catchError((error) => {
+                        this.handleAnnounceError(error);
+                        throw error;
+                    }),
+                )
+                .subscribe((res) => {
+                    this.dialogRef.close();
+                });
+        } else if (this.data.mode === 'edit') {
+            form.modifiedAt = moment().format('YYYY-MM-DD HH:mm:ss');
+            form.modifiedById = this.userData?.userId;
+
+            this.announcementService
+                .update(form)
+                .pipe(
+                    catchError((error) => {
+                        this.handleAnnounceError(error);
+                        throw error;
+                    }),
+                )
+                .subscribe((res) => {
+                    this.dialogRef.close();
+                });
+        }
     }
 
     handleAnnounceError(error: any) {
@@ -79,15 +145,50 @@ export class MenagementAnnounceComponent implements OnInit {
                 errorMessage = 'Your session has expired. Please log in again.';
                 route = 'login';
                 break;
+            case 400:
+                icon = 'warning';
+                title = 'Announcement Error';
+                errorMessage = 'Invalid data. Please check your input and try again.';
+                route = '';
+                break;
             default:
                 icon = 'error';
-                title = 'Announce Error';
-                errorMessage = `Failed to update announcement. Please try again later.`;
+                title = 'Announcement Error';
+                errorMessage = `Failed to ${this.data.mode} announcement. Please try again later.`;
                 route = '';
                 break;
         }
 
-        this.dialogRef.close();
         this.sweetalertServices.getSwal(icon, title, errorMessage, false, route);
+    }
+
+    initializeForm(): void {
+        const isViewMode = this.data.mode === 'view';
+
+        if (this.data.mode === 'add') {
+            this.announceData = this.fb.group({
+                announceId: [],
+                announceTitle: ['', Validators.required],
+                description: ['', Validators.required],
+                startDate: [new Date(), Validators.required],
+                endDate: [new Date(), Validators.required],
+                createdAt: [],
+                createdById: [],
+                modifiedAt: [],
+                modifiedById: [],
+            });
+        } else {
+            this.announceData = this.fb.group({
+                announceId: [{ value: this.data.announcement?.announceId, disabled: isViewMode }],
+                announceTitle: [{ value: this.data.announcement?.announceTitle, disabled: isViewMode }, [Validators.required]],
+                description: [{ value: this.data.announcement?.description, disabled: isViewMode }, [Validators.required]],
+                startDate: [{ value: this.data.announcement?.startDate, disabled: isViewMode }, [Validators.required]],
+                endDate: [{ value: this.data.announcement?.endDate, disabled: isViewMode }, [Validators.required]],
+                createdAt: [{ value: this.data.announcement?.createdAt, disabled: isViewMode }],
+                createdById: [{ value: this.data.announcement?.createdById, disabled: isViewMode }],
+                modifiedAt: [{ value: this.data.announcement?.modifiedAt, disabled: isViewMode }],
+                modifiedById: [{ value: this.data.announcement?.modifiedById, disabled: isViewMode }],
+            });
+        }
     }
 }

@@ -45,7 +45,6 @@ export class MenagementCalendarComponent implements OnInit {
         width: 'auto',
         minWidth: '0',
         translate: 'yes',
-        enableToolbar: true,
         showToolbar: true,
         placeholder: '',
         defaultParagraphSeparator: '',
@@ -97,37 +96,42 @@ export class MenagementCalendarComponent implements OnInit {
 
     ngOnInit(): void {
         this.initializeForm();
+        this.getAllTags();
         this.getUserData();
         this.getMembers();
     }
 
     initializeForm(): void {
-        if (this.data.mode === 'edit' && this.data.eventData) {
+        const isViewMode = this.data.mode === 'view';
+
+        if (this.data.mode === 'add') {
             this.calendarEvent = this.fb.group({
-                eventId: [this.data.eventData.eventId],
-                title: [this.data.eventData.title, Validators.required],
-                tag: [this.data.eventData.tag.tagId, Validators.required],
-                location: [this.data.eventData.location],
-                startDate: [new Date(this.data.eventData.startDate).toISOString(), Validators.required],
-                endDate: [new Date(this.data.eventData.startDate).toISOString(), Validators.required],
-                description: [this.data.eventData.description, Validators.required],
+                eventId: [{ value: '' }],
+                title: [{ value: '' }, Validators.required],
+                tag: [{ value: '' }, Validators.required],
+                location: [{ value: '' }],
+                startDate: [{ value: new Date().toISOString() }, Validators.required],
+                endDate: [{ value: new Date().toISOString() }, Validators.required],
+                description: [{ value: '' }, Validators.required],
                 members: [[], Validators.required],
             });
         } else {
             this.calendarEvent = this.fb.group({
-                eventId: [''],
-                title: ['', Validators.required],
-                tag: ['', Validators.required],
-                location: [''],
-                startDate: [new Date().toISOString(), Validators.required],
-                endDate: [new Date().toISOString(), Validators.required],
-                description: ['', Validators.required],
-                members: [[], Validators.required],
+                eventId: [{ value: this.data.eventData?.eventId, disabled: isViewMode }],
+                title: [{ value: this.data.eventData?.title, disabled: isViewMode }, Validators.required],
+                tag: [{ value: this.data.eventData?.tag.tagId, disabled: isViewMode }, Validators.required],
+                location: [{ value: this.data.eventData?.location, disabled: isViewMode }],
+                startDate: [
+                    { value: new Date(this.data.eventData?.startDate || '').toISOString(), disabled: isViewMode },
+                    Validators.required,
+                ],
+                endDate: [{ value: new Date(this.data.eventData?.endDate || '').toISOString(), disabled: isViewMode }, Validators.required],
+                description: [{ value: this.data.eventData?.description, disabled: isViewMode }, Validators.required],
+                members: [{ value: [], disabled: isViewMode }, Validators.required],
             });
         }
-        this.attachments = [...(this.data.eventData?.attachments || [])];
 
-        this.getAllTags();
+        this.attachments = [...(this.data.eventData?.attachments || [])];
     }
 
     getUserData() {

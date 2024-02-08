@@ -156,7 +156,7 @@
                             <label for="attachments" class="form-label">Attachments list</label>
                         </div>
                         <div class="col-auto">
-                            <button class="btn btn-primary-color text-white" (click)="openFileInput()">
+                            <button class="btn btn-primary-color text-white" (click)="openFileInput()" [disabled]="data.mode === 'view'">
                                 <fa-icon [icon]="faPlus"></fa-icon>
                                 Add
                             </button>
@@ -175,7 +175,9 @@
             </div>
         </div>
         <div class="footer">
-            <button type="submit" class="btn btn-primary-color text-white" (click)="onSubmit()">Save</button>
+            <button type="submit" class="btn btn-primary-color text-white" (click)="onSubmit()" [disabled]="data.mode === 'view'">
+                Save
+            </button>
         </div>
     </div>
 </div>
