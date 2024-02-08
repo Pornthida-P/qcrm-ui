@@ -28,7 +28,9 @@ export class AnnounceComponent {
     ) {}
 
     ngOnInit(): void {
-        this.findAnnounceByDate();
+        this.announcementService.onRefreshData().subscribe(() => {
+            this.findAnnounceByDate();
+        });
     }
 
     findAnnounceByDate() {
@@ -65,8 +67,7 @@ export class AnnounceComponent {
     }
 
     onClickEditAnnounce() {
-        const announceAll: any = this.announcementService.findAll().toPromise();
-        this.modalAnnouncementService.openDialogList('edit', announceAll);
+        this.modalAnnouncementService.openDialogList('edit');
     }
 
     handleAnnounceError(error: any) {
