@@ -8,10 +8,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Formio, FormioModule } from '@formio/angular';
 import bootstrap4 from '@formio/bootstrap/bootstrap4';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModule,NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { TokenInterceptor } from './core/interceptor/token.interceptor';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+
 (Formio as any).use(bootstrap4);
 
 @NgModule({
@@ -25,7 +26,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
         FormioModule,
         NgbModule,
         MatDatepickerModule,
-        MatNativeDateModule,
+      MatNativeDateModule,
+      NgbDatepickerModule,
     ],
     providers: [
         {

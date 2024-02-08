@@ -16,6 +16,7 @@
                         placeholder="ค้นหา..."
                         aria-describedby="basic-addon1"
                         style="width: 70%"
+                        (change)="search()"
                     />
                     <select class="form-select shadow-none" aria-label="Default select example" [(ngModel)]="selectedFilter">
                         <option *ngFor="let op of filterOption" [value]="op.code">
@@ -24,30 +25,30 @@
                     </select>
                 </div>
             </div>
-            <button
-                class="d-flex align-items-center gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white"
-                (click)="formManage()"
-            >
-                <i class="fa-solid fa-plus"></i>
-                สร้างแบบสำรวจ
-            </button>
-            <div class="d-none d-md-flex d-lg-none p-2 btn-primary-color rounded text-white" (click)="formManage()">
-                <i class="fa-solid fa-plus"></i>
+            <div *ngIf="checkRole()">
+                <button
+                    class="d-flex align-items-center gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white"
+                    (click)="formManage()"
+                >
+                    <i class="fa-solid fa-plus"></i>
+                    สร้างแบบสำรวจ
+                </button>
+                <div class="d-none d-md-flex d-lg-none p-2 btn-primary-color rounded text-white" (click)="formManage()">
+                    <i class="fa-solid fa-plus"></i>
+                </div>
             </div>
         </div>
-        <!-- <div *ngIf="selectedForm.length != 0">
-          <div class="flex p-3 bg-gray-50">
-              <button
-                  type="button"
-                  pButton
-                  pRipple
-                  icon="pi pi-file-excel"
-                  (click)="exportExcel()"
-                  class="p-button-success mr-2"
-                  pTooltip="XLS"
-                  tooltipPosition="bottom"
-              ></button>
-              <button
+        <div *ngIf="checkedValues.length != 0">
+            <div class="d-flex p-3 bg-body-tertiary">
+                <button
+                    class="d-flex align-items-center me-2 d-md-none d-lg-flex rounded p-2 text-white btn btn-warning"
+                    (click)="exportExcel()"
+                    placement="top"
+                    ngbTooltip="Export to Excel"
+                >
+                    <i class="fa-solid fa-file"></i>
+                </button>
+                <!--<button
                   type="button"
                   pButton
                   pRipple
@@ -56,24 +57,25 @@
                   class="p-button-warning mr-2"
                   pTooltip="Edit"
                   tooltipPosition="bottom"
-              ></button>
-              <button
-                  type="button"
-                  pButton
-                  pRipple
-                  icon="pi pi-trash"
-                  (click)="deleteSurvey()"
-                  class="p-button-danger ml-auto"
-                  pTooltip="Delete"
-                  tooltipPosition="bottom"
-              ></button>
-          </div>
-      </div> -->
+              ></button>-->
+                <button
+                    class="d-flex align-items-center d-md-none d-lg-flex rounded p-2 text-white btn btn-danger"
+                    (click)="deleteSelectForm()"
+                    placement="top"
+                    ngbTooltip="ลบ"
+                >
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
+        </div>
         <div>
             <div class="table-responsive">
                 <table class="table">
                     <thead>
                         <tr>
+                            <th class="text-center" *ngIf="checkRole()">
+                                <input type="checkbox" name="all" [checked]="isAllChecked()" (change)="checkAll($event)" />
+                            </th>
                             <th style="width: 70%" scope="col">
                                 <a (click)="sort('name')">แบบฟอร์มสำรวจ </a><i *ngIf="sortId == 'name'" class="{{ sortIcon }}"></i>
                             </th>
@@ -83,14 +85,23 @@
                             <th style="width: 15%" scope="col">
                                 <a (click)="sort('createdById')">บันทึกโดย</a><i *ngIf="sortId == 'createBy'" class="{{ sortIcon }}"></i>
                             </th>
-                            <th scope="col"><a>จัดการ</a></th>
+                            <th scope="col" *ngIf="checkRole()"><a>จัดการ</a></th>
                         </tr>
                     </thead>
                     <tbody>
                         <ng-container *ngIf="(surveyForms | searchFilter : valueSearch : selectedFilter)?.length > 0; else noDataTemplate">
                             <tr *ngFor="let form of surveyForms | searchFilter : valueSearch : selectedFilter; let i = index">
+                                <td class="text-center" *ngIf="checkRole()">
+                                    <input
+                                        type="checkbox"
+                                        name="forms[]"
+                                        value="{{ form.id }}"
+                                        [(ngModel)]="form.state"
+                                        (change)="updateCheckedValues(form.surveyFormId)"
+                                    />
+                                </td>
                                 <td
-                                    (click)="showSideBar(i)"
+                                    (click)="showSideBar(i, form.surveyFormId)"
                                     class="cursor-pointer w-max-ellipsis"
                                     data-bs-toggle="offcanvas"
                                     data-bs-target="#offcanvasRight"
@@ -103,13 +114,13 @@
                                 </td>
                                 <td scope="row">{{ form.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
                                 <td scope="row">{{ form.createdBy }}</td>
-                                <td class="text-center" scope="row">
+                                <td class="text-center" scope="row" *ngIf="checkRole()">
                                     <div class="d-flex flex-row flex-nowrap">
                                         <div class="me-3 color-primary" placement="top" ngbTooltip="แก้ไข" (click)="edit(form)">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </div>
                                         <div class="color-red" placement="top" ngbTooltip="ลบ" (click)="deleteForm(form.surveyFormId)">
-                                            <i class="fa-solid fa-trash-can"></i>
+                                            <i class="fa-solid fa-trash"></i>
                                         </div>
                                     </div>
                                 </td>
@@ -181,8 +192,25 @@
                     <div class="p-5 shadow call-side-detail">
                         <div class="d-flex justify-content-end">
                             <div class="d-flex flex-wrap">
-                                <div class="flex-grow-1" type="button" (click)="edit(detailItem)" placement="bottom" ngbTooltip="แก้ไข">
+                                <div
+                                    class="flex-grow-1"
+                                    type="button"
+                                    (click)="edit(detailItem)"
+                                    placement="bottom"
+                                    ngbTooltip="แก้ไข"
+                                    *ngIf="checkRole()"
+                                >
                                     <fa-icon class="color-primary" [icon]="faPenToSquare" size="lg"></fa-icon>
+                                </div>
+                                <div
+                                    class="flex-grow-1"
+                                    type="button"
+                                    (click)="edit(detailItem)"
+                                    placement="bottom"
+                                    ngbTooltip="แสดง"
+                                    *ngIf="!checkRole()"
+                                >
+                                    <fa-icon class="color-primary" [icon]="faEye" size="lg"></fa-icon>
                                 </div>
                             </div>
                         </div>

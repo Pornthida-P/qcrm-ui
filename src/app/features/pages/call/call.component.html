@@ -57,7 +57,7 @@
                             <tr *ngFor="let calls of calls | searchFilter : valueSearch : selectedFilter; let i = index" >
                                 <td scope="row"><input type="checkbox" [value]="calls" /></td>
                                 <td>
-                                    {{ calls.time | date : 'dd/MM/yyyy HH:mm' }}
+                                    {{ calls.createdAt | date : 'dd/MM/yyyy HH:mm' }}
                                 </td>
                                 <td
                                     (click)="showSideBar(i)"
@@ -68,18 +68,18 @@
                                 >
                                 <div class="" ngbTooltip="คลิกดูรายละเอียด"
                                 placement="bottom">
-                                  {{ calls.mobilePhone }}
+                                  {{ calls.name }}
                                 </div>
                                 </td>
-                                <td>{{ calls.typePhone }}</td>
+                                <td>{{ calls.direction }}</td>
                                 <td class="w-max-ellipsis">
-                                    <div [ngbTooltip]="calls.subject" placement="bottom" class="text-ellipsis">
-                                        {{ calls.subject }}
+                                    <div [ngbTooltip]="calls.caseTopicName" placement="bottom" class="text-ellipsis">
+                                        {{ calls.caseTopicName }}
                                     </div>
                                 </td>
                                 <td class="w-max-ellipsis">
                                     <div [ngbTooltip]="calls.detail" placement="bottom" class="text-ellipsis">
-                                        {{ calls.detail }}
+                                        {{ calls.description }}
                                     </div>
                                 </td>
                                 <td class="w-max-ellipsis">
@@ -87,7 +87,7 @@
                                         {{ calls.solutions }}
                                     </div>
                                 </td>
-                                <td>{{ calls.agent }}</td>
+                                <td>{{ calls.modified }}</td>
                                 <td class="" scope="row" (click)="editPage(calls)">
                                     <fa-icon [icon]="faPenToSquare"></fa-icon>
                                 </td>
@@ -168,26 +168,26 @@
 
                         <div>
                             <h4>เบอร์โทร</h4>
-                            <h5 class="font-b">{{ detailItem?.mobilePhone || emptyItem }}</h5>
+                            <h5 class="font-b">{{ detailItem?.name || emptyItem }}</h5>
                         </div>
                         <div class="row row-side">
                             <div class="col">
                                 <h5>เวลา</h5>
-                                <div class="font-b">{{ detailItem?.time | date : 'dd/MM/yyyy HH:mm' || emptyItem }}</div>
+                                <div class="font-b">{{ detailItem?.createdAt | date : 'dd/MM/yyyy HH:mm' || emptyItem }}</div>
                             </div>
                             <div class="col">
                                 <h5>ประเภทสาย</h5>
-                                <div class="font-b">{{ detailItem?.typePhone || emptyItem }}</div>
+                                <div class="font-b">{{ detailItem?.direction || emptyItem }}</div>
                             </div>
                         </div>
                         <div class="grid pt-2">
                             <div class="col row-side">
                                 <h5>ผู้ที่รับผิดชอบ</h5>
-                                <div class="font-b">{{ detailItem?.agent || emptyItem }}</div>
+                                <div class="font-b">{{ detailItem?.modified || emptyItem }}</div>
                             </div>
                             <div class="col row-side">
                                 <h5>เรื่องที่ติดต่อ</h5>
-                                <div class="font-b">{{ detailItem?.subject || emptyItem }}</div>
+                                <div class="font-b">{{ detailItem?.caseTopicName || emptyItem }}</div>
                             </div>
                         </div>
                         <div class="grid pt-2 row-side">
@@ -197,7 +197,7 @@
                             </div>
                             <div class="col row-side">
                                 <h5>รายละเอียด</h5>
-                                <div class="font-b">{{ detailItem?.detail || emptyItem }}</div>
+                                <div class="font-b">{{ detailItem?.description || emptyItem }}</div>
                             </div>
                         </div>
                     </div>
@@ -205,21 +205,21 @@
                         <div class="row row-side">
                             <div class="col">
                                 <h5>สร้างโดยผู้ใช้</h5>
-                                <div class="font-b">{{ detailItem?.agent || emptyItem }}</div>
+                                <div class="font-b">{{ detailItem?.modified || emptyItem }}</div>
                             </div>
                             <div class="col">
                                 <h5>เวลาที่แก้ไข</h5>
-                                <div class="font-b">{{ detailItem?.time || emptyItem }}</div>
+                                <div class="font-b">{{ detailItem?.createAt || emptyItem }}</div>
                             </div>
                         </div>
                         <div class="row row-side">
                             <div class="col">
                                 <h5>แก้ไขล่าสุดโดยผู้ใช้</h5>
-                                <div class="font-b">{{ detailItem?.agent || emptyItem }}</div>
+                                <div class="font-b">{{ detailItem?.modified || emptyItem }}</div>
                             </div>
                             <div class="col">
                                 <h5>เวลาที่แก้ไขล่าสุด</h5>
-                                <div class="font-b">{{ detailItem?.time || emptyItem }}</div>
+                                <div class="font-b">{{ detailItem?.createAt || emptyItem }}</div>
                             </div>
                         </div>
                     </div>
