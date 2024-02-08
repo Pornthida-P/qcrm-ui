@@ -8,7 +8,7 @@
                 <fa-icon class="fs-2" [icon]="faXmark"></fa-icon>
             </a>
         </div>
-        <div class="col-12 p-3">
+        <div class="col-12 p-3" *ngIf="announcements && announcements.length > 0; else noData">
             <table mat-table [dataSource]="announcements" class="mat-elevation">
                 <ng-container matColumnDef="announceTitle">
                     <th mat-header-cell *matHeaderCellDef class="fs-5">Title</th>
@@ -49,6 +49,13 @@
                 <tr mat-row *matRowDef="let row; columns: ['announceTitle', 'description', 'startDate', 'endDate', 'actions']"></tr>
             </table>
         </div>
+        <ng-template #noData>
+            <div class="row p-4">
+                <div class="col-12">
+                    <p class="fs-4 label text-center cursor-default">ไม่พบข้อมูล</p>
+                </div>
+            </div>
+        </ng-template>
         <div class="footer d-flex gap-2">
             <button type="button" class="btn btn-primary-color text-white" (click)="onClickAddAnnounce()">Add</button>
             <button type="button" class="btn btn-primary-color text-white" (click)="onSubmit()">Save</button>
