@@ -106,13 +106,13 @@ export class MenagementCalendarComponent implements OnInit {
 
         if (this.data.mode === 'add') {
             this.calendarEvent = this.fb.group({
-                eventId: [{ value: '' }],
-                title: [{ value: '' }, Validators.required],
-                tag: [{ value: '' }, Validators.required],
-                location: [{ value: '' }],
-                startDate: [{ value: new Date().toISOString() }, Validators.required],
-                endDate: [{ value: new Date().toISOString() }, Validators.required],
-                description: [{ value: '' }, Validators.required],
+                eventId: [],
+                title: ['', Validators.required],
+                tag: ['', Validators.required],
+                location: [''],
+                startDate: [new Date().toISOString(), Validators.required],
+                endDate: [new Date().toISOString(), Validators.required],
+                description: [, Validators.required],
                 members: [[], Validators.required],
             });
         } else {

@@ -32,12 +32,12 @@ export class UserModalComponent implements OnInit {
 
         if (this.data.mode === 'add') {
             this.userData = this.fb.group({
-                userId: [{ value: '' }],
-                username: [{ value: '' }],
-                email: [{ value: '' }],
-                group: [{ value: '' }],
-                role: [{ value: '' }],
-                profile: [{ value: '' }],
+                userId: [],
+                username: [''],
+                email: [''],
+                group: [''],
+                role: [''],
+                profile: [''],
             });
         } else {
             this.userData = this.fb.group({
