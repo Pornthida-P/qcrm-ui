@@ -19,8 +19,9 @@ mat-card {
 }
 
 ::ng-deep {
-    .mat-calendar-body-in-comparison-range::before {
-        background: var(--primary-active-color) !important;
+    .highlight-date {
+        background-color: var(--primary-active-color) !important;
+        border-radius: 50%;
     }
 
     .mat-calendar-body-selected {

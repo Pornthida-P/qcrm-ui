@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
-import { AnnounceCard } from 'src/app/shared/interface/announce.interface';
+import * as moment from 'moment';
+import { catchError, tap } from 'rxjs';
+import { CalendarEventService } from 'src/app/services/calendar-event/calendar-event.service';
+import { ModalCalendarService } from 'src/app/services/modal-calendar/modal-calendar.service';
+import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
+import { CalendarEvent, CalendarTag } from 'src/app/shared/interface/calendar.interface';
 
 @Component({
     selector: 'app-announce-list',
@@ -8,74 +13,88 @@ import { AnnounceCard } from 'src/app/shared/interface/announce.interface';
     styleUrl: './announce-list.component.scss',
 })
 export class AnnounceListComponent implements OnInit {
-    cardTypes = [
-        { key: 'morningBrief', title: 'Morning Brief Cards' },
-        { key: 'information', title: 'Information Cards' },
-        { key: 'announcement', title: 'Announcement Cards' },
-    ];
-    cards: AnnounceCard[] = [
-        {
-            id: '1',
-            title: 'ประกาศ 1',
-            type: 'morningBrief',
-            description: 'ข้อความประกาศ 1',
-            attachment: [{ id: 1, fileType: 'image', fileUrl: '', fileName: 'Attachment 1', createDate: '2021-01-01', createById: '1' }],
-            startDate: '2021-01-01',
-            endDate: '2021-01-01',
-            createAt: '2021-01-01T00:00:00',
-            createById: '1',
-        },
-        {
-            id: '2',
-            title: 'ประกาศ 2',
-            type: 'morningBrief',
-            description: 'ข้อความประกาศ 2',
-            attachment: [{ id: 1, fileType: 'png', fileUrl: '', fileName: 'Attachment 1', createDate: '2021-01-01', createById: '1' }],
-            startDate: '2021-01-01',
-            endDate: '2021-01-01',
-            createAt: '2021-01-01T00:00:00',
-            createById: '1',
-        },
-        {
-            id: '2',
-            title: 'ประกาศ 2',
-            type: 'morningBrief',
-            description: 'ข้อความประกาศ 2',
-            attachment: [{ id: 1, fileType: 'PDF', fileUrl: '', fileName: 'Attachment 1', createDate: '2021-01-01', createById: '1' }],
-            startDate: '2021-01-01',
-            endDate: '2021-01-01',
-            createAt: '2021-01-01T00:00:00',
-            createById: '1',
-        },
-        {
-            id: '3',
-            title: 'ประกาศ 3',
-            type: 'information',
-            description: 'ข้อความประกาศ 3',
-            attachment: [{ id: 1, fileType: 'image', fileUrl: '', fileName: 'Attachment 1', createDate: '2021-01-01', createById: '1' }],
-            startDate: '2021-01-01',
-            endDate: '2021-01-01',
-            createAt: '2021-01-01T00:00:00',
-            createById: '1',
-        },
-        {
-            id: '4',
-            title: 'ประกาศ 4',
-            type: 'information',
-            description: 'ข้อความประกาศ 4',
-            attachment: [{ id: 1, fileType: 'image', fileUrl: '', fileName: 'Attachment 1', createDate: '2021-01-01', createById: '1' }],
-            startDate: '2021-01-01',
-            endDate: '2021-01-01',
-            createAt: '2021-01-01T00:00:00',
-            createById: '1',
-        },
-    ];
+    calendarEvent: CalendarEvent[] = [];
+    tags: CalendarTag[] = [];
 
     faPlus = faPlusCircle;
 
-    getCardsByType(type: string): any[] {
-        const item = this.cards.filter((card) => card.type === type);
+    constructor(
+        private calendarService: CalendarEventService,
+        private sweetalertServices: SweetAlertService,
+        private modalCalendarService: ModalCalendarService,
+    ) {}
+
+    ngOnInit(): void {
+        this.getCalendarTag();
+        this.getCalendarEvent();
+
+        this.calendarService.onRefreshData().subscribe(() => {
+            this.getCalendarEvent();
+        });
+    }
+
+    getCalendarTag() {
+        this.calendarService
+            .findAllTags()
+            .pipe(
+                tap((res) => {
+                    this.tags = res;
+                }),
+                catchError((error) => {
+                    this.handleCalendarEventError(error);
+                    throw error;
+                }),
+            )
+            .subscribe((res) => {});
+    }
+
+    getCalendarEvent() {
+        const date = moment().format('YYYY-MM-DD');
+
+        this.calendarService
+            .findByDate(date)
+            .pipe(
+                tap((res: CalendarEvent[]) => {
+                    this.calendarEvent = res;
+                }),
+                catchError((error) => {
+                    this.handleCalendarEventError(error);
+                    throw error;
+                }),
+            )
+            .subscribe((res) => {});
+    }
+
+    findCalendarByTagId(tag: number): any[] {
+        const item = this.calendarEvent.filter((event) => event.tag.tagId === tag);
         return item;
     }
-    ngOnInit(): void {}
+
+    onClickAddEvent() {
+        this.modalCalendarService.openDialog('add');
+    }
+
+    handleCalendarEventError(error: any) {
+        let icon: string;
+        let errorMessage: string;
+        let title: string;
+        let route: string;
+
+        switch (error.status) {
+            case 401:
+                icon = 'warning';
+                title = 'Warning Authentication';
+                errorMessage = 'Your session has expired. Please log in again.';
+                route = 'login';
+                break;
+            default:
+                icon = 'error';
+                title = 'Calendar Event Error';
+                errorMessage = 'Failed to update calendar event. Please try again later.';
+                route = '';
+                break;
+        }
+
+        this.sweetalertServices.getSwal(icon, title, errorMessage, false, route);
+    }
 }

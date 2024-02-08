@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { User } from 'src/app/shared/interface/user.interface';
 
 @Component({
@@ -6,14 +6,19 @@ import { User } from 'src/app/shared/interface/user.interface';
     templateUrl: './profile-list.component.html',
     styleUrl: './profile-list.component.scss',
 })
-export class ProfileListComponent {
-    @Input() member?: User;
+export class ProfileListComponent implements OnInit {
+    @Input() members?: User[] = [];
+    @Input() isAction: boolean = false;
+    @Output() deleteUserId: EventEmitter<string> = new EventEmitter<string>();
 
-    profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
+    ngOnInit(): void {}
 
-    handleProfileError(event: any) {
-        if (event) {
-            event.target.src = this.profileError;
+    onDeletedMember(userId: string) {
+        const index = this.members?.findIndex((user) => user.userId === userId);
+        if (index !== undefined && index !== -1) {
+            this.members?.splice(index, 1);
         }
+
+        this.deleteUserId.emit(userId);
     }
 }

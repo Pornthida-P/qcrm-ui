@@ -9,7 +9,6 @@ import { HomeComponent } from './home.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AnnounceComponent } from '../../components/announce/announce.component';
 import { AnnounceListComponent } from '../../components/announce-list/announce-list.component';
-import { AnnounceCardComponent } from '../../components/announce-card/announce-card.component';
 import { CalendarCardComponent } from '../../components/calendar-card/calendar-card.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MenagementCalendarComponent } from '../../modals/menagement-calendar/menagement-calendar.component';
@@ -17,6 +16,16 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { ProfileListComponent } from '../../components/profile-list/profile-list.component';
 import { AngularEditorModule } from '@kolkov/angular-editor';
+import { AttachmentsComponent } from '../../components/attachments/attachments.component';
+import { AttachmentsListComponent } from '../../components/attachments-list/attachments-list.component';
+import { FileSizePipe } from 'src/app/shared/pipe/file-size.pipe';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { ProfileComponent } from '../../components/profile/profile.component';
+import { UserModalComponent } from '../../modals/user/user.component';
+import { MatTableModule } from '@angular/material/table';
+import { MenagementAnnounceComponent } from '../../modals/menagement-announce/menagement-announce.component';
+import { MenagementAnnounceListComponent } from '../../modals/menagement-announce-list/menagement-announce-list/menagement-announce-list.component';
+import { NgbModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
     declarations: [
@@ -24,10 +33,16 @@ import { AngularEditorModule } from '@kolkov/angular-editor';
         TeamActivitiesComponent,
         AnnounceComponent,
         AnnounceListComponent,
-        AnnounceCardComponent,
         CalendarCardComponent,
         MenagementCalendarComponent,
         ProfileListComponent,
+        AttachmentsComponent,
+        AttachmentsListComponent,
+        ProfileComponent,
+        UserModalComponent,
+        MenagementAnnounceComponent,
+        MenagementAnnounceListComponent,
+        FileSizePipe,
     ],
     imports: [
         MatCardModule,
@@ -35,11 +50,15 @@ import { AngularEditorModule } from '@kolkov/angular-editor';
         FormsModule,
         ReactiveFormsModule,
         FontAwesomeModule,
+        MatTableModule,
         MatDialogModule,
         MatDatepickerModule,
         MatNativeDateModule,
         MatSelectModule,
         AngularEditorModule,
+        MatButtonToggleModule,
+        NgbTooltipModule,
+        NgbModule,
         RouterModule.forChild([
             {
                 path: '',

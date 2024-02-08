@@ -9,7 +9,7 @@ import { CalendarEvent } from 'src/app/shared/interface/calendar.interface';
 export class ModalCalendarService {
     constructor(public dialog: MatDialog) {}
 
-    openDialog(mode: 'add' | 'edit', eventData?: CalendarEvent): void {
+    openDialog(mode: 'add' | 'view' | 'edit', eventData?: CalendarEvent): void {
         const dialogRef = this.dialog.open(MenagementCalendarComponent, {
             width: '60%',
             data: { mode, eventData },

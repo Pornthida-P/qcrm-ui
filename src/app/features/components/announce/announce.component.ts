@@ -1,5 +1,10 @@
 import { Component } from '@angular/core';
 import { faBullhorn, faEdit } from '@fortawesome/free-solid-svg-icons';
+import * as moment from 'moment';
+import { catchError, tap } from 'rxjs';
+import { AnnouncementService } from 'src/app/services/announcement/announcement.service';
+import { ModalAnnouncementService } from 'src/app/services/modal-announcement/modal-announcement.service';
+import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { Announce } from 'src/app/shared/interface/announce.interface';
 
 @Component({
@@ -16,20 +21,33 @@ export class AnnounceComponent {
 
     faEdit = faEdit;
 
-    ngOnInit(): void {
-        this.announcements = [
-            {
-                id: '1',
-                title: 'ประกาศ 1',
-                description: 'ข้อความประกาศ 1',
-                startDate: '2021-01-01',
-                endDate: '2021-01-01',
-                createAt: '2021-01-01T00:00:00',
-                createById: '1',
-            },
-        ];
+    constructor(
+        private modalAnnouncementService: ModalAnnouncementService,
+        private announcementService: AnnouncementService,
+        private sweetalertServices: SweetAlertService,
+    ) {}
 
-        this.updateMarqueeText();
+    ngOnInit(): void {
+        this.announcementService.onRefreshData().subscribe(() => {
+            this.findAnnounceByDate();
+        });
+    }
+
+    findAnnounceByDate() {
+        const date = moment().format('YYYY-MM-DD');
+        this.announcementService
+            .findByDate(date)
+            .pipe(
+                tap((res: Announce[]) => {
+                    this.announcements = res;
+                    this.updateMarqueeText();
+                }),
+                catchError((error) => {
+                    this.handleAnnounceError(error);
+                    throw error;
+                }),
+            )
+            .subscribe(() => {});
     }
 
     updateMarqueeText() {
@@ -37,14 +55,42 @@ export class AnnounceComponent {
             this.marqueeText = this.announcements
                 .map((announce, index, array) => {
                     if (index < array.length - 1) {
-                        return `<strong>${announce.title}</strong> : ${announce.description} <span class="marquee-space"></span>`;
+                        return `<strong>${announce.announceTitle}</strong> : ${announce.description} <span class="marquee-space"></span>`;
                     } else {
-                        return `<strong>${announce.title}</strong> : ${announce.description}`;
+                        return `<strong>${announce.announceTitle}</strong> : ${announce.description}`;
                     }
                 })
                 .join('');
         } else {
             this.marqueeText = '';
         }
+    }
+
+    onClickEditAnnounce() {
+        this.modalAnnouncementService.openDialogList('edit');
+    }
+
+    handleAnnounceError(error: any) {
+        let icon: string;
+        let errorMessage: string;
+        let title: string;
+        let route: string;
+
+        switch (error.status) {
+            case 401:
+                icon = 'warning';
+                title = 'Warning Authentication';
+                errorMessage = 'Your session has expired. Please log in again.';
+                route = 'login';
+                break;
+            default:
+                icon = 'error';
+                title = 'Announcement Error';
+                errorMessage = 'Failed to update announcement. Please try again later.';
+                route = '';
+                break;
+        }
+
+        this.sweetalertServices.getSwal(icon, title, errorMessage, false, route);
     }
 }

@@ -1,6 +1,18 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { faCalendarAlt, faList, faLocationDot, faUserGroup, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { catchError, tap } from 'rxjs';
+import { FormControl } from '@angular/forms';
+import { TooltipPosition } from '@angular/material/tooltip';
+import {
+    faCalendarAlt,
+    faList,
+    faLocationDot,
+    faUserGroup,
+    faEdit,
+    faTrash,
+    faTag,
+    faPaperclip,
+    faEye,
+} from '@fortawesome/free-solid-svg-icons';
+import { catchError } from 'rxjs';
 import { CalendarEventService } from 'src/app/services/calendar-event/calendar-event.service';
 import { ModalCalendarService } from 'src/app/services/modal-calendar/modal-calendar.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
@@ -17,11 +29,17 @@ export class CalendarCardComponent implements OnInit {
     profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
 
     faCalendar = faCalendarAlt;
+    faTag = faTag;
     faList = faList;
     faLocation = faLocationDot;
     faUserGroup = faUserGroup;
+    faView = faEye;
     faEdit = faEdit;
     faTrash = faTrash;
+    faPaperclip = faPaperclip;
+
+    positionOptions: TooltipPosition[] = ['below', 'above', 'left', 'right'];
+    position = new FormControl(this.positionOptions[0]);
 
     constructor(
         private modalCalendarService: ModalCalendarService,
@@ -37,6 +55,12 @@ export class CalendarCardComponent implements OnInit {
         }
     }
 
+    onClickViewEvent(event: CalendarEvent | undefined) {
+        if (event && event?.eventId) {
+            this.modalCalendarService.openDialog('view', event);
+        }
+    }
+
     onClickEditEvent(event: CalendarEvent | undefined) {
         if (event && event?.eventId) {
             this.modalCalendarService.openDialog('edit', event);
@@ -49,7 +73,7 @@ export class CalendarCardComponent implements OnInit {
                 .deleteCalendarEvent(event.eventId.toString())
                 .pipe(
                     catchError((error) => {
-                        this.handleContactError(error);
+                        this.handleCalendarEventError(error);
                         throw error;
                     }),
                 )
@@ -57,7 +81,7 @@ export class CalendarCardComponent implements OnInit {
         }
     }
 
-    handleContactError(error: any) {
+    handleCalendarEventError(error: any) {
         let icon: string;
         let errorMessage: string;
         let title: string;
