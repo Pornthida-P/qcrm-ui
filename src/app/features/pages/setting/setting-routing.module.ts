@@ -17,7 +17,7 @@ const routes: Routes = [
             },
             {
                 path: 'menagement-team',
-                loadChildren: () => import('../../components/menagement-team/menagement-team.module').then((m) => m.MenagementTeamModule),
+                loadChildren: () => import('../../components/team/team.module').then((m) => m.TeamModule),
                 title: 'Menagement Team',
             },
             {
