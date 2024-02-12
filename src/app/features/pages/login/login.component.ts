@@ -56,29 +56,11 @@ export class LoginComponent {
                         this.loginService.login();
                     }),
                     catchError((error) => {
-                        this.handleLoginError(error);
+                        this.sweetalertServices.handleError(error);
                         return throwError(error);
                     }),
                 )
                 .subscribe();
         }
-    }
-
-    handleLoginError(error: any) {
-        let errorMessage: string;
-        let title: string;
-
-        switch (error.status) {
-            case 401:
-                title = 'Login Error';
-                errorMessage = 'Username or password is incorrect';
-                break;
-            default:
-                title = 'Login Error';
-                errorMessage = 'Login failed. Please try again';
-                break;
-        }
-
-        this.sweetalertServices.getSwal('error', title, errorMessage, false, '');
     }
 }
