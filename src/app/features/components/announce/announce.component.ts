@@ -43,7 +43,7 @@ export class AnnounceComponent {
                     this.updateMarqueeText();
                 }),
                 catchError((error) => {
-                    this.handleAnnounceError(error);
+                    this.sweetalertServices.handleError(error);
                     throw error;
                 }),
             )
@@ -68,29 +68,5 @@ export class AnnounceComponent {
 
     onClickEditAnnounce() {
         this.modalAnnouncementService.openDialogList('edit');
-    }
-
-    handleAnnounceError(error: any) {
-        let icon: string;
-        let errorMessage: string;
-        let title: string;
-        let route: string;
-
-        switch (error.status) {
-            case 401:
-                icon = 'warning';
-                title = 'Warning Authentication';
-                errorMessage = 'Your session has expired. Please log in again.';
-                route = 'login';
-                break;
-            default:
-                icon = 'error';
-                title = 'Announcement Error';
-                errorMessage = 'Failed to update announcement. Please try again later.';
-                route = '';
-                break;
-        }
-
-        this.sweetalertServices.getSwal(icon, title, errorMessage, false, route);
     }
 }

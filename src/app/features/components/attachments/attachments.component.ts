@@ -83,7 +83,7 @@ export class AttachmentsComponent implements OnInit {
                 .delete(attachment.attachmentId)
                 .pipe(
                     catchError((error) => {
-                        this.handleCalendarEventError(error);
+                        this.sweetalertServices.handleError(error);
                         throw error;
                     }),
                 )
@@ -93,29 +93,5 @@ export class AttachmentsComponent implements OnInit {
         } else {
             this.sweetalertServices.getSwal('warning', 'Warning', 'There is a problem with the internet. Please try again.', false, '');
         }
-    }
-
-    handleCalendarEventError(error: any) {
-        let icon: string;
-        let errorMessage: string;
-        let title: string;
-        let route: string;
-
-        switch (error.status) {
-            case 401:
-                icon = 'warning';
-                title = 'Warning Authentication';
-                errorMessage = 'Your session has expired. Please log in again.';
-                route = 'login';
-                break;
-            default:
-                icon = 'error';
-                title = 'Calendar Event Error';
-                errorMessage = 'Failed to update calendar event. Please try again later.';
-                route = '';
-                break;
-        }
-
-        this.sweetalertServices.getSwal(icon, title, errorMessage, false, route);
     }
 }
