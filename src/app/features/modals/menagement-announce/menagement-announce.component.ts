@@ -107,7 +107,7 @@ export class MenagementAnnounceComponent implements OnInit {
                 .add(form)
                 .pipe(
                     catchError((error) => {
-                        this.handleAnnounceError(error);
+                        this.sweetalertServices.handleError(error);
                         throw error;
                     }),
                 )
@@ -122,7 +122,7 @@ export class MenagementAnnounceComponent implements OnInit {
                 .update(form)
                 .pipe(
                     catchError((error) => {
-                        this.handleAnnounceError(error);
+                        this.sweetalertServices.handleError(error);
                         throw error;
                     }),
                 )
@@ -130,36 +130,6 @@ export class MenagementAnnounceComponent implements OnInit {
                     this.dialogRef.close();
                 });
         }
-    }
-
-    handleAnnounceError(error: any) {
-        let icon: string;
-        let errorMessage: string;
-        let title: string;
-        let route: string;
-
-        switch (error.status) {
-            case 401:
-                icon = 'warning';
-                title = 'Warning Authentication';
-                errorMessage = 'Your session has expired. Please log in again.';
-                route = 'login';
-                break;
-            case 400:
-                icon = 'warning';
-                title = 'Announcement Error';
-                errorMessage = 'Invalid data. Please check your input and try again.';
-                route = '';
-                break;
-            default:
-                icon = 'error';
-                title = 'Announcement Error';
-                errorMessage = `Failed to ${this.data.mode} announcement. Please try again later.`;
-                route = '';
-                break;
-        }
-
-        this.sweetalertServices.getSwal(icon, title, errorMessage, false, route);
     }
 
     initializeForm(): void {
