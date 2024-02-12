@@ -9,6 +9,7 @@ import { User } from 'src/app/shared/interface/user.interface';
 })
 export class MenagementAccountComponent implements OnInit {
     userData?: User | null;
+    isAction: boolean = false;
     mode: 'add' | 'view' | 'edit' = 'edit';
 
     profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
@@ -16,8 +17,13 @@ export class MenagementAccountComponent implements OnInit {
     constructor(private userService: UserService) {}
 
     ngOnInit(): void {
+        this.getDataUser();
+    }
+
+    getDataUser() {
         this.userService.getDataUser().subscribe((res: User | null) => {
             this.userData = res;
+            this.isAction = res?.role.roleTitle.toLocaleLowerCase() === 'admin';
         });
     }
 

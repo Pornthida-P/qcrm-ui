@@ -26,6 +26,7 @@ export class MenagementCalendarComponent implements OnInit {
     selectedMembers: User[] = [];
     attachments: Attachment[] = [];
     tags: CalendarTag[] = [];
+    isAction: boolean = false;
 
     @ViewChild('fileInput') fileInput: ElementRef | undefined;
 
@@ -97,7 +98,7 @@ export class MenagementCalendarComponent implements OnInit {
     ngOnInit(): void {
         this.initializeForm();
         this.getAllTags();
-        this.getUserData();
+        this.getDataUser();
         this.getMembers();
     }
 
@@ -134,9 +135,10 @@ export class MenagementCalendarComponent implements OnInit {
         this.attachments = [...(this.data.eventData?.attachments || [])];
     }
 
-    getUserData() {
-        this.userService.getDataUser().subscribe((user: User | null) => {
-            this.userData = user;
+    getDataUser() {
+        this.userService.getDataUser().subscribe((res: User | null) => {
+            this.userData = res;
+            this.isAction = res?.role.roleTitle.toLocaleLowerCase() === 'admin' ? true : false;
         });
     }
 

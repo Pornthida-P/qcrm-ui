@@ -5,6 +5,7 @@ import { ModalTeamService } from 'src/app/services/modal-team/modal-team.service
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { Group } from 'src/app/shared/interface/group.interface';
+import { User } from 'src/app/shared/interface/user.interface';
 
 @Component({
     selector: 'app-team',
@@ -16,7 +17,9 @@ export class TeamComponent {
 
     faEdit = faEdit;
     faTrash = faTrash;
+    isAction: boolean = false;
     groupMembers: Group[] = [];
+    dataUser?: User | null;
 
     profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
 
@@ -30,6 +33,8 @@ export class TeamComponent {
         this.userService.getGroupOnRefrash().subscribe(() => {
             this.findAllGroup();
         });
+
+        this.getDataUser();
     }
 
     findAllGroup() {
@@ -45,6 +50,13 @@ export class TeamComponent {
                 }),
             )
             .subscribe(() => {});
+    }
+
+    getDataUser() {
+        this.userService.getDataUser().subscribe((res: User | null) => {
+            this.dataUser = res;
+            this.isAction = res?.role.roleTitle.toLocaleLowerCase() === 'admin' ? true : false;
+        });
     }
 
     onClickAdd() {

@@ -20,6 +20,7 @@ export class MenagementTeamComponent implements OnInit {
     userData?: User | null;
     selectedMembers: User[] = [];
     members: User[] = [];
+    isAction: boolean = false;
 
     faXmark = faXmark;
 
@@ -67,14 +68,10 @@ export class MenagementTeamComponent implements OnInit {
     }
 
     getUserData() {
-        this.userService
-            .getDataUser()
-            .pipe(
-                tap((res: User | null) => {
-                    this.userData = res;
-                }),
-            )
-            .subscribe();
+        this.userService.getDataUser().subscribe((res: User | null) => {
+            this.userData = res;
+            this.isAction = res?.role.roleTitle.toLocaleLowerCase() === 'admin' ? true : false;
+        });
     }
 
     async getMembers() {
