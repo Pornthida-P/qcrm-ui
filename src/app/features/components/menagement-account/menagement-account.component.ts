@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { UserService } from 'src/app/services/user/user.service';
 import { User } from 'src/app/shared/interface/user.interface';
 
 @Component({
@@ -7,18 +8,18 @@ import { User } from 'src/app/shared/interface/user.interface';
     styleUrl: './menagement-account.component.scss',
 })
 export class MenagementAccountComponent implements OnInit {
-    userData: User = {
-        userId: '2',
-        username: 'Jukkrit',
-        email: 'jukkrit@convergence.co.th',
-        profile: '',
-        group: 'developer',
-        role: 'agent',
-    };
+    userData?: User | null;
+    mode: 'add' | 'view' | 'edit' = 'edit';
 
     profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
 
-    ngOnInit(): void {}
+    constructor(private userService: UserService) {}
+
+    ngOnInit(): void {
+        this.userService.getDataUser().subscribe((res: User | null) => {
+            this.userData = res;
+        });
+    }
 
     handleProfileError(event: any) {
         if (event) {
