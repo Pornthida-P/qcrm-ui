@@ -1,0 +1,14 @@
+<div class="container">
+    <div class="row p-4">
+        <div class="col-8">
+            <p class="form-label fs-2">{{ title | uppercase }}({{ data.mode | uppercase }})</p>
+        </div>
+        <div class="col-4 d-flex justify-content-end">
+            <a class="color-red cursor-pointer" (click)="onClickClose()">
+                <fa-icon class="fs-2" [icon]="faXmark"></fa-icon>
+            </a>
+        </div>
+
+        <app-account-profile [userData]="data.userData" [mode]="data.mode"></app-account-profile>
+    </div>
+</div>
