@@ -43,8 +43,8 @@ export class ContactsComponent {
             .findByPage(page, offset)
             .pipe(
                 catchError((error) => {
-                    this.handleContactError(error);
-                    return throwError(error);
+                    this.sweetalertServices.handleError(error);
+                    throw error;
                 }),
             )
             .toPromise();
@@ -62,29 +62,5 @@ export class ContactsComponent {
             this.pageSize = event.rows;
             await this.findByPage(event.first, event.rows);
         }
-    }
-
-    handleContactError(error: any) {
-        let icon: string;
-        let errorMessage: string;
-        let title: string;
-        let route: string;
-
-        switch (error.status) {
-            case 401:
-                icon = 'warning';
-                title = 'warning Authentication';
-                errorMessage = 'Your session has expired. Please log in again.';
-                route = 'login';
-                break;
-            default:
-                icon = 'error';
-                title = 'Contact Error';
-                errorMessage = 'Failed to load contacts. Please try again later.';
-                route = '';
-                break;
-        }
-
-        this.sweetalertServices.getSwal(icon, title, errorMessage, false, route);
     }
 }

@@ -1,0 +1,105 @@
+<div class="row">
+    <div class="col-md-7 px-4 pt-2 pb-4">
+        <form [formGroup]="userDataForm">
+            <div class="form-group px-3 py-2">
+                <label class="mb-2" for="username">Username</label>
+                <input
+                    type="text"
+                    class="form-control"
+                    formControlName="username"
+                    id="username"
+                    name="username"
+                    required
+                    [ngClass]="{
+                        'invalid-form':
+                            userDataForm.get('username')?.invalid &&
+                            (userDataForm.get('username')?.dirty || userDataForm.get('username')?.touched)
+                    }"
+                />
+                <div
+                    *ngIf="
+                        userDataForm.get('username')?.invalid &&
+                        (userDataForm.get('username')?.dirty || userDataForm.get('username')?.touched)
+                    "
+                    class="fs-8 pt-2 text-danger"
+                >
+                    Username is required
+                </div>
+            </div>
+            <div class="form-group px-3 py-2">
+                <label class="mb-2" for="role">Role</label>
+                <select
+                    class="form-select"
+                    formControlName="role"
+                    id="role"
+                    name="role"
+                    required
+                    [ngClass]="{
+                        'invalid-form':
+                            userDataForm.get('role')?.invalid && (userDataForm.get('role')?.dirty || userDataForm.get('role')?.touched)
+                    }"
+                >
+                    <option *ngFor="let role of roles" [value]="role.roleId">{{ role.roleTitle }}</option>
+                </select>
+                <div
+                    *ngIf="userDataForm.get('role')?.invalid && (userDataForm.get('role')?.dirty || userDataForm.get('role')?.touched)"
+                    class="fs-8 pt-2 text-danger"
+                >
+                    Role is required
+                </div>
+            </div>
+
+            <div class="form-group px-3 py-2">
+                <label class="mb-2" for="email">Email</label>
+                <input
+                    type="email"
+                    class="form-control"
+                    formControlName="email"
+                    id="email"
+                    name="email"
+                    required
+                    [ngClass]="{
+                        'invalid-form':
+                            userDataForm.get('email')?.invalid && (userDataForm.get('email')?.dirty || userDataForm.get('email')?.touched)
+                    }"
+                />
+                <div
+                    *ngIf="userDataForm.get('email')?.invalid && (userDataForm.get('email')?.dirty || userDataForm.get('email')?.touched)"
+                    class="fs-8 pt-2 text-danger"
+                >
+                    email is required
+                </div>
+            </div>
+            <div class="form-group px-3 py-2" *ngIf="mode !== 'view'">
+                <button
+                    type="submit"
+                    class="w-100 btn btn-primary-color text-white"
+                    (click)="onClickSave()"
+                    [disabled]="!userDataForm.dirty"
+                >
+                    Save
+                </button>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-5 px-4 pt-2 pb-4">
+        <div class="card h-100 p-3">
+            <div class="profile-container m-auto">
+                <img
+                    class="profile-image"
+                    [src]="userData?.profile"
+                    [alt]="userData?.username"
+                    (error)="handleProfileError($event)"
+                    #imageElement
+                />
+            </div>
+            <div *ngIf="mode !== 'view'" class="text-center px-3 py-2">
+                <input hidden type="file" #uploader (change)="onFileChanged($event)" />
+                <button type="button" class="btn btn-primary-color text-white m-1" (click)="uploader.click()">Upload</button>
+                <p class="fs-6 m-1">
+                    <small>JPG, GIF or PNG 400x400, &lt; 2 MB.</small>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

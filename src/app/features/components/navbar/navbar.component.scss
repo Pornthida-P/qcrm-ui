@@ -6,13 +6,6 @@
     height: 3rem;
 }
 
-.profile {
-    width: 40px;
-    height: 40px;
-    margin: auto auto;
-    outline: 3px solid var(--primary);
-}
-
-.profile:hover {
-    outline: 4px solid var(--primary-active-color);
+.profile-container {
+    max-width: 50px;
 }

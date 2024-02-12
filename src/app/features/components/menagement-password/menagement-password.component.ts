@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { catchError, tap } from 'rxjs';
+import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
+import { UserService } from 'src/app/services/user/user.service';
 import { User } from 'src/app/shared/interface/user.interface';
 
 @Component({
@@ -7,16 +11,63 @@ import { User } from 'src/app/shared/interface/user.interface';
     styleUrl: './menagement-password.component.scss',
 })
 export class MenagementPasswordComponent implements OnInit {
+    userData?: User | null;
     currentPassword: string = '';
     newPassword: string = '';
     verifyPassword: string = '';
 
-    ngOnInit(): void {}
+    passwordForm: FormGroup = new FormGroup({});
+
+    constructor(private userService: UserService, private fb: FormBuilder, private sweetalertService: SweetAlertService) {}
+
+    ngOnInit(): void {
+        this.initializeForm();
+        this.getUserData();
+    }
+
+    initializeForm(): void {
+        this.passwordForm = this.fb.group({
+            currentPassword: ['', [Validators.required, Validators.minLength(8)]],
+            newPassword: ['', [Validators.required, Validators.minLength(8)]],
+            verifyPassword: ['', [Validators.required, Validators.minLength(8)]],
+        });
+    }
+
+    getUserData(): void {
+        this.userService
+            .getDataUser()
+            .pipe(
+                tap((res: User | null) => {
+                    this.userData = res;
+                }),
+            )
+            .subscribe((res) => {});
+    }
 
     onSubmit() {
-        console.log('Reset password form submitted.');
-        console.log('Current Password:', this.currentPassword);
-        console.log('New Password:', this.newPassword);
-        console.log('Verify Password:', this.verifyPassword);
+        if (this.passwordForm.invalid) {
+            this.sweetalertService.getSwal('error', 'Warning', 'Please fill in all the fields.', false, '');
+            return;
+        }
+
+        const { newPassword, verifyPassword, currentPassword } = this.passwordForm.value;
+        if (newPassword !== verifyPassword) {
+            this.sweetalertService.getSwal('error', 'Warning', 'Password does not match.', false, '');
+            this.passwordForm.reset();
+            return;
+        }
+
+        this.userService
+            .updatePassword(this.userData?.userId || '', newPassword, currentPassword)
+            .pipe(
+                catchError((error) => {
+                    this.sweetalertService.handleError(error);
+                    return error;
+                }),
+            )
+            .subscribe((res) => {
+                this.sweetalertService.getSwal('success', 'Success', 'Password has been updated.', false, '');
+                this.passwordForm.reset();
+            });
     }
 }

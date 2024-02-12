@@ -1,19 +1,22 @@
 <div class="sidebar d-none d-xl-flex">
-    <ul class="p-4 menu-main">
-        <div *ngFor="let item of items">
-            <li class="px-2 py-3 cursor-pointer" [routerLink]="[item.routerLink]" [routerLinkActive]="'li-active'">
-                <a class="text-white text-decoration-none d-flex flex-row gap-3">
-                    <div>
-                        <fa-icon [icon]="item.icon"></fa-icon>
-                    </div>
-                    {{ item.label }}</a
-                >
-            </li>
+    <div class="nav mainnav">
+        <div class="nav-box">
+            <div
+                *ngFor="let item of items"
+                class="navbutton cursor-pointer"
+                [routerLink]="[item.routerLink]"
+                [routerLinkActive]="'selected'"
+            >
+                <div class="navicon">
+                    <fa-icon [icon]="item.icon"></fa-icon>
+                </div>
+                <div class="navlabel">{{ item.label }}</div>
+            </div>
         </div>
-    </ul>
+    </div>
 </div>
 <div class="d-sm-flex d-xl-none">
-    <div class="offcanvas offcanvas-start sidebar" tabindex="-1" id="offcanvasNav" aria-labelledby="offcanvasNavLabel">
+    <div class="offcanvas offcanvas-start sidebar-offcanvas" tabindex="-1" id="offcanvasNav" aria-labelledby="offcanvasNavLabel">
         <div class="offcanvas-header">
             <h5 class="offcanvas-title" id="offcanvasNavLabel"></h5>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -39,3 +42,36 @@
         </div>
     </div>
 </div>
+
+<!-- <div class="nav mainnav">
+    <div *ngFor="let item of items" class="navbutton cursor-pointer" [routerLink]="[item.routerLink]" [routerLinkActive]="'selected'">
+        <div class="navicon">
+            <fa-icon [icon]="item.icon"></fa-icon>
+        </div>
+        <div class="navlabel">{{ item.label }}</div>
+    </div>
+</div> -->
+
+<!-- <div class="nav-offcanvas d-sm-flex d-xl-none">
+    <div class="offcanvas offcanvas-start sidebar" tabindex="-1" id="offcanvasNav" aria-labelledby="offcanvasNavLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasNavLabel"></h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="nav mainnav">
+                <div
+                    *ngFor="let item of items"
+                    class="navbutton cursor-pointer"
+                    [routerLink]="[item.routerLink]"
+                    [routerLinkActive]="'selected'"
+                >
+                    <div class="navicon">
+                        <fa-icon [icon]="item.icon"></fa-icon>
+                    </div>
+                    <div class="navlabel">{{ item.label }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> -->

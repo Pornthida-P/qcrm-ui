@@ -148,7 +148,7 @@ export class MenagementCalendarComponent implements OnInit {
                     this.tags = tags;
                 }),
                 catchError((error) => {
-                    this.handleContactError(error);
+                    this.sweetalertServices.handleError(error);
                     throw error;
                 }),
             )
@@ -162,18 +162,13 @@ export class MenagementCalendarComponent implements OnInit {
                 tap((members) => {
                     this.members = members;
 
-                    if (this.data.mode === 'edit' && this.data.eventData) {
-                        this.selectedMembers = members.filter((member) => {
-                            return this.data.eventData?.members.some((eventMember) => eventMember.userId === member.userId);
-                        });
-                        this.calendarEvent.get('members')!.setValue(this.selectedMembers);
-                    } else {
-                        this.selectedMembers = members.filter((member) => member.userId === this.userData?.userId);
-                        this.calendarEvent.get('members')!.setValue(this.selectedMembers);
-                    }
+                    this.selectedMembers = members.filter((member) => {
+                        return this.data.eventData?.members.some((eventMember) => eventMember.userId === member.userId);
+                    });
+                    this.calendarEvent.get('members')!.setValue(this.selectedMembers);
                 }),
                 catchError((error) => {
-                    this.handleContactError(error);
+                    this.sweetalertServices.handleError(error);
                     throw error;
                 }),
             )
@@ -211,7 +206,7 @@ export class MenagementCalendarComponent implements OnInit {
                 .addCalendarEvent(formData)
                 .pipe(
                     catchError((error) => {
-                        this.handleContactError(error);
+                        this.sweetalertServices.handleError(error);
                         throw error;
                     }),
                 )
@@ -228,7 +223,7 @@ export class MenagementCalendarComponent implements OnInit {
                 .updateCalendarEvent(formData.eventId, formData)
                 .pipe(
                     catchError((error) => {
-                        this.handleContactError(error);
+                        this.sweetalertServices.handleError(error);
                         throw error;
                     }),
                 )
@@ -251,7 +246,7 @@ export class MenagementCalendarComponent implements OnInit {
                     this.attachments.push(response);
                 }),
                 catchError((error) => {
-                    this.handleContactError(error);
+                    this.sweetalertServices.handleError(error);
                     throw error;
                 }),
             )
@@ -273,36 +268,5 @@ export class MenagementCalendarComponent implements OnInit {
     onDeletedMember(userId: string) {
         this.selectedMembers = this.selectedMembers.filter((member) => member.userId !== userId);
         this.calendarEvent.get('members')!.setValue(this.selectedMembers);
-    }
-
-    handleContactError(error: any) {
-        let icon: string;
-        let errorMessage: string;
-        let title: string;
-        let route: string;
-
-        switch (error.status) {
-            case 401:
-                icon = 'warning';
-                title = 'Warning Authentication';
-                errorMessage = 'Your session has expired. Please log in again.';
-                route = 'login';
-                break;
-            case 400:
-                icon = 'warning';
-                title = 'Calendar Event Error';
-                errorMessage = 'Invalid data. Please check your input and try again.';
-                route = '';
-                break;
-            default:
-                icon = 'error';
-                title = 'Calendar Event Error';
-                errorMessage = `Failed to ${this.data.mode} calendar event. Please try again later.`;
-                route = '';
-                break;
-        }
-
-        this.dialogRef.close();
-        this.sweetalertServices.getSwal(icon, title, errorMessage, false, route);
     }
 }

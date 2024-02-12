@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { config } from 'src/app/config/config';
+import { User } from 'src/app/shared/interface/user.interface';
 
 @Injectable({
     providedIn: 'root',
@@ -52,6 +53,12 @@ export class LoginService {
 
         const body = {};
 
-        return this.http.post(`${this.baseUrl}${config.api.path.login}`, body, { headers });
+        return this.http.post(`${this.baseUrl}${config.api.path.login}`, body, { headers }).pipe(
+            tap((res: any) => {
+                if (res.user) {
+                    res.user.profile = res.user.profile ? `${environment.api.url}${res.user.profile}` : '';
+                }
+            }),
+        );
     }
 }
