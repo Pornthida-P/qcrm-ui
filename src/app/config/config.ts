@@ -10,8 +10,16 @@ export const config = {
             },
             user: {
                 findAll: '/user',
-                findById: '/user/:id',
-                findByRole: '/user/role/:role',
+                findById: '/user/id/',
+                findByRole: '/user/role/',
+                findByGroup: '/user/group/',
+                findAllRoles: '/user/roles',
+                findAllGroups: '/user/groups',
+                addGroup: '/user/add-group',
+                update: '/user/update',
+                updateGroup: '/user/update-group',
+                updatePassword: '/user/update-password',
+                uploadProfileImage: '/user/upload-profile-image',
             },
             announcement: {
                 findAll: '/announcement',
