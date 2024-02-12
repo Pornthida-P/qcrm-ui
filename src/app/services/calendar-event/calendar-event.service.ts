@@ -41,7 +41,6 @@ export class CalendarEventService {
     }
 
     onSetRefreshData(): void {
-        console.log('onSetRefreshData');
         this.refreshDataSubject.next();
     }
 
