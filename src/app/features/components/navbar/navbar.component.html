@@ -1,4 +1,3 @@
-<!-- <div class="min-vh-100"> -->
 <div class="vh-100 d-flex flex-column" *ngIf="!searchSidebarVisible && !notificationSidebarVisible">
     <div class="px-3 py-2 bg-white border-bottom border-2 border-light-subtle">
         <div class="d-flex flex-row justify-content-between align-items-center">
@@ -53,11 +52,16 @@
                 </ng-template>
                 <div class="d-none d-md-flex d-lg-flex flex-column cursor-default text-end">
                     <p class="m-0 fw-semibold">{{ userData?.username }}</p>
-                    <p class="m-0">{{ userData?.role }}</p>
+                    <p class="m-0">{{ userData?.role?.roleTitle }}</p>
                 </div>
                 <div class="dropdown">
                     <div class="d-sm-flex d-md-none">
-                        <div class="profile cursor-pointer" id="dropdownMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div
+                            class="profile-container m-auto cursor-pointer"
+                            id="dropdownMenu"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                        >
                             <img
                                 class="profile-image img-fluid"
                                 [src]="userData?.profile"
@@ -79,7 +83,12 @@
                         </ul>
                     </div>
                     <div class="d-none d-md-flex">
-                        <div class="profile cursor-pointer" id="dropdownMenuNoneSm" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div
+                            class="profile-container m-auto cursor-pointer"
+                            id="dropdownMenuNoneSm"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                        >
                             <img
                                 class="profile-image img-fluid"
                                 [src]="userData?.profile"

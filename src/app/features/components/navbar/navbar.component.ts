@@ -70,12 +70,6 @@ export class NavbarComponent implements OnInit {
         this.userService.getDataUser().subscribe((user: User | null) => {
             this.userData = user;
         });
-
-        this.router.events
-            .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
-            .subscribe((event: NavigationEnd) => {
-                this.hideSidebar = event.url.includes('/setting');
-            });
     }
 
     openSearchSideBar() {
