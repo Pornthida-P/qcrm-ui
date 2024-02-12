@@ -259,7 +259,7 @@ export class SurveyFormComponent implements OnInit {
                             window.location.reload();
                         }),
                         catchError((error) => {
-                            this.handleError(error);
+                            this.sweetalertServices.handleError(error);
                             throw error;
                         }),
                     )
@@ -289,7 +289,7 @@ export class SurveyFormComponent implements OnInit {
                             window.location.reload();
                         }),
                         catchError((error) => {
-                            this.handleError(error);
+                            this.sweetalertServices.handleError(error);
                             throw error;
                         }),
                     )
@@ -331,30 +331,6 @@ export class SurveyFormComponent implements OnInit {
 
             XLSX.writeFile(wb, `แบบฟอร์มสำรวจ${this.fileType}`);
         }
-    }
-
-    handleError(error: any) {
-        let icon: string;
-        let errorMessage: string;
-        let title: string;
-        let route: string;
-
-        switch (error.status) {
-            case 401:
-                icon = 'warning';
-                title = 'warning Authentication';
-                errorMessage = 'Your session has expired. Please log in again.';
-                route = 'login';
-                break;
-            default:
-                icon = 'error';
-                title = 'Survey Form Error';
-                errorMessage = 'Failed to load survey forms. Please try again later.';
-                route = '';
-                break;
-        }
-
-        this.sweetalertServices.getSwal(icon, title, errorMessage, false, route);
     }
 
     search() {
