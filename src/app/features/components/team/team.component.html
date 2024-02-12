@@ -1,0 +1,61 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 p-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="m-0">{{ title }}</h2>
+                <button type="button" class="btn btn-primary-color text-white" (click)="onClickAdd()">Add Group Member</button>
+            </div>
+        </div>
+        <div class="col-md-12 px-4 pt-2 pb-4">
+            <div *ngIf="groupMembers && groupMembers.length > 0; else noGroups">
+                <ul class="team-list list-unstyled px-3 py-2">
+                    <div class="card mb-3" *ngFor="let groupMember of groupMembers">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 col-xl-8">
+                                    <div class="row">
+                                        <div class="col-6 group d-flex align-items-center justify-content-start">
+                                            <p class="m-1">
+                                                {{ groupMember?.groupTitle }}
+                                            </p>
+                                        </div>
+
+                                        <div class="col-6 member d-flex align-items-center justify-content-end">
+                                            <div class="profile-container" *ngFor="let member of groupMember?.members">
+                                                <img
+                                                    class="profile-image img-fluid"
+                                                    [src]="member?.profile"
+                                                    [alt]="member?.username"
+                                                    (error)="handleProfileError($event)"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3 col-xl-2 group-length d-flex align-items-center justify-content-end">
+                                    <p class="m-1">{{ groupMember?.members?.length }} Members</p>
+                                </div>
+
+                                <div class="col-md-3 col-xl-2 action d-flex justify-content-end">
+                                    <button type="button" class="btn" (click)="onClickEdit(groupMember)">
+                                        <fa-icon [icon]="faEdit" class="color-primary"></fa-icon>
+                                    </button>
+                                    <button type="button" class="btn">
+                                        <fa-icon [icon]="faTrash" class="color-red"></fa-icon>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ul>
+            </div>
+
+            <ng-template #noGroups>
+                <div class="no-group p-3">
+                    <p class="m-0 text-center">No groups available.</p>
+                </div>
+            </ng-template>
+        </div>
+    </div>
+</div>
