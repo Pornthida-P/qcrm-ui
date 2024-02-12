@@ -121,20 +121,26 @@ th[sortable].desc:before {
     border-radius: 6px;
 }
 
-.profile {
+.profile-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: relative;
     overflow: hidden;
     border-radius: 50%;
     background-color: var(--primary);
-    max-width: 100%;
-    display: block;
-    transition: 0.2s ease;
+    border: medium solid var(--primary);
+    aspect-ratio: 1/1;
+}
 
-    .profile-image {
-        position: absolute;
-        top: 0;
-        left: 0;
-    }
+.profile-container:hover {
+    border: medium solid var(--primary-active-color);
+}
+
+.profile-image {
+    display: block;
+    height: auto !important;
+    width: 100% !important;
 }
 
 .cursor-pointer {
