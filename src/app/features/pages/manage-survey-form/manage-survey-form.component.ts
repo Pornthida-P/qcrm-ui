@@ -107,7 +107,7 @@ export class ManageSurveyFormComponent implements OnInit {
                             this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/surveyform');
                         }),
                         catchError((error) => {
-                            this.handleError(error);
+                            this.sweetalertServices.handleError(error);
                             throw error;
                         }),
                     )
@@ -127,36 +127,12 @@ export class ManageSurveyFormComponent implements OnInit {
                             this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/surveyform');
                         }),
                         catchError((error) => {
-                            this.handleError(error);
+                            this.sweetalertServices.handleError(error);
                             throw error;
                         }),
                     )
                     .subscribe();
             }
         }
-    }
-
-    handleError(error: any) {
-        let icon: string;
-        let errorMessage: string;
-        let title: string;
-        let route: string;
-
-        switch (error.status) {
-            case 401:
-                icon = 'warning';
-                title = 'warning Authentication';
-                errorMessage = 'Your session has expired. Please log in again.';
-                route = 'login';
-                break;
-            default:
-                icon = 'error';
-                title = 'Survey Form Error';
-                errorMessage = 'Failed to load survey forms. Please try again later.';
-                route = '';
-                break;
-        }
-
-        this.sweetalertServices.getSwal(icon, title, errorMessage, false, route);
     }
 }
