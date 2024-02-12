@@ -1,31 +1,35 @@
-<div class="container p-0">
-    <h1 class="mb-3">Setting</h1>
-    <div class="row">
-        <div class="col-md-4 col-xl-4">
-            <div class="sidebar card overflow-hidden">
-                <ul class="p-0 m-0">
-                    <li
-                        *ngFor="let item of menuSetting"
-                        class="sidebar-list cursor-pointer list-unstyled p-4 m-0"
-                        [routerLink]="[item.routerLink]"
-                        [routerLinkActive]="'li-active'"
-                    >
-                        <a class="text-menu text-decoration-none">
-                            <fa-icon *ngIf="item?.icon" [icon]="item.icon" class="pe-2"></fa-icon>
-                            {{ item.label }}
-                        </a>
-                    </li>
+<div class="h-100">
+    <div class="bg-white rounded shadow w-100 h-100 d-flex flex-column p-4 overflow-auto">
+        <div class="container p-0">
+            <h1 class="mb-3">Setting</h1>
+            <div class="row">
+                <div class="col-md-4 col-xl-4">
+                    <div class="sidebar card overflow-hidden">
+                        <ul class="p-0 m-0">
+                            <li
+                                *ngFor="let item of menuSetting"
+                                class="sidebar-list cursor-pointer list-unstyled p-4 m-0"
+                                [routerLink]="[item.routerLink]"
+                                [routerLinkActive]="'li-active'"
+                            >
+                                <a class="text-menu text-decoration-none">
+                                    <fa-icon *ngIf="item?.icon" [icon]="item.icon" class="pe-2"></fa-icon>
+                                    {{ item.label }}
+                                </a>
+                            </li>
 
-                    <li class="sidebar-list cursor-pointer list-unstyled p-4 m-0" (click)="logout()">
-                        <fa-icon *ngIf="menuLogout?.icon" [icon]="menuLogout.icon" class="pe-2"></fa-icon>
-                        <a class="text-menu text-decoration-none">{{ menuLogout?.label }}</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div class="col-md-8 col-xl-8">
-            <div class="content card">
-                <router-outlet></router-outlet>
+                            <li class="sidebar-list cursor-pointer list-unstyled p-4 m-0" (click)="logout()">
+                                <fa-icon *ngIf="menuLogout?.icon" [icon]="menuLogout.icon" class="pe-2"></fa-icon>
+                                <a class="text-menu text-decoration-none">{{ menuLogout?.label }}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-8 col-xl-8">
+                    <div class="content card">
+                        <router-outlet></router-outlet>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
