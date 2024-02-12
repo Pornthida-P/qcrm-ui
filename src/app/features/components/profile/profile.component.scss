@@ -1,18 +1,8 @@
-.profile-container {
-    background-color: var(--background-color);
-}
-
-.profile {
-    width: 30px;
-    height: 30px;
-    outline: 2px solid var(--primary);
-}
-
-.profile:hover {
-    outline: 3px solid var(--primary-active-color);
-}
-
 .label {
     margin: 0;
     cursor: default;
+}
+
+.profile-container {
+    max-width: 40px;
 }
