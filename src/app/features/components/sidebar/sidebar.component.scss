@@ -1,6 +1,10 @@
 .sidebar {
-    background-color: var(--primary);
     height: calc(100vh - 66px);
+}
+
+.sidebar,
+.sidebar-offcanvas {
+    background-color: var(--primary);
 }
 
 .menu-main {
@@ -30,4 +34,93 @@
 
 .menu-main .li-menu:hover {
     text-shadow: rgba(150, 163, 230, 0.9) 0px 0px 7px;
+}
+
+.nav {
+    height: calc(100vh - 66px);
+    width: min-content;
+    display: flex;
+    flex-direction: column;
+    background: var(--primary);
+    border-top-right-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+    padding: 0.5rem;
+}
+
+.navbutton {
+    position: relative;
+    display: flex;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    isolation: isolate;
+    transition: width 300ms;
+}
+
+.nav-box:has(.navbutton:hover) > .navbutton,
+.nav.demoanim > .navbutton {
+    width: 18rem;
+}
+
+.navbutton:after {
+    position: absolute;
+    content: '';
+    inset: 1rem;
+    background: var(--primary-active-color);
+    border-radius: 0.5rem;
+    z-index: -2;
+    opacity: 0;
+    transition: inset 300ms, opacity 300ms;
+}
+
+.navbutton:hover:after,
+.nav.demoanim .navbutton.demoanimhover:after {
+    inset: 0;
+    opacity: 1;
+}
+
+.navicon {
+    flex-shrink: 0;
+    position: relative;
+    width: 3.5rem;
+    display: grid;
+    place-content: center;
+    padding-bottom: 0.125rem;
+    font-size: 1.375rem;
+    --ionicon-stroke-width: 40px;
+    color: var(--color-white);
+}
+
+.navicon:after {
+    position: absolute;
+    content: '';
+    inset: 1rem;
+    background: var(--primary-active-color);
+    border-radius: 0.5rem 0 0 0.5rem;
+    z-index: -1;
+    opacity: 0;
+    transition: inset 300ms, opacity 300ms, border-radius 300ms ease;
+}
+
+.nav:not(:has(.navbutton:hover), .demoanim) .navbutton.selected > .navicon:after {
+    inset: 0;
+    opacity: 1;
+    border-radius: 0.5rem;
+}
+
+.navbutton:hover > .navicon:after,
+.nav.demoanim .navbutton.demoanimhover > .navicon:after {
+    inset: 0;
+    opacity: 1;
+}
+
+.navlabel {
+    flex-shrink: 0;
+    display: grid;
+    place-content: center;
+    padding-bottom: 0.125rem;
+    padding-left: 0.5rem;
+    font-size: 1.125rem;
+    color: var(--color-white);
 }
