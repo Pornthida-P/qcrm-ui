@@ -1,8 +1,7 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, map, tap } from 'rxjs';
 import { config } from 'src/app/config/config';
-import { Attachment } from 'src/app/shared/interface/attachment.interface';
 import { Group } from 'src/app/shared/interface/group.interface';
 import { User } from 'src/app/shared/interface/user.interface';
 import { environment } from 'src/environments/environment';
@@ -89,6 +88,14 @@ export class UserService {
 
     updateGroup(form: Group): Observable<any> {
         return this.http.post(`${this.baseUrl}${config.api.path.user.updateGroup}`, form).pipe(
+            tap(() => {
+                this.groupSubject.next();
+            }),
+        );
+    }
+
+    deleteGroup(groupId: string): Observable<any> {
+        return this.http.post(`${this.baseUrl}${config.api.path.user.deleteGroup}`, { groupId: groupId }).pipe(
             tap(() => {
                 this.groupSubject.next();
             }),
