@@ -38,10 +38,13 @@
                                 </div>
 
                                 <div class="col-md-3 col-xl-2 action d-flex justify-content-end">
-                                    <button type="button" class="btn" (click)="onClickEdit(groupMember)">
+                                    <button type="button" class="btn" (click)="onClickView(groupMember)">
+                                        <fa-icon [icon]="faEye" class="color-primary"></fa-icon>
+                                    </button>
+                                    <button type="button" class="btn" (click)="onClickEdit(groupMember)" *ngIf="isAction">
                                         <fa-icon [icon]="faEdit" class="color-primary"></fa-icon>
                                     </button>
-                                    <button type="button" class="btn">
+                                    <button type="button" class="btn" (click)="onClickDelete(groupMember)" *ngIf="isAction">
                                         <fa-icon [icon]="faTrash" class="color-red"></fa-icon>
                                     </button>
                                 </div>

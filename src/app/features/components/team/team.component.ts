@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faEye, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { tap, catchError } from 'rxjs';
 import { ModalTeamService } from 'src/app/services/modal-team/modal-team.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
@@ -17,6 +17,8 @@ export class TeamComponent {
 
     faEdit = faEdit;
     faTrash = faTrash;
+    faEye = faEye;
+
     isAction: boolean = false;
     groupMembers: Group[] = [];
     dataUser?: User | null;
@@ -63,12 +65,26 @@ export class TeamComponent {
         this.modalTeamService.openDialog('add');
     }
 
-    onClickEdit(group: any) {
+    onClickView(group: Group) {
+        this.modalTeamService.openDialog('view', group);
+    }
+
+    onClickEdit(group: Group) {
         this.modalTeamService.openDialog('edit', group);
     }
 
-    removeTeamMember(teamMember: any) {
-        console.log('Removing team member:', teamMember);
+    onClickDelete(group: Group) {
+        this.userService
+            .deleteGroup(group.groupId)
+            .pipe(
+                catchError((error) => {
+                    this.sweetalertService.handleError(error);
+                    throw error;
+                }),
+            )
+            .subscribe(() => {
+                this.sweetalertService.getSwal('success', 'Success', 'Group has been deleted.', false, '');
+            });
     }
 
     handleProfileError(event: any) {
