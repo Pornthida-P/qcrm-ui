@@ -4,30 +4,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { config } from 'src/app/config/config';
 import * as XLSX from 'xlsx';
 import { SurveyFormService } from 'src/app/services/survey-form/survey-form.service';
-import { SurveyForm } from 'src/app/shared/interface/survey-form';
 import { catchError, tap } from 'rxjs';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import Swal from 'sweetalert2';
-
-@Pipe({
-    name: 'searchFilter',
-})
-export class SearchPipe implements PipeTransform {
-    transform(value: any, args: any, filter: any): any {
-        if (value) {
-            return value.filter((val: SurveyForm) => {
-                switch (filter) {
-                    case 'all':
-                        if (!args) return true;
-                        else return val.name.toLocaleLowerCase().includes(args);
-                    default:
-                        if (!args) return val.createdBy.toLocaleLowerCase().includes(filter);
-                        else return val.createdBy.toLocaleLowerCase().includes(filter) && val.name.toLocaleLowerCase().includes(args);
-                }
-            });
-        }
-    }
-}
 
 @Component({
     selector: 'app-survey-form',
@@ -36,6 +15,7 @@ export class SearchPipe implements PipeTransform {
 })
 export class SurveyFormComponent implements OnInit {
     surveyForms!: any;
+    spareSurveyForms!: any;
     selectedSurveyForms: any = [];
     valueSearch!: string;
     checkedValues: string[] = [];
@@ -67,11 +47,13 @@ export class SurveyFormComponent implements OnInit {
     itemIdex: number = 0;
     sideBarItemIndex: number = 0;
 
-    sortId: string = '-';
-    sortOrder: string = 'ASC';
+    sortId: string = 'createdAt';
+    sortOrder: string = 'DESC';
     sortIcon: string = '';
 
+    userData: any = JSON.parse(localStorage.getItem('userData') || '{}');
     userRole: string = '';
+    userId: string = '';
     roleCanAccessCUDForm: string[] = config.roleCanAccessCUDForm;
 
     constructor(
@@ -82,11 +64,10 @@ export class SurveyFormComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-        this.userRole = userData.role;
+        this.userRole = this.userData.role.roleTitle.toLocaleLowerCase();
         this.filterOption = [
             { name: 'ทั้งหมด', code: 'all' },
-            { name: 'Only My', code: userData.username },
+            { name: 'Only My', code: this.userData.username },
         ];
         this.activeRoute.queryParams.subscribe((params) => {
             if (params['cb'] != undefined && params['cb'] != '') {
@@ -98,6 +79,9 @@ export class SurveyFormComponent implements OnInit {
             }
         });
         this.selectedFilter = this.filterOption[0].code;
+        if (this.selectedFilter !== 'all') {
+            this.userId = this.userData.userId;
+        }
         this.getForm((this.currentPage - 1) * this.pageSize, this.pageSize);
         this.getPage();
     }
@@ -130,14 +114,17 @@ export class SurveyFormComponent implements OnInit {
     }
 
     async getForm(page: number, pageSize: number) {
-        await this.surveyFormService.getSurveyFormByPage(page, pageSize, `${this.sortId},${this.sortOrder}`).subscribe((res: any) => {
-            this.surveyForms = res;
-        });
+        await this.surveyFormService
+            .getSurveyFormByPage(page, pageSize, `${this.sortId},${this.sortOrder}`, this.valueSearch, this.selectedFilter)
+            .subscribe((res: any) => {
+                this.surveyForms = res;
+                this.spareSurveyForms = res;
+            });
     }
 
     async getFormSideBar(page: number, pageSize: number, value: string) {
         await this.surveyFormService
-            .getSurveyFormByPage(page, pageSize, `${this.sortId},${this.sortOrder}`)
+            .getSurveyFormByPage(page, pageSize, `${this.sortId},${this.sortOrder}`, this.valueSearch, this.selectedFilter)
             .subscribe((res: any) => {
                 this.surveyForms = res;
             })
@@ -148,7 +135,7 @@ export class SurveyFormComponent implements OnInit {
     }
 
     async getPage() {
-        await this.surveyFormService.countSurveyForm().subscribe((res: any) => {
+        await this.surveyFormService.countSurveyForm(this.valueSearch, this.userId).subscribe((res: any) => {
             this.totalItems = res.count;
         });
     }
@@ -334,10 +321,12 @@ export class SurveyFormComponent implements OnInit {
     }
 
     search() {
-        if (this.valueSearch) {
-            this.surveyForms = this.surveyForms.filter((val: SurveyForm) => {
-                return val.name.toLocaleLowerCase().includes(this.valueSearch.toLocaleLowerCase());
-            });
+        if (this.selectedFilter !== 'all') {
+            this.userId = this.userData.userId;
+        } else {
+            this.userId = '';
         }
+        this.getForm((this.currentPage - 1) * this.pageSize, this.pageSize);
+        this.getPage();
     }
 }

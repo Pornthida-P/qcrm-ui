@@ -9,10 +9,8 @@ import { SurveyFormService } from 'src/app/services/survey-form/survey-form.serv
 import { HttpClientModule } from '@angular/common/http';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
-import { SearchPipe } from './survey-form.component';
-
 @NgModule({
-    declarations: [SurveyFormComponent, SearchPipe],
+    declarations: [SurveyFormComponent],
     imports: [
         CommonModule,
         FormsModule,

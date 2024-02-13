@@ -1,5 +1,5 @@
 <div class="h-100">
-    <div class="bg-white rounded shadow w-100 h-100">
+    <div class="bg-white rounded shadow w-100 h-100 overflow-auto">
         <div class="p-4 d-flex flex-column justify-content-between flex-md-row flex-lg-row gap-4 align-items-center w-100">
             <p class="m-0 d-flex fs-5">แบบฟอร์มสำรวจ</p>
             <div class="d-flex flex-nowrap flex-grow-1">
@@ -18,7 +18,12 @@
                         style="width: 70%"
                         (change)="search()"
                     />
-                    <select class="form-select shadow-none" aria-label="Default select example" [(ngModel)]="selectedFilter">
+                    <select
+                        class="form-select shadow-none"
+                        aria-label="Default select example"
+                        [(ngModel)]="selectedFilter"
+                        (change)="search()"
+                    >
                         <option *ngFor="let op of filterOption" [value]="op.code">
                             {{ op.name }}
                         </option>
@@ -80,17 +85,17 @@
                                 <a (click)="sort('name')">แบบฟอร์มสำรวจ </a><i *ngIf="sortId == 'name'" class="{{ sortIcon }}"></i>
                             </th>
                             <th style="width: 15%" scope="col">
-                                <a (click)="sort('createdAt')">วันที่บันทึก</a><i *ngIf="sortId == 'save_date'" class="{{ sortIcon }}"></i>
+                                <a (click)="sort('createdAt')">วันที่บันทึก</a><i *ngIf="sortId == 'createdAt'" class="{{ sortIcon }}"></i>
                             </th>
                             <th style="width: 15%" scope="col">
-                                <a (click)="sort('createdById')">บันทึกโดย</a><i *ngIf="sortId == 'createBy'" class="{{ sortIcon }}"></i>
+                                <a (click)="sort('createdById')">บันทึกโดย</a><i *ngIf="sortId == 'createById'" class="{{ sortIcon }}"></i>
                             </th>
                             <th scope="col" *ngIf="checkRole()"><a>จัดการ</a></th>
                         </tr>
                     </thead>
                     <tbody>
-                        <ng-container *ngIf="(surveyForms | searchFilter : valueSearch : selectedFilter)?.length > 0; else noDataTemplate">
-                            <tr *ngFor="let form of surveyForms | searchFilter : valueSearch : selectedFilter; let i = index">
+                        <ng-container *ngIf="surveyForms?.length > 0; else noDataTemplate">
+                            <tr *ngFor="let form of surveyForms; let i = index">
                                 <td class="text-center" *ngIf="checkRole()">
                                     <input
                                         type="checkbox"

@@ -27,15 +27,26 @@ export class SurveyFormService {
         return this.http.delete(`${this.baseUrl}${config.api.path.surveyForm.baseUrl}`, data);
     }
 
-    getSurveyFormByPage(page: number, limit: number, sortId: string) {
-        return this.http.get(`${this.baseUrl}${config.api.path.surveyForm.baseUrl}/${page}/${limit}/${sortId}`);
+    getSurveyFormByPage(page: number, limit: number, sortId: string, searchText: string, createdBy: string) {
+        if (searchText == '' || searchText == null) {
+            searchText = 'undefined';
+        }
+        return this.http.get(`${this.baseUrl}${config.api.path.surveyForm.baseUrl}/${page}/${limit}/${sortId}/${searchText}/${createdBy}`);
     }
 
     getSurveyFormById(id: string) {
         return this.http.get(`${this.baseUrl}${config.api.path.surveyForm.baseUrl}${config.api.path.surveyForm.find}/${id}`);
     }
 
-    countSurveyForm() {
-        return this.http.get(`${this.baseUrl}${config.api.path.surveyForm.baseUrl}${config.api.path.surveyForm.count}`);
+    countSurveyForm(searchText: string, createdById: string) {
+        if (searchText == '' || searchText == null) {
+            searchText = 'undefined';
+        }
+        if (createdById == '' || createdById == null) {
+            createdById = 'undefined';
+        }
+        return this.http.get(
+            `${this.baseUrl}${config.api.path.surveyForm.baseUrl}${config.api.path.surveyForm.count}/${searchText}/${createdById}`,
+        );
     }
 }
