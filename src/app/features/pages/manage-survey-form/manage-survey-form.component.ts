@@ -50,7 +50,7 @@ export class ManageSurveyFormComponent implements OnInit {
             this.getSurveyById(this.surveyFormId);
         }
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-        this.userRole = userData.role;
+        this.userRole = userData.role.roleTitle.toLocaleLowerCase();
         console.log(this.userRole);
     }
 
