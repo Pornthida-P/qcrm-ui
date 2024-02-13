@@ -141,7 +141,8 @@
                                     <div class="row">
                                         <app-profile-list
                                             [members]="selectedMembers"
-                                            [isAction]="true"
+                                            [isShowToolbar]="true"
+                                            [mode]="data.mode"
                                             (deleteUserId)="onDeletedMember($event)"
                                         ></app-profile-list>
                                     </div>
@@ -167,7 +168,8 @@
                         <div class="col">
                             <app-attachments-list
                                 [attachments]="attachments"
-                                [isAction]="data.mode === 'edit' ? true : false"
+                                [isShowToolbar]="true"
+                                [mode]="data.mode"
                             ></app-attachments-list>
                         </div>
                     </div>

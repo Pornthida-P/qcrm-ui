@@ -11,7 +11,8 @@ import { User } from 'src/app/shared/interface/user.interface';
 })
 export class ProfileComponent implements OnInit {
     @Input() member?: User;
-    @Input() isAction: boolean = false;
+    @Input() mode?: 'view' | 'edit' | 'add';
+    @Input() isShowToolbar?: boolean = false;
     @Output() deleteUserId: EventEmitter<string> = new EventEmitter<string>();
 
     profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';

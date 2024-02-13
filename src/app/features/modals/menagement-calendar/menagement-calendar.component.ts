@@ -164,9 +164,15 @@ export class MenagementCalendarComponent implements OnInit {
                 tap((members) => {
                     this.members = members;
 
-                    this.selectedMembers = members.filter((member) => {
-                        return this.data.eventData?.members.some((eventMember) => eventMember.userId === member.userId);
-                    });
+                    if (this.data.mode === 'add') {
+                        this.selectedMembers = members.filter((member) => {
+                            return this.userData?.userId === member.userId;
+                        });
+                    } else {
+                        this.selectedMembers = members.filter((member) => {
+                            return this.data.eventData?.members.some((eventMember) => eventMember.userId === member.userId);
+                        });
+                    }
                     this.calendarEvent.get('members')!.setValue(this.selectedMembers);
                 }),
                 catchError((error) => {

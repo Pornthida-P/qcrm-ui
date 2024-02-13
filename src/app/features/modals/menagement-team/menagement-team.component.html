@@ -68,7 +68,8 @@
                             <div class="row">
                                 <app-profile-list
                                     [members]="selectedMembers"
-                                    [isAction]="true"
+                                    [isShowToolbar]="true"
+                                    [mode]="data.mode"
                                     (deleteUserId)="onDeletedMember($event)"
                                 ></app-profile-list>
                             </div>

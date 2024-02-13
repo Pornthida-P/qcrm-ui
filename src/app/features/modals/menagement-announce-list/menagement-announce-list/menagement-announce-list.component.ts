@@ -7,6 +7,8 @@ import { ModalAnnouncementService } from 'src/app/services/modal-announcement/mo
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { Announce } from 'src/app/shared/interface/announce.interface';
 import { MenagementAnnounceComponent } from '../../menagement-announce/menagement-announce.component';
+import { User } from 'src/app/shared/interface/user.interface';
+import { UserService } from 'src/app/services/user/user.service';
 
 @Component({
     selector: 'app-menagement-announce-list',
@@ -21,7 +23,11 @@ export class MenagementAnnounceListComponent implements OnInit {
     faEye = faEye;
     faEdit = faEdit;
 
+    dataUser?: User | null;
+    isAction: boolean = false;
+
     constructor(
+        private userService: UserService,
         private announcementService: AnnouncementService,
         private sweetalertServices: SweetAlertService,
         private modalAnnouncementService: ModalAnnouncementService,
@@ -32,6 +38,8 @@ export class MenagementAnnounceListComponent implements OnInit {
         this.announcementService.onRefreshData().subscribe(() => {
             this.findAllAnnouncement();
         });
+
+        this.getDataUser();
     }
 
     findAllAnnouncement() {
@@ -47,6 +55,13 @@ export class MenagementAnnounceListComponent implements OnInit {
                 }),
             )
             .subscribe(() => {});
+    }
+
+    getDataUser() {
+        this.userService.getDataUser().subscribe((res: User | null) => {
+            this.dataUser = res;
+            this.isAction = res?.role.roleTitle.toLowerCase() === 'admin' ? true : false;
+        });
     }
 
     onClickClose() {
