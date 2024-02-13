@@ -23,6 +23,7 @@ export class MenagementAnnounceComponent implements OnInit {
     startTime: NgbTimeStruct = { hour: 0, minute: 0, second: 0 };
     endTime: NgbTimeStruct = { hour: 23, minute: 59, second: 59 };
     userData?: User | null;
+    isAction: boolean = false;
 
     faXmark = faXmark;
 
@@ -62,6 +63,7 @@ export class MenagementAnnounceComponent implements OnInit {
             .pipe(
                 tap((res: User | null) => {
                     this.userData = res;
+                    this.isAction = res?.role.roleTitle.toLocaleLowerCase() === 'admin' ? true : false;
                 }),
             )
             .subscribe();

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, map, tap } from 'rxjs';
 import { config } from 'src/app/config/config';
 import { CalendarEvent } from 'src/app/shared/interface/calendar.interface';
 import { environment } from 'src/environments/environment';
@@ -18,8 +18,19 @@ export class CalendarEventService {
         return this.http.get(`${this.baseUrl}${config.api.path.calendarEvent.findAll}`);
     }
 
-    findByDate(date: string): Observable<any> {
-        return this.http.get(`${this.baseUrl}${config.api.path.calendarEvent.findByDate}/${date}`);
+    findByDate(date: string): Observable<CalendarEvent[]> {
+        return this.http.get(`${this.baseUrl}${config.api.path.calendarEvent.findByDate}/${date}`).pipe(
+            map((res: any) => {
+                for (let event of res) {
+                    if (event.members) {
+                        for (let member of event.members) {
+                            member.profile = member.profile ? `${environment.api.url}${member.profile}` : '';
+                        }
+                    }
+                }
+                return res as CalendarEvent[];
+            }),
+        );
     }
 
     addCalendarEvent(data: CalendarEvent): Observable<any> {

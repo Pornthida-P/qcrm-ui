@@ -37,7 +37,7 @@ export class AccountProfileComponent {
 
     initializeForm(): void {
         const isViewMode = this.mode === 'view';
-        const isRole = this.userData?.role?.roleTitle !== 'Admin';
+        const isRole = this.userData?.role?.roleTitle.toLocaleLowerCase() !== 'admin';
 
         if (this.mode === 'add') {
             this.userDataForm = this.fb.group({

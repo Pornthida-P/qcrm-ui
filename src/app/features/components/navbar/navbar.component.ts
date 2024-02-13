@@ -19,6 +19,7 @@ export class NavbarComponent implements OnInit {
     value: string | undefined;
     hideSidebar: boolean = false;
     userData: User | null = null;
+    isAction: boolean = false;
 
     profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
 
@@ -27,7 +28,7 @@ export class NavbarComponent implements OnInit {
     constructor(private router: Router, private userService: UserService) {}
 
     ngOnInit() {
-        this.getUserData();
+        this.getDataUser();
 
         this.menuUser = [
             {
@@ -66,9 +67,10 @@ export class NavbarComponent implements OnInit {
         ];
     }
 
-    getUserData() {
-        this.userService.getDataUser().subscribe((user: User | null) => {
-            this.userData = user;
+    getDataUser() {
+        this.userService.getDataUser().subscribe((res: User | null) => {
+            this.userData = res;
+            this.isAction = res?.role.roleTitle.toLocaleLowerCase() === 'admin' ? true : false;
         });
     }
 

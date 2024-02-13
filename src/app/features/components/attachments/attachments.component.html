@@ -11,14 +11,14 @@
         </div>
     </div>
     <div class="col-auto" *ngIf="attachment">
-        <div class="attachment-action d-flex gap-2">
+        <div class="attachment-action d-flex gap-2" *ngIf="isShowToolbar">
             <button class="btn btn-primary-color text-white" (click)="onClickViewAttachment(attachment)">
                 <fa-icon [icon]="faEye"></fa-icon>
             </button>
             <button class="btn btn-primary-color text-white" (click)="onClickDownloadAttachment(attachment)">
                 <fa-icon [icon]="faDownload"></fa-icon>
             </button>
-            <button *ngIf="isAction" class="btn btn-red-color text-white" (click)="onClickDeleteAttachment(attachment)">
+            <button *ngIf="mode === 'edit'" class="btn btn-red-color text-white" (click)="onClickDeleteAttachment(attachment)">
                 <fa-icon [icon]="faXmark"></fa-icon>
             </button>
         </div>

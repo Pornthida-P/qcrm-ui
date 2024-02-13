@@ -8,7 +8,8 @@ import { User } from 'src/app/shared/interface/user.interface';
 })
 export class ProfileListComponent implements OnInit {
     @Input() members?: User[] = [];
-    @Input() isAction: boolean = false;
+    @Input() mode?: 'view' | 'edit' | 'add';
+    @Input() isShowToolbar?: boolean = false;
     @Output() deleteUserId: EventEmitter<string> = new EventEmitter<string>();
 
     ngOnInit(): void {}

@@ -1,11 +1,11 @@
 <div class="container">
     <div class="row p-4">
         <div class="col-8">
-            <p class="form-label fs-2">{{ title | uppercase }}</p>
+            <p class="form-label fs-5">{{ title | uppercase }}</p>
         </div>
         <div class="col-4 d-flex justify-content-end">
             <a class="color-red cursor-pointer" (click)="onClickClose()">
-                <fa-icon class="fs-2" [icon]="faXmark"></fa-icon>
+                <fa-icon class="fs-5" [icon]="faXmark"></fa-icon>
             </a>
         </div>
         <div class="col-12 p-3" *ngIf="announcements && announcements.length > 0; else noData">
@@ -36,10 +36,10 @@
                         <button class="btn btn-primary-color text-white mx-1" (click)="onClickViewAnnounce(announcement)">
                             <fa-icon [icon]="faEye"></fa-icon>
                         </button>
-                        <button class="btn btn-primary-color text-white mx-1" (click)="onClickEditAnnounce(announcement)">
+                        <button *ngIf="isAction" class="btn btn-primary-color text-white mx-1" (click)="onClickEditAnnounce(announcement)">
                             <fa-icon [icon]="faEdit"></fa-icon>
                         </button>
-                        <button class="btn btn-red-color text-white mx-1" (click)="onClickDeleteAnnounce(announcement)">
+                        <button *ngIf="isAction" class="btn btn-red-color text-white mx-1" (click)="onClickDeleteAnnounce(announcement)">
                             <fa-icon [icon]="faXmark"></fa-icon>
                         </button>
                     </td>
@@ -57,7 +57,7 @@
             </div>
         </ng-template>
         <div class="footer d-flex gap-2">
-            <button type="button" class="btn btn-primary-color text-white" (click)="onClickAddAnnounce()">Add</button>
+            <button type="button" class="btn btn-primary-color text-white" *ngIf="isAction" (click)="onClickAddAnnounce()">Add</button>
             <button type="button" class="btn btn-primary-color text-white" (click)="onSubmit()">Save</button>
         </div>
     </div>

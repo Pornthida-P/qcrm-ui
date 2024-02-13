@@ -15,6 +15,7 @@ export class MenagementPasswordComponent implements OnInit {
     currentPassword: string = '';
     newPassword: string = '';
     verifyPassword: string = '';
+    isAction: boolean = false;
 
     passwordForm: FormGroup = new FormGroup({});
 
@@ -39,6 +40,7 @@ export class MenagementPasswordComponent implements OnInit {
             .pipe(
                 tap((res: User | null) => {
                     this.userData = res;
+                    this.isAction = res?.role.roleTitle.toLocaleLowerCase() === 'admin' ? true : false;
                 }),
             )
             .subscribe((res) => {});

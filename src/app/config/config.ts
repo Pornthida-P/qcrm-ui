@@ -20,6 +20,7 @@ export const config = {
                 updateGroup: '/user/update-group',
                 updatePassword: '/user/update-password',
                 uploadProfileImage: '/user/upload-profile-image',
+                deleteGroup: '/user/delete-group/',
             },
             announcement: {
                 findAll: '/announcement',

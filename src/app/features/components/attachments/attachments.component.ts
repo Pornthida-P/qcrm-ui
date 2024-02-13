@@ -23,7 +23,8 @@ import { Attachment } from 'src/app/shared/interface/attachment.interface';
 })
 export class AttachmentsComponent implements OnInit {
     @Input() attachment?: Attachment;
-    @Input() isAction: boolean = false;
+    @Input() isShowToolbar: boolean = false;
+    @Input() mode?: 'view' | 'edit' | 'add';
     @Output() deleteAttachmentId: EventEmitter<string> = new EventEmitter<string>();
 
     faFileImage = faFileImage;

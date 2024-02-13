@@ -1,14 +1,5 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import {
-    faFileImage,
-    faFilePdf,
-    faFileWord,
-    faFile,
-    faDownload,
-    faXmark,
-    IconDefinition,
-    faPlusCircle,
-} from '@fortawesome/free-solid-svg-icons';
+import { Component, Input } from '@angular/core';
+import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { Attachment } from 'src/app/shared/interface/attachment.interface';
 
 @Component({
@@ -18,7 +9,8 @@ import { Attachment } from 'src/app/shared/interface/attachment.interface';
 })
 export class AttachmentsListComponent {
     @Input() attachments: Attachment[] = [];
-    @Input() isAction: boolean = false;
+    @Input() isShowToolbar: boolean = false;
+    @Input() mode?: 'view' | 'edit' | 'add';
 
     faPlus = faPlusCircle;
 
