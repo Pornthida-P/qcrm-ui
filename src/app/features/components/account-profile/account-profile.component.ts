@@ -8,6 +8,7 @@ import { UserService } from 'src/app/services/user/user.service';
 import { User } from 'src/app/shared/interface/user.interface';
 import { Role } from 'src/app/shared/interface/role.interface';
 import { environment } from 'src/environments/environment';
+import { config } from 'src/app/config/config';
 
 @Component({
     selector: 'app-account-profile',
@@ -81,8 +82,7 @@ export class AccountProfileComponent {
                 return;
             }
 
-            const maxSize = 2 * 1024 * 1024;
-            if (file.size > maxSize) {
+            if (file.size > config.file.maxSize) {
                 this.sweetalertServices.getSwal('warning', 'Warning', 'Please upload an image with a size less than 2 MB.', false, '');
                 return;
             }
@@ -152,22 +152,17 @@ export class AccountProfileComponent {
     }
 
     updateUser(userData: User) {
-        this.userService
-            .updateUser(userData)
-            .subscribe(
-                () => {
-                    this.userService.setDataUser(userData);
-                    this.sweetalertServices.getSwal('success', 'Success', 'User has been updated successfully.', false, '');
-                    this.userDataForm.markAsPristine();
-                    this.userDataForm.markAsUntouched();
-                },
-                (err) => {
-                    this.sweetalertServices.handleError(err);
-                },
-            )
-            .add(() => {
-                this.userDataForm.enable();
-            });
+        this.userService.updateUser(userData).subscribe(
+            () => {
+                this.userService.setDataUser(userData);
+                this.sweetalertServices.getSwal('success', 'Success', 'User has been updated successfully.', false, '');
+                this.userDataForm.markAsPristine();
+                this.userDataForm.markAsUntouched();
+            },
+            (err) => {
+                this.sweetalertServices.handleError(err);
+            },
+        );
     }
 
     handleProfileError(event: any) {
