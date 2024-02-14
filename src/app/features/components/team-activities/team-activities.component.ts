@@ -21,7 +21,7 @@ export class TeamActivitiesComponent implements OnInit {
 
     faPlus = faPlusCircle;
 
-    title: string = 'Team Activities';
+    title: string = 'กิจกรรมทีม';
 
     constructor(
         private modalCalendarService: ModalCalendarService,

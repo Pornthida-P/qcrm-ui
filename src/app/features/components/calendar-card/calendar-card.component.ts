@@ -16,7 +16,9 @@ import { catchError } from 'rxjs';
 import { CalendarEventService } from 'src/app/services/calendar-event/calendar-event.service';
 import { ModalCalendarService } from 'src/app/services/modal-calendar/modal-calendar.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
+import { UserService } from 'src/app/services/user/user.service';
 import { CalendarEvent } from 'src/app/shared/interface/calendar.interface';
+import { User } from 'src/app/shared/interface/user.interface';
 
 @Component({
     selector: 'app-calendar-card',
@@ -26,6 +28,8 @@ import { CalendarEvent } from 'src/app/shared/interface/calendar.interface';
 export class CalendarCardComponent implements OnInit {
     @Input() event?: CalendarEvent;
 
+    userData?: User | null;
+    isAction: boolean = false;
     profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
 
     faCalendar = faCalendarAlt;
@@ -42,12 +46,22 @@ export class CalendarCardComponent implements OnInit {
     position = new FormControl(this.positionOptions[0]);
 
     constructor(
+        private userService: UserService,
         private modalCalendarService: ModalCalendarService,
         private calendarService: CalendarEventService,
         private sweetalertServices: SweetAlertService,
     ) {}
 
-    ngOnInit(): void {}
+    ngOnInit(): void {
+        this.getDataUser();
+    }
+
+    getDataUser() {
+        this.userService.getDataUser().subscribe((res: User | null) => {
+            this.userData = res;
+            this.isAction = res?.role.roleTitle.toLocaleLowerCase() === 'admin';
+        });
+    }
 
     handleProfileError(event: any) {
         if (event) {

@@ -13,7 +13,7 @@ import { User } from 'src/app/shared/interface/user.interface';
     styleUrl: './team.component.scss',
 })
 export class TeamComponent {
-    title = 'Group Management';
+    title = 'จัดการทีม';
 
     faEdit = faEdit;
     faTrash = faTrash;

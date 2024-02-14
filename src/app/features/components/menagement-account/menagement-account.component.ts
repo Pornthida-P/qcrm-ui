@@ -13,6 +13,7 @@ export class MenagementAccountComponent implements OnInit {
     mode: 'add' | 'view' | 'edit' = 'edit';
 
     profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
+    title: string = 'ตั้งค่าบัญชีผู้ใช้';
 
     constructor(private userService: UserService) {}
 

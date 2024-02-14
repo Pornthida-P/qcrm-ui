@@ -5,10 +5,10 @@
                 <span class="fs-6 color-primary cursor-pointer" (click)="onClickViewEvent(event)">
                     <fa-icon [icon]="faView"></fa-icon>
                 </span>
-                <span class="fs-6 color-primary cursor-pointer" (click)="onClickEditEvent(event)">
+                <span *ngIf="isAction" class="fs-6 color-primary cursor-pointer" (click)="onClickEditEvent(event)">
                     <fa-icon [icon]="faEdit"></fa-icon>
                 </span>
-                <span class="fs-6 color-red cursor-pointer" (click)="onClickDeleteEvent(event)">
+                <span *ngIf="isAction" class="fs-6 color-red cursor-pointer" (click)="onClickDeleteEvent(event)">
                     <fa-icon [icon]="faTrash"></fa-icon>
                 </span>
             </div>
@@ -71,7 +71,7 @@
             </div>
             <div class="col-md-10 d-flex flex-column">
                 <p class="card-text fs-6">จำนวนผู้เข้าร่วม {{ event?.members?.length }} คน</p>
-                <app-profile-list [members]="event?.members"></app-profile-list>
+                <app-profile-list [members]="event?.members" [isShowToolbar]="true"></app-profile-list>
             </div>
         </div>
 
@@ -83,7 +83,11 @@
                 <p class="card-text fs-6">Attachments:</p>
                 <div *ngIf="event?.attachments">
                     <div class="col-md-12">
-                        <app-attachments-list [attachments]="event!.attachments"></app-attachments-list>
+                        <app-attachments-list
+                            [attachments]="event!.attachments"
+                            [isShowToolbar]="true"
+                            [mode]="'view'"
+                        ></app-attachments-list>
                     </div>
                 </div>
                 <div *ngIf="!event?.attachments">

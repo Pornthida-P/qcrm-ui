@@ -195,16 +195,16 @@ export class MenagementCalendarComponent implements OnInit {
         }
 
         const formData = this.calendarEvent.value;
-        const startDateTime = moment(formData.startDate);
-        const endDateTime = moment(formData.endDate);
+        formData.startDate = moment(formData.startDate).startOf('day').format('YYYY-MM-DD HH:mm:ss');
+        formData.endDate = moment(formData.endDate).endOf('day').format('YYYY-MM-DD HH:mm:ss');
 
-        if (!startDateTime.isBefore(endDateTime)) {
+        const startDate = moment(formData.startDate, 'YYYY-MM-DD HH:mm:ss');
+        const endDate = moment(formData.endDate, 'YYYY-MM-DD HH:mm:ss');
+
+        if (!startDate.isBefore(endDate)) {
             this.sweetalertServices.getSwal('warning', 'Warning', 'Start date must be before end date.', false, '');
             return;
         }
-
-        formData.startDate = moment(formData.startDate).startOf('day').format('YYYY-MM-DD HH:mm:ss');
-        formData.endDate = moment(formData.endDate).endOf('day').format('YYYY-MM-DD HH:mm:ss');
         formData.createdAt = moment().format('YYYY-MM-DD HH:mm:ss');
         formData.createdById = this.userData?.userId;
         formData.attachments = this.attachments;

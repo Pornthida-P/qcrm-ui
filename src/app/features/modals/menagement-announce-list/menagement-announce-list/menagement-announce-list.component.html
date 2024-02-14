@@ -57,8 +57,12 @@
             </div>
         </ng-template>
         <div class="footer d-flex gap-2">
-            <button type="button" class="btn btn-primary-color text-white" *ngIf="isAction" (click)="onClickAddAnnounce()">Add</button>
-            <button type="button" class="btn btn-primary-color text-white" (click)="onSubmit()">Save</button>
+            <button type="button" class="btn btn-primary-color text-white" [disabled]="data.mode === 'view'" (click)="onClickAddAnnounce()">
+                Add
+            </button>
+            <button type="button" class="btn btn-primary-color text-white" [disabled]="data.mode === 'view'" (click)="onSubmit()">
+                Save
+            </button>
         </div>
     </div>
 </div>
