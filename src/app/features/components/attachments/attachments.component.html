@@ -1,16 +1,18 @@
-<div class="row g-2 p-2 align-items-center attachment-container">
+<div class="row g-2 p-2 align-items-center attachment-container" *ngIf="attachment">
     <div class="col-auto m-0 px-3">
         <div class="attachment">
-            <fa-icon class="color-primary fs-3" [icon]="getIconClass(attachment?.fileType || '')"></fa-icon>
+            <fa-icon class="color-primary fs-3" [icon]="getIconClass(attachment.fileType || '')"></fa-icon>
         </div>
     </div>
     <div class="col m-0">
         <div class="attachment-info cursor-default">
-            <p class="label color-primary fs-7">{{ attachment?.filename }}</p>
-            <p class="label fs-8">{{ attachment?.fileSize | fileSize }}</p>
+            <a class="label cursor-pointer color-primary text-decoration-none fs-7" (click)="onClickViewAttachment(attachment)">{{
+                attachment.filename
+            }}</a>
+            <p class="label fs-8">{{ attachment.fileSize | fileSize }}</p>
         </div>
     </div>
-    <div class="col-auto" *ngIf="attachment">
+    <div class="col-auto">
         <div class="attachment-action d-flex gap-2" *ngIf="isShowToolbar">
             <button class="btn btn-primary-color text-white" (click)="onClickViewAttachment(attachment)">
                 <fa-icon [icon]="faEye"></fa-icon>
