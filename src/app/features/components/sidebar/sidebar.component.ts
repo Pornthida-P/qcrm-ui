@@ -47,21 +47,21 @@ export class SidebarComponent implements OnInit {
                 icon: faPhoneVolume,
                 routerLink: '/call',
             },
-            {
-                label: 'หลักสูตร E-Learning',
-                icon: faBookOpen,
-                routerLink: '/e-learning',
-            },
-            {
-                label: 'โครงการอบรม / สัมนา',
-                icon: faLayerGroup,
-                routerLink: '/training',
-            },
-            {
-                label: 'ประเภทสินค้า',
-                icon: faBagShopping,
-                routerLink: '/products',
-            },
+            // {
+            //     label: 'หลักสูตร E-Learning',
+            //     icon: faBookOpen,
+            //     routerLink: '/e-learning',
+            // },
+            // {
+            //     label: 'โครงการอบรม / สัมนา',
+            //     icon: faLayerGroup,
+            //     routerLink: '/training',
+            // },
+            // {
+            //     label: 'ประเภทสินค้า',
+            //     icon: faBagShopping,
+            //     routerLink: '/products',
+            // },
         ];
     }
 }
