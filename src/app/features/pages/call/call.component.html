@@ -88,10 +88,17 @@
                                     </div>
                                 </td>
                                 <td>{{ calls.modified }}</td>
-                                <td class="" scope="row" (click)="editPage(calls)">
-                                    <fa-icon [icon]="faPenToSquare"></fa-icon>
-                                </td>
-                                <!-- <td class="text-center" type="button" (click)="editPage(calls)"><fa-icon [icon]="faPenToSquare"></fa-icon></td> -->
+
+                                <td class="text-center" scope="row">
+                                  <div class="d-flex flex-row flex-nowrap">
+                                      <div class="me-3 color-primary cursor-pointer" placement="top" ngbTooltip="แก้ไข" (click)="editPage()">
+                                          <i class="fa-solid fa-pen-to-square"></i>
+                                      </div>
+                                      <div class="color-red cursor-pointer" placement="top" ngbTooltip="ลบ" (click)="deleteCall()">
+                                          <i class="fa-solid fa-trash"></i>
+                                      </div>
+                                  </div>
+                              </td>
                             </tr>
                         </ng-container>
                         <ng-template #noDataTemplate>
@@ -160,9 +167,15 @@
                     <div class="p-5 shadow call-side-detail">
                         <div class="d-flex justify-content-end">
                             <div class="d-flex flex-wrap">
-                                <div class="flex-grow-1" type="button" (click)="editPage(detailItem)" placement="bottom" ngbTooltip="แก้ไข">
-                                    <fa-icon class="color-primary" [icon]="faPenToSquare" size="lg"></fa-icon>
+                                <div class="flex-grow-1" type="button" (click)="editPage()" placement="bottom" ngbTooltip="แก้ไข">
+                                    <fa-icon class="color-primary cursor-pointer" [icon]="faPenToSquare" size="lg"></fa-icon>
                                 </div>
+                                <div class="flex-grow-1" type="button" (click)="editPage()" placement="bottom" ngbTooltip="แก้ไข">
+                                    <fa-icon class="color-primary cursor-pointer" [icon]="faPenToSquare" size="lg"></fa-icon>
+                                </div>
+                                <div class="color-red" placement="top" ngbTooltip="ลบ" (click)="deleteCall()">
+                                  <i class="fa-solid fa-trash"></i>
+                              </div>
                             </div>
                         </div>
 

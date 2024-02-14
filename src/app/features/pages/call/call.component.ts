@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Call } from 'src/app/shared/interface/call';
 import { UserService } from 'src/app/services/user/user.service';
 import { User } from 'src/app/shared/interface/user.interface';
+import Swal from 'sweetalert2';
 @Pipe({
     name: 'searchFilter',
 })
@@ -156,11 +157,15 @@ export class CallComponent implements OnInit {
         if (this.itemIdex == this.calls.length - 1 && this.currentPage == this.totalPages) this.visibleRightSideBar = false;
     }
 
-    editPage(item: any) {
-        console.log('go to editpage');
-        console.log(item);
-        const cb = `${this.pageSize},${this.currentPage},${this.totalItems},${this.totalPages}`;
-        this.router.navigate(['/'], { queryParams: { itemId: item.activityTopicId, cb: cb } });
+    // editPage(item: any) {
+    //     console.log('go to editpage');
+    //     console.log(item);
+    //     const cb = `${this.pageSize},${this.currentPage},${this.totalItems},${this.totalPages}`;
+    //     this.router.navigate(['/'], { queryParams: { itemId: item.activityTopicId, cb: cb } });
+    // }
+
+    editPage() {
+        this.router.navigate(['/call/edit'])
     }
 
     async pageChange(page: number) {
@@ -233,5 +238,16 @@ export class CallComponent implements OnInit {
             this.userData = res;
             this.isAction = res?.role.roleTitle.toLocaleLowerCase() === 'admin' ? true : false;
         });
+    }
+
+  deleteCall() {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Do you want to delete this form?',
+      showCancelButton: true,
+      confirmButtonColor: '#3066be',
+      cancelButtonColor: '#ec5365',
+      width: '50%',
+  })
     }
 }
