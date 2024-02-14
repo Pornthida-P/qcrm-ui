@@ -1,17 +1,17 @@
-<div class="row pb-2 px-5">
-    <div class="col-sm-4 col-md-3 col-xl-2">
-        <span class="fs-6 color-primary d-flex flex-row justify-content-center gap-2">
+<div class="row justify-content-center align-items-center pb-2">
+    <div class="col-auto">
+        <span class="fs-6 color-primary d-flex flex-row gap-2">
             <fa-icon [icon]="faAnnounce"></fa-icon>
             <p class="m-0">ประกาศ :</p>
         </span>
     </div>
-    <div class="col-sm-6 col-md-6 col-xl-8">
+    <div class="col-sm-6 col-md-8 col-xl-10">
         <marquee class="fs-7" behavior="scroll" direction="left" scrollamount="8">
             <p class="m-0" [innerHTML]="marqueeText"></p>
         </marquee>
     </div>
-    <div class="col-sm-4 col-md-3 col-xl-2">
-        <div class="announcement-action d-flex gap-2">
+    <div class="col-auto">
+        <div class="announcement-action d-flex flex-column gap-2">
             <button class="btn btn-primary-color text-white" (click)="onClickView()">
                 <fa-icon [icon]="faEye"> </fa-icon>
             </button>
