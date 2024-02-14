@@ -60,6 +60,12 @@ const routes: Routes = [
                           import('../../pages/create-call/create-call.module').then((m) => m.CreateCallModule),
                       title: 'Create Call',
                   },
+                  {
+                      path: 'edit',
+                      loadChildren: () =>
+                          import('../../pages/change-call/change-call.module').then((m) => m.ChangeCallModule),
+                      title: 'Edit Call',
+                  },
               ],
             },
             {
