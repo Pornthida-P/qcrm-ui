@@ -18,6 +18,7 @@ export class MenagementPasswordComponent implements OnInit {
     isAction: boolean = false;
 
     passwordForm: FormGroup = new FormGroup({});
+    title = 'จัดการพาสเวิร์ดผ่าน';
 
     constructor(private userService: UserService, private fb: FormBuilder, private sweetalertService: SweetAlertService) {}
 

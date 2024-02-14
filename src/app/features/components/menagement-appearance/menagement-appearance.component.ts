@@ -7,6 +7,7 @@ import { ThemeService } from 'src/app/services/theme/theme.service';
     styleUrl: './menagement-appearance.component.scss',
 })
 export class MenagementAppearanceComponent implements OnInit {
+    title = 'จัดการรูปแบบ';
     colorPairs = [
         { color1: '#3066be', color2: '#60afff' },
         { color1: '#d94855', color2: '#ec5365' },

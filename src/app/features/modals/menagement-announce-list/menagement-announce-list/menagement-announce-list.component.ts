@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { faEdit, faEye, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { tap, catchError } from 'rxjs';
 import { AnnouncementService } from 'src/app/services/announcement/announcement.service';
@@ -24,7 +24,7 @@ export class MenagementAnnounceListComponent implements OnInit {
     faEdit = faEdit;
 
     dataUser?: User | null;
-    isAction: boolean = false;
+    isAction?: boolean = false;
 
     constructor(
         private userService: UserService,
@@ -32,6 +32,7 @@ export class MenagementAnnounceListComponent implements OnInit {
         private sweetalertServices: SweetAlertService,
         private modalAnnouncementService: ModalAnnouncementService,
         public dialogRef: MatDialogRef<MenagementAnnounceComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: { mode: 'add' | 'view' | 'edit' },
     ) {}
 
     ngOnInit(): void {

@@ -2,7 +2,7 @@
     <div class="col-md-7 px-4 pt-2 pb-4">
         <form [formGroup]="userDataForm">
             <div class="form-group px-3 py-2">
-                <label class="mb-2" for="username">Username</label>
+                <label class="mb-2" for="username">ชื่อผู้ใช้งาน</label>
                 <input
                     type="text"
                     class="form-control"
@@ -23,11 +23,11 @@
                     "
                     class="fs-8 pt-2 text-danger"
                 >
-                    Username is required
+                    ชื่อผู้ใช้งานจำเป็นต้องกรอก
                 </div>
             </div>
             <div class="form-group px-3 py-2">
-                <label class="mb-2" for="role">Role</label>
+                <label class="mb-2" for="role">บทบาท</label>
                 <select
                     class="form-select"
                     formControlName="role"
@@ -45,12 +45,12 @@
                     *ngIf="userDataForm.get('role')?.invalid && (userDataForm.get('role')?.dirty || userDataForm.get('role')?.touched)"
                     class="fs-8 pt-2 text-danger"
                 >
-                    Role is required
+                    บทบาทจำเป็นต้องกรอก
                 </div>
             </div>
 
             <div class="form-group px-3 py-2">
-                <label class="mb-2" for="email">Email</label>
+                <label class="mb-2" for="email">อีเมลล์</label>
                 <input
                     type="email"
                     class="form-control"
@@ -67,7 +67,7 @@
                     *ngIf="userDataForm.get('email')?.invalid && (userDataForm.get('email')?.dirty || userDataForm.get('email')?.touched)"
                     class="fs-8 pt-2 text-danger"
                 >
-                    email is required
+                    อีเมลล์จำเป็นต้องกรอก
                 </div>
             </div>
             <div class="form-group px-3 py-2" *ngIf="mode !== 'view'">
