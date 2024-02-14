@@ -3,16 +3,16 @@
         <div class="p-4 d-flex flex-column justify-content-between gap-4 w-100">
             <div class="d-flex justify-content-between mg-bt">
                 <button type="button" (click)="prev()" class="btn btn-outline-danger">ย้อนกลับ</button>
-                <button type="button" (click)="submit()" class="btn btn-primary rounded text-white">บันทึก</button>
+                <button type="button" (click)="submit()" class="btn btn-primary rounded text-white" disabled>บันทึก</button>
             </div>
             <p class="fs-5 mg-bt-0">แก้ไขการโทร</p>
-            <form class="row g-3">
+            <form class="row g-3 mg-3">
                 <div class="col-md-6">
                     <label for="inputEmail4" class="form-label">ชื่อ</label>
                     <input type="email" class="form-control" id="inputEmail4" />
                 </div>
                 <div class="col-md-6">
-                    <label for="inputPassword4" class="form-label">Status</label>
+                    <label for="inputPassword4" class="form-label">สถานะ</label>
                     <select id="inputState" class="form-select">
                         <option disabled selected></option>
                         <option>ข้อมูลติดต่อ</option>
@@ -36,66 +36,31 @@
                         <option>...</option>
                     </select>
                 </div>
-                <!-- <form class="row row-cols-sm-auto">
-                    <div class="col-12">
-                        <div class="dp-hidden position-absolute">
-                            <div class="input-group">
-                                <input
-                                    name="datepicker"
-                                    class="form-control"
-                                    ngbDatepicker
-                                    #datepicker="ngbDatepicker"
-                                    [autoClose]="'outside'"
-                                    (dateSelect)="onDateSelection($event)"
-                                    [displayMonths]="2"
-                                    [dayTemplate]="t"
-                                    outsideDays="hidden"
-                                    [startDate]="fromDate!"
-                                    tabindex="-1"
-                                />
-                                <ng-template #t let-date let-focused="focused">
-                                    <span
-                                        class="custom-day"
-                                        [class.focused]="focused"
-                                        [class.range]="isRange(date)"
-                                        [class.faded]="isHovered(date) || isInside(date)"
-                                        (mouseenter)="hoveredDate = date"
-                                        (mouseleave)="hoveredDate = null"
-                                    >
-                                        {{ date.day }}
-                                    </span>
-                                </ng-template>
-                            </div>
-                        </div>
-                        <div class="input-group">
-                            <input
-                                #dpFromDate
-                                class="form-control"
-                                placeholder="yyyy-mm-dd"
-                                name="dpFromDate"
-                                [value]="formatter.format(fromDate)"
-                                (input)="fromDate = validateInput(fromDate, dpFromDate.value)"
-                            />
-                            <button class="btn btn-outline-secondary bi bi-calendar3" (click)="datepicker.toggle()" type="button"></button>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="input-group">
-                            <input
-                                #dpToDate
-                                class="form-control"
-                                placeholder="yyyy-mm-dd"
-                                name="dpToDate"
-                                [value]="formatter.format(toDate)"
-                                (input)="toDate = validateInput(toDate, dpToDate.value)"
-                            />
-                            <button class="btn btn-outline-secondary bi bi-calendar3" (click)="datepicker.toggle()" type="button"></button>
-                        </div>
-                    </div>
-                </form> -->
-                <!-- <hr />
-                <pre>From date model: {{ fromDate | json }}</pre>
-                <pre>To date model: {{ toDate | json }}</pre> -->
+                <div class="col-6 date-pik">
+                  <mat-form-field class="date-time">
+                    <mat-label>กรุณาเลือกวันที่</mat-label>
+                    <input matInput [matDatepicker]="picker1" [formControl]="date">
+                    <mat-hint>MM/DD/YYYY</mat-hint>
+                    <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1></mat-datepicker>
+                  </mat-form-field>
+                  <ngb-timepicker [(ngModel)]="time" [seconds]="seconds" [ngModelOptions]="{standalone: true}"></ngb-timepicker>
+                  <!-- <pre>Selected time: {{ time | json }}</pre> -->
+                </div>
+
+                <div class="col-6 date-pik">
+                  <mat-form-field class="date-time">
+                    <mat-label>กรุณาเลือกวันที่</mat-label>
+                    <input matInput [matDatepicker]="picker2" [formControl]="date">
+                    <mat-hint>MM/DD/YYYY</mat-hint>
+                    <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+                    <mat-datepicker #picker2></mat-datepicker>
+                  </mat-form-field>
+                  <ngb-timepicker [(ngModel)]="time1"  [seconds]="seconds" [ngModelOptions]="{standalone: true}"></ngb-timepicker>
+                  <!-- <button class="btn btn-sm btn-outline-{{ meridian ? 'success' : 'danger' }}" (click)="meridian = !meridian">
+                    Meridian - {{ meridian ? 'ON' : 'OFF' }}
+                  </button> -->
+                </div>
 
                 <div class="col-6">
                     <label for="inputAddress2" class="form-label">ประเภทสาย</label>

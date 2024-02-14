@@ -3,11 +3,16 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ChangeCallComponent } from './change-call.component';
 import { NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { JsonPipe } from '@angular/common';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
+import { MAT_DATE_LOCALE } from '@angular/material/core'
 
 @NgModule({
-  declarations: [],
+  declarations: [ChangeCallComponent],
   imports: [
     CommonModule,
     RouterModule.forChild([
@@ -19,6 +24,14 @@ import { JsonPipe } from '@angular/common';
     NgbDatepickerModule,
     FormsModule,
     JsonPipe,
+    MatDatepickerModule,
+    MatInputModule,
+    MatFormFieldModule,
+    NgbTimepickerModule,
+    ReactiveFormsModule
+  ],
+  providers: [
+    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' }
   ]
 })
 export class ChangeCallModule { }
