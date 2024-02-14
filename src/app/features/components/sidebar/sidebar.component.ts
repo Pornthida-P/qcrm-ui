@@ -28,22 +28,22 @@ export class SidebarComponent implements OnInit {
                 routerLink: '/home',
             },
             {
-                label: 'ฐานข้อมูลผู้ติดต่อ',
+                label: 'ฐานข้อมูลผู้ใช้บริการและประวัติผู้ติดต่อ',
                 icon: faFileLines,
                 routerLink: '/contacts',
             },
+            // {
+            //     label: 'แบบฟอร์มสำรวจและติดตามประเมินผล',
+            //     icon: faComments,
+            //     routerLink: '/survey',
+            // },
             {
-                label: 'การติดตามและประเมินผล',
-                icon: faComments,
-                routerLink: '/survey',
-            },
-            {
-                label: 'แบบฟอร์มสำรวจ',
+                label: 'แบบฟอร์มสำรวจและติดตามประเมินผล',
                 icon: faFilePen,
                 routerLink: '/surveyform',
             },
             {
-                label: 'การโทร',
+                label: 'ประวัติการโทร',
                 icon: faPhoneVolume,
                 routerLink: '/call',
             },
