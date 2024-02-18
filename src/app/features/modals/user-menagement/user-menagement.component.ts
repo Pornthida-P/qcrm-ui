@@ -2,6 +2,8 @@ import { Component, Inject } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import { tap } from 'rxjs';
+import { UserService } from 'src/app/services/user/user.service';
 import { User } from 'src/app/shared/interface/user.interface';
 
 @Component({
@@ -18,7 +20,7 @@ export class UserMenagementComponent {
 
     constructor(
         public dialogRef: MatDialogRef<UserMenagementComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: { mode: 'add' | 'view' | 'edit'; userData?: User },
+        @Inject(MAT_DIALOG_DATA) public data: { mode: 'add' | 'view' | 'edit'; member?: User },
     ) {}
 
     ngOnInit(): void {}

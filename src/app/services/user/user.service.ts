@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, map, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { config } from 'src/app/config/config';
 import { Group } from 'src/app/shared/interface/group.interface';
 import { User } from 'src/app/shared/interface/user.interface';
@@ -12,6 +12,7 @@ import { environment } from 'src/environments/environment';
 export class UserService {
     private userDataSubject = new BehaviorSubject<User | null>(null);
     private groupSubject = new BehaviorSubject<void>(undefined);
+    private memberSubject = new BehaviorSubject<void>(undefined);
     private storageKey = 'userData';
 
     baseUrl: string = `${environment.api.url}`;
@@ -37,19 +38,48 @@ export class UserService {
         return this.userDataSubject.asObservable();
     }
 
+    userIsRefresh() {
+        const userData = this.userDataSubject.getValue();
+        this.http
+            .get<User>(`${this.baseUrl}${config.api.path.user.findById}${userData?.userId}`)
+            .pipe(
+                tap((res: User) => {
+                    if (res.profile) {
+                        res.profile = res.profile ? `${environment.api.url}${res.profile}` : '';
+                    }
+                    this.setDataUser(res);
+                }),
+            )
+            .subscribe(() => {});
+    }
+
+    setDataUser(value: User | null) {
+        if (value) {
+            localStorage.setItem(this.storageKey, JSON.stringify(value));
+        } else {
+            localStorage.removeItem(this.storageKey);
+        }
+
+        this.userDataSubject.next(value);
+    }
+
+    clearDataUser() {
+        localStorage.removeItem(this.storageKey);
+        this.userDataSubject.next(null);
+    }
+
     findAllRoles(): Observable<any> {
         return this.http.get(`${this.baseUrl}${config.api.path.user.findAllRoles}`);
     }
 
     findAllGroups(): Observable<any> {
-        return this.http.get(`${this.baseUrl}${config.api.path.user.findAllGroups}`).pipe(
-            map((res: any) => {
-                res.forEach((group: any) => {
-                    group.members.forEach((member: any) => {
+        return this.http.get<Group[]>(`${this.baseUrl}${config.api.path.user.findAllGroups}`).pipe(
+            tap((res: Group[]) => {
+                res.forEach((group: Group) => {
+                    group.members.forEach((member: User) => {
                         member.profile = member.profile ? `${environment.api.url}${member.profile}` : '';
                     });
                 });
-                return res;
             }),
         );
     }
@@ -70,7 +100,12 @@ export class UserService {
     }
 
     updateUser(userData: User): Observable<any> {
-        return this.http.post(`${this.baseUrl}${config.api.path.user.update}`, userData);
+        return this.http.post(`${this.baseUrl}${config.api.path.user.update}`, userData).pipe(
+            tap(() => {
+                this.userIsRefresh();
+                this.memberSubject.next();
+            }),
+        );
     }
 
     updatePassword(userId: string, newPassword: string, currentPassword: string): Observable<any> {
@@ -102,26 +137,11 @@ export class UserService {
         );
     }
 
-    setGroupOnRefrash() {
-        this.groupSubject.next();
+    getMemberOnRefrash(): Observable<void> {
+        return this.memberSubject.asObservable();
     }
 
     getGroupOnRefrash(): Observable<void> {
         return this.groupSubject.asObservable();
-    }
-
-    setDataUser(value: User | null) {
-        if (value) {
-            localStorage.setItem(this.storageKey, JSON.stringify(value));
-        } else {
-            localStorage.removeItem(this.storageKey);
-        }
-
-        this.userDataSubject.next(value);
-    }
-
-    clearDataUser() {
-        localStorage.removeItem(this.storageKey);
-        this.userDataSubject.next(null);
     }
 }

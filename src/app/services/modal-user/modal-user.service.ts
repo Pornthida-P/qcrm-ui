@@ -9,10 +9,10 @@ import { User } from 'src/app/shared/interface/user.interface';
 export class ModalUserService {
     constructor(public dialog: MatDialog) {}
 
-    openDialog(mode: 'add' | 'view' | 'edit', userData?: User): void {
+    openDialog(mode: 'add' | 'view' | 'edit', member?: User): void {
         const dialogRef = this.dialog.open(UserMenagementComponent, {
             width: '60%',
-            data: { mode, userData },
+            data: { mode, member },
         });
 
         dialogRef.afterClosed().subscribe((result) => {

@@ -5,6 +5,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { config } from 'src/app/config/config';
 import { User } from 'src/app/shared/interface/user.interface';
+import { UserService } from '../user/user.service';
+import { TokenService } from '../token/token.service';
 
 @Injectable({
     providedIn: 'root',
@@ -13,7 +15,7 @@ export class LoginService {
     private isLoginedSubject = new BehaviorSubject<boolean>(false);
     private keyIsLogined = 'isLogined';
 
-    constructor(private router: Router, private http: HttpClient) {
+    constructor(private router: Router, private http: HttpClient, private userService: UserService, private tokenService: TokenService) {
         this.updateIsLogined();
     }
 
@@ -34,8 +36,8 @@ export class LoginService {
         this.router.navigate(['/home']);
     }
 
-    logout() {
-        localStorage.removeItem(this.keyIsLogined);
+    logout(userId?: string): Observable<any> {
+        return this.http.post(`${this.baseUrl}${config.api.path.logout}`, { userId: userId }).pipe(tap(() => {}));
     }
 
     checklogin() {
