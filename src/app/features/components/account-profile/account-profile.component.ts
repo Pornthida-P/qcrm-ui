@@ -16,47 +16,67 @@ import { config } from 'src/app/config/config';
     styleUrl: './account-profile.component.scss',
 })
 export class AccountProfileComponent {
-    @Input() userData?: User | null;
+    @Input() member?: User | null;
     @Input() mode?: 'add' | 'view' | 'edit';
     @ViewChild('imageElement') imageElement?: ElementRef<HTMLImageElement>;
 
     imageSrc?: File;
     roles: Role[] = [];
-
+    isAction: boolean = false;
     userDataForm: FormGroup = new FormGroup({});
+    userData: User | null = null;
 
     faXmark = faXmark;
 
     profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
 
+    usernameValidators = [Validators.required, Validators.pattern(/^[a-zA-Z0-9]+$/)];
+    emailValidators = [Validators.required, Validators.email];
+
     constructor(private fb: FormBuilder, private userService: UserService, private sweetalertServices: SweetAlertService) {}
 
     ngOnInit(): void {
-        this.initializeForm();
         this.findAllRoles();
+        this.getDataUser();
+        this.initializeForm();
     }
 
     initializeForm(): void {
         const isViewMode = this.mode === 'view';
-        const isRole = this.userData?.role?.roleTitle.toLocaleLowerCase() !== 'admin';
 
         if (this.mode === 'add') {
             this.userDataForm = this.fb.group({
                 userId: [''],
-                username: ['', Validators.required],
-                email: ['', Validators.required],
+                username: ['', this.usernameValidators],
+                email: ['', this.emailValidators],
                 role: ['', Validators.required],
                 profile: [''],
+                lastLogin: [''],
+                isActive: [''],
             });
         } else {
             this.userDataForm = this.fb.group({
-                userId: [{ value: this.userData?.userId, disabled: isViewMode || isRole }, Validators.required],
-                username: [{ value: this.userData?.username, disabled: isViewMode }, Validators.required],
-                email: [{ value: this.userData?.email, disabled: isViewMode }, Validators.required],
-                role: [{ value: this.userData?.role?.roleId, disabled: isViewMode || isRole }, Validators.required],
-                profile: [{ value: this.userData?.profile, disabled: isViewMode }],
+                userId: [{ value: this.member?.userId, disabled: isViewMode || !this.isAction }, Validators.required],
+                username: [{ value: this.member?.username, disabled: isViewMode }, this.usernameValidators],
+                email: [{ value: this.member?.email, disabled: isViewMode }, this.emailValidators],
+                role: [{ value: this.member?.role?.roleId, disabled: isViewMode || !this.isAction }, Validators.required],
+                profile: [{ value: this.member?.profile, disabled: isViewMode }],
+                lastLogin: [{ value: this.member?.lastLogin, disabled: true }],
+                isActive: [{ value: this.member?.isActive, disabled: true }],
             });
         }
+    }
+
+    getDataUser(): void {
+        this.userService
+            .getDataUser()
+            .pipe(
+                tap((res: User | null) => {
+                    this.userData = res;
+                    this.isAction = res?.role.roleTitle.toLowerCase() === 'admin' ? true : false;
+                }),
+            )
+            .subscribe(() => {});
     }
 
     findAllRoles(): void {
@@ -118,22 +138,28 @@ export class AccountProfileComponent {
         }
 
         const userData: User = {
-            userId: this.userData?.userId || '',
+            userId: this.userDataForm.get('userId')?.value,
             username: this.userDataForm.get('username')?.value,
             email: this.userDataForm.get('email')?.value,
             role: role,
             profile: this.userDataForm.get('profile')?.value,
+            lastLogin: this.userDataForm.get('lastLogin')?.value,
+            isActive: this.userDataForm.get('isActive')?.value,
         };
 
         if (this.mode === 'edit') {
             this.updateUser(userData);
+        }
+
+        if (this.mode === 'add') {
+            this.addUser(userData);
         }
     }
 
     async uploadProfileImage() {
         if (this.imageSrc) {
             const filename = this.imageSrc.name;
-            const userId = this.userData?.userId || '';
+            const userId = this.member?.userId || '';
             const createdAt = moment().format('YYYY-MM-DD HH:mm:ss');
             const createdById = this.userData?.userId || '';
 
@@ -151,10 +177,27 @@ export class AccountProfileComponent {
         }
     }
 
+    addUser(userData: User) {
+        console.log(userData);
+        this.userService
+            .addUser(userData)
+            .pipe(
+                tap(() => {
+                    this.sweetalertServices.getSwal('success', 'Success', 'User has been added successfully.', false, '');
+                    this.userDataForm.markAsPristine();
+                    this.userDataForm.markAsUntouched();
+                }),
+                catchError((err) => {
+                    this.sweetalertServices.handleError(err);
+                    throw err;
+                }),
+            )
+            .subscribe();
+    }
+
     updateUser(userData: User) {
         this.userService.updateUser(userData).subscribe(
             () => {
-                this.userService.setDataUser(userData);
                 this.sweetalertServices.getSwal('success', 'Success', 'User has been updated successfully.', false, '');
                 this.userDataForm.markAsPristine();
                 this.userDataForm.markAsUntouched();
