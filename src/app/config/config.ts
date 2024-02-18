@@ -2,6 +2,7 @@ export const config = {
     api: {
         path: {
             login: '/login',
+            logout: '/logout',
             attachment: {
                 find: '/attachment/find',
                 upload: '/attachment/upload',
