@@ -6,21 +6,18 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-12 d-flex justify-content-center align-items-center p-2">
-                <mat-button-toggle-group name="viewType" aria-label="View Type" [(ngModel)]="selectedViewType">
-                    <mat-button-toggle value="calendar">
-                        <fa-icon [icon]="faCalendar"></fa-icon>
-                    </mat-button-toggle>
-                    <mat-button-toggle value="list">
-                        <fa-icon [icon]="faList"></fa-icon>
-                    </mat-button-toggle>
-                </mat-button-toggle-group>
+            <div class="col-12 d-flex gap-3 justify-content-center align-items-center p-2">
+                <mat-button-toggle *ngFor="let viewType of viewTypes" [value]="viewType.value">
+                    <div class="d-flex">
+                        <fa-icon [icon]="viewType.icon" class="pe-2"></fa-icon>
+                        <p class="label">{{ viewType.label }}</p>
+                    </div>
+                </mat-button-toggle>
             </div>
         </div>
         <div class="row">
             <div class="col-12">
-                <app-announce-list *ngIf="selectedViewType === 'list'"></app-announce-list>
-                <app-team-activities *ngIf="selectedViewType === 'calendar'"></app-team-activities>
+                <app-team-activities *ngIf="selectedViewType === 'home'"></app-team-activities>
             </div>
         </div>
     </div>
