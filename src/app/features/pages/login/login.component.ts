@@ -37,11 +37,7 @@ export class LoginComponent {
         return this.loginForm.controls['password'];
     }
 
-    ngOnInit(): void {
-        this.userServices.clearDataUser();
-        this.tokenServices.clearDataToken();
-        this.loginService.logout();
-    }
+    ngOnInit(): void {}
 
     onSubmit(form: FormGroup) {
         const username = form.value.username;
