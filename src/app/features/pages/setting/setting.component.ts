@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { faMagnifyingGlass, faBell, faGear, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
-import { LoginService } from 'src/app/services/login/login.service';
 
 @Component({
     selector: 'app-setting',
@@ -11,6 +9,8 @@ import { LoginService } from 'src/app/services/login/login.service';
 export class SettingComponent implements OnInit {
     menuSetting: any[] = [];
     menuLogout: any = {};
+
+    title: string = 'ตั้งค่า';
 
     constructor(private router: Router) {}
 
@@ -25,6 +25,11 @@ export class SettingComponent implements OnInit {
                 label: 'พาสเวิร์ด',
                 icon: '',
                 routerLink: 'menagement-password',
+            },
+            {
+                label: 'สมาชิก',
+                icon: '',
+                routerLink: 'menagement-member',
             },
             {
                 label: 'ทีม',
