@@ -63,7 +63,7 @@ export class MenagementAnnounceComponent implements OnInit {
             .pipe(
                 tap((res: User | null) => {
                     this.userData = res;
-                    this.isAction = res?.role.roleTitle.toLocaleLowerCase() === 'admin' ? true : false;
+                    this.isAction = res?.role.roleTitle.toLowerCase() === 'admin' ? true : false;
                 }),
             )
             .subscribe();
