@@ -15,6 +15,8 @@ export class SweetAlertService {
             text: text,
             showConfirmButton: showButton,
             confirmButtonColor: '#0a6ebd',
+            timer: 2000,
+            timerProgressBar: true,
         }).then(() => {
             if (route) {
                 setTimeout(() => this.router.navigate([`/${route}`]), 500);
@@ -43,7 +45,7 @@ export class SweetAlertService {
                 icon = 'warning';
                 title = 'Warning Authentication';
                 errorMessage = 'Your session has expired. Please log in again.';
-                route = 'login';
+                route = 'logout';
                 break;
             default:
                 icon = 'error';
