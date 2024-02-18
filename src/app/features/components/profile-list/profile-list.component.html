@@ -1,10 +1,16 @@
-<div *ngIf="members?.length === 0" class="row g-2 p-2 justify-content-center align-items-center attachment-container">
-    <div class="col-auto m-0 px-3">
-        <div class="attachment">
+<div *ngIf="members?.length === 0" class="row g-2 p-4 justify-content-center align-items-center profile-list-container">
+    <div class="col-auto m-0">
+        <div class="profile-list">
             <p class="fs-7 m-auto">ไม่พบ Member</p>
         </div>
     </div>
 </div>
 <div *ngFor="let member of members" class="my-2">
-    <app-profile [member]="member" [isShowToolbar]="isShowToolbar" [mode]="mode" (deleteUserId)="onDeletedMember($event)"></app-profile>
+    <app-profile
+        [member]="member"
+        [isShowToolbar]="isShowToolbar"
+        [mode]="mode"
+        [isBackground]="isBackground"
+        (deleteUserId)="onDeletedMember($event)"
+    ></app-profile>
 </div>

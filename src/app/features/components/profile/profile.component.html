@@ -1,7 +1,21 @@
-<div class="row g-2 p-2 align-items-center bg-light">
+<div class="row g-2 p-2 align-items-center" [ngClass]="{ 'bg-light': isBackground }">
     <div class="col-auto m-0 px-3">
-        <div class="profile-container m-auto">
-            <img class="profile-image img-fluid" [src]="member?.profile" [alt]="member?.username" (error)="handleProfileError($event)" />
+        <div class="position-relative">
+            <div class="profile-container m-auto">
+                <img
+                    class="profile-image img-fluid"
+                    [src]="member?.profile"
+                    [alt]="member?.username"
+                    (error)="handleProfileError($event)"
+                />
+            </div>
+            <div class="dot">
+                <div
+                    class="dot-inner dot-status"
+                    [ngbTooltip]="member?.isActive === 1 ? 'Online' : 'Offline'"
+                    [class.dot-status-online]="member?.isActive === 1"
+                ></div>
+            </div>
         </div>
     </div>
     <div class="col m-0">
@@ -12,10 +26,18 @@
     </div>
     <div class="col-auto m-0" *ngIf="isShowToolbar">
         <div class="user-action d-flex gap-2">
-            <button class="btn btn-primary-color text-white" (click)="onClickViewProfile(member)">
+            <button type="button" class="btn btn-primary-color text-white" (click)="onClickView(member)">
                 <fa-icon [icon]="faEye"></fa-icon>
             </button>
-            <button *ngIf="mode === 'edit'" class="btn btn-red-color text-white" (click)="onClickDeleteProfile(member)">
+            <button
+                *ngIf="mode === 'edit' && isAction"
+                type="button"
+                class="btn btn-primary-color text-white"
+                (click)="onClickEdit(member)"
+            >
+                <fa-icon [icon]="faEdit"></fa-icon>
+            </button>
+            <button *ngIf="mode === 'edit' && isAction" type="button" class="btn btn-red-color text-white" (click)="onClickDelete(member)">
                 <fa-icon [icon]="faXmark"></fa-icon>
             </button>
         </div>

@@ -6,3 +6,8 @@
 .profile-container {
     max-width: 40px;
 }
+
+.list-item {
+    max-height: 400px;
+    overflow-y: scroll;
+}
