@@ -7,12 +7,20 @@
         </div>
         <div class="row">
             <div class="col-12 d-flex gap-3 justify-content-center align-items-center p-2">
-                <mat-button-toggle *ngFor="let viewType of viewTypes" [value]="viewType.value">
-                    <div class="d-flex">
-                        <fa-icon [icon]="viewType.icon" class="pe-2"></fa-icon>
-                        <p class="label">{{ viewType.label }}</p>
-                    </div>
-                </mat-button-toggle>
+                <div class="btn-group" role="group" aria-label="menu home">
+                    <button
+                        *ngFor="let viewType of viewTypes"
+                        type="button"
+                        class="btn btn-primary-color text-white"
+                        [class.button-active]="selectedViewType === viewType.value"
+                        (click)="onClickChangeMenu(viewType.value)"
+                    >
+                        <div class="d-flex">
+                            <fa-icon [icon]="viewType.icon" class="pe-2"></fa-icon>
+                            <p class="label">{{ viewType.label }}</p>
+                        </div>
+                    </button>
+                </div>
             </div>
         </div>
         <div class="row">

@@ -17,4 +17,8 @@ export class HomeComponent {
     ];
 
     constructor() {}
+
+    onClickChangeMenu(value: string) {
+        this.selectedViewType = value;
+    }
 }
