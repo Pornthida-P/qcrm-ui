@@ -8,6 +8,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { ProfileListModule } from '../profile-list/profile-list.module';
 import { ProfileModule } from '../profile/profile.module';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
     declarations: [TeamComponent, MenagementTeamComponent],
@@ -19,6 +20,7 @@ import { ProfileModule } from '../profile/profile.module';
         ReactiveFormsModule,
         ProfileModule,
         ProfileListModule,
+        NgbModule,
         RouterModule.forChild([
             {
                 path: '',

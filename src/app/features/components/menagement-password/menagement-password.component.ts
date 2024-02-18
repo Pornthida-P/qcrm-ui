@@ -18,7 +18,7 @@ export class MenagementPasswordComponent implements OnInit {
     isAction: boolean = false;
 
     passwordForm: FormGroup = new FormGroup({});
-    title = 'จัดการพาสเวิร์ดผ่าน';
+    title = 'จัดการพาสเวิร์ด';
 
     constructor(private userService: UserService, private fb: FormBuilder, private sweetalertService: SweetAlertService) {}
 
@@ -41,7 +41,7 @@ export class MenagementPasswordComponent implements OnInit {
             .pipe(
                 tap((res: User | null) => {
                     this.userData = res;
-                    this.isAction = res?.role.roleTitle.toLocaleLowerCase() === 'admin' ? true : false;
+                    this.isAction = res?.role.roleTitle.toLowerCase() === 'admin' ? true : false;
                 }),
             )
             .subscribe((res) => {});

@@ -21,6 +21,7 @@ export class TeamComponent {
 
     isAction: boolean = false;
     groupMembers: Group[] = [];
+    searchGroup: Group[] = [];
     dataUser?: User | null;
 
     profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
@@ -57,7 +58,18 @@ export class TeamComponent {
     getDataUser() {
         this.userService.getDataUser().subscribe((res: User | null) => {
             this.dataUser = res;
-            this.isAction = res?.role.roleTitle.toLocaleLowerCase() === 'admin' ? true : false;
+            this.isAction = res?.role.roleTitle.toLowerCase() === 'admin' ? true : false;
+        });
+    }
+
+    onSearch(text: string) {
+        if (!text) {
+            this.searchGroup = [];
+            return;
+        }
+
+        this.searchGroup = this.groupMembers.filter((group) => {
+            return group.groupTitle.toLowerCase().includes(text.toLowerCase());
         });
     }
 
