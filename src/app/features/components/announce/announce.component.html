@@ -1,11 +1,11 @@
-<div class="row justify-content-center align-items-center pb-2">
+<div class="row justify-content-center align-items-center">
     <div class="col-auto">
         <span class="fs-6 color-primary d-flex flex-row gap-2">
             <fa-icon [icon]="faAnnounce"></fa-icon>
             <p class="m-0">ประกาศ :</p>
         </span>
     </div>
-    <div class="col-sm-6 col-md-8 col-xl-10">
+    <div class="col-sm-6 col-md-8 d-flex justify-content-center align-items-center col-xl-10">
         <marquee class="fs-7" behavior="scroll" direction="left" scrollamount="8">
             <p class="m-0" [innerHTML]="marqueeText"></p>
         </marquee>
