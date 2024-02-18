@@ -96,7 +96,7 @@ export class UserService {
     }
 
     addUser(userData: User): Observable<any> {
-        return this.http.post(`${this.baseUrl}${config.api.path.user.findAll}`, userData);
+        return this.http.post(`${this.baseUrl}${config.api.path.user.add}`, userData);
     }
 
     updateUser(userData: User): Observable<any> {

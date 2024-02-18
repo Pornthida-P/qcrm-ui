@@ -24,7 +24,7 @@
             <p class="label fs-8">{{ member?.role?.roleTitle }}</p>
         </div>
     </div>
-    <div class="col-auto m-0" *ngIf="isShowToolbar">
+    <div class="col-auto m-0 px-3" *ngIf="isShowToolbar">
         <div class="user-action d-flex gap-2">
             <button type="button" class="btn btn-primary-color text-white" (click)="onClickView(member)">
                 <fa-icon [icon]="faEye"></fa-icon>

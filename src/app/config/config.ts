@@ -16,6 +16,7 @@ export const config = {
                 findByGroup: '/user/group/',
                 findAllRoles: '/user/roles',
                 findAllGroups: '/user/groups',
+                add: '/user/add',
                 addGroup: '/user/add-group',
                 update: '/user/update',
                 updateGroup: '/user/update-group',
