@@ -9,6 +9,7 @@ import { User } from 'src/app/shared/interface/user.interface';
 import { Role } from 'src/app/shared/interface/role.interface';
 import { environment } from 'src/environments/environment';
 import { config } from 'src/app/config/config';
+import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
 
 @Component({
     selector: 'app-account-profile',
@@ -33,7 +34,12 @@ export class AccountProfileComponent {
     usernameValidators = [Validators.required, Validators.pattern(/^[a-zA-Z0-9]+$/)];
     emailValidators = [Validators.required, Validators.email];
 
-    constructor(private fb: FormBuilder, private userService: UserService, private sweetalertServices: SweetAlertService) {}
+    constructor(
+        private fb: FormBuilder,
+        private userService: UserService,
+        private sweetalertServices: SweetAlertService,
+        private socketIO: SocketIoService,
+    ) {}
 
     ngOnInit(): void {
         this.findAllRoles();
@@ -206,6 +212,10 @@ export class AccountProfileComponent {
                 this.sweetalertServices.handleError(err);
             },
         );
+    }
+
+    getStatusOnline(userId?: string): boolean {
+        return this.socketIO.getStatusOnline(userId);
     }
 
     handleProfileError(event: any) {

@@ -6,6 +6,7 @@ import { filter } from 'rxjs';
 import { UserService } from 'src/app/services/user/user.service';
 import { User } from 'src/app/shared/interface/user.interface';
 import { LoginService } from 'src/app/services/login/login.service';
+import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
 
 @Component({
     selector: 'app-navbar',
@@ -26,7 +27,7 @@ export class NavbarComponent implements OnInit {
 
     faBars = faBars;
 
-    constructor(private router: Router, private userService: UserService) {}
+    constructor(private router: Router, private userService: UserService, private socketIO: SocketIoService) {}
 
     ngOnInit() {
         this.getDataUser();
@@ -100,6 +101,10 @@ export class NavbarComponent implements OnInit {
         if (event) {
             event.target.src = this.profileError;
         }
+    }
+
+    getStatusOnline(userId?: string): boolean {
+        return this.socketIO.getStatusOnline(userId);
     }
 
     logout() {

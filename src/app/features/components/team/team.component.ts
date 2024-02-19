@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { faEdit, faEye, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { tap, catchError } from 'rxjs';
 import { ModalTeamService } from 'src/app/services/modal-team/modal-team.service';
+import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { Group } from 'src/app/shared/interface/group.interface';
@@ -29,6 +30,7 @@ export class TeamComponent {
     constructor(
         private userService: UserService,
         private sweetalertService: SweetAlertService,
+        private socketIO: SocketIoService,
         private modalTeamService: ModalTeamService,
     ) {}
 
@@ -97,6 +99,10 @@ export class TeamComponent {
             .subscribe(() => {
                 this.sweetalertService.getSwal('success', 'Success', 'Group has been deleted.', false, '');
             });
+    }
+
+    getStatusOnline(userId?: string): boolean {
+        return this.socketIO.getStatusOnline(userId);
     }
 
     handleProfileError(event: any) {

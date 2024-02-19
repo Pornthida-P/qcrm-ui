@@ -11,4 +11,7 @@ export const environment = {
             },
         },
     },
+    socket: {
+        url: 'http://localhost:3000',
+    },
 };

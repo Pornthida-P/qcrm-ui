@@ -4,9 +4,10 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { config } from 'src/app/config/config';
+import { Socket, io } from 'socket.io-client';
 import { User } from 'src/app/shared/interface/user.interface';
-import { UserService } from '../user/user.service';
-import { TokenService } from '../token/token.service';
+import { SweetAlertService } from '../sweet-alert/sweet-alert.service';
+import { SocketIoService } from '../socket-io/socket-io.service';
 
 @Injectable({
     providedIn: 'root',
@@ -15,7 +16,7 @@ export class LoginService {
     private isLoginedSubject = new BehaviorSubject<boolean>(false);
     private keyIsLogined = 'isLogined';
 
-    constructor(private router: Router, private http: HttpClient, private userService: UserService, private tokenService: TokenService) {
+    constructor(private router: Router, private http: HttpClient, private socketIO: SocketIoService) {
         this.updateIsLogined();
     }
 
@@ -36,8 +37,12 @@ export class LoginService {
         this.router.navigate(['/home']);
     }
 
-    logout(userId?: string): Observable<any> {
-        return this.http.post(`${this.baseUrl}${config.api.path.logout}`, { userId: userId }).pipe(tap(() => {}));
+    logout(user?: User | null): Observable<any> {
+        return this.http.post(`${this.baseUrl}${config.api.path.logout}`, { userId: user?.userId }).pipe(
+            tap(() => {
+                this.socketIO.logout(user);
+            }),
+        );
     }
 
     checklogin() {

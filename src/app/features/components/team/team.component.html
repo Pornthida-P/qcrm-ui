@@ -43,8 +43,8 @@
                                                 <div class="dot">
                                                     <div
                                                         class="dot-inner dot-status"
-                                                        [ngbTooltip]="member?.isActive === 1 ? 'Online' : 'Offline'"
-                                                        [class.dot-status-online]="member?.isActive === 1"
+                                                        [ngbTooltip]="getStatusOnline(member?.userId) ? 'Online' : 'Offline'"
+                                                        [class.dot-status-online]="getStatusOnline(member?.userId)"
                                                     ></div>
                                                 </div>
                                             </div>

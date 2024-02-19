@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { faEdit, faEye, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { ModalUserService } from 'src/app/services/modal-user/modal-user.service';
+import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { User } from 'src/app/shared/interface/user.interface';
@@ -28,6 +29,7 @@ export class ProfileComponent implements OnInit {
     constructor(
         private sweetAlertService: SweetAlertService,
         private modalUserService: ModalUserService,
+        private socketIO: SocketIoService,
         private userService: UserService,
     ) {}
 
@@ -62,5 +64,9 @@ export class ProfileComponent implements OnInit {
         } else {
             this.sweetAlertService.getSwal('warning', 'Warning Member', 'User ID is not found please try again.', false, '');
         }
+    }
+
+    getStatusOnline(userId?: string): boolean {
+        return this.socketIO.getStatusOnline(userId);
     }
 }
