@@ -70,9 +70,9 @@ export class AnnounceComponent {
             this.marqueeText = this.announcements
                 .map((announce, index, array) => {
                     if (index < array.length - 1) {
-                        return `<p class="m-0 color-red"><strong>${announce.announceTitle}</strong> : ${announce.description}</p> <span class="marquee-space"></span>`;
+                        return `<p class="m-0"><strong class="color-red">${announce.announceTitle}</strong> : ${announce.description}</p> <span class="marquee-space"></span>`;
                     } else {
-                        return `<p class="m-0 color-red"><strong>${announce.announceTitle}</strong> : ${announce.description}</p>`;
+                        return `<p class="m-0"><strong class="color-red">${announce.announceTitle}</strong> : ${announce.description}</p>`;
                     }
                 })
                 .join('');
