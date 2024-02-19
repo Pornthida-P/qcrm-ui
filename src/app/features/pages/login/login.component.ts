@@ -5,6 +5,7 @@ import { LoginService } from 'src/app/services/login/login.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { TokenService } from 'src/app/services/token/token.service';
 import { UserService } from 'src/app/services/user/user.service';
+import { User } from 'src/app/shared/interface/user.interface';
 
 @Component({
     selector: 'app-login',
@@ -44,19 +45,18 @@ export class LoginComponent {
         const password = form.value.password;
         if (username && password) {
             this.loginService
-                .getLogin(username, password)
+                .login(username, password)
                 .pipe(
-                    tap((res: any) => {
+                    tap((res: { user: User; token: string }) => {
                         this.userServices.setDataUser(res.user);
                         this.tokenServices.setDataToken(res.token);
-                        this.loginService.login();
                     }),
                     catchError((error) => {
                         this.sweetalertServices.handleError(error);
                         return throwError(error);
                     }),
                 )
-                .subscribe();
+                .subscribe(() => {});
         }
     }
 }

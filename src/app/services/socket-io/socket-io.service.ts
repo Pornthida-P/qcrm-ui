@@ -14,7 +14,9 @@ export class SocketIoService {
     isOnline: User[] = [];
 
     constructor(private router: Router, private sweetAlertService: SweetAlertService) {
-        this.socket = io(environment.socket.url, { transports: ['websocket'] });
+        this.socket = io(environment.socket.url, { transports: ['websocket'], path: environment.socket.path });
+
+        this.socket.on('connect_error', (error) => {});
 
         this.socket.on('onlineStatusUpdate', (data) => {
             this.isOnline = data;
