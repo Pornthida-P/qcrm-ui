@@ -31,7 +31,7 @@
             <p class="mb-3" class="bg-primary-color rounded p-2 text-white fs-5" *ngIf="checkRole()">สร้าง</p>
             <div class="p-2">
                 <p class="mb-3">แบบฟอร์ม</p>
-                <form-builder id="form" [form]="form" (change)="onChange($event)" *ngIf="checkRole()"></form-builder>
+                <form-builder id="form" [form]="form" *ngIf="checkRole()"></form-builder>
                 <formio [form]="form" [readOnly]="!checkRole()" *ngIf="!checkRole()"></formio>
             </div>
         </div>

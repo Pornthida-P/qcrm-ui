@@ -50,6 +50,9 @@ export const config = {
                 url: '/call',
                 count: '/count',
             },
+            survey: {
+                baseUrl: '/survey',
+            },
         },
     },
     file: {

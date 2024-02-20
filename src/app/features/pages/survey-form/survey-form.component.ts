@@ -1,5 +1,5 @@
-import { Component, OnInit, Pipe, PipeTransform } from '@angular/core';
-import { faArrowLeft, faArrowRight, faPenToSquare, faTrashCan, faCircleXmark, faEye } from '@fortawesome/free-solid-svg-icons';
+import { Component, OnInit } from '@angular/core';
+import { faArrowLeft, faArrowRight, faPenToSquare, faTrashCan, faCircleXmark, faEye, faClipboard } from '@fortawesome/free-solid-svg-icons';
 import { ActivatedRoute, Router } from '@angular/router';
 import { config } from 'src/app/config/config';
 import * as XLSX from 'xlsx';
@@ -7,6 +7,7 @@ import { SurveyFormService } from 'src/app/services/survey-form/survey-form.serv
 import { catchError, tap } from 'rxjs';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import Swal from 'sweetalert2';
+import { Clipboard } from '@angular/cdk/clipboard';
 
 @Component({
     selector: 'app-survey-form',
@@ -32,6 +33,7 @@ export class SurveyFormComponent implements OnInit {
     faArrowLeft = faArrowLeft;
     faCircleXmark = faCircleXmark;
     faEye = faEye;
+    faClipboard = faClipboard;
 
     pageSizeOptions = [10, 20];
     pageSize = 10;
@@ -55,12 +57,14 @@ export class SurveyFormComponent implements OnInit {
     userRole: string = '';
     userId: string = '';
     roleCanAccessCUDForm: string[] = config.roleCanAccessCUDForm;
+    url: string = '';
 
     constructor(
         private router: Router,
-        public surveyFormService: SurveyFormService,
+        private surveyFormService: SurveyFormService,
         private activeRoute: ActivatedRoute,
         private sweetalertServices: SweetAlertService,
+        private clipboard: Clipboard,
     ) {}
 
     ngOnInit() {
@@ -328,5 +332,17 @@ export class SurveyFormComponent implements OnInit {
         }
         this.getForm((this.currentPage - 1) * this.pageSize, this.pageSize);
         this.getPage();
+    }
+
+    getLink(item: any) {
+        const baseUrl = window.location.origin;
+        if (item && item.surveyFormId) {
+            this.url = baseUrl + '/survey?key1=' + item.surveyFormId;
+            this.clipboard.copy(this.url);
+            console.log('Link copied to clipboard: ' + this.url);
+            console.log('Link copied to clipboard: ' + this.clipboard.copy(this.url));
+        } else {
+            console.error('surveyFormId is null or undefined.');
+        }
     }
 }

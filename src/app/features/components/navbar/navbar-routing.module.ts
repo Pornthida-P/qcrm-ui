@@ -20,11 +20,6 @@ const routes: Routes = [
                 title: 'Contacts',
             },
             {
-                path: 'survey',
-                loadChildren: () => import('../../pages/survey/survey.module').then((m) => m.SurveyModule),
-                title: 'Survey',
-            },
-            {
                 path: 'surveyform',
                 children: [
                     {
@@ -49,24 +44,22 @@ const routes: Routes = [
             {
                 path: 'call',
                 children: [
-                  {
-                      path: '',
-                      loadChildren: () => import('../../pages/call/call.module').then((m) => m.CallModule),
-                      title: 'Call',
-                  },
-                  {
-                      path: 'create',
-                      loadChildren: () =>
-                          import('../../pages/create-call/create-call.module').then((m) => m.CreateCallModule),
-                      title: 'Create Call',
-                  },
-                  {
-                      path: 'edit',
-                      loadChildren: () =>
-                          import('../../pages/change-call/change-call.module').then((m) => m.ChangeCallModule),
-                      title: 'Edit Call',
-                  },
-              ],
+                    {
+                        path: '',
+                        loadChildren: () => import('../../pages/call/call.module').then((m) => m.CallModule),
+                        title: 'Call',
+                    },
+                    {
+                        path: 'create',
+                        loadChildren: () => import('../../pages/create-call/create-call.module').then((m) => m.CreateCallModule),
+                        title: 'Create Call',
+                    },
+                    {
+                        path: 'edit',
+                        loadChildren: () => import('../../pages/change-call/change-call.module').then((m) => m.ChangeCallModule),
+                        title: 'Edit Call',
+                    },
+                ],
             },
             {
                 path: 'e-learning',
