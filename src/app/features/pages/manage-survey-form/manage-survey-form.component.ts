@@ -51,7 +51,6 @@ export class ManageSurveyFormComponent implements OnInit {
         }
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
         this.userRole = userData.role.roleTitle.toLocaleLowerCase();
-        console.log(this.userRole);
     }
 
     checkRole(): boolean {
@@ -66,18 +65,6 @@ export class ManageSurveyFormComponent implements OnInit {
         });
     }
 
-    onChange(event: any) {
-        console.log('Submission changed!', event);
-        if (event.data) {
-            console.log(event.data);
-            // this.data = event.data;
-        }
-    }
-
-    onSubmit(submission: any) {
-        console.log(submission); // This will print out the full submission from Form.io API.
-    }
-
     prev() {
         this._location.back();
         this.state = '';
@@ -90,7 +77,7 @@ export class ManageSurveyFormComponent implements OnInit {
 
     submit() {
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-        if (userData) {
+        if (userData && this.formName && this.formName !== '' && this.form.components.length > 1) {
             if (this.detailItem && this.state != 'copy') {
                 const data = {
                     id: this.detailItem.surveyFormId,
@@ -133,6 +120,8 @@ export class ManageSurveyFormComponent implements OnInit {
                     )
                     .subscribe();
             }
+        } else {
+            this.sweetalertServices.getSwal('error', 'Form name and form component cannot be empty.', '', false, '');
         }
     }
 }

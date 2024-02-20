@@ -32,11 +32,6 @@ export class SidebarComponent implements OnInit {
                 icon: faFileLines,
                 routerLink: '/contacts',
             },
-            // {
-            //     label: 'แบบฟอร์มสำรวจและติดตามประเมินผล',
-            //     icon: faComments,
-            //     routerLink: '/survey',
-            // },
             {
                 label: 'แบบฟอร์มสำรวจและติดตามประเมินผล',
                 icon: faFilePen,

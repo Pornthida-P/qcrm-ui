@@ -1,10 +1,8 @@
-import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
-import { SurveyService } from 'src/app/services/survey/survey.service';
-import * as XLSX from 'xlsx';
-import { config } from 'src/app/config/config';
-import { Survey } from 'src/app/shared/interface/survey';
-import { Observable } from 'rxjs';
-import { NgbdSortableHeader, SortEvent } from './sortable.directive';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { FormioComponent } from '@formio/angular';
+import { SurveyFormService } from 'src/app/services/survey-form/survey-form.service';
+import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 
 @Component({
     selector: 'app-survey',
@@ -12,70 +10,75 @@ import { NgbdSortableHeader, SortEvent } from './sortable.directive';
     styleUrls: ['./survey.component.scss'],
 })
 export class SurveyComponent implements OnInit {
-    value: string | undefined;
-    filterOption!: any[];
-    selectedFilter: any | undefined;
-    selectedSurvey: any = [];
-    fileType: string = config.file.type;
-    surveys!: Survey[];
-    surveys$: Observable<Survey[]>;
-    total$: Observable<number>;
+    formId: string = '';
+    userId: string = '';
+    formName: string = '';
+    surveyForm: any;
+    form: any;
+    thanks: boolean = false;
 
-    @ViewChildren(NgbdSortableHeader) headers!: QueryList<NgbdSortableHeader>;
-
-    constructor(public surveyService: SurveyService) {
-        this.surveys$ = surveyService.surveys$;
-        this.total$ = surveyService.total$;
-    }
-
-    ngOnInit() {
-        this.filterOption = [
-            { name: 'ทั้งหมด', code: 'all' },
-            { name: 'Only My', code: 'me' },
-        ];
-        this.selectedFilter = this.filterOption[0].code;
-    }
-
-    onSort({ column, direction }: SortEvent) {
-        // resetting other headers
-        this.headers.forEach((header) => {
-            if (header.sortable !== column) {
-                header.direction = '';
+    constructor(
+        private surveyFormService: SurveyFormService,
+        private activeRoute: ActivatedRoute,
+        private sweetalertService: SweetAlertService,
+    ) {
+        this.activeRoute.queryParams.subscribe((params) => {
+            if (params['key1'] != undefined && params['key1'] != '') {
+                this.formId = params['key1'];
+            }
+            if (params['key2'] != undefined && params['key2'] != '') {
+                this.userId = params['key2'];
             }
         });
-
-        this.surveyService.sortColumn = column;
-        this.surveyService.sortDirection = direction;
+        this.getForm();
     }
 
-    checkAll(ev: any) {}
+    ngOnInit() {}
 
-    isAllChecked() {}
-
-    onSelectionChange(value: any) {
-        console.log(value);
+    getForm() {
+        this.surveyFormService.getSurveyFormById(this.formId).subscribe((res) => {
+            this.surveyForm = res;
+            this.form = JSON.parse(this.surveyForm[0].form);
+            this.formName = this.surveyForm[0].name;
+        });
     }
 
-    editSurveys() {
-        console.log('edit', this.selectedSurvey);
-    }
+    @ViewChild(FormioComponent, { static: false })
+    formio!: FormioComponent;
 
-    exportExcel() {
-        if (this.selectedSurvey.length != 0) {
-            const columns = [['เลขที่การทำแบบสำรวจ', 'ชื่อผู้ติดตามและประเมินผลฯ', 'แบบฟอร์มสำรวจ', 'ประจำปี (ค.ศ.)', 'วันที่บันทึก']];
-            const wb = XLSX.utils.book_new();
-            const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet([]);
-            XLSX.utils.sheet_add_aoa(ws, columns);
-
-            XLSX.utils.sheet_add_json(ws, this.selectedSurvey, { origin: 'A2', skipHeader: true });
-
-            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-
-            XLSX.writeFile(wb, `การติดตามและประเมินผล${this.fileType}`);
+    submitButton() {
+        if (this.formio) {
+            const isValid = this.formio.formio.checkValidity();
+            this.formio.formio.emit('submitButton');
+            if (!isValid) {
+                this.sweetalertService.getSwal('warning', 'Warning', 'Please fill all the required fields.', false, '');
+            }
         }
     }
 
-    deleteSurvey() {
-        console.log('delete', this.selectedSurvey);
+    onSubmit(submission: any) {
+        if (submission) {
+            const submissionData = {
+                data: submission.data,
+            };
+            if (submissionData.data) {
+                const surveyData = {
+                    surveyData: submissionData,
+                    contactId: this.userId,
+                    surveyFormId: this.formId,
+                    channel: '',
+                    description: null,
+                    createdBy: null,
+                };
+                this.surveyFormService.saveSurveyData(surveyData).subscribe((res: any) => {
+                    if (res.success) {
+                        this.sweetalertService.getSwal('success', 'Success', 'Survey submitted successfully.', false, '');
+                        this.thanks = true;
+                    } else {
+                        this.sweetalertService.getSwal('error', 'Error', res.message, false, '');
+                    }
+                });
+            }
+        }
     }
 }
