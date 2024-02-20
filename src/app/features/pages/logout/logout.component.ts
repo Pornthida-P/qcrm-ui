@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, tap, throwError } from 'rxjs';
 import { LoginService } from 'src/app/services/login/login.service';
+import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
 import { TokenService } from 'src/app/services/token/token.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { User } from 'src/app/shared/interface/user.interface';
@@ -18,40 +19,34 @@ export class LogoutComponent implements OnInit {
         private userService: UserService,
         private tokenService: TokenService,
         private loginService: LoginService,
+        private socketIO: SocketIoService,
         private router: Router,
     ) {}
 
     ngOnInit(): void {
-        this.getUserData();
-        this.logout();
+        this.initzation();
     }
 
-    getUserData() {
-        this.userService
-            .getDataUser()
-            .pipe(
-                tap((res: User | null) => {
-                    this.userData = res;
-                }),
-            )
-            .subscribe(() => {});
+    initzation(): void {
+        this.getDataUser();
+        setTimeout(() => {
+            this.logout();
+        }, 1000);
     }
 
-    async logout() {
+    getDataUser(): void {
+        this.userService.getDataUser().subscribe((res: User | null) => {
+            this.userData = res;
+        });
+    }
+
+    logout(): void {
+        if (this.userData) {
+            this.loginService.logout(this.userData).subscribe();
+        }
+
         this.userService.clearDataUser();
         this.tokenService.clearDataToken();
-
-        this.loginService
-            .logout(this.userData)
-            .pipe(
-                tap(() => {
-                    this.router.navigate(['/login']);
-                }),
-                catchError((error) => {
-                    this.router.navigate(['/login']);
-                    return throwError(error);
-                }),
-            )
-            .subscribe();
+        this.router.navigate(['/login']);
     }
 }

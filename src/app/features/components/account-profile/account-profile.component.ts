@@ -25,7 +25,7 @@ export class AccountProfileComponent {
     roles: Role[] = [];
     isAction: boolean = false;
     userDataForm: FormGroup = new FormGroup({});
-    userData: User | null = null;
+    userData?: User | null;
 
     faXmark = faXmark;
 

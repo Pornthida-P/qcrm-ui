@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { catchError, tap, throwError } from 'rxjs';
 import { LoginService } from 'src/app/services/login/login.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
@@ -16,9 +17,11 @@ export class LoginComponent {
     value: string | undefined;
 
     loginForm: FormGroup;
+    userData?: User | null;
 
     constructor(
         private fb: FormBuilder,
+        private router: Router,
         private loginService: LoginService,
         private userServices: UserService,
         private tokenServices: TokenService,
@@ -38,7 +41,24 @@ export class LoginComponent {
         return this.loginForm.controls['password'];
     }
 
-    ngOnInit(): void {}
+    ngOnInit(): void {
+        this.initzation();
+    }
+
+    initzation(): void {
+        this.getUserData();
+        setTimeout(() => {
+            if (this.userData) {
+                this.router.navigate(['/home']);
+            }
+        }, 1000);
+    }
+
+    getUserData(): void {
+        this.userServices.getDataUser().subscribe((res: User | null) => {
+            this.userData = res;
+        });
+    }
 
     onSubmit(form: FormGroup) {
         const username = form.value.username;
@@ -50,6 +70,7 @@ export class LoginComponent {
                     tap((res: { user: User; token: string }) => {
                         this.userServices.setDataUser(res.user);
                         this.tokenServices.setDataToken(res.token);
+                        this.router.navigate(['/home']);
                     }),
                     catchError((error) => {
                         this.sweetalertServices.handleError(error);

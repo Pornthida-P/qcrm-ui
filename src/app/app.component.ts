@@ -13,11 +13,25 @@ import { User } from './shared/interface/user.interface';
 export class AppComponent implements OnInit {
     title = 'qcrm-ui';
 
+    userData?: User | null;
     constructor(private themeService: ThemeService, private socketIO: SocketIoService, private userService: UserService) {}
 
     async ngOnInit() {
+        this.initzation();
+    }
+
+    async initzation() {
         this.setTheme();
-        await this.getUserData();
+        this.getDataUser();
+        setTimeout(() => {
+            this.login();
+        }, 1000);
+    }
+
+    getDataUser(): void {
+        this.userService.getDataUser().subscribe((res: User | null) => {
+            this.userData = res;
+        });
     }
 
     setTheme() {
@@ -27,14 +41,9 @@ export class AppComponent implements OnInit {
         }
     }
 
-    getUserData() {
-        this.userService
-            .getDataUser()
-            .pipe(
-                tap((res: User | null) => {
-                    this.socketIO.login(res);
-                }),
-            )
-            .subscribe(() => {});
+    login() {
+        if (this.userData) {
+            this.socketIO.login(this.userData);
+        }
     }
 }

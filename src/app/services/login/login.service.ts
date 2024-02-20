@@ -32,7 +32,6 @@ export class LoginService {
 
     setLogined(status: boolean) {
         localStorage.setItem(this.keyIsLogined, JSON.stringify(status));
-        this.updateIsLogined();
     }
 
     login(username: string, password: string): Observable<any> {
@@ -50,23 +49,17 @@ export class LoginService {
                     res.user.profile = res.user.profile ? `${environment.api.url}${res.user.profile}` : '';
                 }
                 this.setLogined(true);
+                this.updateIsLogined();
 
                 this.socketIO.login(res.user);
-                this.router.navigate(['/home']);
-            }),
-            catchError((error) => {
-                return throwError(error);
             }),
         );
     }
 
-    logout(user?: User | null): Observable<any> {
+    logout(user: User): Observable<any> {
         return this.http.post(`${this.baseUrl}${config.api.path.logout}`, { userId: user?.userId }).pipe(
             tap(() => {
                 this.socketIO.logout(user);
-            }),
-            catchError((error) => {
-                return throwError(error);
             }),
         );
     }
