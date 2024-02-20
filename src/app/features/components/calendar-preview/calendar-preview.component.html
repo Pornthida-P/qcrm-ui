@@ -1,0 +1,32 @@
+<div class="calendar-container">
+    <div class="calendar-header">
+        <button class="calendar-button fs-3" (click)="previousMonth()">
+            <fa-icon [icon]="faChevronLeft"></fa-icon>
+        </button>
+        <p class="fs-3 cursor-default">{{ currentMonth.toUpperCase() }}</p>
+        <button class="calendar-button fs-3" (click)="nextMonth()">
+            <fa-icon [icon]="faChevronRight"></fa-icon>
+        </button>
+    </div>
+    <div class="days-header">
+        <div class="day-name">Sun</div>
+        <div class="day-name">Mon</div>
+        <div class="day-name">Tue</div>
+        <div class="day-name">Wed</div>
+        <div class="day-name">Thu</div>
+        <div class="day-name">Fri</div>
+        <div class="day-name">Sat</div>
+    </div>
+    <div *ngFor="let week of weeks" class="week">
+        <div *ngFor="let day of week" class="day-container cursor-pointer" (click)="addEvent(day.date)">
+            <div class="day-wrapper">
+                <div class="day-number" [ngClass]="{ selected: isSelected(day.date) }">
+                    {{ day.number }}
+                </div>
+                <div *ngIf="hasEvent(day.date) > 0" class="dot-container">
+                    <div *ngFor="let dot of [].constructor(hasEvent(day.date)); let i = index" class="dot"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

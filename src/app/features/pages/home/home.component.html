@@ -1,12 +1,10 @@
 <div class="h-100">
     <div class="bg-white rounded shadow w-100 h-100 d-flex flex-column p-4 overflow-auto">
-        <div class="row">
-            <div class="col-12">
+        <div class="row h-100">
+            <div class="col-12 h-auto">
                 <app-announce></app-announce>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-12 d-flex gap-3 justify-content-center align-items-center p-2">
+            <div class="col-12 h-auto d-flex gap-3 justify-content-center align-items-center p-2">
                 <button
                     *ngFor="let viewType of viewTypes"
                     type="button"
@@ -20,9 +18,7 @@
                     </div>
                 </button>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-12">
+            <div class="col-12 h-100">
                 <app-team-activities *ngIf="selectedViewType === 'home'"></app-team-activities>
             </div>
         </div>

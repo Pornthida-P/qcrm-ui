@@ -1,6 +1,19 @@
-.max-height-100 {
-    max-height: 100vh;
+.col-5 {
     overflow-y: auto;
+}
+
+.row-equal {
+    display: flex;
+    flex-direction: column;
+}
+
+.row-equal > [class*='col-'] {
+    display: flex;
+    flex-direction: column;
+}
+
+.row-equal > [class*='col-'] > div {
+    flex-grow: 1;
 }
 
 .card-text,
@@ -10,21 +23,4 @@
 
 p {
     margin: 0;
-}
-
-mat-card {
-    border-radius: 0.375rem;
-    border: 1px solid rgba(0, 0, 0, 0.175);
-    box-shadow: none;
-}
-
-::ng-deep {
-    .highlight-date {
-        background-color: var(--primary-active-color) !important;
-        border-radius: 50%;
-    }
-
-    .mat-calendar-body-selected {
-        background-color: var(--primary) !important;
-    }
 }

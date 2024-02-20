@@ -27,6 +27,7 @@ import { AccountProfileModule } from '../../components/account-profile/account-p
 import { ProfileListModule } from '../../components/profile-list/profile-list.module';
 import { ProfileModule } from '../../components/profile/profile.module';
 import { UserMenagementModule } from '../../modals/user-menagement/user-menagement.module';
+import { CalendarPreviewModule } from '../../components/calendar-preview/calendar-preview.module';
 
 @NgModule({
     declarations: [
@@ -61,6 +62,7 @@ import { UserMenagementModule } from '../../modals/user-menagement/user-menageme
         UserMenagementModule,
         ProfileListModule,
         NgbModule,
+        CalendarPreviewModule,
         RouterModule.forChild([
             {
                 path: '',

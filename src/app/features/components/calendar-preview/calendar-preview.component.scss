@@ -1,0 +1,96 @@
+* {
+    margin: 0;
+}
+
+.calendar-container {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    overflow: hidden;
+    width: 100%;
+    background-color: #fff;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px;
+    background-color: #f0f0f0;
+}
+
+.days-header {
+    display: flex;
+    justify-content: space-around;
+    padding: 5px;
+    background-color: #e0e0e0;
+    cursor: default;
+}
+
+.day-name {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.week {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+}
+
+.day-container {
+    aspect-ratio: 3/2;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.day-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.day-number {
+    aspect-ratio: 1/1;
+    padding: 10px;
+    height: 100%;
+    width: auto;
+    text-align: center;
+}
+
+.selected {
+    border-radius: 100%;
+    background-color: var(--primary);
+    color: var(--color-white);
+}
+
+.calendar-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    outline: none;
+}
+
+.dot-container {
+    position: absolute;
+    display: flex;
+    gap: 5px;
+    top: 105%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.dot {
+    background: var(--primary);
+    border-radius: 100%;
+    width: 10px;
+    height: 10px;
+}

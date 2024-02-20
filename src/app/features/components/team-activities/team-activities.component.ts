@@ -40,6 +40,7 @@ export class TeamActivitiesComponent implements OnInit {
             .getAllCalendarEvent()
             .pipe(
                 tap((events) => {
+                    console.log('events', events);
                     this.calendarDateEvents = events;
                     this.onSelectedDateChanged();
                 }),
@@ -90,6 +91,12 @@ export class TeamActivitiesComponent implements OnInit {
                 }),
             )
             .subscribe(() => {});
+    }
+
+    onSelectDate(date: Date) {
+        console.log('date', date);
+        this.selectedCalendarDate = date;
+        this.onSelectedDateChanged();
     }
 
     onClickAddEvent() {
