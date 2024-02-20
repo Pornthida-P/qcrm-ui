@@ -42,6 +42,11 @@
     display: flex;
     flex-direction: column;
     background: var(--primary);
+    background-image: url('../../../../assets/nea-qcrm-ui/image/logo/nea-big-logo.png');
+    background-repeat: no-repeat;
+    background-size: auto 65%;
+    background-position: bottom left;
+    background-blend-mode: luminosity;
     border-top-right-radius: 1rem;
     border-bottom-right-radius: 1rem;
     padding: 0.5rem;
