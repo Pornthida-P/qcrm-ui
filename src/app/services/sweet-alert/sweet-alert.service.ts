@@ -44,7 +44,7 @@ export class SweetAlertService {
             case 401:
                 icon = 'warning';
                 title = 'Warning Authentication';
-                errorMessage = 'Your session has expired. Please log in again.';
+                errorMessage = error.error.message || 'Your session has expired. Please log in again.';
                 route = 'logout';
                 break;
             default:
