@@ -16,21 +16,19 @@
         </div>
         <div class="events col-sm-12 col-md-6 overflow-auto">
             <div class="position-relative">
-                <div class="position-absolute w-100">
-                    <div *ngIf="selectedCalendarDate">
-                        <div *ngIf="!events || events.length === 0; else eventsContent">
-                            <div class="card">
-                                <div class="card-body">
-                                    <p class="card-text text-center p-5">ไม่มี Event</p>
-                                </div>
+                <div class="row m-auto flex-column gap-3 w-100 position-absolute">
+                    <div *ngIf="!events || events.length === 0; else eventsContent" class="col p-0">
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="card-text text-center p-5">ไม่มี Event</p>
                             </div>
                         </div>
-                        <ng-template #eventsContent>
-                            <div *ngFor="let event of events" class="d-flex flex-column gap-3">
-                                <app-calendar-card [event]="event"></app-calendar-card>
-                            </div>
-                        </ng-template>
                     </div>
+                    <ng-template #eventsContent>
+                        <div *ngFor="let event of events" class="col p-0">
+                            <app-calendar-card [event]="event"></app-calendar-card>
+                        </div>
+                    </ng-template>
                 </div>
             </div>
         </div>

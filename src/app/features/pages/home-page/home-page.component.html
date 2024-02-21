@@ -1,0 +1,26 @@
+<div class="bg-white rounded shadow w-100 h-100 d-flex flex-column p-4 overflow-auto">
+    <div class="row">
+        <div class="col-12">
+            <app-announce></app-announce>
+        </div>
+        <div class="col-12">
+            <div class="d-flex flex-wrap gap-1 justify-content-center justify-content-md-center align-items-center p-2">
+                <button
+                    *ngFor="let viewType of viewTypes"
+                    type="button"
+                    class="btn btn-primary-color text-white button"
+                    [class.button-active]="selectedViewType === viewType.value"
+                    (click)="onClickChangeMenu(viewType.value)"
+                >
+                    <div class="d-flex align-items-center">
+                        <fa-icon [icon]="viewType.icon" class="pe-2"></fa-icon>
+                        <p class="label">{{ viewType.label }}</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+        <div class="col-12">
+            <app-home *ngIf="selectedViewType === 'home'"></app-home>
+        </div>
+    </div>
+</div>

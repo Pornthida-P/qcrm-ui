@@ -1,19 +1,19 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { MatCalendar, MatCalendarCellClassFunction } from '@angular/material/datepicker';
-import { faCalendarAlt, faEdit, faList, faLocationDot, faPlusCircle, faTrash, faUserGroup } from '@fortawesome/free-solid-svg-icons';
-import { CalendarEvent } from 'src/app/shared/interface/calendar.interface';
+import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import * as moment from 'moment';
-import { ModalCalendarService } from 'src/app/services/modal-calendar/modal-calendar.service';
+import { tap, catchError } from 'rxjs';
 import { CalendarEventService } from 'src/app/services/calendar-event/calendar-event.service';
-import { catchError, tap } from 'rxjs';
+import { ModalCalendarService } from 'src/app/services/modal-calendar/modal-calendar.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
+import { CalendarEvent } from 'src/app/shared/interface/calendar.interface';
 
 @Component({
-    selector: 'app-team-activities',
-    templateUrl: './team-activities.component.html',
-    styleUrl: './team-activities.component.scss',
+    selector: 'app-home',
+    templateUrl: './home.component.html',
+    styleUrl: './home.component.scss',
 })
-export class TeamActivitiesComponent implements OnInit {
+export class HomeComponent {
     @ViewChild(MatCalendar, { static: false }) calendar!: MatCalendar<Date>;
     selectedCalendarDate: Date | null = new Date();
     calendarDateEvents: CalendarEvent[] = [];

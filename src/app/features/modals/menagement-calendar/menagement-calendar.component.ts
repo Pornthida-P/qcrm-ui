@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { faCalendarAlt, faPaperclip, faPlusCircle, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { AngularEditorConfig } from '@kolkov/angular-editor';
+import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import { catchError, tap } from 'rxjs';
 import { AttachmentService } from 'src/app/services/attachment/attachment.service';
@@ -27,6 +28,9 @@ export class MenagementCalendarComponent implements OnInit {
     attachments: Attachment[] = [];
     tags: CalendarTag[] = [];
     isAction: boolean = false;
+
+    startTime: NgbTimeStruct = { hour: 0, minute: 0, second: 0 };
+    endTime: NgbTimeStruct = { hour: 23, minute: 59, second: 59 };
 
     @ViewChild('fileInput') fileInput: ElementRef | undefined;
 
@@ -93,7 +97,19 @@ export class MenagementCalendarComponent implements OnInit {
         private cdRef: ChangeDetectorRef,
         public dialogRef: MatDialogRef<MenagementCalendarComponent>,
         @Inject(MAT_DIALOG_DATA) public data: { mode: 'add' | 'view' | 'edit'; eventData?: CalendarEvent },
-    ) {}
+    ) {
+        this.startTime = {
+            hour: data.eventData ? moment(data.eventData.startDate).hour() : 0,
+            minute: data.eventData ? moment(data.eventData.startDate).minute() : 0,
+            second: data.eventData ? moment(data.eventData.startDate).second() : 0,
+        };
+
+        this.endTime = {
+            hour: data.eventData ? moment(data.eventData.endDate).hour() : 23,
+            minute: data.eventData ? moment(data.eventData.endDate).minute() : 59,
+            second: data.eventData ? moment(data.eventData.endDate).second() : 59,
+        };
+    }
 
     ngOnInit(): void {
         this.initializeForm();
@@ -195,16 +211,28 @@ export class MenagementCalendarComponent implements OnInit {
         }
 
         const formData = this.calendarEvent.value;
-        formData.startDate = moment(formData.startDate).startOf('day').format('YYYY-MM-DD HH:mm:ss');
-        formData.endDate = moment(formData.endDate).endOf('day').format('YYYY-MM-DD HH:mm:ss');
+        const startDate = moment(formData.startDate)
+            .set({
+                hour: this.startTime.hour,
+                minute: this.startTime.minute,
+                second: this.startTime.second,
+            })
+            .format('YYYY-MM-DD HH:mm:ss');
+        const endDate = moment(formData.endDate)
+            .set({
+                hour: this.endTime.hour,
+                minute: this.endTime.minute,
+                second: this.endTime.second,
+            })
+            .format('YYYY-MM-DD HH:mm:ss');
 
-        const startDate = moment(formData.startDate, 'YYYY-MM-DD HH:mm:ss');
-        const endDate = moment(formData.endDate, 'YYYY-MM-DD HH:mm:ss');
-
-        if (!startDate.isBefore(endDate)) {
+        if (!moment(startDate).isBefore(endDate)) {
             this.sweetalertServices.getSwal('warning', 'Warning', 'Start date must be before end date.', false, '');
             return;
         }
+
+        formData.startDate = startDate;
+        formData.endDate = endDate;
         formData.createdAt = moment().format('YYYY-MM-DD HH:mm:ss');
         formData.createdById = this.userData?.userId;
         formData.attachments = this.attachments;

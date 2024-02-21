@@ -2,11 +2,11 @@ import { Component } from '@angular/core';
 import { faHouse, faInfo, faScroll, faSun, faUsers } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
-    selector: 'app-home',
-    templateUrl: './home.component.html',
-    styleUrls: ['./home.component.scss'],
+    selector: 'app-home-page',
+    templateUrl: './home-page.component.html',
+    styleUrls: ['./home-page.component.scss'],
 })
-export class HomeComponent {
+export class HomePageComponent {
     selectedViewType = 'home';
     viewTypes = [
         { value: 'home', icon: faHouse, label: 'Home' },

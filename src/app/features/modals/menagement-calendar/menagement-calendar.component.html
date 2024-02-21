@@ -9,7 +9,7 @@
             </a>
         </div>
 
-        <div class="col-12">
+        <div class="col-12 py-3">
             <ul class="nav nav-tabs" id="calendarEventTab">
                 <li class="nav-item">
                     <a class="nav-link active color-primary" id="details-tab" data-bs-toggle="tab" href="#details">Details</a>
@@ -65,50 +65,66 @@
                                 </div>
                             </div>
 
-                            <div class="row my-3">
+                            <div class="row">
                                 <div class="col-sm-12 col-md-6">
-                                    <label for="datepicker" class="form-label">Start Date</label>
-                                    <div class="input-group">
-                                        <input
-                                            matInput
-                                            [matDatepicker]="startDatePicker"
-                                            formControlName="startDate"
-                                            name="datetime"
-                                            required
-                                            class="input-date form-control"
-                                            [ngClass]="{
-                                                'invalid-form':
-                                                    calendarEvent.get('startDate')?.invalid &&
-                                                    (calendarEvent.get('startDate')?.dirty || calendarEvent.get('startDate')?.touched)
-                                            }"
-                                        />
-                                        <span class="input-group-text">
-                                            <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
-                                            <mat-datepicker #startDatePicker></mat-datepicker>
-                                        </span>
+                                    <label for="startDate" class="label">Start Date</label>
+                                    <div class="row justify-content-center align-items-center">
+                                        <div class="col">
+                                            <div class="input-group start-date">
+                                                <input
+                                                    matInput
+                                                    [matDatepicker]="startDatePicker"
+                                                    formControlName="startDate"
+                                                    name="datetime"
+                                                    required
+                                                    class="input-date form-control"
+                                                />
+                                                <span class="input-group-text">
+                                                    <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+                                                    <mat-datepicker #startDatePicker></mat-datepicker>
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col">
+                                            <ngb-timepicker
+                                                class="starttime"
+                                                [(ngModel)]="startTime"
+                                                [seconds]="true"
+                                                [ngModelOptions]="{ standalone: true }"
+                                                [disabled]="data.mode === 'view'"
+                                            ></ngb-timepicker>
+                                        </div>
                                     </div>
                                 </div>
-
                                 <div class="col-sm-12 col-md-6">
-                                    <label for="datepicker" class="form-label">End Date</label>
-                                    <div class="input-group">
-                                        <input
-                                            matInput
-                                            [matDatepicker]="endDatePicker"
-                                            formControlName="endDate"
-                                            name="datetime"
-                                            required
-                                            class="input-date form-control"
-                                            [ngClass]="{
-                                                'invalid-form':
-                                                    calendarEvent.get('endDate')?.invalid &&
-                                                    (calendarEvent.get('endDate')?.dirty || calendarEvent.get('endDate')?.touched)
-                                            }"
-                                        />
-                                        <span class="input-group-text">
-                                            <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
-                                            <mat-datepicker #endDatePicker></mat-datepicker>
-                                        </span>
+                                    <label for="endDate" class="label">End Date</label>
+                                    <div class="row justify-content-center align-items-center">
+                                        <div class="col">
+                                            <div class="input-group end-date">
+                                                <input
+                                                    matInput
+                                                    [matDatepicker]="endDatePicker"
+                                                    formControlName="endDate"
+                                                    name="datetime"
+                                                    required
+                                                    class="input-date form-control"
+                                                />
+                                                <span class="input-group-text">
+                                                    <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+                                                    <mat-datepicker #endDatePicker></mat-datepicker>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <ngb-timepicker
+                                                class="endtime"
+                                                [(ngModel)]="endTime"
+                                                [seconds]="true"
+                                                [ngModelOptions]="{ standalone: true }"
+                                                [disabled]="data.mode === 'view'"
+                                            ></ngb-timepicker>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -142,6 +158,7 @@
                                         <app-profile-list
                                             [members]="selectedMembers"
                                             [isShowToolbar]="true"
+                                            [isBackground]="false"
                                             [mode]="data.mode"
                                             (deleteUserId)="onDeletedMember($event)"
                                         ></app-profile-list>

@@ -11,7 +11,7 @@ const routes: Routes = [
         children: [
             {
                 path: 'home',
-                loadChildren: () => import('../../pages/home/home.module').then((m) => m.HomeModule),
+                loadChildren: () => import('../../pages/home-page/home-page.module').then((m) => m.HomePageModule),
                 title: 'Home',
             },
             {
@@ -49,24 +49,22 @@ const routes: Routes = [
             {
                 path: 'call',
                 children: [
-                  {
-                      path: '',
-                      loadChildren: () => import('../../pages/call/call.module').then((m) => m.CallModule),
-                      title: 'Call',
-                  },
-                  {
-                      path: 'create',
-                      loadChildren: () =>
-                          import('../../pages/create-call/create-call.module').then((m) => m.CreateCallModule),
-                      title: 'Create Call',
-                  },
-                  {
-                      path: 'edit',
-                      loadChildren: () =>
-                          import('../../pages/change-call/change-call.module').then((m) => m.ChangeCallModule),
-                      title: 'Edit Call',
-                  },
-              ],
+                    {
+                        path: '',
+                        loadChildren: () => import('../../pages/call/call.module').then((m) => m.CallModule),
+                        title: 'Call',
+                    },
+                    {
+                        path: 'create',
+                        loadChildren: () => import('../../pages/create-call/create-call.module').then((m) => m.CreateCallModule),
+                        title: 'Create Call',
+                    },
+                    {
+                        path: 'edit',
+                        loadChildren: () => import('../../pages/change-call/change-call.module').then((m) => m.ChangeCallModule),
+                        title: 'Edit Call',
+                    },
+                ],
             },
             {
                 path: 'e-learning',

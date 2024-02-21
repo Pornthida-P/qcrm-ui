@@ -5,7 +5,8 @@ import { TeamActivitiesComponent } from '../../components/team-activities/team-a
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatCardModule } from '@angular/material/card';
-import { HomeComponent } from './home.component';
+import { HomePageComponent } from './home-page.component';
+import { HomeComponent } from '../../components/home/home.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AnnounceComponent } from '../../components/announce/announce.component';
 import { AnnounceListComponent } from '../../components/announce-list/announce-list.component';
@@ -31,7 +32,7 @@ import { CalendarPreviewModule } from '../../components/calendar-preview/calenda
 
 @NgModule({
     declarations: [
-        HomeComponent,
+        HomePageComponent,
         TeamActivitiesComponent,
         AnnounceComponent,
         AnnounceListComponent,
@@ -40,6 +41,7 @@ import { CalendarPreviewModule } from '../../components/calendar-preview/calenda
         AttachmentsComponent,
         AttachmentsListComponent,
         MenagementAnnounceComponent,
+        HomeComponent,
         MenagementAnnounceListComponent,
         FileSizePipe,
     ],
@@ -66,11 +68,11 @@ import { CalendarPreviewModule } from '../../components/calendar-preview/calenda
         RouterModule.forChild([
             {
                 path: '',
-                component: HomeComponent,
+                component: HomePageComponent,
             },
         ]),
     ],
     providers: [],
     exports: [],
 })
-export class HomeModule {}
+export class HomePageModule {}

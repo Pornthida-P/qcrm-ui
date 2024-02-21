@@ -93,3 +93,22 @@
     width: 10px;
     height: 10px;
 }
+
+@media screen and (max-width: 1024px) {
+    .calendar-header {
+        padding: 20px;
+    }
+
+    .day-container {
+        aspect-ratio: 1/1;
+    }
+
+    .day-number {
+        padding: 5px;
+    }
+
+    .dot {
+        width: 5px;
+        height: 5px;
+    }
+}
