@@ -25,6 +25,11 @@ const routes: Routes = [
                 title: 'Menagement Team',
             },
             {
+                path: 'tag',
+                loadChildren: () => import('../../components/tag/tag.module').then((m) => m.TagModule),
+                title: 'Tag',
+            },
+            {
                 path: 'menagement-password',
                 loadChildren: () =>
                     import('../../components/menagement-password/menagement-password.module').then((m) => m.MenagementPasswordModule),

@@ -37,6 +37,11 @@ export class SettingComponent implements OnInit {
                 routerLink: 'menagement-team',
             },
             {
+                label: 'แท็ก',
+                icon: '',
+                routerLink: 'tag',
+            },
+            {
                 label: 'รูปร่าง',
                 icon: '',
                 routerLink: 'menagement-appearance',
