@@ -15,7 +15,16 @@ export class TagListComponent implements OnInit, OnChanges {
 
     displayedColumns: string[] = [];
     dataSource = new MatTableDataSource<CalendarTag>(this.tags);
-    columnVisibility: { [key: string]: boolean } = {};
+    initialColumnVisibility: { [key: string]: boolean } = {
+        tagId: false,
+        tagName: false,
+        description: false,
+        createdAt: false,
+        createdById: false,
+        modifyAt: false,
+        modifyById: false,
+    };
+    columnVisibility: { [key: string]: boolean } = { ...this.initialColumnVisibility };
     showColumnMenu = false;
     isAction: boolean = false;
     userDatas: User | null = null;
@@ -103,5 +112,6 @@ export class TagListComponent implements OnInit, OnChanges {
 
     onClickDelete(tag: CalendarTag) {
         console.log('Delete:', tag);
+        this.dataSource.data = this.dataSource.data.filter((item) => item !== tag);
     }
 }
