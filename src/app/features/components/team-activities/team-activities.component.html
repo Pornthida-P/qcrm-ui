@@ -1,23 +1,25 @@
-<div *ngIf="calendarDateEvents" class="row py-5 h-100">
-    <div class="col-sm-12 col-md-6">
-        <app-calendar-preview [events]="calendarDateEvents" (selectedDate)="onSelectDate($event)"></app-calendar-preview>
-    </div>
-    <div class="col-sm-12 col-md-6" style="max-height: 100%; overflow-y: scroll">
-        <div class="row">
-            <div class="col-12">
-                <div *ngIf="selectedCalendarDate">
-                    <div *ngIf="!events || events.length === 0; else eventsContent">
-                        <div class="card mb-4">
-                            <div class="card-body">
-                                <p class="card-text text-center p-5">ไม่มี Event</p>
+<div class="py-5 px-3">
+    <div class="row">
+        <div class="col-sm-12 col-md-6">
+            <app-calendar-preview [events]="calendarDateEvents" (selectedDate)="onSelectDate($event)"></app-calendar-preview>
+        </div>
+        <div class="col-sm-12 col-md-6 overflow-auto">
+            <div class="position-relative">
+                <div class="position-absolute w-100">
+                    <div *ngIf="selectedCalendarDate">
+                        <div *ngIf="!events || events.length === 0; else eventsContent">
+                            <div class="card">
+                                <div class="card-body">
+                                    <p class="card-text text-center p-5">ไม่มี Event</p>
+                                </div>
                             </div>
                         </div>
+                        <ng-template #eventsContent>
+                            <div *ngFor="let event of events" class="d-flex flex-column gap-3">
+                                <app-calendar-card [event]="event"></app-calendar-card>
+                            </div>
+                        </ng-template>
                     </div>
-                    <ng-template #eventsContent>
-                        <div *ngFor="let event of events" class="mb-4">
-                            <app-calendar-card [event]="event"></app-calendar-card>
-                        </div>
-                    </ng-template>
                 </div>
             </div>
         </div>

@@ -15,14 +15,13 @@
     justify-content: space-between;
     align-items: center;
     padding: 25px;
-    background-color: #f0f0f0;
 }
 
 .days-header {
     display: flex;
     justify-content: space-around;
     padding: 5px;
-    background-color: #e0e0e0;
+    border-bottom: 1px solid #ccc;
     cursor: default;
 }
 

@@ -1,21 +1,3 @@
-.col-5 {
-    overflow-y: auto;
-}
-
-.row-equal {
-    display: flex;
-    flex-direction: column;
-}
-
-.row-equal > [class*='col-'] {
-    display: flex;
-    flex-direction: column;
-}
-
-.row-equal > [class*='col-'] > div {
-    flex-grow: 1;
-}
-
 .card-text,
 .card-title {
     cursor: default;
