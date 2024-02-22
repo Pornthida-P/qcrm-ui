@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-import { faEdit, faEye, faGear, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faEye, faGear, faTrash, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'app-table-list',
@@ -23,7 +23,7 @@ export class TableListComponent implements OnInit, OnChanges {
     faGear = faGear;
     faEye = faEye;
     faEdit = faEdit;
-    faXmark = faXmark;
+    faTrash = faTrash;
 
     constructor() {}
 
