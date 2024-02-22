@@ -9,53 +9,58 @@
             </a>
         </div>
 
-        <div class="row">
-            <div class="col-12">
-                <form [formGroup]="tagData">
-                    <div class="form-group px-3 py-2">
-                        <label class="mb-2" for="tagName">Tag Title</label>
-                        <input
-                            type="text"
-                            class="form-control"
-                            formControlName="tagName"
-                            id="tagName"
-                            name="tagName"
-                            required
-                            [ngClass]="{
-                                'invalid-form':
-                                    tagData.get('tagName')?.invalid && (tagData.get('tagName')?.dirty || tagData.get('tagName')?.touched)
-                            }"
-                        />
-                    </div>
-                    <div class="form-group px-3 py-2">
-                        <label class="mb-2" for="description">Description</label>
-                        <input
-                            type="text"
-                            class="form-control"
-                            formControlName="description"
-                            id="description"
-                            name="description"
-                            required
-                            [ngClass]="{
-                                'invalid-form':
-                                    tagData.get('description')?.invalid &&
-                                    (tagData.get('description')?.dirty || tagData.get('description')?.touched)
-                            }"
-                        />
-                    </div>
+        <div class="col-12">
+            <form [formGroup]="tagData" (ngSubmit)="onSubmit()">
+                <div class="form-group px-3 py-2">
+                    <label class="mb-2" for="tagName">Tag Title</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        formControlName="tagName"
+                        id="tagName"
+                        name="tagName"
+                        required
+                        [ngClass]="{
+                            'invalid-form':
+                                tagData.get('tagName')?.invalid && (tagData.get('tagName')?.dirty || tagData.get('tagName')?.touched)
+                        }"
+                    />
+                </div>
+                <div class="form-group px-3 py-2">
+                    <label class="mb-2" for="description">Description</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        formControlName="description"
+                        id="description"
+                        name="description"
+                        required
+                        [ngClass]="{
+                            'invalid-form':
+                                tagData.get('description')?.invalid &&
+                                (tagData.get('description')?.dirty || tagData.get('description')?.touched)
+                        }"
+                    />
+                </div>
+                <div class="form-group px-3 py-2">
+                    <label class="mb-2" for="color">Color</label>
+                    <input
+                        type="color"
+                        class="form-control"
+                        formControlName="color"
+                        id="color"
+                        name="color"
+                        required
+                        [ngClass]="{
+                            'invalid-form': tagData.get('color')?.invalid && (tagData.get('color')?.dirty || tagData.get('color')?.touched)
+                        }"
+                    />
+                </div>
 
-                    <div class="footer">
-                        <button
-                            type="submit"
-                            class="btn btn-primary-color text-white"
-                            (click)="onSubmit()"
-                            [disabled]="data.mode === 'view'"
-                        >
-                            Save
-                        </button>
-                    </div>
-                </form>
-            </div>
+                <div class="form-group px-3 py-2">
+                    <button type="submit" class="btn btn-primary-color text-white" [disabled]="data.mode === 'view'">Save</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
