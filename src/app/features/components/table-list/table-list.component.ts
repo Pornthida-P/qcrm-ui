@@ -20,6 +20,8 @@ export class TableListComponent implements OnInit, OnChanges {
     @Output() edit: EventEmitter<any> = new EventEmitter<any>();
     @Output() delete: EventEmitter<any> = new EventEmitter<any>();
 
+    includesDate: string[] = ['createdAt', 'modityAt', 'startDate', 'endDate'];
+
     faGear = faGear;
     faEye = faEye;
     faEdit = faEdit;
