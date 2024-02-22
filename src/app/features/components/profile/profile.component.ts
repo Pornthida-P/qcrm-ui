@@ -1,7 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { faEye, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faEye, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { ModalUserService } from 'src/app/services/modal-user/modal-user.service';
+import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
+import { UserService } from 'src/app/services/user/user.service';
 import { User } from 'src/app/shared/interface/user.interface';
 
 @Component({
@@ -13,16 +15,27 @@ export class ProfileComponent implements OnInit {
     @Input() member?: User;
     @Input() mode?: 'view' | 'edit' | 'add';
     @Input() isShowToolbar?: boolean = false;
+    @Input() isBackground?: boolean = true;
     @Output() deleteUserId: EventEmitter<string> = new EventEmitter<string>();
 
+    userData?: User | null;
+    isAction: boolean = false;
     profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
 
     faEye = faEye;
+    faEdit = faEdit;
     faXmark = faXmark;
 
-    constructor(private sweetAlertService: SweetAlertService, private modalUserService: ModalUserService) {}
+    constructor(
+        private sweetAlertService: SweetAlertService,
+        private modalUserService: ModalUserService,
+        private socketIO: SocketIoService,
+        private userService: UserService,
+    ) {}
 
-    ngOnInit(): void {}
+    ngOnInit(): void {
+        this.getUserData();
+    }
 
     handleProfileError(event: any) {
         if (event) {
@@ -30,15 +43,30 @@ export class ProfileComponent implements OnInit {
         }
     }
 
-    onClickViewProfile(member: User | undefined) {
+    getUserData() {
+        this.userService.getDataUser().subscribe((res: User | null) => {
+            this.userData = res;
+            this.isAction = res?.role.roleTitle.toLowerCase() === 'admin' ? true : false;
+        });
+    }
+
+    onClickView(member: User | undefined) {
         this.modalUserService.openDialog('view', member);
     }
 
-    onClickDeleteProfile(member: User | undefined) {
+    onClickEdit(member: User | undefined) {
+        this.modalUserService.openDialog('edit', member);
+    }
+
+    onClickDelete(member: User | undefined) {
         if (member?.userId) {
             this.deleteUserId.emit(member.userId);
         } else {
             this.sweetAlertService.getSwal('warning', 'Warning Member', 'User ID is not found please try again.', false, '');
         }
+    }
+
+    getStatusOnline(userId?: string): boolean {
+        return this.socketIO.getStatusOnline(userId);
     }
 }

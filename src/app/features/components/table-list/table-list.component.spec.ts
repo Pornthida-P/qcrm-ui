@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AnnounceListComponent } from './announce-list.component';
+import { TableListComponent } from './table-list.component';
 
-describe('AnnounceListComponent', () => {
-  let component: AnnounceListComponent;
-  let fixture: ComponentFixture<AnnounceListComponent>;
+describe('TableListComponent', () => {
+  let component: TableListComponent;
+  let fixture: ComponentFixture<TableListComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AnnounceListComponent]
+      imports: [TableListComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(AnnounceListComponent);
+    fixture = TestBed.createComponent(TableListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

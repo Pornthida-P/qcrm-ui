@@ -1,0 +1,33 @@
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+    <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+        <th mat-header-cell *matHeaderCellDef class="fs-6 fw-bolder">{{ column }}</th>
+        <td mat-cell *matCellDef="let element">
+            <ng-container *ngIf="includesDate.includes(column); else other">
+                {{ element[column] | date : 'dd/MM/yyyy HH:mm:ss' }}
+            </ng-container>
+            <ng-template #other>
+                {{ element[column] }}
+            </ng-template>
+        </td>
+    </ng-container>
+
+    <ng-container *ngIf="isShowTool" matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef class="fs-6 fw-bolder">Actions</th>
+        <td mat-cell *matCellDef="let element">
+            <button class="btn color-primary mx-1" (click)="onClickView(element)">
+                <fa-icon [icon]="faEye"></fa-icon>
+            </button>
+            <button *ngIf="isAction" class="btn color-primary mx-1" (click)="onClickEdit(element)">
+                <fa-icon [icon]="faEdit"></fa-icon>
+            </button>
+            <button *ngIf="isAction" class="btn color-red mx-1" (click)="onClickDelete(element)">
+                <fa-icon [icon]="faTrash"></fa-icon>
+            </button>
+        </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="isShowTool ? displayedColumns.concat('actions') : displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: isShowTool ? displayedColumns.concat('actions') : displayedColumns"></tr>
+</table>
+
+<mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements"> ></mat-paginator>

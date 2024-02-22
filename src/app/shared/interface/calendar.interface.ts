@@ -17,9 +17,10 @@ export interface CalendarTag {
     tagId: number;
     tagName: string;
     description?: string;
-    createdAt?: Date;
+    color?: string;
+    createdAt?: string;
     createdById?: string;
-    modifyAt?: Date;
+    modifyAt?: string;
     modifyById?: string;
     isDeleted?: boolean;
 }

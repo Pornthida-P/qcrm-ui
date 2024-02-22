@@ -1,0 +1,41 @@
+<div class="bg-white rounded shadow w-100 h-100 d-flex flex-column p-4 overflow-auto">
+    <div class="row">
+        <div class="col-12">
+            <app-announce></app-announce>
+        </div>
+        <div class="col-12">
+            <div class="d-flex flex-wrap gap-1 justify-content-center justify-content-md-center align-items-center p-2">
+                <button
+                    type="button"
+                    class="btn btn-primary-color text-white button"
+                    [class.button-active]="onHome"
+                    (click)="onClickHome()"
+                >
+                    <div class="d-flex align-items-center">
+                        <p class="label">Home</p>
+                    </div>
+                </button>
+                <button
+                    *ngFor="let tag of tags"
+                    type="button"
+                    class="btn btn-primary-color text-white button"
+                    [class.button-active]="onSelectTag?.tagId === tag.tagId"
+                    (click)="onClickChangeMenu(tag)"
+                >
+                    <div class="d-flex align-items-center">
+                        <p class="label">{{ tag.tagName }}</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+        <div class="col-12">
+            <app-home *ngIf="onHome"></app-home>
+            <app-card-event-list
+                *ngIf="!onHome"
+                [events]="events"
+                [title]="onSelectTag?.tagName"
+                (onClickAdd)="onClickAddEvent()"
+            ></app-card-event-list>
+        </div>
+    </div>
+</div>

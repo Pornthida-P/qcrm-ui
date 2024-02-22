@@ -1,23 +1,27 @@
-<div class="row justify-content-center align-items-center pb-2">
-    <div class="col-auto">
-        <span class="fs-6 color-primary d-flex flex-row gap-2">
-            <fa-icon [icon]="faAnnounce"></fa-icon>
-            <p class="m-0">ประกาศ :</p>
-        </span>
-    </div>
-    <div class="col-sm-6 col-md-8 col-xl-10">
-        <marquee class="fs-7" behavior="scroll" direction="left" scrollamount="8">
-            <p class="m-0" [innerHTML]="marqueeText"></p>
-        </marquee>
-    </div>
-    <div class="col-auto">
-        <div class="announcement-action d-flex flex-row gap-2">
-            <button class="btn btn-primary-color text-white" (click)="onClickView()">
-                <fa-icon [icon]="faEye"> </fa-icon>
-            </button>
-            <button *ngIf="isAction" class="btn btn-primary-color text-white" (click)="onClickEdit()">
-                <fa-icon [icon]="faEdit"></fa-icon>
-            </button>
+<div class="px-3">
+    <div class="row gap-1 justify-content-center align-items-center">
+        <div class="col-auto">
+            <span class="fs-5 color-primary d-flex flex-row gap-2">
+                <fa-icon [icon]="faAnnounce"></fa-icon>
+                <p class="cursor-default m-0">ประกาศ :</p>
+            </span>
+        </div>
+        <div class="col">
+            <div class="d-flex justify-content-center align-items-center">
+                <marquee class="fs-5" behavior="scroll" direction="left" scrollamount="8">
+                    <p class="m-0" [innerHTML]="marqueeText"></p>
+                </marquee>
+            </div>
+        </div>
+        <div class="col-auto">
+            <div class="announcement-action d-flex flex-row gap-2">
+                <button class="btn btn-primary-color fs-5 text-white" (click)="onClickView()">
+                    <fa-icon [icon]="faEye"> </fa-icon>
+                </button>
+                <button *ngIf="isAction" class="btn btn-primary-color fs-5 text-white" (click)="onClickEdit()">
+                    <fa-icon [icon]="faEdit"></fa-icon>
+                </button>
+            </div>
         </div>
     </div>
 </div>

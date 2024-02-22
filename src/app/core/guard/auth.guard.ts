@@ -13,7 +13,7 @@ export class AuthGuard {
         return this.loginService.isLogined().pipe(
             tap((isLogined) => {
                 if (!isLogined) {
-                    this.router.navigate(['/login']);
+                    this.router.navigate(['/logout']);
                 }
             }),
         );

@@ -165,7 +165,7 @@ export class CallComponent implements OnInit {
     // }
 
     editPage() {
-        this.router.navigate(['/call/edit'])
+        this.router.navigate(['/call/edit']);
     }
 
     async pageChange(page: number) {
@@ -240,14 +240,14 @@ export class CallComponent implements OnInit {
         });
     }
 
-  deleteCall() {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Do you want to delete this form?',
-      showCancelButton: true,
-      confirmButtonColor: '#3066be',
-      cancelButtonColor: '#ec5365',
-      width: '50%',
-  })
+    deleteCall() {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Do you want to delete this form?',
+            showCancelButton: true,
+            confirmButtonColor: '#3066be',
+            cancelButtonColor: '#ec5365',
+            width: '50%',
+        });
     }
 }

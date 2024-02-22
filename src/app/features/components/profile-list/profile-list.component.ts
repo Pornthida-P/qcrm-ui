@@ -10,6 +10,7 @@ export class ProfileListComponent implements OnInit {
     @Input() members?: User[] = [];
     @Input() mode?: 'view' | 'edit' | 'add';
     @Input() isShowToolbar?: boolean = false;
+    @Input() isBackground?: boolean = true;
     @Output() deleteUserId: EventEmitter<string> = new EventEmitter<string>();
 
     ngOnInit(): void {}

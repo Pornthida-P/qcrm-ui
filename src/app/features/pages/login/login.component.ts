@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { catchError, tap, throwError } from 'rxjs';
 import { LoginService } from 'src/app/services/login/login.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { TokenService } from 'src/app/services/token/token.service';
 import { UserService } from 'src/app/services/user/user.service';
+import { User } from 'src/app/shared/interface/user.interface';
 
 @Component({
     selector: 'app-login',
@@ -15,9 +17,11 @@ export class LoginComponent {
     value: string | undefined;
 
     loginForm: FormGroup;
+    userData?: User | null;
 
     constructor(
         private fb: FormBuilder,
+        private router: Router,
         private loginService: LoginService,
         private userServices: UserService,
         private tokenServices: TokenService,
@@ -38,9 +42,22 @@ export class LoginComponent {
     }
 
     ngOnInit(): void {
-        this.userServices.clearDataUser();
-        this.tokenServices.clearDataToken();
-        this.loginService.logout();
+        this.initzation();
+    }
+
+    initzation(): void {
+        this.getUserData();
+        setTimeout(() => {
+            if (this.userData) {
+                this.router.navigate(['/home']);
+            }
+        }, 1000);
+    }
+
+    getUserData(): void {
+        this.userServices.getDataUser().subscribe((res: User | null) => {
+            this.userData = res;
+        });
     }
 
     onSubmit(form: FormGroup) {
@@ -48,19 +65,19 @@ export class LoginComponent {
         const password = form.value.password;
         if (username && password) {
             this.loginService
-                .getLogin(username, password)
+                .login(username, password)
                 .pipe(
-                    tap((res: any) => {
+                    tap((res: { user: User; token: string }) => {
                         this.userServices.setDataUser(res.user);
                         this.tokenServices.setDataToken(res.token);
-                        this.loginService.login();
+                        this.router.navigate(['/home']);
                     }),
                     catchError((error) => {
                         this.sweetalertServices.handleError(error);
                         return throwError(error);
                     }),
                 )
-                .subscribe();
+                .subscribe(() => {});
         }
     }
 }

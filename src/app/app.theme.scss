@@ -6,6 +6,7 @@
     --color-lighter-red: #ec5365;
     --color-lighter-green: #53ec62;
     --color-white: #ffffff;
+    --color-gray: #acabab;
     --color-black: #000;
 
     --background-color: #f8f7f7a2;
@@ -18,7 +19,7 @@
 body {
     margin: 0;
     padding: 0;
-    background-color: rgba(248, 247, 247, 0.636);
+    background-color: #f8f7f7a2;
     min-height: 100vh;
 }
 
@@ -139,8 +140,23 @@ th[sortable].desc:before {
 
 .profile-image {
     display: block;
-    height: auto !important;
+    height: 100% !important;
     width: 100% !important;
+}
+
+.dot-status {
+    position: absolute;
+    bottom: 0%;
+    right: 0%;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: medium solid var(--background-color);
+    background-color: var(--color-gray);
+}
+
+.dot-status-online {
+    background-color: var(--color-lighter-green) !important;
 }
 
 .cursor-pointer {

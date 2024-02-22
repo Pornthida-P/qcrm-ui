@@ -1,42 +1,59 @@
 <div class="container">
-    <div class="row">
-        <div class="col-md-12 p-3">
+    <div class="row g-3 p-3">
+        <div class="col-md-12">
             <div class="d-flex justify-content-between align-items-center">
                 <h2 class="fs-5 m-0">{{ title }}</h2>
-                <button type="button" class="btn btn-primary-color text-white" (click)="onClickAdd()">Add Group Member</button>
+                <button type="button" class="btn btn-primary-color text-white" (click)="onClickAdd()">เพิ่ม</button>
             </div>
         </div>
-        <div class="col-md-12 px-4 pt-2 pb-4">
-            <div *ngIf="groupMembers && groupMembers.length > 0; else noGroups">
+        <div class="col-12 px-3">
+            <div class="d-flex">
+                <input type="text" class="form-control" placeholder="ค้นหา" #inputSearch (input)="onSearch(inputSearch.value)" />
+            </div>
+        </div>
+        <div class="col-md-12 list-item">
+            <ng-container
+                *ngIf="
+                    (inputSearch.value.length > 0 ? searchGroup : groupMembers) &&
+                        (inputSearch.value.length > 0 ? searchGroup.length : groupMembers.length) > 0;
+                    else noGroups
+                "
+            >
                 <ul class="team-list list-unstyled px-3 py-2">
-                    <div class="card mb-3" *ngFor="let groupMember of groupMembers">
+                    <li class="card mb-3" *ngFor="let groupMember of inputSearch.value.length > 0 ? searchGroup : groupMembers">
                         <div class="card-body">
-                            <div class="row">
+                            <div class="row align-items-center">
                                 <div class="col-md-6 col-xl-8">
                                     <div class="row">
-                                        <div class="col-6 group d-flex align-items-center justify-content-start">
-                                            <p class="m-1">
+                                        <div class="col-6 group d-flex align-items-center">
+                                            <p class="m-1 cursor-default" [ngbTooltip]="groupMember.description">
                                                 {{ groupMember?.groupTitle }}
                                             </p>
                                         </div>
-
                                         <div class="col-6 member d-flex align-items-center justify-content-end">
-                                            <div class="profile-container" *ngFor="let member of groupMember?.members">
-                                                <img
-                                                    class="profile-image img-fluid"
-                                                    [src]="member?.profile"
-                                                    [alt]="member?.username"
-                                                    (error)="handleProfileError($event)"
-                                                />
+                                            <div class="position-relative" *ngFor="let member of groupMember?.members">
+                                                <div class="profile-container">
+                                                    <img
+                                                        class="profile-image img-fluid"
+                                                        [src]="member?.profile"
+                                                        [alt]="member?.username"
+                                                        (error)="handleProfileError($event)"
+                                                    />
+                                                </div>
+                                                <div class="dot">
+                                                    <div
+                                                        class="dot-inner dot-status"
+                                                        [ngbTooltip]="getStatusOnline(member?.userId) ? 'Online' : 'Offline'"
+                                                        [class.dot-status-online]="getStatusOnline(member?.userId)"
+                                                    ></div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="col-md-3 col-xl-2 group-length d-flex align-items-center justify-content-end">
                                     <p class="m-1">{{ groupMember?.members?.length }} Members</p>
                                 </div>
-
                                 <div class="col-md-3 col-xl-2 action d-flex justify-content-end">
                                     <button type="button" class="btn" (click)="onClickView(groupMember)">
                                         <fa-icon [icon]="faEye" class="color-primary"></fa-icon>
@@ -50,10 +67,9 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </li>
                 </ul>
-            </div>
-
+            </ng-container>
             <ng-template #noGroups>
                 <div class="no-group p-3">
                     <p class="m-0 text-center">No groups available.</p>

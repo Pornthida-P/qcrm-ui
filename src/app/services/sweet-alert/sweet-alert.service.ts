@@ -15,10 +15,24 @@ export class SweetAlertService {
             text: text,
             showConfirmButton: showButton,
             confirmButtonColor: '#0a6ebd',
+            timer: 2000,
+            timerProgressBar: true,
         }).then(() => {
             if (route) {
                 setTimeout(() => this.router.navigate([`/${route}`]), 500);
             }
+        });
+    }
+
+    confirmSwal(icon: any, title: string, text: string, confirmButtonText: string, cancelButtonText: string): any {
+        return Swal.fire({
+            icon: icon,
+            title: title,
+            text: text,
+            showCancelButton: true,
+            confirmButtonColor: '#0a6ebd',
+            confirmButtonText: confirmButtonText,
+            cancelButtonText: cancelButtonText,
         });
     }
 
@@ -42,8 +56,8 @@ export class SweetAlertService {
             case 401:
                 icon = 'warning';
                 title = 'Warning Authentication';
-                errorMessage = 'Your session has expired. Please log in again.';
-                route = 'login';
+                errorMessage = error.error.message || 'Your session has expired. Please log in again.';
+                route = 'logout';
                 break;
             default:
                 icon = 'error';

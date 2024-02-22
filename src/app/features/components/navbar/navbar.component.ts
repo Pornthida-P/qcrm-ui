@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { faBars, faMagnifyingGlass, faArrowRightFromBracket, faGear } from '@fortawesome/free-solid-svg-icons';
 import { faBell } from '@fortawesome/free-regular-svg-icons';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
 import { UserService } from 'src/app/services/user/user.service';
 import { User } from 'src/app/shared/interface/user.interface';
+import { LoginService } from 'src/app/services/login/login.service';
+import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
 
 @Component({
     selector: 'app-navbar',
@@ -25,7 +27,7 @@ export class NavbarComponent implements OnInit {
 
     faBars = faBars;
 
-    constructor(private router: Router, private userService: UserService) {}
+    constructor(private router: Router, private userService: UserService, private socketIO: SocketIoService) {}
 
     ngOnInit() {
         this.getDataUser();
@@ -70,7 +72,7 @@ export class NavbarComponent implements OnInit {
     getDataUser() {
         this.userService.getDataUser().subscribe((res: User | null) => {
             this.userData = res;
-            this.isAction = res?.role.roleTitle.toLocaleLowerCase() === 'admin' ? true : false;
+            this.isAction = res?.role.roleTitle.toLowerCase() === 'admin' ? true : false;
         });
     }
 
@@ -101,7 +103,11 @@ export class NavbarComponent implements OnInit {
         }
     }
 
+    getStatusOnline(userId?: string): boolean {
+        return this.socketIO.getStatusOnline(userId);
+    }
+
     logout() {
-        this.router.navigate(['login']);
+        this.router.navigate(['logout']);
     }
 }

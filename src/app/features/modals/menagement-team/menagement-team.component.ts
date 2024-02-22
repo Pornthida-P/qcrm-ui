@@ -70,7 +70,7 @@ export class MenagementTeamComponent implements OnInit {
     getUserData() {
         this.userService.getDataUser().subscribe((res: User | null) => {
             this.userData = res;
-            this.isAction = res?.role.roleTitle.toLocaleLowerCase() === 'admin' ? true : false;
+            this.isAction = res?.role.roleTitle.toLowerCase() === 'admin' ? true : false;
         });
     }
 

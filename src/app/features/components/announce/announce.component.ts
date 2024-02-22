@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { faBullhorn, faEdit, faEye } from '@fortawesome/free-solid-svg-icons';
 import * as moment from 'moment';
 import { catchError, tap } from 'rxjs';
@@ -31,6 +32,7 @@ export class AnnounceComponent {
         private modalAnnouncementService: ModalAnnouncementService,
         private announcementService: AnnouncementService,
         private sweetalertServices: SweetAlertService,
+        private router: Router,
     ) {}
 
     ngOnInit(): void {
@@ -70,9 +72,9 @@ export class AnnounceComponent {
             this.marqueeText = this.announcements
                 .map((announce, index, array) => {
                     if (index < array.length - 1) {
-                        return `<strong>${announce.announceTitle}</strong> : ${announce.description} <span class="marquee-space"></span>`;
+                        return `<p class="m-0"><strong class="color-red">${announce.announceTitle}</strong> : ${announce.description}</p> <span class="marquee-space"></span>`;
                     } else {
-                        return `<strong>${announce.announceTitle}</strong> : ${announce.description}`;
+                        return `<p class="m-0"><strong class="color-red">${announce.announceTitle}</strong> : ${announce.description}</p>`;
                     }
                 })
                 .join('');
@@ -82,10 +84,10 @@ export class AnnounceComponent {
     }
 
     onClickView() {
-        this.modalAnnouncementService.openDialogList('view');
+        this.router.navigate(['/announcement-page']);
     }
 
     onClickEdit() {
-        this.modalAnnouncementService.openDialogList('edit');
+        this.router.navigate(['/announcement-page']);
     }
 }

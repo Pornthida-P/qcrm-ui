@@ -56,18 +56,22 @@
                 </div>
                 <div class="dropdown">
                     <div class="d-sm-flex d-md-none">
-                        <div
-                            class="profile-container m-auto cursor-pointer"
-                            id="dropdownMenu"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false"
-                        >
-                            <img
-                                class="profile-image img-fluid"
-                                [src]="userData?.profile"
-                                [alt]="userData?.username"
-                                (error)="handleProfileError($event)"
-                            />
+                        <div class="position-relative" id="dropdownMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="profile-container m-auto cursor-pointer">
+                                <img
+                                    class="profile-image img-fluid"
+                                    [src]="userData?.profile"
+                                    [alt]="userData?.username"
+                                    (error)="handleProfileError($event)"
+                                />
+                            </div>
+                            <div class="dot">
+                                <div
+                                    class="dot-inner dot-status"
+                                    [ngbTooltip]="getStatusOnline(userData?.userId) ? 'Online' : 'Offline'"
+                                    [class.dot-status-online]="getStatusOnline(userData?.userId)"
+                                ></div>
+                            </div>
                         </div>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
                             <li class="dropdown-item">{{ userData?.username }}</li>
@@ -83,18 +87,22 @@
                         </ul>
                     </div>
                     <div class="d-none d-md-flex">
-                        <div
-                            class="profile-container m-auto cursor-pointer"
-                            id="dropdownMenuNoneSm"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false"
-                        >
-                            <img
-                                class="profile-image img-fluid"
-                                [src]="userData?.profile"
-                                [alt]="userData?.username"
-                                (error)="handleProfileError($event)"
-                            />
+                        <div class="position-relative" id="dropdownMenuNoneSm" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="profile-container m-auto cursor-pointer">
+                                <img
+                                    class="profile-image img-fluid"
+                                    [src]="userData?.profile"
+                                    [alt]="userData?.username"
+                                    (error)="handleProfileError($event)"
+                                />
+                            </div>
+                            <div class="dot">
+                                <div
+                                    class="dot-inner dot-status"
+                                    [ngbTooltip]="getStatusOnline(userData?.userId) ? 'Online' : 'Offline'"
+                                    [class.dot-status-online]="getStatusOnline(userData?.userId)"
+                                ></div>
+                            </div>
                         </div>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuNoneSm">
                             <div *ngFor="let item of menuUserNoneSm">

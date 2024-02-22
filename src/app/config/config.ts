@@ -2,6 +2,7 @@ export const config = {
     api: {
         path: {
             login: '/login',
+            logout: '/logout',
             attachment: {
                 find: '/attachment/find',
                 upload: '/attachment/upload',
@@ -15,6 +16,7 @@ export const config = {
                 findByGroup: '/user/group/',
                 findAllRoles: '/user/roles',
                 findAllGroups: '/user/groups',
+                add: '/user/add',
                 addGroup: '/user/add-group',
                 update: '/user/update',
                 updateGroup: '/user/update-group',
@@ -35,9 +37,13 @@ export const config = {
                 findById: '/calendar-event/id/',
                 findByDate: '/calendar-event/date',
                 findByMember: '/calendar-event/member/id/',
+                findByTagId: '/calendar-event/tag/',
                 add: '/calendar-event/add',
+                addTag: '/calendar-event/add-tag',
                 update: '/calendar-event/update',
+                updateTag: '/calendar-event/update-tag',
                 delete: '/calendar-event/delete',
+                deleteTag: '/calendar-event/delete-tag',
                 findAlltags: '/calendar-event/tags',
             },
             elearning: '/e-learning',

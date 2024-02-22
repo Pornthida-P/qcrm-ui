@@ -11,7 +11,7 @@ const routes: Routes = [
         children: [
             {
                 path: 'home',
-                loadChildren: () => import('../../pages/home/home.module').then((m) => m.HomeModule),
+                loadChildren: () => import('../../pages/home-page/home-page.module').then((m) => m.HomePageModule),
                 title: 'Home',
             },
             {
@@ -85,6 +85,11 @@ const routes: Routes = [
                 path: 'products',
                 loadChildren: () => import('../../pages/products/products.module').then((m) => m.ProductsModule),
                 title: 'Products',
+            },
+            {
+                path: 'announcement-page',
+                loadChildren: () => import('../../pages/announcement-page/announcement-page.module').then((m) => m.AnnouncementPageModule),
+                title: 'Announcement',
             },
             {
                 path: 'setting',

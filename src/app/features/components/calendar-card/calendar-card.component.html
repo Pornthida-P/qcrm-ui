@@ -28,7 +28,12 @@
                 <span class="fs-5 color-primary"><fa-icon [icon]="faTag"></fa-icon></span>
             </div>
             <div class="col-md-10 d-flex align-items-center">
-                <p class="card-text btn btn-primary-color text-white fs-6" [ngbTooltip]="event?.tag?.description" placement="bottom">
+                <p
+                    class="card-text btn text-white fs-6"
+                    [style.background-color]="event?.tag?.color"
+                    [ngbTooltip]="event?.tag?.description"
+                    placement="bottom"
+                >
                     #{{ event?.tag?.tagName }}
                 </p>
             </div>
@@ -80,7 +85,7 @@
                 <span class="fs-5 color-primary"><fa-icon [icon]="faPaperclip"></fa-icon></span>
             </div>
             <div class="col-md-10 d-flex flex-column">
-                <p class="card-text fs-6">Attachments:</p>
+                <p class="card-text fs-6">ไฟล์แนบ</p>
                 <div *ngIf="event?.attachments">
                     <div class="col-md-12">
                         <app-attachments-list
@@ -91,7 +96,7 @@
                     </div>
                 </div>
                 <div *ngIf="!event?.attachments">
-                    <p class="card-text fs-6">No attachments</p>
+                    <p class="card-text fs-6">ไม่มีไฟล์แนบ</p>
                 </div>
             </div>
         </div>
