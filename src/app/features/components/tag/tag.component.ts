@@ -1,6 +1,6 @@
-import { Component, OnChanges, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { faGear, faEye, faEdit, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faGear } from '@fortawesome/free-solid-svg-icons';
 import { catchError, tap } from 'rxjs';
 import { CalendarEventService } from 'src/app/services/calendar-event/calendar-event.service';
 import { ModalTagService } from 'src/app/services/modal-tag/modal-tag.service';
@@ -14,29 +14,17 @@ import { User } from 'src/app/shared/interface/user.interface';
     templateUrl: './tag.component.html',
     styleUrl: './tag.component.scss',
 })
-export class TagComponent implements OnInit, OnChanges {
+export class TagComponent implements OnInit {
     title = 'แท็ก';
     tags: CalendarTag[] = [];
     displayedColumns: string[] = [];
-    dataSource = new MatTableDataSource<CalendarTag>(this.tags);
-    initialColumnVisibility: { [key: string]: boolean } = {
-        tagId: false,
-        tagName: false,
-        description: false,
-        createdAt: false,
-        createdById: false,
-        modifyAt: false,
-        modifyById: false,
-    };
-    columnVisibility: { [key: string]: boolean } = { ...this.initialColumnVisibility };
+    dataSource = new MatTableDataSource<CalendarTag>();
+    columnVisibility: { [key: string]: boolean } = {};
     showColumnMenu = false;
     isAction: boolean = false;
     userDatas: User | null = null;
 
     faGear = faGear;
-    faEye = faEye;
-    faEdit = faEdit;
-    faXmark = faXmark;
 
     get columnVisibilityKeys(): string[] {
         return Object.keys(this.columnVisibility);
@@ -53,13 +41,11 @@ export class TagComponent implements OnInit, OnChanges {
         this.initzation();
     }
 
-    ngOnChanges(): void {
-        this.initzation();
-    }
-
     initzation(): void {
-        this.findAllTag();
         this.getUerData();
+        this.calendarService.onRefrashTag().subscribe(() => {
+            this.findAllTag();
+        });
     }
 
     findAllTag(): void {
@@ -69,7 +55,13 @@ export class TagComponent implements OnInit, OnChanges {
                 tap((tags) => {
                     this.tags = tags;
                     if (this.tags && this.tags.length > 0) {
-                        this.displayedColumns = ['tagName', 'description', 'createdAt'];
+                        this.tags.forEach((tag) => {
+                            Object.keys(tag).forEach((key) => {
+                                this.columnVisibility[key] = false;
+                            });
+                        });
+
+                        this.displayedColumns = ['tagName', 'description', 'color'];
                         this.dataSource = new MatTableDataSource<CalendarTag>(this.tags);
 
                         this.displayedColumns.forEach((column) => (this.columnVisibility[column] = true));
@@ -121,20 +113,36 @@ export class TagComponent implements OnInit, OnChanges {
     }
 
     onClickAdd() {
-        console.log('Add');
+        this.modalTagService.openDialog('add');
     }
 
     onClickView(tag: CalendarTag) {
-        console.log('View:', tag);
         this.modalTagService.openDialog('view', tag);
     }
 
     onClickEdit(tag: CalendarTag) {
-        console.log('Edit:', tag);
         this.modalTagService.openDialog('edit', tag);
     }
 
     onClickDelete(tag: CalendarTag) {
-        this.dataSource.data = this.dataSource.data.filter((item) => item !== tag);
+        this.sweetAlertService
+            .confirmSwal('warning', 'Warning', 'Are you sure you want to delete this tag?', 'Yes', 'No')
+            .then((result: { isConfirmed: boolean }) => {
+                if (result.isConfirmed) {
+                    this.calendarService
+                        .deleteTag(tag)
+                        .pipe(
+                            tap(() => {
+                                this.sweetAlertService.getSwal('success', 'Success', 'Delete tag successfully.', false, '');
+                                this.findAllTag();
+                            }),
+                            catchError((error) => {
+                                this.sweetAlertService.handleError(error);
+                                throw error;
+                            }),
+                        )
+                        .subscribe(() => {});
+                }
+            });
     }
 }
