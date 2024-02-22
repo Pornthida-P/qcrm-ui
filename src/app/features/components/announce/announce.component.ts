@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { faBullhorn, faEdit, faEye } from '@fortawesome/free-solid-svg-icons';
 import * as moment from 'moment';
 import { catchError, tap } from 'rxjs';
@@ -31,6 +32,7 @@ export class AnnounceComponent {
         private modalAnnouncementService: ModalAnnouncementService,
         private announcementService: AnnouncementService,
         private sweetalertServices: SweetAlertService,
+        private router: Router,
     ) {}
 
     ngOnInit(): void {
@@ -82,10 +84,10 @@ export class AnnounceComponent {
     }
 
     onClickView() {
-        this.modalAnnouncementService.openDialogList('view');
+        this.router.navigate(['/announcement-page']);
     }
 
     onClickEdit() {
-        this.modalAnnouncementService.openDialogList('edit');
+        this.router.navigate(['/announcement-page']);
     }
 }
