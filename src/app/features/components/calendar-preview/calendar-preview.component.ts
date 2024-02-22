@@ -80,8 +80,15 @@ export class CalendarPreviewComponent implements OnInit {
     }
 
     previousMonth(): void {
-        const currentMonth = this.weeks[0][0].date.getMonth();
-        const currentYear = this.weeks[0][0].date.getFullYear();
+        if (this.weeks.length === 0 || this.weeks[this.weeks.length - 1].length === 0) {
+            return;
+        }
+
+        const lastWeek = this.weeks[this.weeks.length - 1];
+        const lastDayOfLastWeek = lastWeek[lastWeek.length - 1];
+
+        const currentMonth = lastDayOfLastWeek.date.getMonth();
+        const currentYear = lastDayOfLastWeek.date.getFullYear();
 
         const newMonth = currentMonth === 0 ? 11 : currentMonth - 1;
         const newYear = currentMonth === 0 ? currentYear - 1 : currentYear;
