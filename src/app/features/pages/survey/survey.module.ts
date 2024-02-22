@@ -1,12 +1,15 @@
 import { NgModule } from '@angular/core';
-import { CommonModule, DecimalPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { SurveyComponent } from './survey.component';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Formio, FormioModule } from '@formio/angular';
+import bootstrap4 from '@formio/bootstrap/bootstrap4';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
-import { SurveyService } from 'src/app/services/survey/survey.service';
-import { NgbdSortableHeader } from './sortable.directive';
+
+(Formio as any).use(bootstrap4);
+(Formio as any).icons = 'fontawesome';
 
 @NgModule({
     declarations: [SurveyComponent],
@@ -22,8 +25,8 @@ import { NgbdSortableHeader } from './sortable.directive';
         ReactiveFormsModule,
         FontAwesomeModule,
         NgbPaginationModule,
-        NgbdSortableHeader,
+        FormioModule,
     ],
-    providers: [SurveyService, DecimalPipe],
+    providers: [],
 })
 export class SurveyModule {}

@@ -198,6 +198,15 @@
                         <div class="d-flex justify-content-end">
                             <div class="d-flex flex-wrap">
                                 <div
+                                    class="flex-grow-1 me-2"
+                                    type="button"
+                                    (click)="getLink(detailItem)"
+                                    placement="bottom"
+                                    ngbTooltip="คัดลอกลิ้งค์"
+                                >
+                                    <fa-icon class="color-primary" [icon]="faClipboard" size="lg"></fa-icon>
+                                </div>
+                                <div
                                     class="flex-grow-1"
                                     type="button"
                                     (click)="edit(detailItem)"

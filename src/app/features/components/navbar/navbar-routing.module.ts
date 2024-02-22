@@ -20,11 +20,6 @@ const routes: Routes = [
                 title: 'Contacts',
             },
             {
-                path: 'survey',
-                loadChildren: () => import('../../pages/survey/survey.module').then((m) => m.SurveyModule),
-                title: 'Survey',
-            },
-            {
                 path: 'surveyform',
                 children: [
                     {

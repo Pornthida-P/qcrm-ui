@@ -49,4 +49,8 @@ export class SurveyFormService {
             `${this.baseUrl}${config.api.path.surveyForm.baseUrl}${config.api.path.surveyForm.count}/${searchText}/${createdById}`,
         );
     }
+
+    saveSurveyData(data: any) {
+        return this.http.post(`${this.baseUrl}${config.api.path.survey.baseUrl}`, data);
+    }
 }
