@@ -24,6 +24,18 @@ export class SweetAlertService {
         });
     }
 
+    confirmSwal(icon: any, title: string, text: string, confirmButtonText: string, cancelButtonText: string): any {
+        return Swal.fire({
+            icon: icon,
+            title: title,
+            text: text,
+            showCancelButton: true,
+            confirmButtonColor: '#0a6ebd',
+            confirmButtonText: confirmButtonText,
+            cancelButtonText: cancelButtonText,
+        });
+    }
+
     handleError(error: any) {
         let icon: string;
         let errorMessage: string;
