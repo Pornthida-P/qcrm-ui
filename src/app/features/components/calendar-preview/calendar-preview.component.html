@@ -24,7 +24,11 @@
                     {{ day.number }}
                 </div>
                 <div *ngIf="hasEvent(day.date) > 0" class="dot-container">
-                    <div *ngFor="let dot of [].constructor(hasEvent(day.date)); let i = index" class="dot"></div>
+                    <div
+                        *ngFor="let dot of [].constructor(hasEvent(day.date)); let i = index"
+                        class="dot"
+                        [style.backgroundColor]="getDotColor(i, day.date)"
+                    ></div>
                 </div>
             </div>
         </div>

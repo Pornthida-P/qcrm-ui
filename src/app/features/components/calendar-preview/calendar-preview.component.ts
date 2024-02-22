@@ -30,9 +30,7 @@ export class CalendarPreviewComponent implements OnInit {
         this.selectDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
     }
 
-    ngOnInit(): void {
-        console.log('events', this.events);
-    }
+    ngOnInit(): void {}
 
     generateCalendar(month: number, year: number): void {
         const firstDayOfMonth = new Date(year, month, 1);
@@ -109,7 +107,6 @@ export class CalendarPreviewComponent implements OnInit {
             const startDate = new Date(event.startDate);
             const endDate = new Date(event.endDate);
 
-            //
             if (date >= startDate && date <= endDate) {
                 count++;
                 if (count >= 4) {
@@ -118,5 +115,20 @@ export class CalendarPreviewComponent implements OnInit {
             }
         }
         return count;
+    }
+
+    getDotColor(index: number, date: Date): string {
+        const filteredEvents = this.events.filter((event) => {
+            const startDate = new Date(event.startDate);
+            const endDate = new Date(event.endDate);
+            return date >= startDate && date <= endDate;
+        });
+
+        if (filteredEvents.length === 0) {
+            return '';
+        }
+
+        const tagColor = filteredEvents[index]?.tag?.color;
+        return tagColor ? tagColor : 'var(--primary)';
     }
 }
