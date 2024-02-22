@@ -1,0 +1,32 @@
+<div class="px-3">
+    <div class="row">
+        <div class="col-12 mb-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <p class="label fs-5">{{ title }}</p>
+                <button *ngIf="isAction" type="button" class="btn btn-primary-color text-white" (click)="onClickAddEvent()">
+                    <div class="d-flex gap-2">
+                        <fa-icon [icon]="faPlus"></fa-icon>
+                        <span class="label">เพิ่ม</span>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="row gap-3">
+                <div *ngIf="!events || events.length === 0; else eventsContent" class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="card-text text-center p-5">ไม่มี Event</p>
+                        </div>
+                    </div>
+                </div>
+                <ng-template #eventsContent>
+                    <div *ngFor="let event of events" class="col-12">
+                        <app-calendar-card [event]="event"></app-calendar-card>
+                    </div>
+                </ng-template>
+            </div>
+        </div>
+    </div>
+</div>
