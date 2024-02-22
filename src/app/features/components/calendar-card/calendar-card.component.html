@@ -28,7 +28,12 @@
                 <span class="fs-5 color-primary"><fa-icon [icon]="faTag"></fa-icon></span>
             </div>
             <div class="col-md-10 d-flex align-items-center">
-                <p class="card-text btn btn-primary-color text-white fs-6" [ngbTooltip]="event?.tag?.description" placement="bottom">
+                <p
+                    class="card-text btn text-white fs-6"
+                    [style.background-color]="event?.tag?.color"
+                    [ngbTooltip]="event?.tag?.description"
+                    placement="bottom"
+                >
                     #{{ event?.tag?.tagName }}
                 </p>
             </div>
