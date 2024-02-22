@@ -109,7 +109,7 @@ export class TagComponent implements OnInit {
     }
 
     onSearch(text: string) {
-        console.log('Search:', text);
+        this.dataSource.filter = text.trim().toLowerCase();
     }
 
     onClickAdd() {
