@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { TooltipPosition } from '@angular/material/tooltip';
 import {
@@ -27,6 +27,11 @@ import { User } from 'src/app/shared/interface/user.interface';
 })
 export class CalendarCardComponent implements OnInit {
     @Input() event?: CalendarEvent;
+    @Input() isBorder: boolean = true;
+
+    @Output() viewEvent: EventEmitter<void> = new EventEmitter();
+    @Output() editEvent: EventEmitter<void> = new EventEmitter();
+    @Output() deleteEvent: EventEmitter<void> = new EventEmitter();
 
     userData?: User | null;
     isAction: boolean = false;
@@ -70,18 +75,24 @@ export class CalendarCardComponent implements OnInit {
     }
 
     onClickViewEvent(event: CalendarEvent | undefined) {
+        this.viewEvent.emit();
+
         if (event && event?.eventId) {
             this.modalCalendarService.openDialog('view', event);
         }
     }
 
     onClickEditEvent(event: CalendarEvent | undefined) {
+        this.editEvent.emit();
+
         if (event && event?.eventId) {
             this.modalCalendarService.openDialog('edit', event);
         }
     }
 
     onClickDeleteEvent(event: CalendarEvent | undefined) {
+        this.deleteEvent.emit();
+
         if (event && event?.eventId) {
             this.calendarService
                 .deleteCalendarEvent(event.eventId.toString())
