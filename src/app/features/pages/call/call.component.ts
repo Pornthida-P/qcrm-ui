@@ -6,6 +6,10 @@ import { Call } from 'src/app/shared/interface/call';
 import { UserService } from 'src/app/services/user/user.service';
 import { User } from 'src/app/shared/interface/user.interface';
 import Swal from 'sweetalert2';
+import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
+import { catchError, tap } from 'rxjs';
+import * as XLSX from 'xlsx';
+import { config } from 'src/app/config/config';
 @Pipe({
     name: 'searchFilter',
 })
@@ -102,12 +106,18 @@ export class CallComponent implements OnInit {
     sortId: string = '-';
     sortOrder: string = 'ASC';
     sortIcon: string = '';
+    checkedValues: any;
+    selectValue: number[] = [];
+  call_id: any;
+
+  fileType: string = config.file.type;
 
     constructor(
         private callService: CallService,
         private router: Router,
         private activeRoute: ActivatedRoute,
         private userService: UserService,
+        private sweetAlertService: SweetAlertService
     ) {}
 
     ngOnInit() {
@@ -240,14 +250,123 @@ export class CallComponent implements OnInit {
         });
     }
 
-    deleteCall() {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Do you want to delete this form?',
-            showCancelButton: true,
-            confirmButtonColor: '#3066be',
-            cancelButtonColor: '#ec5365',
-            width: '50%',
-        });
+  //   deleteForm(id: string) {
+  //     Swal.fire({
+  //         icon: 'warning',
+  //         title: 'Do you want to delete this form?',
+  //         showCancelButton: true,
+  //         confirmButtonColor: '#3066be',
+  //         cancelButtonColor: '#ec5365',
+  //         width: '50%',
+  //     }).then((result) => {
+  //         if (result.isConfirmed) {
+  //             const data = {
+  //                 body: [id],
+  //             };
+  //             this.surveyFormService
+  //                 .deleteSurveyForm(data)
+  //                 .pipe(
+  //                     tap((res) => {
+  //                         this.sweetalertServices.getSwal('success', 'Delete data success.', '', false, '');
+  //                         window.location.reload();
+  //                     }),
+  //                     catchError((error) => {
+  //                         this.sweetalertServices.handleError(error);
+  //                         throw error;
+  //                     }),
+  //                 )
+  //                 .subscribe();
+  //         }
+  //     });
+  // }
+
+    deleteCall(id: string) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Do you want to delete this call ?',
+        showCancelButton: true,
+        confirmButtonColor: '#3066be',
+        cancelButtonColor: '#ec5365',
+        width: '50%',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const data = {
+                body: [id],
+            };
+            this.callService
+                .deleteCalls(data)
+                .pipe(
+                    tap((res) => {
+                        this.sweetAlertService.getSwal('success', 'Delete data success.', '', false, '');
+                        window.location.reload();
+                    }),
+                    catchError((error) => {
+                        this.sweetAlertService.handleError(error);
+                        throw error;
+                    }),
+                )
+                .subscribe();
+        }
+    });
     }
+
+    exportExcel() {
+      if (this.selectValue.length != 0) {
+          this.selectedCalls = this.calls.filter((calls: any) => this.selectValue.includes(calls.call_id));
+      }
+
+      if (this.selectedCalls.length != 0) {
+          const processedForms = this.selectedCalls.reduce(
+              (acc: any, cur: any) => [
+                  ...acc,
+                  {
+                    createdAt: cur.createdAt,
+                    name: cur.name,
+                    direction: cur.direction,
+                    caseTopicName: cur.caseTopicName,
+                    description: cur.description,
+                    solutions: cur.solutions,
+                    modified: cur.modified
+                  },
+              ],
+              [],
+          );
+
+          const columns = [['เวลา', 'เบอร์โทร', 'ประเภทสาย', 'เรื่องที่ติดต่อ', 'รายละเอียด', 'แนวทางการแก้ไข', 'ผู้ที่รับผิดชอบ']];
+          const wb = XLSX.utils.book_new();
+          const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet([]);
+          XLSX.utils.sheet_add_aoa(ws, columns);
+
+          XLSX.utils.sheet_add_json(ws, processedForms, { origin: 'A2', skipHeader: true });
+
+          XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+          XLSX.writeFile(wb, `ประวัติการโทร${this.fileType}`);
+      }
+  }
+
+    deleteSelectForm() {}
+
+    selectCheckbox(callId: number): void {
+      if (this.selectValue.includes(callId)) {
+          this.selectValue = this.selectValue.filter((id) => id !== callId);
+      } else {
+          this.selectValue.push(callId);
+      }
+  }
+
+  checkAll(ev: any) {
+      this.calls.forEach((x: any) => {
+          x.state = ev.target.checked;
+          if (ev.target.checked) {
+              this.selectValue.push(x.call_id);
+          } else {
+              this.selectValue = [];
+          }
+      });
+  }
+
+  isAllChecked() {
+      return this.calls && this.calls.every((_: any) => _.state);
+  }
 }
