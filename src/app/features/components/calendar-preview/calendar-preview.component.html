@@ -18,9 +18,14 @@
         <div class="day-name">Sat</div>
     </div>
     <div *ngFor="let week of weeks" class="week">
-        <div *ngFor="let day of week" class="day-container cursor-pointer" (click)="addEvent(day.date)">
+        <div *ngFor="let day of week" class="day-container cursor-pointer">
             <div class="day-wrapper">
-                <div class="day-number" [ngClass]="{ selected: isSelected(day.date) }">
+                <div
+                    class="day-number"
+                    [ngClass]="{ selected: isSelected(day.date) }"
+                    [ngbPopover]="popoverContent"
+                    (click)="onClickSelectDate(day.date)"
+                >
                     {{ day.number }}
                 </div>
                 <div *ngIf="hasEvent(day.date) > 0" class="dot-container">
@@ -34,3 +39,13 @@
         </div>
     </div>
 </div>
+
+<ng-template #popoverContent>
+    <app-pop-overs-event
+        [events]="onSelectEvent"
+        (addEvent)="onClickAddEvent()"
+        (viewEvent)="onClickViewEvent()"
+        (editEvent)="onClickEditEvent()"
+        (deleteEvent)="onClickDeleteEvent()"
+    ></app-pop-overs-event>
+</ng-template>
