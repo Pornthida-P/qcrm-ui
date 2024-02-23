@@ -1,0 +1,44 @@
+<div class="overflow-auto px-3" style="max-height: 60vh">
+    <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <ng-container *ngIf="events.length > 0; else noEventsTemplate">
+                <div *ngFor="let event of events; let i = index" class="carousel-item" [class.active]="i === 0">
+                    <app-calendar-card
+                        [event]="event"
+                        [isBorder]="false"
+                        (viewEvent)="onClickView()"
+                        (editEvent)="onClickEdit()"
+                        (deleteEvent)="onClickDelete()"
+                    ></app-calendar-card>
+                </div>
+            </ng-container>
+            <ng-template #noEventsTemplate>
+                <div class="carousel-item active">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <p class="fs-5 label">ไม่มีกิจกรรม</p>
+                    </div>
+                </div>
+            </ng-template>
+        </div>
+    </div>
+    <button
+        *ngIf="events.length > 0"
+        class="carousel-control-prev color-primary fs-3"
+        type="button"
+        data-bs-target="#carouselExampleControls"
+        data-bs-slide="prev"
+        style="position: absolute; top: 50%; left: -3%; transform: translateY(-50%)"
+    >
+        <fa-icon [icon]="faChevronLeft"></fa-icon>
+    </button>
+    <button
+        *ngIf="events.length > 0"
+        class="carousel-control-next color-primary fs-3"
+        type="button"
+        data-bs-target="#carouselExampleControls"
+        data-bs-slide="next"
+        style="position: absolute; top: 50%; right: -3%; transform: translateY(-50%)"
+    >
+        <fa-icon [icon]="faChevronRight"></fa-icon>
+    </button>
+</div>
