@@ -11,21 +11,26 @@
                 </button>
             </div>
         </div>
-
-        <div class="col-12">
-            <div class="row gap-3">
-                <div *ngIf="!events || events.length === 0; else eventsContent" class="col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <p class="card-text text-center p-5">ไม่มี Event</p>
+    </div>
+    <div class="col-12">
+        <div class="container px-5 py-3">
+            <div class="row">
+                <div class="col-12">
+                    <div class="row gap-3">
+                        <div *ngIf="!events || events.length === 0; else eventsContent" class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <p class="card-text text-center p-5">ไม่มี Event</p>
+                                </div>
+                            </div>
                         </div>
+                        <ng-template #eventsContent>
+                            <div *ngFor="let event of events" class="col-12">
+                                <app-calendar-card [event]="event"></app-calendar-card>
+                            </div>
+                        </ng-template>
                     </div>
                 </div>
-                <ng-template #eventsContent>
-                    <div *ngFor="let event of events" class="col-12">
-                        <app-calendar-card [event]="event"></app-calendar-card>
-                    </div>
-                </ng-template>
             </div>
         </div>
     </div>
