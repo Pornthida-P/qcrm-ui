@@ -334,15 +334,7 @@ export class SurveyFormComponent implements OnInit {
         this.getPage();
     }
 
-    getLink(item: any) {
-        const baseUrl = window.location.origin;
-        if (item && item.surveyFormId) {
-            this.url = baseUrl + '/survey?key1=' + item.surveyFormId;
-            this.clipboard.copy(this.url);
-            console.log('Link copied to clipboard: ' + this.url);
-            console.log('Link copied to clipboard: ' + this.clipboard.copy(this.url));
-        } else {
-            console.error('surveyFormId is null or undefined.');
-        }
+    openDialog(item: any) {
+        this.surveyFormService.openDialog(item.surveyFormId);
     }
 }

@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { config } from 'src/app/config/config';
+import { GetLinkSurveyComponent } from 'src/app/features/modals/get-link-survey/get-link-survey.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Injectable({
     providedIn: 'root',
@@ -9,7 +11,7 @@ import { config } from 'src/app/config/config';
 export class SurveyFormService {
     baseUrl: string = `${environment.api.url}`;
 
-    constructor(private http: HttpClient) {}
+    constructor(private http: HttpClient, public dialog: MatDialog) {}
 
     getSurveyForm() {
         return this.http.get(`${this.baseUrl}${config.api.path.surveyForm.baseUrl}`);
@@ -52,5 +54,16 @@ export class SurveyFormService {
 
     saveSurveyData(data: any) {
         return this.http.post(`${this.baseUrl}${config.api.path.survey.baseUrl}`, data);
+    }
+
+    openDialog(surveyFormId: string): void {
+        const dialogRef = this.dialog.open(GetLinkSurveyComponent, {
+            width: '40%',
+            data: { surveyFormId },
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+            console.log('The get link survey form dialog was closed');
+        });
     }
 }

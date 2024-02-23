@@ -200,9 +200,10 @@
                                 <div
                                     class="flex-grow-1 me-2"
                                     type="button"
-                                    (click)="getLink(detailItem)"
+                                    (click)="openDialog(detailItem)"
                                     placement="bottom"
                                     ngbTooltip="คัดลอกลิ้งค์"
+                                    data-bs-dismiss="offcanvas"
                                 >
                                     <fa-icon class="color-primary" [icon]="faClipboard" size="lg"></fa-icon>
                                 </div>

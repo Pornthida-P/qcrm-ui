@@ -58,6 +58,7 @@ export const config = {
             },
             survey: {
                 baseUrl: '/survey',
+                existing: '/existing',
             },
         },
     },
