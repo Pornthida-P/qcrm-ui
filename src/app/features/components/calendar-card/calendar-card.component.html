@@ -1,4 +1,4 @@
-<div [ngClass]="{ card: isBorder }">
+<div *ngIf="event" [ngClass]="{ card: isBorder }">
     <div class="card-body">
         <div class="row">
             <div class="col-md-12 d-flex justify-content-end gap-2">
@@ -19,7 +19,7 @@
                 <span class="fs-5 color-primary"><fa-icon [icon]="faCalendar"></fa-icon></span>
             </div>
             <div class="col-md-10 d-flex align-items-center">
-                <p class="card-title fs-5">{{ event?.title }}</p>
+                <p class="card-title fs-5">{{ event.title }}</p>
             </div>
         </div>
 
@@ -30,11 +30,11 @@
             <div class="col-md-10 d-flex align-items-center">
                 <p
                     class="card-text btn text-white fs-6"
-                    [style.background-color]="event?.tag?.color"
-                    [ngbTooltip]="event?.tag?.description"
+                    [style.background-color]="event.tag.color"
+                    [ngbTooltip]="event.tag.description"
                     placement="bottom"
                 >
-                    #{{ event?.tag?.tagName }}
+                    #{{ event.tag.tagName }}
                 </p>
             </div>
         </div>
@@ -42,13 +42,13 @@
         <div class="row d-flex justify-content-center my-2">
             <div class="col-md-2 d-flex justify-content-center"></div>
             <div class="col-md-10 d-flex align-items-center">
-                <p class="card-text fs-7">{{ event?.startDate | date : 'medium' }}</p>
+                <p class="card-text fs-7">{{ event.startDate | date : 'medium' }}</p>
             </div>
         </div>
         <div class="row d-flex justify-content-center my-2">
             <div class="col-md-2 d-flex justify-content-center"></div>
             <div class="col-md-10 d-flex align-items-center">
-                <p class="card-text fs-7">{{ event?.endDate | date : 'medium' }}</p>
+                <p class="card-text fs-7">{{ event.endDate | date : 'medium' }}</p>
             </div>
         </div>
 
@@ -57,7 +57,7 @@
                 <span class="fs-5 color-primary"><fa-icon [icon]="faLocation"></fa-icon></span>
             </div>
             <div class="col-md-10 d-flex align-items-center">
-                <p class="card-text fs-6">{{ event?.location }}</p>
+                <p class="card-text fs-6">{{ event.location }}</p>
             </div>
         </div>
 
@@ -66,7 +66,7 @@
                 <span class="fs-5 color-primary"><fa-icon [icon]="faList"></fa-icon></span>
             </div>
             <div class="col-md-10 d-flex align-items-center">
-                <p class="card-text fs-6" [innerHtml]="event?.description"></p>
+                <p class="card-text fs-6" [innerHtml]="event.description"></p>
             </div>
         </div>
 
@@ -75,8 +75,14 @@
                 <span class="fs-5 color-primary"><fa-icon [icon]="faUserGroup"></fa-icon></span>
             </div>
             <div class="col-md-10 d-flex flex-column">
-                <p class="card-text fs-6">จำนวนผู้เข้าร่วม {{ event?.members?.length }} คน</p>
-                <app-profile-list [members]="event?.members" [isShowToolbar]="true"></app-profile-list>
+                <p class="card-text fs-6">จำนวนผู้เข้าร่วม {{ event.members.length }} คน</p>
+                <app-profile-list
+                    [members]="event.members"
+                    [isShowToolbar]="true"
+                    (viewUserId)="onClickViewMember($event)"
+                    (editUserId)="onClickEditMember($event)"
+                    (deleteUserId)="onClickDeletedMember($event)"
+                ></app-profile-list>
             </div>
         </div>
 
@@ -86,7 +92,7 @@
             </div>
             <div class="col-md-10 d-flex flex-column">
                 <p class="card-text fs-6">ไฟล์แนบ</p>
-                <div *ngIf="event?.attachments">
+                <div *ngIf="event.attachments">
                     <div class="col-md-12">
                         <app-attachments-list
                             [attachments]="event!.attachments"
@@ -95,7 +101,7 @@
                         ></app-attachments-list>
                     </div>
                 </div>
-                <div *ngIf="!event?.attachments">
+                <div *ngIf="!event.attachments">
                     <p class="card-text fs-6">ไม่มีไฟล์แนบ</p>
                 </div>
             </div>

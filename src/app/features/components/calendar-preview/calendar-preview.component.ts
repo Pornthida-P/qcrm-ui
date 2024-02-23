@@ -4,6 +4,7 @@ import { CalendarEvent } from 'src/app/shared/interface/calendar.interface';
 import { PopOversEventComponent } from '../pop-overs-event/pop-overs-event.component';
 import { NgbPopover, NgbPopoverConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ModalCalendarService } from 'src/app/services/modal-calendar/modal-calendar.service';
+import { User } from 'src/app/shared/interface/user.interface';
 
 interface Day {
     number: number;
@@ -167,6 +168,18 @@ export class CalendarPreviewComponent implements OnInit {
     }
 
     onClickDeleteEvent(): void {
+        this.closePopover();
+    }
+
+    onClickViewMember(userId: User): void {
+        this.closePopover();
+    }
+
+    onClickEditMember(userId: User): void {
+        this.closePopover();
+    }
+
+    onClickDeletedMember(userId: User): void {
         this.closePopover();
     }
 

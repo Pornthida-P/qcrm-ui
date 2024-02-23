@@ -1,27 +1,22 @@
-<div class="row g-2 p-2 align-items-center" [ngClass]="{ 'bg-light': isBackground }">
+<div *ngIf="member" class="row g-2 p-2 align-items-center" [ngClass]="{ 'bg-light': isBackground }">
     <div class="col-auto m-0 px-3">
         <div class="position-relative">
             <div class="profile-container m-auto">
-                <img
-                    class="profile-image img-fluid"
-                    [src]="member?.profile"
-                    [alt]="member?.username"
-                    (error)="handleProfileError($event)"
-                />
+                <img class="profile-image img-fluid" [src]="member.profile" [alt]="member.username" (error)="handleProfileError($event)" />
             </div>
             <div class="dot">
                 <div
                     class="dot-inner dot-status"
-                    [ngbTooltip]="getStatusOnline(member?.userId) ? 'Online' : 'Offline'"
-                    [class.dot-status-online]="getStatusOnline(member?.userId)"
+                    [ngbTooltip]="getStatusOnline(member.userId) ? 'Online' : 'Offline'"
+                    [class.dot-status-online]="getStatusOnline(member.userId)"
                 ></div>
             </div>
         </div>
     </div>
     <div class="col m-0">
         <div class="user-info">
-            <p class="label fs-7">{{ member?.username }}</p>
-            <p class="label fs-8">{{ member?.role?.roleTitle }}</p>
+            <p class="label fs-7">{{ member.username }}</p>
+            <p class="label fs-8">{{ member.role.roleTitle }}</p>
         </div>
     </div>
     <div class="col-auto m-0 px-3" *ngIf="isShowToolbar">

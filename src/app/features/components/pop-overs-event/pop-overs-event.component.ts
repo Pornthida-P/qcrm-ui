@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { faChevronLeft, faChevronRight, faPlusCircle, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { CalendarEvent } from 'src/app/shared/interface/calendar.interface';
+import { User } from 'src/app/shared/interface/user.interface';
 
 @Component({
     selector: 'app-pop-overs-event',
@@ -14,6 +15,10 @@ export class PopOversEventComponent implements OnInit {
     @Output() viewEvent: EventEmitter<void> = new EventEmitter();
     @Output() editEvent: EventEmitter<void> = new EventEmitter();
     @Output() deleteEvent: EventEmitter<void> = new EventEmitter();
+
+    @Output() viewMember: EventEmitter<User> = new EventEmitter<User>();
+    @Output() editMember: EventEmitter<User> = new EventEmitter<User>();
+    @Output() deleteMember: EventEmitter<User> = new EventEmitter<User>();
 
     faXmark = faXmark;
     faChevronLeft = faChevronLeft;
@@ -38,5 +43,17 @@ export class PopOversEventComponent implements OnInit {
 
     onClickDelete(): void {
         this.deleteEvent.emit();
+    }
+
+    onClickViewMember(member: User): void {
+        this.viewMember.emit(member);
+    }
+
+    onClickEditMember(member: User): void {
+        this.editMember.emit(member);
+    }
+
+    onClickDeletedMember(member: User): void {
+        this.deleteMember.emit(member);
     }
 }

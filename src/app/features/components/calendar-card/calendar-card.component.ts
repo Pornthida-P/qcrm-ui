@@ -33,6 +33,10 @@ export class CalendarCardComponent implements OnInit {
     @Output() editEvent: EventEmitter<void> = new EventEmitter();
     @Output() deleteEvent: EventEmitter<void> = new EventEmitter();
 
+    @Output() viewMember: EventEmitter<User> = new EventEmitter<User>();
+    @Output() editMember: EventEmitter<User> = new EventEmitter<User>();
+    @Output() deleteMember: EventEmitter<User> = new EventEmitter<User>();
+
     userData?: User | null;
     isAction: boolean = false;
     profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
@@ -74,7 +78,7 @@ export class CalendarCardComponent implements OnInit {
         }
     }
 
-    onClickViewEvent(event: CalendarEvent | undefined) {
+    onClickViewEvent(event: CalendarEvent) {
         this.viewEvent.emit();
 
         if (event && event?.eventId) {
@@ -82,7 +86,7 @@ export class CalendarCardComponent implements OnInit {
         }
     }
 
-    onClickEditEvent(event: CalendarEvent | undefined) {
+    onClickEditEvent(event: CalendarEvent) {
         this.editEvent.emit();
 
         if (event && event?.eventId) {
@@ -90,7 +94,7 @@ export class CalendarCardComponent implements OnInit {
         }
     }
 
-    onClickDeleteEvent(event: CalendarEvent | undefined) {
+    onClickDeleteEvent(event: CalendarEvent) {
         this.deleteEvent.emit();
 
         if (event && event?.eventId) {
@@ -104,5 +108,17 @@ export class CalendarCardComponent implements OnInit {
                 )
                 .subscribe(() => {});
         }
+    }
+
+    onClickViewMember(member: User) {
+        this.viewMember.emit(member);
+    }
+
+    onClickEditMember(member: User) {
+        this.editMember.emit(member);
+    }
+
+    onClickDeletedMember(member: User) {
+        this.deleteMember.emit(member);
     }
 }
