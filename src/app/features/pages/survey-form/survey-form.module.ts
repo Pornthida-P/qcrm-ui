@@ -8,6 +8,7 @@ import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { SurveyFormService } from 'src/app/services/survey-form/survey-form.service';
 import { HttpClientModule } from '@angular/common/http';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { GetLinkSurveyModule } from '../../modals/get-link-survey/get-link-survey.module';
 
 @NgModule({
     declarations: [SurveyFormComponent],
@@ -25,6 +26,7 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
         NgbPaginationModule,
         HttpClientModule,
         NgbTooltipModule,
+        GetLinkSurveyModule,
     ],
     providers: [SurveyFormService],
 })

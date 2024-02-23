@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormioComponent } from '@formio/angular';
 import { SurveyFormService } from 'src/app/services/survey-form/survey-form.service';
+import { SurveyService } from 'src/app/services/survey/survey.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 
 @Component({
@@ -16,11 +17,13 @@ export class SurveyComponent implements OnInit {
     surveyForm: any;
     form: any;
     thanks: boolean = false;
+    existing: boolean = false;
 
     constructor(
         private surveyFormService: SurveyFormService,
         private activeRoute: ActivatedRoute,
         private sweetalertService: SweetAlertService,
+        private surveyService: SurveyService,
     ) {
         this.activeRoute.queryParams.subscribe((params) => {
             if (params['key1'] != undefined && params['key1'] != '') {
@@ -30,6 +33,7 @@ export class SurveyComponent implements OnInit {
                 this.userId = params['key2'];
             }
         });
+        this.checkExisting();
         this.getForm();
     }
 
@@ -80,5 +84,11 @@ export class SurveyComponent implements OnInit {
                 });
             }
         }
+    }
+
+    checkExisting() {
+        this.surveyService.checkExisting(this.formId, this.userId).subscribe((res: any) => {
+            this.existing = res;
+        });
     }
 }

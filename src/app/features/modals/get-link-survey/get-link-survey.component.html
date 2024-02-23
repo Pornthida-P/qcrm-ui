@@ -1,0 +1,40 @@
+<div class="container">
+    <div class="d-flex flex-column p-4">
+        <div class="d-flex flex-row justify-content-between mb-2">
+            <p class="form-label fs-5">{{ formName }}</p>
+            <a class="color-red cursor-pointer" (click)="onClickClose()">
+                <fa-icon class="fs-5" [icon]="faXmark"></fa-icon>
+            </a>
+        </div>
+        <div class="mb-4 d-flex justify-content-center align-items-center flex-column">
+            <!-- <label for="floatingPlaintextInputUrl" class="mb-2">Url</label> -->
+            <input
+                type="text"
+                class="form-control border border-start-0 shadow-none"
+                id="floatingPlaintextInputUrl"
+                [(ngModel)]="url"
+                disabled
+            />
+            <div class="qrcodeImage">
+                <qrcode
+                    [qrdata]="url"
+                    [allowEmptyString]="true"
+                    [colorDark]="'#000000'"
+                    [colorLight]="'#ffffffff'"
+                    [elementType]="'img'"
+                    [errorCorrectionLevel]="'H'"
+                    [margin]="4"
+                    [scale]="1"
+                    [width]="300"
+                    (qrCodeURL)="onChangeURL($event)"
+                ></qrcode>
+            </div>
+            <a
+                [href]="qrCodeDownloadLink"
+                download="qrcode"
+                class="d-flex justify-content-center gap-2 btn-primary-color rounded p-2 text-decoration-none text-white text-center border-0 w-50"
+                >บันทึก</a
+            >
+        </div>
+    </div>
+</div>
