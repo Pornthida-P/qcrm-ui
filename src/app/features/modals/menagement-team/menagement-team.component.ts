@@ -99,8 +99,8 @@ export class MenagementTeamComponent implements OnInit {
         this.cdRef.detectChanges();
     }
 
-    onDeletedMember(userId: string) {
-        this.selectedMembers = this.selectedMembers.filter((member) => member.userId !== userId);
+    onDeletedMember(member: User) {
+        this.selectedMembers = this.selectedMembers.filter((user) => user.userId !== member.userId);
         this.groupForm.get('members')!.setValue(this.selectedMembers);
     }
 

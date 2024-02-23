@@ -11,6 +11,8 @@
         [isShowToolbar]="isShowToolbar"
         [mode]="mode"
         [isBackground]="isBackground"
-        (deleteUserId)="onDeletedMember($event)"
+        (deleteUserId)="onDeleted($event)"
+        (viewUserId)="onClickView($event)"
+        (editUserId)="onClickEdit($event)"
     ></app-profile>
 </div>

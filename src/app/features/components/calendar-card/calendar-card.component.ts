@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { TooltipPosition } from '@angular/material/tooltip';
 import {
@@ -27,6 +27,15 @@ import { User } from 'src/app/shared/interface/user.interface';
 })
 export class CalendarCardComponent implements OnInit {
     @Input() event?: CalendarEvent;
+    @Input() isBorder: boolean = true;
+
+    @Output() viewEvent: EventEmitter<void> = new EventEmitter();
+    @Output() editEvent: EventEmitter<void> = new EventEmitter();
+    @Output() deleteEvent: EventEmitter<void> = new EventEmitter();
+
+    @Output() viewMember: EventEmitter<User> = new EventEmitter<User>();
+    @Output() editMember: EventEmitter<User> = new EventEmitter<User>();
+    @Output() deleteMember: EventEmitter<User> = new EventEmitter<User>();
 
     userData?: User | null;
     isAction: boolean = false;
@@ -69,19 +78,25 @@ export class CalendarCardComponent implements OnInit {
         }
     }
 
-    onClickViewEvent(event: CalendarEvent | undefined) {
+    onClickViewEvent(event: CalendarEvent) {
+        this.viewEvent.emit();
+
         if (event && event?.eventId) {
             this.modalCalendarService.openDialog('view', event);
         }
     }
 
-    onClickEditEvent(event: CalendarEvent | undefined) {
+    onClickEditEvent(event: CalendarEvent) {
+        this.editEvent.emit();
+
         if (event && event?.eventId) {
             this.modalCalendarService.openDialog('edit', event);
         }
     }
 
-    onClickDeleteEvent(event: CalendarEvent | undefined) {
+    onClickDeleteEvent(event: CalendarEvent) {
+        this.deleteEvent.emit();
+
         if (event && event?.eventId) {
             this.calendarService
                 .deleteCalendarEvent(event.eventId.toString())
@@ -93,5 +108,17 @@ export class CalendarCardComponent implements OnInit {
                 )
                 .subscribe(() => {});
         }
+    }
+
+    onClickViewMember(member: User) {
+        this.viewMember.emit(member);
+    }
+
+    onClickEditMember(member: User) {
+        this.editMember.emit(member);
+    }
+
+    onClickDeletedMember(member: User) {
+        this.deleteMember.emit(member);
     }
 }

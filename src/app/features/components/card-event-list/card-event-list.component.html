@@ -3,7 +3,7 @@
         <div class="col-12 mb-3">
             <div class="d-flex justify-content-between align-items-center">
                 <p class="label fs-5">{{ title }}</p>
-                <button *ngIf="isAction" type="button" class="btn btn-primary-color text-white" (click)="onClickAddEvent()">
+                <button *ngIf="!isAction" type="button" class="btn btn-primary-color text-white" (click)="onClickAddEvent()">
                     <div class="d-flex gap-2">
                         <fa-icon [icon]="faPlus"></fa-icon>
                         <span class="label">เพิ่ม</span>

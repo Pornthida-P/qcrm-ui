@@ -1,6 +1,10 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { CalendarEvent } from 'src/app/shared/interface/calendar.interface';
+import { PopOversEventComponent } from '../pop-overs-event/pop-overs-event.component';
+import { NgbPopover, NgbPopoverConfig } from '@ng-bootstrap/ng-bootstrap';
+import { ModalCalendarService } from 'src/app/services/modal-calendar/modal-calendar.service';
+import { User } from 'src/app/shared/interface/user.interface';
 
 interface Day {
     number: number;
@@ -19,15 +23,20 @@ export class CalendarPreviewComponent implements OnInit {
     currentMonth: string;
     weeks: Day[][] = [];
     selectDate: Date = new Date();
+    onSelectEvent: CalendarEvent[] = [];
 
     faChevronLeft = faChevronLeft;
     faChevronRight = faChevronRight;
 
-    constructor() {
+    constructor(config: NgbPopoverConfig, private modalCalendarService: ModalCalendarService) {
         const currentDate = new Date();
         this.currentMonth = currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
         this.generateCalendar(currentDate.getMonth(), currentDate.getFullYear());
         this.selectDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+
+        config.container = 'body';
+        config.autoClose = 'outside';
+        config.popoverClass = 'custom-popover';
     }
 
     ngOnInit(): void {}
@@ -98,10 +107,15 @@ export class CalendarPreviewComponent implements OnInit {
         this.currentMonth = new Date(newYear, newMonth).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
     }
 
-    addEvent(date: Date): void {
-        this.selectedDate.emit(date);
+    onClickSelectDate(date: Date): void {
+        this.onSelectEvent = this.events.filter((event) => {
+            const startDate = new Date(event.startDate);
+            const endDate = new Date(event.endDate);
+            return date >= startDate && date <= endDate;
+        });
 
         this.selectDate = date;
+        this.selectedDate.emit(date);
     }
 
     isSelected(date: Date): boolean {
@@ -137,5 +151,42 @@ export class CalendarPreviewComponent implements OnInit {
 
         const tagColor = filteredEvents[index]?.tag?.color;
         return tagColor ? tagColor : 'var(--primary)';
+    }
+
+    onClickAddEvent(): void {
+        this.closePopover();
+
+        this.modalCalendarService.openDialog('add');
+    }
+
+    onClickViewEvent(): void {
+        this.closePopover();
+    }
+
+    onClickEditEvent(): void {
+        this.closePopover();
+    }
+
+    onClickDeleteEvent(): void {
+        this.closePopover();
+    }
+
+    onClickViewMember(userId: User): void {
+        this.closePopover();
+    }
+
+    onClickEditMember(userId: User): void {
+        this.closePopover();
+    }
+
+    onClickDeletedMember(userId: User): void {
+        this.closePopover();
+    }
+
+    closePopover() {
+        const popoverElement = document.querySelector('.popover');
+        if (popoverElement) {
+            popoverElement.closest('.popover')?.remove();
+        }
     }
 }

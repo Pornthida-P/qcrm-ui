@@ -16,7 +16,10 @@ export class ProfileComponent implements OnInit {
     @Input() mode?: 'view' | 'edit' | 'add';
     @Input() isShowToolbar?: boolean = false;
     @Input() isBackground?: boolean = true;
-    @Output() deleteUserId: EventEmitter<string> = new EventEmitter<string>();
+
+    @Output() deleteUserId: EventEmitter<User> = new EventEmitter<User>();
+    @Output() editUserId: EventEmitter<User> = new EventEmitter<User>();
+    @Output() viewUserId: EventEmitter<User> = new EventEmitter<User>();
 
     userData?: User | null;
     isAction: boolean = false;
@@ -50,20 +53,18 @@ export class ProfileComponent implements OnInit {
         });
     }
 
-    onClickView(member: User | undefined) {
+    onClickView(member: User) {
+        this.viewUserId.emit(member);
         this.modalUserService.openDialog('view', member);
     }
 
-    onClickEdit(member: User | undefined) {
+    onClickEdit(member: User) {
+        this.editUserId.emit(member);
         this.modalUserService.openDialog('edit', member);
     }
 
-    onClickDelete(member: User | undefined) {
-        if (member?.userId) {
-            this.deleteUserId.emit(member.userId);
-        } else {
-            this.sweetAlertService.getSwal('warning', 'Warning Member', 'User ID is not found please try again.', false, '');
-        }
+    onClickDelete(member: User) {
+        this.deleteUserId.emit(member);
     }
 
     getStatusOnline(userId?: string): boolean {
