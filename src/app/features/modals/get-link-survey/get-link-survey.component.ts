@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SafeUrl } from '@angular/platform-browser';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { SurveyFormService } from 'src/app/services/survey-form/survey-form.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
     selector: 'app-get-link-survey',
@@ -17,6 +18,7 @@ export class GetLinkSurveyComponent {
     formId: any;
     surveyForm: any;
     formName: string = '';
+    subPath: string = environment.subPath;
 
     constructor(
         private surveyFormService: SurveyFormService,
@@ -24,10 +26,9 @@ export class GetLinkSurveyComponent {
         @Inject(MAT_DIALOG_DATA) public data: { surveyFormId?: string },
     ) {
         const baseUrl = window.location.origin;
-        this.url = baseUrl + '/survey?key1=' + data.surveyFormId;
+        this.url = baseUrl + this.subPath + '/survey?key1=' + data.surveyFormId;
         this.formId = data?.surveyFormId;
         this.getForm();
-        console.log(this.url);
     }
 
     ngOnInit(): void {}
