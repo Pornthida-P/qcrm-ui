@@ -104,6 +104,7 @@ export class CallComponent implements OnInit {
     sortIcon: string = '';
     checkedValues: any;
     selectValue: number[] = [];
+    call_id: any;
 
     constructor(
         private callService: CallService,
@@ -257,14 +258,26 @@ export class CallComponent implements OnInit {
 
     deleteSelectForm() {}
 
-    selectCheckbox(event: any, callId: number): void {
-        if (event.target.checked) {
-            if (!this.selectValue.includes(callId)) {
-                this.selectValue.push(callId);
-            }
-        } else {
-            this.selectValue = this.selectValue.filter((id: number) => id !== callId);
-        }
-        // console.log('this.selectValue', this.selectValue);
-    }
+    selectCheckbox(callId: number): void {
+      if (this.selectValue.includes(callId)) {
+          this.selectValue = this.selectValue.filter((id) => id !== callId);
+      } else {
+          this.selectValue.push(callId);
+      }
+  }
+
+  checkAll(ev: any) {
+      this.calls.forEach((x: any) => {
+          x.state = ev.target.checked;
+          if (ev.target.checked) {
+              this.selectValue.push(x.call_id);
+          } else {
+              this.selectValue = [];
+          }
+      });
+  }
+
+  isAllChecked() {
+      return this.calls && this.calls.every((_: any) => _.state);
+  }
 }
