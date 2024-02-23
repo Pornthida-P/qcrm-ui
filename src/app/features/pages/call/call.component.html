@@ -46,14 +46,14 @@
                 >
                     <i class="fa-solid fa-file"></i>
                 </button>
-                <button
+                <!-- <button
                     class="d-flex align-items-center d-md-none d-lg-flex rounded p-2 text-white btn btn-danger"
                     (click)="deleteSelectForm()"
                     placement="top"
                     ngbTooltip="ลบ"
                 >
                     <i class="fa-solid fa-trash"></i>
-                </button>
+                </button> -->
             </div>
         </div>
         <div>
@@ -76,7 +76,7 @@
                             <th scope="col" style="width: 18%">รายละเอียด</th>
                             <th scope="col" style="width: 16%">แนวทางการแก้ไข</th>
                             <th scope="col" style="width: 15%">ผู้ที่รับผิดชอบ</th>
-                            <th scope="col">จัดการ</th>
+                            <!-- <th scope="col">จัดการ</th> -->
                         </tr>
                     </thead>
                     <tbody>
@@ -122,17 +122,16 @@
                                     </div>
                                 </td>
                                 <td>{{ calls.modified }}</td>
-
-                                <td class="text-center" scope="row">
+                                <!-- <td class="text-center" scope="row">
                                     <div class="d-flex flex-row flex-nowrap">
-                                        <!-- <div class="me-3 color-primary cursor-pointer" placement="top" ngbTooltip="แก้ไข" (click)="editPage()">
+                                        <div class="me-3 color-primary cursor-pointer" placement="top" ngbTooltip="แก้ไข" (click)="editPage()">
                                           <i class="fa-solid fa-pen-to-square"></i>
-                                      </div> -->
-                                        <div class="color-red cursor-pointer" placement="top" ngbTooltip="ลบ" (click)="deleteCall()">
+                                      </div>
+                                        <div class="color-red cursor-pointer" placement="top" ngbTooltip="ลบ" (click)="deleteCall(calls.call_id)">
                                             <i class="fa-solid fa-trash"></i>
                                         </div>
                                     </div>
-                                </td>
+                                </td> -->
                             </tr>
                         </ng-container>
                         <ng-template #noDataTemplate>
