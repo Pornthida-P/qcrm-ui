@@ -81,10 +81,10 @@
                                 <a (click)="sort('contact_type')">ประเภทผู้ประกอบการ</a><i *ngIf="sortId == 'contact_type'" class="{{ sortIcon }}"></i>
                             </th>
                             <th style="width: 12.5%" scope="col">
-                                <a (click)="sort('organization')">ร้านค้า/บริษัท</a><i *ngIf="sortId == 'createById'" class="{{ sortIcon }}"></i>
+                                <a (click)="sort('organization')">ร้านค้า/บริษัท</a><i *ngIf="sortId == 'organization'" class="{{ sortIcon }}"></i>
                             </th>
                             <th style="width: 12.5%" scope="col">
-                                <a (click)="sort('email')">อีเมล์</a><i *ngIf="sortId == 'createById'" class="{{ sortIcon }}"></i>
+                                <a (click)="sort('email')">อีเมล์</a><i *ngIf="sortId == 'email'" class="{{ sortIcon }}"></i>
                             </th>
                             <th style="width: 12.5%" scope="col">
                                 <a (click)="sort('contactNumber')">เบอร์ติดต่อ</a><i *ngIf="sortId == 'contactNumber'" class="{{ sortIcon }}"></i>
@@ -208,15 +208,6 @@
                         <div class="d-flex justify-content-end">
                             <div class="d-flex flex-wrap">
                                 <div
-                                    class="flex-grow-1 me-2"
-                                    type="button"
-                                    (click)="getLink(detailItem)"
-                                    placement="bottom"
-                                    ngbTooltip="คัดลอกลิ้งค์"
-                                >
-                                    <fa-icon class="color-primary" [icon]="faClipboard" size="lg"></fa-icon>
-                                </div>
-                                <div
                                     class="flex-grow-1"
                                     type="button"
                                     (click)="edit(detailItem)"
@@ -247,22 +238,40 @@
                     <div class="p-5 shadow call-side-change-by">
                         <div class="row row-side">
                             <div class="col">
+                                <h5>ร้านค้า/บริษัท</h5>
+                                <p class="m-0">{{ detailItem?.organization || emptyItem }}</p>
+                            </div>
+                            <div class="col">
+                                <h5>ประเภทผู้ประกอบการ</h5>
+                                <p class="m-0">{{ detailItem?.contact_type || emptyItem }}</p>
+                            </div>
+                        </div>
+                        <div class="row row-side">
+                            <div class="col">
+                                <h5>จังหวัด</h5>
+                                <div>{{ detailItem?.province || emptyItem }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-5 shadow call-side-change-by">
+                        <div class="row row-side">
+                            <div class="col">
                                 <h5>สร้างโดยผู้ใช้</h5>
-                                <p class="m-0">{{ detailItem?.createdBy || emptyItem }}</p>
+                                <p class="m-0">{{ detailItem?.create_by || emptyItem }}</p>
                             </div>
                             <div class="col">
                                 <h5>เวลาที่แก้ไข</h5>
-                                <p class="m-0">{{ (detailItem?.createdAt | date : 'dd/MM/yyyy  HH:mm') || emptyItem }}</p>
+                                <p class="m-0">{{ (detailItem?.created_at | date : 'dd/MM/yyyy  HH:mm') || emptyItem }}</p>
                             </div>
                         </div>
                         <div class="row row-side">
                             <div class="col">
                                 <h5>แก้ไขล่าสุดโดยผู้ใช้</h5>
-                                <div>{{ detailItem?.modifiedBy || emptyItem }}</div>
+                                <div>{{ detailItem?.modified_by || emptyItem }}</div>
                             </div>
                             <div class="col">
                                 <h5>เวลาที่แก้ไขล่าสุด</h5>
-                                <div>{{ (detailItem?.modifiedAt | date : 'dd/MM/yyyy  HH:mm') || emptyItem }}</div>
+                                <div>{{ (detailItem?.modified_at | date : 'dd/MM/yyyy  HH:mm') || emptyItem }}</div>
                             </div>
                         </div>
                     </div>
