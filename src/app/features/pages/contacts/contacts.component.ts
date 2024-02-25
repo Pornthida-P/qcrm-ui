@@ -1,66 +1,348 @@
-import { Component } from '@angular/core';
-import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { catchError, throwError } from 'rxjs';
-import { ContactService } from 'src/app/services/contact/contact.service';
+import { Component, OnInit } from '@angular/core';
+import { faArrowLeft, faArrowRight, faPenToSquare, faTrashCan, faCircleXmark, faEye, faClipboard } from '@fortawesome/free-solid-svg-icons';
+import { ActivatedRoute, Router } from '@angular/router';
+import { config } from 'src/app/config/config';
+import * as XLSX from 'xlsx';
+import { ContactsService } from 'src/app/services/contacts/contacts.service';
+import { catchError, tap } from 'rxjs';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
+import Swal from 'sweetalert2';
+import { Clipboard } from '@angular/cdk/clipboard';
 
 @Component({
     selector: 'app-contacts',
     templateUrl: './contacts.component.html',
     styleUrls: ['./contacts.component.scss'],
 })
-export class ContactsComponent {
-    title: string = 'ฐานข้อมูลผู้ติดต่อ';
-    value: string | undefined;
+export class ContactsComponent implements OnInit {
+    contacts!: any;
+    spareContacts!: any;
+    selectedContacts: any = [];
+    valueSearch!: string;
+    checkedValues: string[] = [];
+
     filterOption!: any[];
     selectedFilter: any | undefined;
-    item: any[] = [];
-    selectedSurvey: any | undefined;
+    selectedContact: any | undefined;
+
+    fileType: string = config.file.type;
 
     faPenToSquare = faPenToSquare;
-    faTrash = faTrash;
+    faTrashCan = faTrashCan;
+    faArrowRight = faArrowRight;
+    faArrowLeft = faArrowLeft;
+    faCircleXmark = faCircleXmark;
+    faEye = faEye;
+    faClipboard = faClipboard;
 
-    pageSize = 10;
     pageSizeOptions = [10, 20];
-    totalPage = 0;
-    firstItem = 1;
-    lastItem = 10;
+    pageSize = 10;
+    currentPage = 1;
+    totalItems = 0;
+    totalPages = 0;
+    pagesToShow = 3;
 
-    constructor(private contactServices: ContactService, private sweetalertServices: SweetAlertService) {}
+    visibleRightSideBar: boolean = true;
+    visibleLeftSideBar: boolean = true;
+    detailItem: any = undefined;
+    emptyItem: String = 'ว่าง';
+    itemIdex: number = 0;
+    sideBarItemIndex: number = 0;
+
+    sortId: string = 'a.createdAt';
+    sortOrder: string = 'DESC';
+    sortIcon: string = '';
+
+    userData: any = JSON.parse(localStorage.getItem('userData') || '{}');
+    userRole: string = '';
+    userId: string = '';
+    roleCanAccessCUDForm: string[] = config.roleCanAccessCUDForm;
+    url: string = '';
+
+    constructor(
+        private router: Router,
+        private contactsService: ContactsService,
+        private activeRoute: ActivatedRoute,
+        private sweetalertServices: SweetAlertService,
+        private clipboard: Clipboard,
+    ) {}
 
     ngOnInit() {
+        this.userRole = this.userData.role.roleTitle.toLocaleLowerCase();
         this.filterOption = [
             { name: 'ทั้งหมด', code: 'all' },
-            { name: 'Only My', code: 'me' },
+            { name: 'Only My', code: this.userData.username },
         ];
-        this.selectedFilter = this.filterOption[0];
-        this.findByPage(this.firstItem, this.pageSize);
+        this.activeRoute.queryParams.subscribe((params) => {
+            if (params['cb'] != undefined && params['cb'] != '') {
+                const cbArray = params['cb'].split(',').map(Number);
+                this.pageSize = cbArray[0];
+                this.currentPage = cbArray[1];
+                this.totalItems = cbArray[2];
+                this.totalPages = cbArray[3];
+            }
+        });
+        this.selectedFilter = this.filterOption[0].code;
+        if (this.selectedFilter !== 'all') {
+            this.userId = this.userData.userId;
+        }
+        this.getContacts((this.currentPage - 1) * this.pageSize, this.pageSize);
         this.getPage();
     }
 
-    async findByPage(page: number, offset: number) {
-        this.item = await this.contactServices
-            .findByPage(page, offset)
-            .pipe(
-                catchError((error) => {
-                    this.sweetalertServices.handleError(error);
-                    throw error;
-                }),
-            )
-            .toPromise();
+    checkRole(): boolean {
+        return this.roleCanAccessCUDForm.includes(this.userRole);
+    }
+
+    updateCheckedValues(contactId: string): void {
+        if (this.checkedValues.includes(contactId)) {
+            this.checkedValues = this.checkedValues.filter((id) => id !== contactId);
+        } else {
+            this.checkedValues.push(contactId);
+        }
+    }
+
+    checkAll(ev: any) {
+        this.contacts.forEach((x: any) => {
+            x.state = ev.target.checked;
+            if (ev.target.checked) {
+                this.checkedValues.push(x.contactId);
+            } else {
+                this.checkedValues = [];
+            }
+        });
+    }
+
+    isAllChecked() {
+        return this.contacts && this.contacts.every((_: any) => _.state);
+    }
+
+    async getContacts(page: number, pageSize: number) {
+        await this.contactsService
+            .getContactsByPage(page, pageSize, `${this.sortId},${this.sortOrder}`, this.valueSearch, this.selectedFilter)
+            .subscribe((res: any) => {
+                this.contacts = res;
+                this.spareContacts = res;
+                console.log('contacts', this.contacts);
+            });
+    }
+
+    async getContactsSideBar(page: number, pageSize: number, value: string) {
+        await this.contactsService
+            .getContactsByPage(page, pageSize, `${this.sortId},${this.sortOrder}`, this.valueSearch, this.selectedFilter)
+            .subscribe((res: any) => {
+                this.contacts = res;
+            })
+            .add(() => {
+                if (value == 'right') this.showSideBar(0, this.contacts[0].contactId);
+                else if (value == 'left') this.showSideBar(this.pageSize - 1, this.contacts[this.pageSize - 1].contactId);
+            });
     }
 
     async getPage() {
-        const item = await this.contactServices.countAllItem().toPromise();
-        this.totalPage = item.totalPage;
+        await this.contactsService.countContacts(this.valueSearch, this.userId).subscribe((res: any) => {
+            this.totalItems = res.count;
+        });
     }
 
-    async pageChange(event: any): Promise<void> {
-        if (!(this.firstItem == event.first && this.lastItem && event.first + event.rows && this.pageSize == event.rows)) {
-            this.firstItem = event.first;
-            this.lastItem = event.first + event.rows;
-            this.pageSize = event.rows;
-            await this.findByPage(event.first, event.rows);
+    get pages(): number[] {
+        var page: number[] = [];
+        this.totalPages = Math.ceil(this.totalItems / this.pageSize);
+        for (var i = -this.pagesToShow; i <= this.pagesToShow; i++) {
+            if (this.currentPage + i > 0 && this.currentPage + i <= this.totalPages) {
+                page.push(this.currentPage + i);
+            }
+        }
+        return page;
+    }
+
+    async pageChange(page: number) {
+        if (page != this.currentPage) {
+            if (page >= 1 && page <= this.totalPages) {
+                this.currentPage = page;
+                await this.getContacts((this.currentPage - 1) * this.pageSize, this.pageSize);
+                this.checkedValues = [];
+            }
+        }
+    }
+
+    pageChangeSideBar(page: number, value: string): void {
+        if (page != this.currentPage) {
+            if (page >= 1 && page <= this.totalPages) {
+                this.currentPage = page;
+                this.getContactsSideBar((this.currentPage - 1) * this.pageSize, this.pageSize, value);
+            }
+        }
+    }
+
+    pageSizeChange() {
+        this.currentPage = 1;
+        this.getContacts((this.currentPage - 1) * this.pageSize, this.pageSize);
+    }
+
+    showSideBar(value: number, itemId: string) {
+        this.itemIdex = value;
+        this.detailItem = this.contacts.find((contact: any) => contact.contactId == itemId);
+        this.sideBarItemIndex = this.contacts.findIndex((contact: any) => contact.contactId == itemId);
+        this.visibleLeftSideBar = true;
+        this.visibleRightSideBar = true;
+        if (this.itemIdex == 0 && this.currentPage == 1) this.visibleLeftSideBar = false;
+        if (this.itemIdex == this.contacts.length - 1) this.visibleRightSideBar = false;
+        if (this.itemIdex == this.contacts.length - 1 && this.currentPage == this.totalPages) this.visibleRightSideBar = false;
+    }
+
+    sort(value: string) {
+        if (this.sortId == value) {
+            if (this.sortIcon == 'fa-solid fa-sort-down') {
+                this.sortIcon = 'fa-solid fa-sort-up';
+                this.sortOrder = 'DESC';
+            } else {
+                this.sortIcon = 'fa-solid fa-sort-down';
+                this.sortOrder = 'ASC';
+            }
+        } else {
+            this.sortId = value;
+        }
+        this.getContacts((this.currentPage - 1) * this.pageSize, this.pageSize);
+    }
+
+    async changeSideBar(value: string) {
+        if (value == 'right') {
+            if (this.itemIdex >= this.pageSize - 1) {
+                await this.pageChangeSideBar(this.currentPage + 1, value);
+            } else {
+                if (this.itemIdex != this.contacts.length - 1) {
+                    this.showSideBar(this.itemIdex + 1, this.contacts[this.sideBarItemIndex + 1].contactId);
+                }
+            }
+        } else if (value == 'left') {
+            if (this.itemIdex == 0) {
+                await this.pageChangeSideBar(this.currentPage - 1, value);
+            } else {
+                this.showSideBar(this.itemIdex - 1, this.contacts[this.sideBarItemIndex - 1].contactId);
+            }
+        }
+    }
+
+    edit(item: any) {
+        const cb = `${this.pageSize},${this.currentPage},${this.totalItems},${this.totalPages}`;
+        this.router.navigate(['/contacts/edit'], { queryParams: { key: item.contactId, cb: cb } });
+    }
+
+    deletecontacts(id: string) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Do you want to delete this contact?',
+            showCancelButton: true,
+            confirmButtonColor: '#3066be',
+            cancelButtonColor: '#ec5365',
+            width: '50%',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const data = {
+                    body: [id],
+                };
+                this.contactsService
+                    .deleteContacts(data)
+                    .pipe(
+                        tap((res) => {
+                            this.sweetalertServices.getSwal('success', 'Delete data success.', '', false, '');
+                            window.location.reload();
+                        }),
+                        catchError((error) => {
+                            this.sweetalertServices.handleError(error);
+                            throw error;
+                        }),
+                    )
+                    .subscribe();
+            }
+        });
+    }
+
+    deleteSelectcontacts() {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Do you want to delete this contact?',
+            showCancelButton: true,
+            confirmButtonColor: '#3066be',
+            cancelButtonColor: '#ec5365',
+            width: '50%',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const data = {
+                    body: this.checkedValues,
+                };
+                this.contactsService
+                    .deleteContacts(data)
+                    .pipe(
+                        tap((res) => {
+                            this.sweetalertServices.getSwal('success', 'Delete data success.', '', false, '');
+                            window.location.reload();
+                        }),
+                        catchError((error) => {
+                            this.sweetalertServices.handleError(error);
+                            throw error;
+                        }),
+                    )
+                    .subscribe();
+            }
+        });
+    }
+
+    contactsManage() {
+        this.router.navigate(['/contacts/new']);
+    }
+
+    exportExcel() {
+        if (this.checkedValues.length != 0) {
+            this.selectedContacts = this.contacts.filter((contact: any) => this.checkedValues.includes(contact.contactId));
+        }
+
+        if (this.selectedContacts.length != 0) {
+            const processedContacts = this.selectedContacts.reduce(
+                (acc: any, cur: any) => [
+                    ...acc,
+                    {
+                        name: cur.name,
+                        createdAt: cur.createdAt,
+                        createdBy: cur.createdBy,
+                    },
+                ],
+                [],
+            );
+
+            const columns = [['แบบฟอร์มสำรวจ', 'วันที่บันทึก', 'บันทึกโดย']];
+            const wb = XLSX.utils.book_new();
+            const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet([]);
+            XLSX.utils.sheet_add_aoa(ws, columns);
+
+            XLSX.utils.sheet_add_json(ws, processedContacts, { origin: 'A2', skipHeader: true });
+
+            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+            XLSX.writeFile(wb, `แบบฟอร์มสำรวจ${this.fileType}`);
+        }
+    }
+
+    search() {
+        if (this.selectedFilter !== 'all') {
+            this.userId = this.userData.userId;
+        } else {
+            this.userId = '';
+        }
+        this.getContacts((this.currentPage - 1) * this.pageSize, this.pageSize);
+        this.getPage();
+    }
+
+    getLink(item: any) {
+        const baseUrl = window.location.origin;
+        if (item && item.contactId) {
+            this.url = baseUrl + '/survey?key1=' + item.contactId;
+            this.clipboard.copy(this.url);
+            console.log('Link copied to clipboard: ' + this.url);
+            console.log('Link copied to clipboard: ' + this.clipboard.copy(this.url));
+        } else {
+            console.error('contactId is null or undefined.');
         }
     }
 }

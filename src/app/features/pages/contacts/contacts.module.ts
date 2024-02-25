@@ -4,20 +4,28 @@ import { ContactsComponent } from './contacts.component';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
+import { ContactsService } from 'src/app/services/contacts/contacts.service';
+import { HttpClientModule } from '@angular/common/http';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
     declarations: [ContactsComponent],
     imports: [
         CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        FontAwesomeModule,
         RouterModule.forChild([
             {
                 path: '',
                 component: ContactsComponent,
             },
         ]),
-        FormsModule,
-        ReactiveFormsModule,
-        FontAwesomeModule,
+        NgbPaginationModule,
+        HttpClientModule,
+        NgbTooltipModule,
     ],
+    providers: [ContactsService],
 })
 export class ContactsModule {}
