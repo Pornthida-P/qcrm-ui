@@ -52,6 +52,11 @@ export const config = {
                 find: '/find',
                 count: '/count',
             },
+            contacts: {
+                baseUrl: '/contact',
+                find: '/find',
+                count: '/count',
+            },
             call: {
                 url: '/call',
                 count: '/count',
