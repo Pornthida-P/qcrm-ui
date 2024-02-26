@@ -16,8 +16,26 @@ const routes: Routes = [
             },
             {
                 path: 'contacts',
-                loadChildren: () => import('../../pages/contacts/contacts.module').then((m) => m.ContactsModule),
-                title: 'Contacts',
+                children: [
+                    {
+                        path: '',
+                        loadChildren: () => import('../../pages/contacts/contacts.module').then((m) => m.ContactsModule),
+                        title: 'Contacts',
+                    },
+                    {
+                        path: 'new',
+                        loadChildren: () =>
+                            import('../../pages/manage-contacts/manage-contacts.module').then((m) => m.ManageContactsModule),
+                        title: 'New Contacts',
+                    },
+                    {
+                        path: 'edit',
+                        loadChildren: () =>
+                            import('../../pages/manage-contacts/manage-contacts.module').then((m) => m.ManageContactsModule),
+                        title: 'Edit Contacts',
+                    },
+                ],
+                
             },
             {
                 path: 'surveyform',

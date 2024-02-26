@@ -38,6 +38,10 @@ export class ContactsService {
         return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}${config.api.path.contacts.find}/${id}`);
     }
 
+    getAllOrganization() {
+        return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}/organization`);
+    }
+
     countContacts(searchText: string, createdById: string) {
         if (searchText == '' || searchText == null) {
             searchText = 'undefined';
