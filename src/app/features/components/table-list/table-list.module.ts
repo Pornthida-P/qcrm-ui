@@ -7,6 +7,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
     declarations: [TableListComponent],
@@ -16,6 +17,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
         MatTableModule,
         FormsModule,
         ReactiveFormsModule,
+        NgbTooltip,
         MatSelectModule,
         MatMenuModule,
         MatPaginatorModule,

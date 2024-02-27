@@ -2,12 +2,39 @@
     <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
         <th mat-header-cell *matHeaderCellDef class="fs-6 fw-bolder">{{ column }}</th>
         <td mat-cell *matCellDef="let element">
-            <ng-container *ngIf="includesDate.includes(column); else other">
-                {{ element[column] | date : 'dd/MM/yyyy HH:mm:ss' }}
+            <ng-container [ngSwitch]="true">
+                <ng-container *ngSwitchCase="includesProfile.includes(column)">
+                    <div class="col-auto">
+                        <div class="position-relative m-auto">
+                            <div class="profile-container">
+                                <img class="profile-image" [src]="element[column]" (error)="handleProfileError($event)" #imageElement />
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="includesStatus.includes(column)">
+                    <div class="dot">
+                        <div
+                            class="dot-inner dot-status"
+                            [ngbTooltip]="getStatusOnline(element.userId) ? 'Online' : 'Offline'"
+                            [class.dot-status-online]="getStatusOnline(element.userId)"
+                        ></div>
+                    </div>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="includesDate.includes(column)">
+                    {{ element[column] | date : 'dd/MM/yyyy HH:mm:ss' }}
+                </ng-container>
+
+                <ng-container *ngSwitchCase="includesRole.includes(column)">
+                    {{ element[column].roleTitle }}
+                </ng-container>
+
+                <ng-container *ngSwitchDefault>
+                    {{ element[column] }}
+                </ng-container>
             </ng-container>
-            <ng-template #other>
-                {{ element[column] }}
-            </ng-template>
         </td>
     </ng-container>
 

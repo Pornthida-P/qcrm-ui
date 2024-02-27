@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } 
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { faEdit, faEye, faGear, faTrash, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
 
 @Component({
     selector: 'app-table-list',
@@ -20,14 +21,19 @@ export class TableListComponent implements OnInit, OnChanges {
     @Output() edit: EventEmitter<any> = new EventEmitter<any>();
     @Output() delete: EventEmitter<any> = new EventEmitter<any>();
 
-    includesDate: string[] = ['createdAt', 'modityAt', 'startDate', 'endDate'];
+    includesDate: string[] = ['createdAt', 'modityAt', 'lastLogin', 'startDate', 'endDate'];
+    includesRole: string[] = ['role'];
+    includesProfile: string[] = ['profile'];
+    includesStatus: string[] = ['isActive'];
 
     faGear = faGear;
     faEye = faEye;
     faEdit = faEdit;
     faTrash = faTrash;
 
-    constructor() {}
+    profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
+
+    constructor(private socketIO: SocketIoService) {}
 
     ngOnInit(): void {}
 
@@ -48,5 +54,15 @@ export class TableListComponent implements OnInit, OnChanges {
 
     onClickDelete(element: any): void {
         this.delete.emit(element);
+    }
+
+    handleProfileError(event: any) {
+        if (event) {
+            event.target.src = this.profileError;
+        }
+    }
+
+    getStatusOnline(userId?: string): boolean {
+        return this.socketIO.getStatusOnline(userId);
     }
 }
