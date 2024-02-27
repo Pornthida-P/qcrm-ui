@@ -22,6 +22,7 @@ export const config = {
                 updateGroup: '/user/update-group',
                 updatePassword: '/user/update-password',
                 uploadProfileImage: '/user/upload-profile-image',
+                deleteUser: '/user/delete',
                 deleteGroup: '/user/delete-group/',
             },
             announcement: {
