@@ -30,6 +30,10 @@ export class HomePageComponent implements OnInit {
         this.calendarService.onRefrashTag().subscribe(() => {
             this.findAllTag();
         });
+
+        this.calendarService.onRefreshData().subscribe(() => {
+            this.findEventByTagId(this.onSelectTag?.tagId);
+        });
     }
 
     findAllTag(): void {

@@ -96,7 +96,11 @@ export class UserService {
     }
 
     addUser(userData: User): Observable<any> {
-        return this.http.post(`${this.baseUrl}${config.api.path.user.add}`, userData);
+        return this.http.post(`${this.baseUrl}${config.api.path.user.add}`, userData).pipe(
+            tap(() => {
+                this.memberSubject.next();
+            }),
+        );
     }
 
     updateUser(userData: User): Observable<any> {
@@ -125,6 +129,14 @@ export class UserService {
         return this.http.post(`${this.baseUrl}${config.api.path.user.updateGroup}`, form).pipe(
             tap(() => {
                 this.groupSubject.next();
+            }),
+        );
+    }
+
+    deleteUser(userId: string): Observable<any> {
+        return this.http.post(`${this.baseUrl}${config.api.path.user.deleteUser}`, { userId: userId }).pipe(
+            tap(() => {
+                this.memberSubject.next();
             }),
         );
     }
