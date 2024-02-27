@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import {
     faArrowUpShortWide,
     faArrowUpWideShort,
@@ -18,7 +18,7 @@ import { User } from 'src/app/shared/interface/user.interface';
     templateUrl: './card-event-list.component.html',
     styleUrl: './card-event-list.component.scss',
 })
-export class CardEventListComponent implements OnInit {
+export class CardEventListComponent implements OnInit, OnChanges {
     @Input() events: CalendarEvent[] = [];
     @Input() title?: string = '';
 
@@ -45,6 +45,8 @@ export class CardEventListComponent implements OnInit {
         this.initzation();
     }
 
+    ngOnChanges(changes: SimpleChanges): void {}
+
     initzation() {
         this.findAllMembers();
         this.getUserData();
@@ -60,10 +62,6 @@ export class CardEventListComponent implements OnInit {
     findAllMembers() {
         this.userService.getAllUser().subscribe((members: User[]) => {
             this.members = members;
-
-            members.forEach((member) => {
-                this.selectedMembers.push(member.userId);
-            });
         });
     }
 
@@ -124,6 +122,10 @@ export class CardEventListComponent implements OnInit {
                     const lastDayOfYear = new Date(currentDate.getFullYear(), 11, 31);
                     startDate = new Date(firstDayOfYear.getFullYear(), firstDayOfYear.getMonth(), firstDayOfYear.getDate(), 0, 0, 0);
                     endDate = new Date(lastDayOfYear.getFullYear(), lastDayOfYear.getMonth(), lastDayOfYear.getDate(), 23, 59, 59);
+                    break;
+                case 'all':
+                    startDate = new Date(0);
+                    endDate = new Date();
                     break;
                 default:
                     console.error('Invalid selectedDate value');
