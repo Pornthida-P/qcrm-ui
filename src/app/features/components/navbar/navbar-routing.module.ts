@@ -92,6 +92,11 @@ const routes: Routes = [
                 title: 'Announcement',
             },
             {
+                path: 'report-page',
+                loadChildren: () => import('../../pages/report-page/report-page.module').then((m) => m.ReportPageModule),
+                title: 'Report',
+            },
+            {
                 path: 'setting',
                 loadChildren: () => import('../../pages/setting/setting.module').then((m) => m.SettingModule),
                 title: 'Products',

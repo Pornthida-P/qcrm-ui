@@ -9,7 +9,7 @@
             <input type="text" class="form-control" placeholder="ค้นหา" #inputSearch (input)="onSearch(inputSearch.value)" />
         </div>
         <div class="col-auto">
-            <button type="button" class="btn btn-primary-color text-white" (click)="onClickAdd()">
+            <button type="button" *ngIf="isAction" class="btn btn-primary-color text-white" (click)="onClickAdd()">
                 <div class="d-flex gap-1">
                     <fa-icon [icon]="faPlusCircle"></fa-icon>
                     <p class="label">เพิ่ม</p>
