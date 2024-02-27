@@ -250,65 +250,35 @@ export class CallComponent implements OnInit {
         });
     }
 
-  //   deleteForm(id: string) {
-  //     Swal.fire({
-  //         icon: 'warning',
-  //         title: 'Do you want to delete this form?',
-  //         showCancelButton: true,
-  //         confirmButtonColor: '#3066be',
-  //         cancelButtonColor: '#ec5365',
-  //         width: '50%',
-  //     }).then((result) => {
-  //         if (result.isConfirmed) {
-  //             const data = {
-  //                 body: [id],
-  //             };
-  //             this.surveyFormService
-  //                 .deleteSurveyForm(data)
-  //                 .pipe(
-  //                     tap((res) => {
-  //                         this.sweetalertServices.getSwal('success', 'Delete data success.', '', false, '');
-  //                         window.location.reload();
-  //                     }),
-  //                     catchError((error) => {
-  //                         this.sweetalertServices.handleError(error);
-  //                         throw error;
-  //                     }),
-  //                 )
-  //                 .subscribe();
-  //         }
-  //     });
-  // }
-
-    deleteCall(id: string) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Do you want to delete this call ?',
-        showCancelButton: true,
-        confirmButtonColor: '#3066be',
-        cancelButtonColor: '#ec5365',
-        width: '50%',
-    }).then((result) => {
-        if (result.isConfirmed) {
-            const data = {
-                body: [id],
-            };
-            this.callService
-                .deleteCalls(data)
-                .pipe(
-                    tap((res) => {
-                        this.sweetAlertService.getSwal('success', 'Delete data success.', '', false, '');
-                        window.location.reload();
-                    }),
-                    catchError((error) => {
-                        this.sweetAlertService.handleError(error);
-                        throw error;
-                    }),
-                )
-                .subscribe();
-        }
-    });
-    }
+    // deleteCall(id: string) {
+    //   Swal.fire({
+    //     icon: 'warning',
+    //     title: 'Do you want to delete this call ?',
+    //     showCancelButton: true,
+    //     confirmButtonColor: '#3066be',
+    //     cancelButtonColor: '#ec5365',
+    //     width: '50%',
+    // }).then((result) => {
+    //     if (result.isConfirmed) {
+    //         const data = {
+    //             body: [id],
+    //         };
+    //         this.callService
+    //             .deleteCalls(data)
+    //             .pipe(
+    //                 tap((res) => {
+    //                     this.sweetAlertService.getSwal('success', 'Delete data success.', '', false, '');
+    //                     window.location.reload();
+    //                 }),
+    //                 catchError((error) => {
+    //                     this.sweetAlertService.handleError(error);
+    //                     throw error;
+    //                 }),
+    //             )
+    //             .subscribe();
+    //     }
+    // });
+    // }
 
     exportExcel() {
       if (this.selectValue.length != 0) {

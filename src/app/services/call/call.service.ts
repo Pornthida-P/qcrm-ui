@@ -20,9 +20,9 @@ export class CallService {
     return this.http.get(`${this.baseUrl}${config.api.path.call.url}/${page}/${limit}/${sortId}`);
 }
 
-getCallsCount() {
-  return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.count}`)
-}
+  getCallsCount() {
+    return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.count}`)
+  }
 
   // getCalls(page: number, pageSize: number): Observable<any> {
   //   return of([
