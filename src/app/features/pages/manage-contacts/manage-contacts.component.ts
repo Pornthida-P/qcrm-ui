@@ -92,10 +92,10 @@ export class ManageContactsComponent implements OnInit {
 
     submit() {
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-        if (userData && this.contactId && this.contactId !== '' && this.contact.components.length > 1) {
+        // if (userData && this.contactId && this.contactId !== '' && this.contact.components.length > 1) {
             if (this.detailItem && this.state != 'copy') {
                 const data = {
-                    contactId: this.detailItem.contactId,
+                    contactId: this.contactId,
                     firstName: this.contactFirstName,
                     lastName: this.contactLastName,
                     identification: this.contactIden,
@@ -145,8 +145,8 @@ export class ManageContactsComponent implements OnInit {
                     )
                     .subscribe();
             }
-        } else {
-            this.sweetalertServices.getSwal('error', 'Contact name and contact component cannot be empty.', '', false, '');
-        }
+        // } else {
+        //     this.sweetalertServices.getSwal('error', 'Contact name and contact component cannot be empty.', '', false, '');
+        // }
     }
 }
