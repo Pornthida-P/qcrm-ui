@@ -1,14 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {
-    faBagShopping,
-    faBookOpen,
-    faChartColumn,
-    faComments,
-    faFileLines,
-    faFilePen,
-    faLayerGroup,
-    faPhoneVolume,
-} from '@fortawesome/free-solid-svg-icons';
+import { faChartPie, faFileLines, faFilePen, faHouse, faPhoneVolume } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'app-sidebar',
@@ -24,7 +15,7 @@ export class SidebarComponent implements OnInit {
         this.items = [
             {
                 label: 'หน้าแรก',
-                icon: faChartColumn,
+                icon: faHouse,
                 routerLink: '/home',
             },
             {
@@ -41,6 +32,11 @@ export class SidebarComponent implements OnInit {
                 label: 'ประวัติการโทร',
                 icon: faPhoneVolume,
                 routerLink: '/call',
+            },
+            {
+                label: 'รายงาน',
+                icon: faChartPie,
+                routerLink: '/report-page',
             },
             // {
             //     label: 'หลักสูตร E-Learning',
