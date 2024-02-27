@@ -33,7 +33,9 @@ export class SurveyComponent implements OnInit {
                 this.userId = params['key2'];
             }
         });
-        this.checkExisting();
+        if (this.userId) {
+            this.checkExisting();
+        }
         this.getForm();
     }
 
