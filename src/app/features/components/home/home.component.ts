@@ -36,9 +36,14 @@ export class HomeComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
+        this.initzation();
+    }
+
+    initzation() {
         this.calendarService.onRefreshData().subscribe(() => {
             this.refreshData();
         });
+        this.getUserData();
     }
 
     findAllEvents() {

@@ -3,7 +3,7 @@
         <div class="col-12 mb-3">
             <div class="d-flex justify-content-between align-items-center">
                 <p class="label fs-5">{{ title }}</p>
-                <button *ngIf="!isAction" type="button" class="btn btn-primary-color text-white" (click)="onClickAddEvent()">
+                <button *ngIf="isAction" type="button" class="btn btn-primary-color text-white" (click)="onClickAddEvent()">
                     <div class="d-flex gap-2">
                         <fa-icon [icon]="faPlus"></fa-icon>
                         <span class="label">เพิ่ม</span>
@@ -14,10 +14,96 @@
     </div>
     <div class="col-12">
         <div class="container px-5 py-3">
-            <div class="row">
+            <div class="row gap-3">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col">
+                            <input type="text" class="form-control" placeholder="ค้นหา" [(ngModel)]="isFilterSearch" />
+                        </div>
+
+                        <div class="col-auto">
+                            <select class="form-select" [(ngModel)]="selectedDate" (change)="onSelectDateChange(selectedDate)">
+                                <option value="day">1 วัน</option>
+                                <option value="week">1 สัปดาห์</option>
+                                <option value="month">1 เดือน</option>
+                                <option value="year">1 ปี</option>
+                            </select>
+                        </div>
+
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-primary-color text-white" (click)="(onClickFilterAttachment)">
+                                <div class="d-flex align-items-center gap-1">
+                                    <input
+                                        class="form-check-input m-0 cursor-pointer"
+                                        type="checkbox"
+                                        id="checkbox-attachment"
+                                        [(ngModel)]="isFilterAttachment"
+                                    />
+                                    <p class="label">มีไฟล์แนบ</p>
+                                </div>
+                            </button>
+                        </div>
+
+                        <div class="col-auto">
+                            <div class="dropdown">
+                                <button
+                                    class="btn btn-primary dropdown-toggle"
+                                    type="button"
+                                    id="dropdownMenuButton"
+                                    data-bs-toggle="dropdown"
+                                    aria-haspopup="true"
+                                    aria-expanded="false"
+                                >
+                                    <fa-icon [icon]="faUser"></fa-icon>
+                                </button>
+                                <div class="dropdown-menu p-3" aria-labelledby="dropdownMenuButton">
+                                    <div class="form-check" *ngFor="let member of members">
+                                        <input
+                                            class="form-check-input cursor-pointer"
+                                            type="checkbox"
+                                            id="checkbox-{{ member.userId }}"
+                                            [checked]="selectedMembers.includes(member.userId)"
+                                            (change)="onMemberCheckboxChange(member.userId)"
+                                        />
+                                        <label class="form-check-label cursor-default" for="checkbox-{{ member.userId }}">{{
+                                            member.username
+                                        }}</label>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        class="btn btn-primary-color text-white w-100 mt-1"
+                                        (click)="onClickSaveFilterMember()"
+                                    >
+                                        บันทึก
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-primary-color text-white" (click)="onClickSort()">
+                                <div class="d-flex gap-1">
+                                    <div [ngSwitch]="isFilterSort">
+                                        <div *ngSwitchCase="'desc'">
+                                            <fa-icon [icon]="faArrowUpShortWide"></fa-icon>
+                                        </div>
+                                        <div *ngSwitchCase="'asc'">
+                                            <fa-icon [icon]="faArrowUpWideShort"></fa-icon>
+                                        </div>
+                                        <div *ngSwitchDefault>
+                                            <fa-icon [icon]="faArrowUpWideShort"></fa-icon>
+                                        </div>
+                                    </div>
+                                    <p class="label">เรียงลำดับ</p>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="col-12">
                     <div class="row gap-3">
-                        <div *ngIf="!events || events.length === 0; else eventsContent" class="col-12">
+                        <div *ngIf="getFilteredEvents().length === 0 || !events || events.length === 0; else eventsContent" class="col-12">
                             <div class="card">
                                 <div class="card-body">
                                     <p class="card-text text-center p-5">ไม่มี Event</p>
@@ -25,7 +111,7 @@
                             </div>
                         </div>
                         <ng-template #eventsContent>
-                            <div *ngFor="let event of events" class="col-12">
+                            <div *ngFor="let event of getFilteredEvents()" class="col-12">
                                 <app-calendar-card [event]="event"></app-calendar-card>
                             </div>
                         </ng-template>
