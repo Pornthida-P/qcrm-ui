@@ -38,6 +38,10 @@ export class ContactsService {
         return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}${config.api.path.contacts.find}/${id}`);
     }
 
+    getContactActivities(id: string) {
+        return this.http.get(`${this.baseUrl}/drive/user/activities/${id}`);
+    }
+
     getAllOrganization() {
         return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}/organization`);
     }

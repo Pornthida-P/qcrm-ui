@@ -9,6 +9,20 @@
         <div class="flex flex-column">
             <p class="mb-3 fs-5">ข้อมูลทั่วไป</p>
             <form class="row g-3 mg-3">
+                <form class="mb-3 p-2">
+                    <label for="inputFormName" class="form-label">เลขประจำตัว</label>
+                    <div class="input-group">
+                        <input
+                            type="text"
+                            class="form-control"
+                            [(ngModel)]="contactIden"
+                            name="contactIden"
+                            id="inputContactIden"
+                            [disabled]="!checkRole()"
+                        />
+                        <button type="button" class="btn btn-primary">ค้นหาจาก Drive <i class="fas fa-search"></i></button>
+                    </div>
+                </form>
                 <div class="col-md-6">
                     <label for="inputContactFirstName" class="form-label">ชื่อ</label>
                     <input
@@ -28,17 +42,6 @@
                     [(ngModel)]="contactLastName"
                     name="contactLastName"
                     id="inputContactLastName"
-                    [disabled]="!checkRole()"
-                />
-                </div>
-                <div class="col-md-6">
-                    <label for="inputContactIden" class="form-label">เลขประจำตัว</label>
-                    <input
-                    type="text"
-                    class="form-control"
-                    [(ngModel)]="contactIden"
-                    name="contactIden"
-                    id="inputContactIden"
                     [disabled]="!checkRole()"
                 />
                 </div>
@@ -121,6 +124,125 @@
                 />
                 </div>
             </form>
+        </div>
+        <div class="flex flex-column" *ngIf="TableShowing">
+            <div class="d-flex align-items-center">
+                <p class="mb-3 fs-5">โครงการอบรม/สัมมนา</p>
+            </div>
+            <div class="h-100">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th style="width: 40%">ชื่อ</th>
+                                <th style="width: 10%">เลขที่อ้างอิง</th>
+                                <th style="width: 20%">วันที่เปิดอบรม</th>
+                                <th style="width: 20%">วันที่ปิดอบรม</th>
+                                <th style="width: 10%">ประเภท</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ng-container *ngIf="contactActivities.length > 0; else noDataTemplate">
+                            <tr *ngFor="let activity of contactActivities">
+                                <td>{{ activity.Activity.ActivityNameTH}}</td>
+                                <td>{{ activity.Activity.ActivityID }}</td>
+                                <td>{{ activity.Activity.ActivityStartDate}}</td>
+                                <td>{{ activity.Activity.ActivityEndDate}}</td>
+                                <td>{{ activity.Activity.ActivityType.name }}</td> 
+                            </tr>
+                        </ng-container>
+                        <ng-template #noDataTemplate>
+                            <tr>
+                                <td colspan="9" class="text-center">ไม่มีข้อมูล</td>
+                            </tr>
+                        </ng-template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="flex flex-column" *ngIf="TableShowing">
+            <p class="mb-3 fs-5" style="margin-top: 5%;">ข้อมูลการติดต่อ</p>
+            <div class="h-100">
+                
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 20%">เวลา</th>
+                                    <th style="width: 20%">เบอร์โทร</th>
+                                    <th style="width: 20%">ประเภทสาย</th>
+                                    <th style="width: 20%">เรื่องที่ติดต่อ</th>
+                                    <th style="width: 20%">ผู้ติดต่อ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ng-container *ngIf="contact?.length > 0; else noDataTemplate">
+                                    <tr *ngFor="let contacts of contact; let i = index">
+                                        <td>{{ contacts.fullname }}</td>
+                                        <td>{{ contacts.iden }}</td>
+                                        <td>{{ contacts.contact_type }}</td>
+                                        <td>{{ contacts.organization }}</td>
+                                        <td>{{ contacts.email }}</td>
+                                    </tr>
+                                </ng-container>
+                                <ng-template #noDataTemplate>
+                                    <tr>
+                                        <td colspan="9" class="text-center">ไม่มีข้อมูล</td>
+                                    </tr>
+                                </ng-template>
+                            </tbody>
+                        </table>
+                    </div>
+                
+            </div>
+        </div>
+        <div class="flex flex-column" *ngIf="TableShowing">
+            <div class="d-flex align-items-center" style="margin-top: 5%;">
+                <p class="mb-3 fs-5" >การติดตามและประเมินผลฯ</p>
+                <button class="btn btn-primary ms-2" style="margin-top: -14px;"><i class="fa-solid fa-plus"></i></button>
+            </div>
+            <div class="h-100">
+                
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 30%">แบบฟอร์มสำรวจ</th>
+                                    <th style="width: 30%">ชื่อผู้ติดตามและประเมินผลฯ</th>
+                                    <th style="width: 30%">วันที่เพิ่ม</th>
+                                    <th style="width: 10%">จัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ng-container *ngIf="contact?.length > 0; else noDataTemplate">
+                                    <tr *ngFor="let contacts of contact; let i = index">
+                                        <td>{{ contacts.fullname }}</td>
+                                        <td>{{ contacts.iden }}</td>
+                                        <td>{{ contacts.contact_type }}</td>
+                                        <td>
+                                            <!-- <div class="d-flex flex-row flex-nowrap">
+                                                <div class="me-3 color-primary" placement="top" ngbTooltip="แก้ไข" (click)="edit(contacts)">
+                                                    <i class="fa-solid fa-pen-to-square"></i>
+                                                </div>
+                                                <div class="color-red" placement="top" ngbTooltip="ลบ" (click)="deletecontacts(contacts.contactId)">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </div>
+                                            </div> -->
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                                <ng-template #noDataTemplate>
+                                    <tr>
+                                        <td colspan="9" class="text-center">ไม่มีข้อมูล</td>
+                                    </tr>
+                                </ng-template>
+                            </tbody>
+                        </table>
+                    </div>
+                
+            </div>
         </div>
     </div>
 </div>

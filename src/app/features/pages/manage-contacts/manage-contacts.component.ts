@@ -12,6 +12,7 @@ import { config } from 'src/app/config/config';
 })
 export class ManageContactsComponent implements OnInit {
     organizations: any[] = [];
+    contactActivities: any[] = [];
     contact: any = {};
     contactFirstName: string = '';
     contactLastName: string = '';
@@ -23,12 +24,14 @@ export class ManageContactsComponent implements OnInit {
     contactProvince: string = '';
     contactProductType: string = '';
     contactSource: string = '';
+    activityName: string = '';
     isContactSelected: boolean = false;
     typeContact: string[] = ['addComponent', 'saveComponent'];
     contactId: string = '';
     cb: string = '';
     state: string = '';
     detailItem: any = undefined;
+    TableShowing: boolean = false;
 
     userRole: string = '';
     roleCanAccessCUDForm: string[] = config.roleCanAccessCUDForm;
@@ -63,6 +66,12 @@ export class ManageContactsComponent implements OnInit {
         this.contactsService.getAllOrganization().subscribe((organizations: any) => {
             this.organizations = organizations;
         });
+
+        if (this.contactId) {
+            this.TableShowing = true;
+        } else {
+            this.TableShowing = false;
+        }
     }
 
     checkRole(): boolean {
@@ -82,7 +91,13 @@ export class ManageContactsComponent implements OnInit {
             this.contactProvince = this.detailItem.province;
             this.contactProductType = this.detailItem.product_type;
             this.contactSource = this.detailItem.sourced;
+
+            this.contactsService.getContactActivities(this.contactIden).subscribe((res: any) => {
+                this.contactActivities = res;
+            });
         });
+
+
     }
 
     prev() {
