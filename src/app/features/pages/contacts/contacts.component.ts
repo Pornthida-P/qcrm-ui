@@ -229,7 +229,7 @@ export class ContactsComponent implements OnInit {
         this.router.navigate(['/contacts/edit'], { queryParams: { key: item.contactId, cb: cb } });
     }
 
-    deletecontacts(id: string) {
+    deletecontacts(contactId: string) {
         Swal.fire({
             icon: 'warning',
             title: 'Do you want to delete this contact?',
@@ -240,7 +240,7 @@ export class ContactsComponent implements OnInit {
         }).then((result) => {
             if (result.isConfirmed) {
                 const data = {
-                    body: [id],
+                    body: [contactId],
                 };
                 this.contactsService
                     .deleteContacts(data)
@@ -258,6 +258,7 @@ export class ContactsComponent implements OnInit {
             }
         });
     }
+    
 
     deleteSelectcontacts() {
         Swal.fire({
@@ -332,17 +333,5 @@ export class ContactsComponent implements OnInit {
         }
         this.getContacts((this.currentPage - 1) * this.pageSize, this.pageSize);
         this.getPage();
-    }
-
-    getLink(item: any) {
-        const baseUrl = window.location.origin;
-        if (item && item.contactId) {
-            this.url = baseUrl + '/survey?key1=' + item.contactId;
-            this.clipboard.copy(this.url);
-            console.log('Link copied to clipboard: ' + this.url);
-            console.log('Link copied to clipboard: ' + this.clipboard.copy(this.url));
-        } else {
-            console.error('contactId is null or undefined.');
-        }
     }
 }

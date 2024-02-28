@@ -1,0 +1,23 @@
+.d-bt-back {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 23px;
+}
+.bt-back {
+    width: 100px;
+}
+
+label:has(+ input:required):after {
+    content: ' *';
+    color: red;
+}
+
+.mg-bt {
+    margin-bottom: 1%;
+  }
+  .mg-bt-0 {
+    margin-bottom: 0%;
+  }
+  .mg-3 {
+    margin: 0 3% 3% 3%;
+  }

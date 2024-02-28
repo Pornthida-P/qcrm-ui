@@ -1,0 +1,126 @@
+<div class="h-100">
+    <div class="bg-white rounded shadow w-100 h-100 d-flex flex-column p-4 overflow-auto">
+        <div class="d-bt-back">
+            <button type="button" (click)="prev()" class="btn btn-outline-danger">ย้อนกลับ</button>
+            <div class="d-flex flex-row flex-nowrap" *ngIf="checkRole()">
+                <button type="button" (click)="submit()" class="btn btn-primary rounded text-white">บันทึก</button>
+            </div>
+        </div>
+        <div class="flex flex-column">
+            <p class="mb-3 fs-5">ข้อมูลทั่วไป</p>
+            <form class="row g-3 mg-3">
+                <div class="col-md-6">
+                    <label for="inputContactFirstName" class="form-label">ชื่อ</label>
+                    <input
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="contactFirstName"
+                    name="contactFirstName"
+                    id="inputContactFirstName"
+                    [disabled]="!checkRole()"
+                />
+                </div>
+                <div class="col-md-6">
+                    <label for="inputcontactLastName" class="form-label">นามสกุล</label>
+                    <input
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="contactLastName"
+                    name="contactLastName"
+                    id="inputContactLastName"
+                    [disabled]="!checkRole()"
+                />
+                </div>
+                <div class="col-md-6">
+                    <label for="inputContactIden" class="form-label">เลขประจำตัว</label>
+                    <input
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="contactIden"
+                    name="contactIden"
+                    id="inputContactIden"
+                    [disabled]="!checkRole()"
+                />
+                </div>
+                <div class="col-md-6">
+                    <label for="inputContactOrg" class="form-label">ร้านค้า/บริษัท</label>
+                    <select
+                        class="form-select"
+                        [(ngModel)]="contactOrg"
+                        name="contactOrg"
+                        id="inputContactOrg"
+                        [disabled]="!checkRole()"
+                    >
+                    <option *ngFor="let organization of organizations" [value]="organization.organizationId">{{ organization.name }}</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="inputContactType" class="form-label">ประเภทผู้ประกอบการ</label>
+                    <input
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="contactType"
+                    name="contactType"
+                    id="inputContactType"
+                    [disabled]="!checkRole()"
+                />
+                </div>
+                <div class="col-md-6">
+                    <label for="inputContactEmail" class="form-label">อีเมล์</label>
+                    <input
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="contactEmail"
+                    name="contactEmail"
+                    id="inputContactEmail"
+                    [disabled]="!checkRole()"
+                />
+                </div>
+                <div class="col-md-6">
+                    <label for="inputContactNum" class="form-label">เบอร์ติดต่อ</label>
+                    <input
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="contactNum"
+                    name="contactNum"
+                    id="inputContactNum"
+                    [disabled]="!checkRole()"
+                />
+                </div>
+                <div class="col-md-6">
+                    <label for="inputContactProvince" class="form-label">จังหวัด</label>
+                    <input
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="contactProvince"
+                    name="contactProvince"
+                    id="inputContactProvince"
+                    [disabled]="!checkRole()"
+                />
+                </div>
+                <div class="col-md-6">
+                    <label for="inputContactProductType" class="form-label">ประเภทสินค้า</label>
+                    <input
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="contactProductType"
+                    name="contactProductType"
+                    id="inputContactProductType"
+                    [disabled]="true"
+                />
+                </div>
+                <div class="col-md-6">
+                    <label for="inputContactSource" class="form-label">แหล่งที่มา</label>
+                    <input
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="contactSource"
+                    name="contactSource"
+                    id="inputContactSource"
+                    [disabled]="true"
+                />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
