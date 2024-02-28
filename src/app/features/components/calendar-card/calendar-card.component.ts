@@ -121,4 +121,11 @@ export class CalendarCardComponent implements OnInit {
     onClickDeletedMember(member: User) {
         this.deleteMember.emit(member);
     }
+
+    isNewCard(startDateStr: string): boolean {
+        const twentyFourHoursInMilliseconds = 24 * 60 * 60 * 1000;
+        const startDate = new Date(startDateStr);
+        const currentDate = new Date();
+        return currentDate.getTime() - startDate.getTime() <= twentyFourHoursInMilliseconds;
+    }
 }
