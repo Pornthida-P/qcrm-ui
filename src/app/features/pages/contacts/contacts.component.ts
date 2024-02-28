@@ -229,7 +229,7 @@ export class ContactsComponent implements OnInit {
         this.router.navigate(['/contacts/edit'], { queryParams: { key: item.contactId, cb: cb } });
     }
 
-    deletecontacts(id: string) {
+    deletecontacts(contactId: string) {
         Swal.fire({
             icon: 'warning',
             title: 'Do you want to delete this contact?',
@@ -240,7 +240,7 @@ export class ContactsComponent implements OnInit {
         }).then((result) => {
             if (result.isConfirmed) {
                 const data = {
-                    body: [id],
+                    body: [contactId],
                 };
                 this.contactsService
                     .deleteContacts(data)
@@ -258,6 +258,7 @@ export class ContactsComponent implements OnInit {
             }
         });
     }
+    
 
     deleteSelectcontacts() {
         Swal.fire({

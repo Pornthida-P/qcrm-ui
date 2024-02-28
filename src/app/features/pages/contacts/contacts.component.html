@@ -43,16 +43,8 @@
                 </div>
             </div>
         </div>
-        <div *ngIf="checkedValues.length != 0">
+        <div *ngIf="checkedValues.length > 0">
             <div class="d-flex p-3 bg-body-tertiary">
-                <button
-                    class="d-flex align-items-center me-2 d-md-none d-lg-flex rounded p-2 text-white btn btn-warning"
-                    (click)="exportExcel()"
-                    placement="top"
-                    ngbTooltip="Export to Excel"
-                >
-                    <i class="fa-solid fa-file"></i>
-                </button>
                 <button
                     class="d-flex align-items-center d-md-none d-lg-flex rounded p-2 text-white btn btn-danger"
                     (click)="deleteSelectcontacts()"
@@ -107,7 +99,7 @@
                                         name="contacts[]"
                                         value="{{ contacts.id }}"
                                         [(ngModel)]="contacts.state"
-                                        (change)="updateCheckedValues(contacts.contactsId)"
+                                        (change)="updateCheckedValues(contacts.contactId)"
                                     />
                                 </td>
                                 <td
@@ -134,7 +126,7 @@
                                         <div class="me-3 color-primary" placement="top" ngbTooltip="แก้ไข" (click)="edit(contacts)">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </div>
-                                        <div class="color-red" placement="top" ngbTooltip="ลบ" (click)="deletecontacts(contacts.contactsId)">
+                                        <div class="color-red" placement="top" ngbTooltip="ลบ" (click)="deletecontacts(contacts.contactId)">
                                             <i class="fa-solid fa-trash"></i>
                                         </div>
                                     </div>
