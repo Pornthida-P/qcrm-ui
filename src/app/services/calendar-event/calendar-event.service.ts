@@ -34,6 +34,21 @@ export class CalendarEventService {
         );
     }
 
+    findEventByMonth(month: string, year: string): Observable<CalendarEvent[]> {
+        return this.http.get(`${this.baseUrl}${config.api.path.calendarEvent.findByMonth}${month}/${year}`).pipe(
+            map((res: any) => {
+                for (let event of res) {
+                    if (event.members) {
+                        for (let member of event.members) {
+                            member.profile = member.profile ? `${environment.api.url}${member.profile}` : '';
+                        }
+                    }
+                }
+                return res as CalendarEvent[];
+            }),
+        );
+    }
+
     findEventByTagId(tagId: number): Observable<CalendarEvent[]> {
         return this.http.get(`${this.baseUrl}${config.api.path.calendarEvent.findByTagId}${tagId}`).pipe(
             map((res: any) => {
