@@ -24,15 +24,19 @@
                 </ng-container>
 
                 <ng-container *ngSwitchCase="includesDate.includes(column)">
-                    {{ element[column] | date : 'dd/MM/yyyy HH:mm:ss' }}
+                    <p class="label">{{ element[column] | date : 'dd/MM/yyyy HH:mm:ss' }}</p>
                 </ng-container>
 
                 <ng-container *ngSwitchCase="includesRole.includes(column)">
-                    {{ element[column].roleTitle }}
+                    <p class="label">{{ element[column].roleTitle }}</p>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="includesColor.includes(column)">
+                    <p class="label" [style.color]="element[column]">{{ element[column] }}</p>
                 </ng-container>
 
                 <ng-container *ngSwitchDefault>
-                    {{ element[column] }}
+                    <p class="label">{{ element[column] }}</p>
                 </ng-container>
             </ng-container>
         </td>
