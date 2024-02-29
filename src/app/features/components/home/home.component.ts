@@ -40,26 +40,7 @@ export class HomeComponent implements OnInit {
     }
 
     initzation() {
-        this.calendarService.onRefreshData().subscribe(() => {
-            this.refreshData();
-        });
         this.getUserData();
-    }
-
-    findAllEvents() {
-        this.calendarService
-            .getAllCalendarEvent()
-            .pipe(
-                tap((events) => {
-                    this.calendarDateEvents = events;
-                    this.onSelectedDateChanged();
-                }),
-                catchError((error) => {
-                    this.sweetalertServices.handleError(error);
-                    throw error;
-                }),
-            )
-            .subscribe();
     }
 
     getUserData() {
@@ -69,59 +50,11 @@ export class HomeComponent implements OnInit {
         });
     }
 
-    dateClass: MatCalendarCellClassFunction<Date> = (cellDate, view) => {
-        if (view === 'month') {
-            const eventsToday = this.calendarDateEvents.filter((event) => {
-                return cellDate >= new Date(event.startDate) && cellDate <= new Date(event.endDate);
-            });
-
-            if (eventsToday.length > 0) {
-                return 'highlight-date';
-            }
-        }
-
-        return '';
-    };
-
-    onSelectedDateChanged() {
-        this.events = [];
-
-        if (this.calendar) {
-            this.calendar.monthView._init();
-        }
-
-        this.onEvent();
-    }
-
-    onEvent() {
-        const selectedDateStr = moment(this.selectedCalendarDate).format('YYYY-MM-DD');
-
-        this.calendarService
-            .findByDate(selectedDateStr)
-            .pipe(
-                tap((events) => {
-                    this.events = events;
-                }),
-                catchError((error) => {
-                    this.sweetalertServices.handleError(error);
-                    throw error;
-                }),
-            )
-            .subscribe(() => {});
-    }
-
     onSelectDate(date: Date) {
         this.selectedCalendarDate = date;
-        this.onSelectedDateChanged();
     }
 
     onClickAddEvent() {
         this.modalCalendarService.openDialog('add');
-    }
-
-    refreshData() {
-        this.events = [];
-        this.calendarDateEvents = [];
-        this.findAllEvents();
     }
 }

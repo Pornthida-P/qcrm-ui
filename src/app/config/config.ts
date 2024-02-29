@@ -37,6 +37,7 @@ export const config = {
                 findAll: '/calendar-event',
                 findById: '/calendar-event/id/',
                 findByDate: '/calendar-event/date',
+                findByMonth: '/calendar-event/month/',
                 findByMember: '/calendar-event/member/id/',
                 findByTagId: '/calendar-event/tag/',
                 add: '/calendar-event/add',

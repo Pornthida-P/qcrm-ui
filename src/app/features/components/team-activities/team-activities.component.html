@@ -12,7 +12,7 @@
             </div>
         </div>
         <div class="calendar col-sm-12 col-md-6">
-            <app-calendar-preview [events]="calendarDateEvents" (selectedDate)="onSelectDate($event)"></app-calendar-preview>
+            <app-calendar-preview (selectedDate)="onSelectDate($event)"></app-calendar-preview>
         </div>
         <div class="events col-sm-12 col-md-6 overflow-auto">
             <div class="position-relative">

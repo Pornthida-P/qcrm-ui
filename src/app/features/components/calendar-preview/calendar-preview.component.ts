@@ -1,10 +1,13 @@
 import { Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { CalendarEvent } from 'src/app/shared/interface/calendar.interface';
-import { PopOversEventComponent } from '../pop-overs-event/pop-overs-event.component';
-import { NgbPopover, NgbPopoverConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbPopoverConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ModalCalendarService } from 'src/app/services/modal-calendar/modal-calendar.service';
 import { User } from 'src/app/shared/interface/user.interface';
+import { CalendarEventService } from 'src/app/services/calendar-event/calendar-event.service';
+import { catchError, tap } from 'rxjs';
+import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
+import { monthNames } from 'src/app/config/month';
 
 interface Day {
     number: number;
@@ -17,9 +20,9 @@ interface Day {
     styleUrl: './calendar-preview.component.scss',
 })
 export class CalendarPreviewComponent implements OnInit {
-    @Input() events: CalendarEvent[] = [];
     @Output() selectedDate: EventEmitter<Date> = new EventEmitter();
 
+    events: CalendarEvent[] = [];
     currentMonth: string;
     weeks: Day[][] = [];
     selectDate: Date = new Date();
@@ -28,9 +31,15 @@ export class CalendarPreviewComponent implements OnInit {
     faChevronLeft = faChevronLeft;
     faChevronRight = faChevronRight;
 
-    constructor(config: NgbPopoverConfig, private modalCalendarService: ModalCalendarService) {
+    constructor(
+        config: NgbPopoverConfig,
+        private modalCalendarService: ModalCalendarService,
+        private calendarService: CalendarEventService,
+        private sweetAlertService: SweetAlertService,
+    ) {
         const currentDate = new Date();
         this.currentMonth = currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        this.findEventByMonth(this.currentMonth);
         this.generateCalendar(currentDate.getMonth(), currentDate.getFullYear());
         this.selectDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
 
@@ -86,6 +95,7 @@ export class CalendarPreviewComponent implements OnInit {
         this.weeks = [];
         this.generateCalendar(newMonth, newYear);
         this.currentMonth = new Date(newYear, newMonth).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        this.findEventByMonth(this.currentMonth);
     }
 
     previousMonth(): void {
@@ -105,6 +115,7 @@ export class CalendarPreviewComponent implements OnInit {
         this.weeks = [];
         this.generateCalendar(newMonth, newYear);
         this.currentMonth = new Date(newYear, newMonth).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        this.findEventByMonth(this.currentMonth);
     }
 
     onClickSelectDate(date: Date): void {
@@ -188,5 +199,24 @@ export class CalendarPreviewComponent implements OnInit {
         if (popoverElement) {
             popoverElement.closest('.popover')?.remove();
         }
+    }
+
+    findEventByMonth(monthYear: string): void {
+        const monthYearParts = monthYear.split(' ');
+        const month = monthNames[monthYearParts[0].toLowerCase()];
+        const year = monthYearParts[1];
+
+        this.calendarService
+            .findEventByMonth(month, year)
+            .pipe(
+                tap((res: CalendarEvent[]) => {
+                    this.events = res;
+                }),
+                catchError((err) => {
+                    this.sweetAlertService.handleError(err);
+                    throw err;
+                }),
+            )
+            .subscribe(() => {});
     }
 }
