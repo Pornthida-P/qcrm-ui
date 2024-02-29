@@ -2,7 +2,7 @@ import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import * as moment from 'moment';
-import { catchError, tap } from 'rxjs';
+import { catchError, finalize, tap } from 'rxjs';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { User } from 'src/app/shared/interface/user.interface';
@@ -10,6 +10,7 @@ import { Role } from 'src/app/shared/interface/role.interface';
 import { environment } from 'src/environments/environment';
 import { config } from 'src/app/config/config';
 import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
+import { LoaderService } from 'src/app/services/loader/loader.service';
 
 @Component({
     selector: 'app-account-profile',
@@ -36,6 +37,7 @@ export class AccountProfileComponent {
 
     constructor(
         private fb: FormBuilder,
+        private loaderService: LoaderService,
         private userService: UserService,
         private sweetalertServices: SweetAlertService,
         private socketIO: SocketIoService,
@@ -184,7 +186,7 @@ export class AccountProfileComponent {
     }
 
     addUser(userData: User) {
-        console.log(userData);
+        this.loaderService.show();
         this.userService
             .addUser(userData)
             .pipe(
@@ -196,6 +198,9 @@ export class AccountProfileComponent {
                 catchError((err) => {
                     this.sweetalertServices.handleError(err);
                     throw err;
+                }),
+                finalize(() => {
+                    this.loaderService.hide();
                 }),
             )
             .subscribe();

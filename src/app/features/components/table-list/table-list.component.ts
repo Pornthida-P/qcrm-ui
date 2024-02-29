@@ -25,6 +25,7 @@ export class TableListComponent implements OnInit, OnChanges {
     includesRole: string[] = ['role'];
     includesProfile: string[] = ['profile'];
     includesStatus: string[] = ['isActive'];
+    includesColor: string[] = ['color'];
 
     faGear = faGear;
     faEye = faEye;

@@ -86,8 +86,4 @@ export class AnnounceComponent {
     onClickView() {
         this.router.navigate(['/announcement-page']);
     }
-
-    onClickEdit() {
-        this.router.navigate(['/announcement-page']);
-    }
 }

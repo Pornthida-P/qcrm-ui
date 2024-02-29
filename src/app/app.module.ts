@@ -12,6 +12,7 @@ import { NgbModule, NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { TokenInterceptor } from './core/interceptor/token.interceptor';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { LoaderModule } from './features/components/loader/loader.module';
 
 (Formio as any).use(bootstrap4);
 
@@ -28,6 +29,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
         MatDatepickerModule,
         MatNativeDateModule,
         NgbDatepickerModule,
+        LoaderModule,
     ],
     providers: [
         {

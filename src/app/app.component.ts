@@ -4,6 +4,7 @@ import { SocketIoService } from './services/socket-io/socket-io.service';
 import { UserService } from './services/user/user.service';
 import { tap } from 'rxjs';
 import { User } from './shared/interface/user.interface';
+import { LoaderService } from './services/loader/loader.service';
 
 @Component({
     selector: 'app-root',
@@ -14,7 +15,13 @@ export class AppComponent implements OnInit {
     title = 'qcrm-ui';
 
     userData?: User | null;
-    constructor(private themeService: ThemeService, private socketIO: SocketIoService, private userService: UserService) {}
+    isLoading: boolean = false;
+    constructor(
+        private themeService: ThemeService,
+        private socketIO: SocketIoService,
+        private userService: UserService,
+        private loaderService: LoaderService,
+    ) {}
 
     async ngOnInit() {
         this.initzation();
@@ -23,6 +30,7 @@ export class AppComponent implements OnInit {
     async initzation() {
         this.setTheme();
         this.getDataUser();
+        this.loaderStatus();
         setTimeout(() => {
             this.login();
         }, 1000);
@@ -45,5 +53,11 @@ export class AppComponent implements OnInit {
         if (this.userData) {
             this.socketIO.login(this.userData);
         }
+    }
+
+    loaderStatus() {
+        this.loaderService.getLoaderStatus().subscribe((res) => {
+            this.isLoading = res;
+        });
     }
 }
