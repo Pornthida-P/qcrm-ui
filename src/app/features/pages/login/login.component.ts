@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { catchError, tap, throwError } from 'rxjs';
+import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
 import { LoginService } from 'src/app/services/login/login.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { TokenService } from 'src/app/services/token/token.service';
@@ -26,6 +27,7 @@ export class LoginComponent {
         private userServices: UserService,
         private tokenServices: TokenService,
         private sweetalertServices: SweetAlertService,
+        private auditLogService: AuditLogService,
     ) {
         this.loginForm = this.fb.group({
             username: new FormControl('', [Validators.required]),
@@ -71,9 +73,11 @@ export class LoginComponent {
                         this.userServices.setDataUser(res.user);
                         this.tokenServices.setDataToken(res.token);
                         this.router.navigate(['/home']);
+                        this.auditLogService.log(username, 'Authen', 'Login', 'Success');
                     }),
                     catchError((error) => {
                         this.sweetalertServices.handleError(error);
+                        this.auditLogService.log(username, 'Authen', 'Login', 'Failed : ' + error.error.message);
                         return throwError(error);
                     }),
                 )
