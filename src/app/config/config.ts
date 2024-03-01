@@ -75,6 +75,13 @@ export const config = {
             },
         },
     },
+        strapi: {
+        url: 'http://localhost:1337/api',
+        path: {
+            auditlog: '/auditlogs',
+        },
+        key: 'b41becc9e75e14f53e6c7f6c84f9f53bc7419e6390ce3c85be6a3c4ff9b56befe4a95a9fcfc34f270694737f8660e0f9f7cfffa5e2ed2dc707b65b310e07b3aa781c93eed5c78eabbbac448a6095017fc0aa8e65c703a8883f9cf118cd06b2aa5810d9e23d73d5e5208a9e18341dcd0f77b8b2d8104839e98e3cadc22fc3b624',
+    },
     file: {
         maxSize: 2 * 1024 * 1024,
         type: '.xlsx',
