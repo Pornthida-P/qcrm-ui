@@ -37,19 +37,90 @@
                 </div>
             </div>
             <div class="flex-lg-none d-flex flex-row align-items-center gap-4">
-                <i
-                    class="fa-regular fa-bell d-none d-md-flex"
-                    id="notification"
+                <div
+                    class="position-relative"
                     [ngbPopover]="popContentNotification"
                     popoverClass="border rounded popover-notification"
-                ></i>
+                    (click)="readAllNotification()"
+                >
+                    <i class="fa-regular fa-bell d-none d-md-flex fs-3 cursor-pointer" id="notification"></i>
+                    <div class="dot-inner dot-notification" [ngClass]="{ 'unread-notification': notifications.length > 0 && unread }"></div>
+                </div>
                 <ng-template #popContentNotification>
-                    <div class="d-flex flex-column">
-                        <p>Notification 1</p>
-                        <p>Notification 2</p>
-                        <p>Notification 3</p>
+                    <div class="notification-container">
+                        <div class="switches-container">
+                            <input
+                                type="radio"
+                                id="switchNewNotification"
+                                name="switchPlan"
+                                [value]="false"
+                                [(ngModel)]="showReadNotifications"
+                                (change)="getNotifications()"
+                            />
+                            <input
+                                type="radio"
+                                id="switchReadNotification"
+                                name="switchPlan"
+                                [value]="true"
+                                [(ngModel)]="showReadNotifications"
+                                (change)="getNotifications()"
+                            />
+                            <label for="switchNewNotification">New notifications</label>
+                            <label for="switchReadNotification">Read notifications</label>
+                            <div class="switch-wrapper">
+                                <div class="switch">
+                                    <div>
+                                        <fa-icon [icon]="faEnvelope"></fa-icon>
+                                    </div>
+                                    <div>
+                                        <fa-icon [icon]="faEnvelopeOpen"></fa-icon>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div *ngIf="notifications.length > 0; else noNotification">
+                            <div class="row py-3 gap-3" style="max-height: 50vh; overflow: scroll">
+                                <div *ngFor="let notification of notifications" class="col-12">
+                                    <div class="row align-items-center">
+                                        <div class="col-2 position-relative d-flex justify-content-center align-items-center">
+                                            <div class="position-relative">
+                                                <div class="profile-container m-auto cursor-pointer">
+                                                    <img
+                                                        class="profile-image img-fluid"
+                                                        [src]="notification.user.profile"
+                                                        [alt]="notification.user.username"
+                                                        (error)="handleProfileError($event)"
+                                                    />
+                                                </div>
+                                                <div
+                                                    class="dot-inner dot-status"
+                                                    [ngbTooltip]="getStatusOnline(notification.user.userId) ? 'Online' : 'Offline'"
+                                                    [class.dot-status-online]="getStatusOnline(notification.user.userId)"
+                                                ></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-10">
+                                            <div class="notification-content">
+                                                <p class="label fw-bolder">{{ notification.title }}</p>
+                                                <p class="label">{{ notification.message }}</p>
+                                            </div>
+                                            <div class="d-flex flex-column">
+                                                <p class="label">{{ formatTimeSinceCreation(notification.createdAt) }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <ng-template #noNotification>
+                            <div class="p-3 text-center">
+                                <p class="label">ไม่มีการแจ้งเตือน</p>
+                            </div>
+                        </ng-template>
                     </div>
                 </ng-template>
+
                 <div class="d-none d-md-flex d-lg-flex flex-column cursor-default text-end">
                     <p class="m-0 fw-semibold">{{ userData?.username }}</p>
                     <p class="m-0">{{ userData?.role?.roleTitle }}</p>
@@ -88,7 +159,7 @@
                     </div>
                     <div class="d-none d-md-flex">
                         <div class="position-relative" id="dropdownMenuNoneSm" data-bs-toggle="dropdown" aria-expanded="false">
-                            <div class="profile-container m-auto cursor-pointer">
+                            <div class="profile-container m-auto cursor-pointer position-relative">
                                 <img
                                     class="profile-image img-fluid"
                                     [src]="userData?.profile"
