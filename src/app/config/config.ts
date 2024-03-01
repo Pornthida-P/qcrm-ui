@@ -58,6 +58,8 @@ export const config = {
                 baseUrl: '/contact',
                 find: '/find',
                 count: '/count',
+                surveyForm: '/survey-form',
+                call: '/call',
             },
             call: {
                 url: '/call',
