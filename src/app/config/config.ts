@@ -58,6 +58,7 @@ export const config = {
                 baseUrl: '/contact',
                 find: '/find',
                 count: '/count',
+                paramsFide: '/params-fide',
             },
             call: {
                 url: '/call',
