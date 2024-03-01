@@ -38,6 +38,10 @@ export class ContactsService {
         return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}${config.api.path.contacts.find}/${id}`);
     }
 
+    getContactsByParamPhone(phone: string) {
+        return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}${config.api.path.contacts.paramsFide}/${phone}`);
+    }
+
     getAllOrganization() {
         return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}/organization`);
     }

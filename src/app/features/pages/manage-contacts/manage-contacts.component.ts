@@ -31,7 +31,9 @@ export class ManageContactsComponent implements OnInit {
     detailItem: any = undefined;
 
     userRole: string = '';
-    roleCanAccessCUDForm: string[] = config.roleCanAccessCUDForm;
+  roleCanAccessCUDForm: string[] = config.roleCanAccessCUDForm;
+
+  calls: string | null | undefined;
 
     constructor(
         private _location: Location,
@@ -63,6 +65,23 @@ export class ManageContactsComponent implements OnInit {
         this.contactsService.getAllOrganization().subscribe((organizations: any) => {
             this.organizations = organizations;
         });
+
+        this.route.queryParamMap.subscribe(params => {
+          this.calls = params.get('phone');
+          console.log('Inside subscribe:', this.calls);
+
+          if (this.calls) {
+              this.contactsService.getContactsByParamPhone(this.calls).subscribe((data: any) => {
+                  if (data) {
+                      console.log('Data exists:', data);
+                  } else {
+                      console.log('Data does not exist');
+                  }
+              });
+          }
+      });
+       console.log('Outside subscribe:', this.calls);
+
     }
 
     checkRole(): boolean {
