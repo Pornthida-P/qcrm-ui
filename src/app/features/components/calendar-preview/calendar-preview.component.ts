@@ -39,7 +39,6 @@ export class CalendarPreviewComponent implements OnInit {
     ) {
         const currentDate = new Date();
         this.currentMonth = currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-        this.findEventByMonth(this.currentMonth);
         this.generateCalendar(currentDate.getMonth(), currentDate.getFullYear());
         this.selectDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
 
@@ -48,7 +47,11 @@ export class CalendarPreviewComponent implements OnInit {
         config.popoverClass = 'custom-popover';
     }
 
-    ngOnInit(): void {}
+    ngOnInit(): void {
+        this.calendarService.onRefreshData().subscribe(() => {
+            this.findEventByMonth(this.currentMonth);
+        });
+    }
 
     generateCalendar(month: number, year: number): void {
         const firstDayOfMonth = new Date(year, month, 1);
