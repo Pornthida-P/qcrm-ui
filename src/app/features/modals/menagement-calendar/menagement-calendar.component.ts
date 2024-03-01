@@ -255,6 +255,9 @@ export class MenagementCalendarComponent implements OnInit {
                 return;
             }
 
+            formData.modifiedById = this.userData?.userId;
+            formData.modifiedAt = moment().format('YYYY-MM-DD HH:mm:ss');
+
             this.calendarService
                 .updateCalendarEvent(formData.eventId, formData)
                 .pipe(
