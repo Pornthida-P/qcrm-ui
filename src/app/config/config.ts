@@ -67,6 +67,12 @@ export const config = {
                 baseUrl: '/survey',
                 existing: '/existing',
             },
+            notification: {
+                findNotification: '/notification',
+                findNotificationUnReadByUserId: '/notification/unread/',
+                findNotificationReadByUserId: '/notification/read/',
+                readAllNotificationByUserId: '/notification/read-all/',
+            },
         },
     },
     file: {

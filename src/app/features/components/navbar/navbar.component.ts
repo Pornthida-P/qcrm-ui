@@ -1,12 +1,14 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { faBars, faMagnifyingGlass, faArrowRightFromBracket, faGear } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faMagnifyingGlass, faArrowRightFromBracket, faGear, faEnvelope, faEnvelopeOpen } from '@fortawesome/free-solid-svg-icons';
 import { faBell } from '@fortawesome/free-regular-svg-icons';
-import { NavigationEnd, Router } from '@angular/router';
-import { filter } from 'rxjs';
+import { Router } from '@angular/router';
+import { tap } from 'rxjs';
 import { UserService } from 'src/app/services/user/user.service';
 import { User } from 'src/app/shared/interface/user.interface';
-import { LoginService } from 'src/app/services/login/login.service';
 import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
+import { NotificationService } from 'src/app/services/notification/notification.service';
+import { Notification } from 'src/app/shared/interface/notification.interface';
+import { NgbPopoverConfig } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'app-navbar',
@@ -16,6 +18,9 @@ import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
 export class NavbarComponent implements OnInit {
     searchSidebarVisible: boolean = false;
     notificationSidebarVisible: boolean = false;
+    notifications: Notification[] = [];
+    showReadNotifications: boolean = false;
+    unread: boolean = true;
     menuUser: any;
     menuUserNoneSm: any;
     value: string | undefined;
@@ -26,11 +31,22 @@ export class NavbarComponent implements OnInit {
     profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
 
     faBars = faBars;
+    faEnvelope = faEnvelope;
+    faEnvelopeOpen = faEnvelopeOpen;
 
-    constructor(private router: Router, private userService: UserService, private socketIO: SocketIoService) {}
+    constructor(
+        private router: Router,
+        private userService: UserService,
+        private socketIO: SocketIoService,
+        private notificationService: NotificationService,
+        configPopover: NgbPopoverConfig,
+    ) {
+        configPopover.autoClose = 'outside';
+    }
 
     ngOnInit() {
         this.getDataUser();
+        this.getNotifications();
 
         this.menuUser = [
             {
@@ -86,6 +102,8 @@ export class NavbarComponent implements OnInit {
     }
 
     openNotificationSideBar() {
+        console.log('openNotificationSideBar');
+        this.findNotificationUnRead();
         this.notificationSidebarVisible = true;
     }
 
@@ -105,6 +123,74 @@ export class NavbarComponent implements OnInit {
 
     getStatusOnline(userId?: string): boolean {
         return this.socketIO.getStatusOnline(userId);
+    }
+
+    findNotificationUnRead() {
+        const userId = this.userData?.userId;
+        if (userId) {
+            this.notificationService
+                .findNotificationUnRead(userId)
+                .pipe(
+                    tap((res) => {
+                        this.notifications = res;
+                    }),
+                )
+                .subscribe(() => {});
+        }
+    }
+
+    findNotificationRead() {
+        const userId = this.userData?.userId;
+        if (userId) {
+            this.notificationService
+                .findNotificationRead(userId)
+                .pipe(
+                    tap((res) => {
+                        this.notifications = res;
+                    }),
+                )
+                .subscribe(() => {});
+        }
+    }
+
+    readAllNotification() {
+        this.unread = false;
+        if (this.notifications.length > 0) {
+            const userId = this.userData?.userId;
+            if (userId) {
+                this.notificationService.readNotification(userId).subscribe(() => {});
+            }
+        }
+    }
+
+    toggleShowReadNotifications() {
+        this.showReadNotifications = !this.showReadNotifications;
+        this.getNotifications();
+    }
+
+    getNotifications() {
+        if (this.showReadNotifications) {
+            console.log(1);
+            this.findNotificationRead();
+        } else {
+            console.log(2);
+            this.findNotificationUnRead();
+        }
+    }
+
+    formatTimeSinceCreation(createdAt: string): string {
+        const now = new Date();
+        const diffMs = now.getTime() - new Date(createdAt).getTime();
+        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+        if (diffHours < 1) {
+            const diffMins = Math.floor(diffMs / (1000 * 60));
+            return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`;
+        } else if (diffHours < 24) {
+            return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+        } else {
+            const diffDays = Math.floor(diffHours / 24);
+            return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+        }
     }
 
     logout() {
