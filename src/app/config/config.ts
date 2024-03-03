@@ -63,6 +63,9 @@ export const config = {
             call: {
                 url: '/call',
                 count: '/count',
+                caseTopic: '/casetopic',
+                organizations: '/organizations',
+                contacts: '/allcontact',
             },
             survey: {
                 baseUrl: '/survey',
