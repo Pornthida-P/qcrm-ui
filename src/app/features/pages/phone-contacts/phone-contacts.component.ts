@@ -6,6 +6,7 @@ import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.serv
 import { ActivatedRoute, Router } from '@angular/router';
 import { config } from 'src/app/config/config';
 import { v4 as uuidv4 } from 'uuid';
+import Swal from 'sweetalert2';
 
 @Component({
     selector: 'app-phone-contacts',
@@ -67,8 +68,8 @@ export class PhoneContactsComponent {
             const res: any = await this.contactsService.getContactsByParamPhone(contactId).toPromise();
 
             if (res && res.length > 0) {
-              const detailItemByPhone = res[0];
-              this.contactId = detailItemByPhone.contactId;
+                const detailItemByPhone = res[0];
+                this.contactId = detailItemByPhone.contactId;
                 this.contactFirstName = detailItemByPhone.firstName;
                 this.contactLastName = detailItemByPhone.lastName;
                 this.contactIden = detailItemByPhone.identification;
@@ -87,15 +88,14 @@ export class PhoneContactsComponent {
         }
     }
 
-
     prev() {
         this._location.back();
     }
 
     submit() {
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-      const contactId = uuidv4();
-      if (this.contactId) {
+        const contactId = uuidv4();
+        if (this.contactId) {
             const data = {
                 contactId: this.contactId,
                 firstName: this.contactFirstName,
@@ -112,7 +112,15 @@ export class PhoneContactsComponent {
                 .editContacts(data)
                 .pipe(
                     tap((res) => {
-                        this.sweetalertServices.getSwal('success', 'Update data success.', '', false, '/contacts');
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Update data success.',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true,
+                        }).then(() => {
+                            this.router.navigate(['/call/create-call'], { queryParams: { contactId: this.contactId } });
+                        });
                     }),
                     catchError((error) => {
                         this.sweetalertServices.handleError(error);
