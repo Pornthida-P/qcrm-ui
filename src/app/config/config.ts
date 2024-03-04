@@ -59,6 +59,8 @@ export const config = {
                 find: '/find',
                 count: '/count',
                 paramsFide: '/params-fide',
+                surveyForm: '/survey-form',
+                call: '/call',
             },
             call: {
                 url: '/call',
