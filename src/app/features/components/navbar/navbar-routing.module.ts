@@ -34,8 +34,14 @@ const routes: Routes = [
                             import('../../pages/manage-contacts/manage-contacts.module').then((m) => m.ManageContactsModule),
                         title: 'Edit Contacts',
                     },
+                    {
+                        path: 'phone',
+                        loadChildren: () =>
+                            import('../../pages/phone-contacts/phone-contacts.module').then((m) => m.PhoneContactsModule),
+                        title: 'Phone Contacts',
+                  },
                 ],
-                
+
             },
             {
                 path: 'surveyform',
@@ -68,10 +74,10 @@ const routes: Routes = [
                         title: 'Call',
                     },
                     {
-                        path: 'create',
-                        loadChildren: () => import('../../pages/create-call/create-call.module').then((m) => m.CreateCallModule),
-                        title: 'Create Call',
-                    },
+                      path: 'create-call',
+                      loadChildren: () => import('../../pages/create-call/create-call.module').then((m) => m.CreateCallModule),
+                      title: 'Create Call',
+                  },
                     {
                         path: 'edit',
                         loadChildren: () => import('../../pages/change-call/change-call.module').then((m) => m.ChangeCallModule),

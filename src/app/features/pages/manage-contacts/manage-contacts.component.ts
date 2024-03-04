@@ -90,6 +90,9 @@ export class ManageContactsComponent implements OnInit {
 
     userData: any = JSON.parse(localStorage.getItem('userData') || '{}');
     userRole: string = '';
+    roleCanAccessCUDForm: string[] = config.roleCanAccessCUDForm;
+
+    calls: string | null | undefined;
     userId: string = '';
     roleCanAccessCUDForm: string[] = config.roleCanAccessCUDForm;
 
@@ -126,6 +129,20 @@ export class ManageContactsComponent implements OnInit {
         this.contactsService.getAllOrganization().subscribe((organizations: any) => {
             this.organizations = organizations;
         });
+
+        this.route.queryParamMap.subscribe(params => {
+          this.calls = params.get('phone');
+
+          if (this.calls) {
+              this.contactsService.getContactsByParamPhone(this.calls).subscribe((data: any) => {
+                  if (data) {
+                      console.log('Data exists:', data);
+                  } else {
+                      console.log('Data does not exist');
+                  }
+              });
+          }
+      });
 
         if (this.contactId) {
             this.TableShowing = true;

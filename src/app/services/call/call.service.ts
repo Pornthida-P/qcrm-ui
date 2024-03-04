@@ -24,6 +24,22 @@ export class CallService {
     return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.count}`)
   }
 
+  getCaseTopic() {
+    return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.caseTopic}`)
+  }
+
+  getOrganizations() {
+    return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.organizations}`)
+  }
+
+  getAllContacts() {
+    return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.contacts}`)
+  }
+
+  createCalls(data: any) {
+    return this.http.post(`${this.baseUrl}${config.api.path.call.url}`, data);
+  }
+
   // getCalls(page: number, pageSize: number): Observable<any> {
   //   return of([
   //     {

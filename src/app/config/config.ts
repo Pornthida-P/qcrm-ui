@@ -58,12 +58,16 @@ export const config = {
                 baseUrl: '/contact',
                 find: '/find',
                 count: '/count',
+                paramsFide: '/params-fide',
                 surveyForm: '/survey-form',
                 call: '/call',
             },
             call: {
                 url: '/call',
                 count: '/count',
+                caseTopic: '/casetopic',
+                organizations: '/organizations',
+                contacts: '/allcontact',
             },
             survey: {
                 baseUrl: '/survey',
