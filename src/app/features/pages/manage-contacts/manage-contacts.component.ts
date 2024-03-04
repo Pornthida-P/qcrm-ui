@@ -94,7 +94,6 @@ export class ManageContactsComponent implements OnInit {
 
     calls: string | null | undefined;
     userId: string = '';
-    roleCanAccessCUDForm: string[] = config.roleCanAccessCUDForm;
 
     constructor(
         private _location: Location,
@@ -329,7 +328,7 @@ export class ManageContactsComponent implements OnInit {
                 this.sweetalertServices.getSwal('warning', 'Warning', 'ไม่พบข้อมูลในระบบ Drive', false, '');
             });
         }
-    }    
+    }
 
     async getPage() {
         await this.surveyFormService.countSurveyForm(this.valueSearch, this.userId).subscribe((res: any) => {
@@ -395,7 +394,7 @@ export class ManageContactsComponent implements OnInit {
         }
         return page;
     }
-    
+
     @ViewChild(FormioComponent, { static: false })
     formio!: FormioComponent;
 
@@ -450,7 +449,7 @@ export class ManageContactsComponent implements OnInit {
                     this.formName = this.surveyForm[0].name;
                     this.formId = this.surveyForm[0].surveyFormId;
                      });
-                 } 
+                 }
         });
     }
 
@@ -468,7 +467,7 @@ export class ManageContactsComponent implements OnInit {
           this.form = JSON.parse(this.surveyForm[0].form);
           this.formName = this.surveyForm[0].name;
           this.formId = this.surveyForm[0].surveyFormId;
-      
+
           this.contactsService.getContactsSurvey(surveyId).subscribe((res) => {
             this.survey = res;
             this.formData = JSON.parse(this.survey[0].surveyData);
@@ -477,5 +476,5 @@ export class ManageContactsComponent implements OnInit {
           });
         });
       }
-       
+
 }
