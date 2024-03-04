@@ -30,6 +30,7 @@ export class PhoneContactsComponent {
     organizations: any;
     contactProvince: any;
     contactId: any;
+    contactOrg: any;
 
     constructor(
         private _location: Location,
@@ -73,7 +74,7 @@ export class PhoneContactsComponent {
                 this.contactFirstName = detailItemByPhone.firstName;
                 this.contactLastName = detailItemByPhone.lastName;
                 this.contactIden = detailItemByPhone.identification;
-                this.contact = detailItemByPhone.organization_id;
+                this.contactOrg = detailItemByPhone.organization_id;
                 this.contactType = detailItemByPhone.contactType;
                 this.contactEmail = detailItemByPhone.email;
                 this.contactNumber = detailItemByPhone.contactNumber;
@@ -101,7 +102,7 @@ export class PhoneContactsComponent {
                 firstName: this.contactFirstName,
                 lastName: this.contactLastName,
                 identification: this.contactIden,
-                organizationId: this.contact && this.contact.components.length > 0 ? this.contact : '',
+                organizationId: this.contactOrg,
                 contactType: this.contactType,
                 email: this.contactEmail,
                 contactNumber: this.contactNumber,
@@ -114,7 +115,7 @@ export class PhoneContactsComponent {
                     tap((res) => {
                         Swal.fire({
                             icon: 'success',
-                            title: 'Update data success.',
+                            title: 'บันทึกข้อมูลเรียบร้อยแล้ว',
                             showConfirmButton: false,
                             timer: 3000,
                             timerProgressBar: true,
@@ -133,18 +134,19 @@ export class PhoneContactsComponent {
                 firstName: this.contactFirstName,
                 lastName: this.contactLastName,
                 identification: this.contactIden,
-                organizationId: this.contact && this.contact.components.length > 0 ? this.contact : '',
+                organizationId: this.contactOrg,
                 contactType: this.contactType,
                 email: this.contactEmail,
                 contactNumber: this.contactNumber,
                 province: this.contactProvince,
                 createdById: userData.userId,
             };
+          console.log('data:', data)
             this.contactsService
                 .createContacts(data)
                 .pipe(
                     tap((res) => {
-                        this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/call/create-call');
+                        this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '/call/create-call');
                     }),
                     catchError((error) => {
                         this.sweetalertServices.handleError(error);
