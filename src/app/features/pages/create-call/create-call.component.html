@@ -44,12 +44,12 @@
                 <div class="date-pik">
                   <mat-form-field class="date-time">
                     <mat-label>กรุณาเลือกวันที่</mat-label>
-                    <input matInput [matDatepicker]="picker1" name="startTime" [(ngModel)]="startTime">
+                    <input matInput [matDatepicker]="picker1" name="startTime" [(ngModel)]="startTime" (dateInput)="formatStartDate()">
                     <mat-hint>MM/DD/YYYY</mat-hint>
                     <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
                     <mat-datepicker #picker1></mat-datepicker>
                   </mat-form-field>
-                  <ngb-timepicker name="timepickStart" [(ngModel)]="timepickStart" [seconds]="seconds" [ngModelOptions]="{standalone: true}"></ngb-timepicker>
+                  <ngb-timepicker name="timepickStart" [(ngModel)]="timepickStart" [seconds]="seconds" [ngModelOptions]="{standalone: true}" (dateInput)="formatTimepickStart" (ngModelChange)="onTimepickStartChange($event)"></ngb-timepicker>
                 </div>
               </div>
 
@@ -58,12 +58,12 @@
                 <div class="date-pik">
                   <mat-form-field class="date-time">
                     <mat-label>กรุณาเลือกวันที่</mat-label>
-                    <input matInput [matDatepicker]="picker2" name="endTime" [(ngModel)]="endTime">
+                    <input matInput [matDatepicker]="picker2" name="endTime" [(ngModel)]="endTime" (dateInput)="formatEndDate()">
                     <mat-hint>MM/DD/YYYY</mat-hint>
                     <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
                     <mat-datepicker #picker2></mat-datepicker>
                   </mat-form-field>
-                  <ngb-timepicker name="timepickEnd" [(ngModel)]="timepickEnd"  [seconds]="seconds" [ngModelOptions]="{standalone: true}"></ngb-timepicker>
+                  <ngb-timepicker name="timepickEnd" [(ngModel)]="timepickEnd" [seconds]="seconds" [ngModelOptions]="{standalone: true}" (ngModelChange)="onTimepickEndChange($event)"></ngb-timepicker>
                 </div>
               </div>
 
