@@ -18,10 +18,10 @@ export class CreateCallComponent {
     organizations: any;
     contacts: any[] = [];
 
-    contactName: string = '';
+    contactName!: string;
     status: string = '';
     parent: string = '';
-    parentSub: string = '';
+    parentSub: any;
     startTime: string = '';
     endTime: string = '';
     direction: string = '';
@@ -45,8 +45,8 @@ export class CreateCallComponent {
         this.location.back();
     }
 
-    time = true;
-    time1 = true;
+    timepickStart = true;
+    timepickEnd = true;
     meridian = true;
     seconds = true;
     seconds1 = true;
@@ -84,7 +84,8 @@ export class CreateCallComponent {
         }
     }
 
-    submit() {
+  submit() {
+      console.log(this.parentSub)
       const userData = JSON.parse(localStorage.getItem('userData') || '{}');
       const data = {
           contactId: this.contactId,
@@ -98,7 +99,6 @@ export class CreateCallComponent {
           duration: this.duration,
           createdById: userData.userId,
       };
-
       this.callServive
           .createCalls(data)
           .pipe(

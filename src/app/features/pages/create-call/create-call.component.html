@@ -9,11 +9,11 @@
           <form class="row g-3 mg-3">
               <div class="col-md-6">
                   <label for="inputContactName" class="form-label">ชื่อ</label>
-                  <input type="text" class="form-control" id="inputContactName" [(ngModel)]="contactName"/>
+                  <input type="text" class="form-control" name="contactName" id="inputContactName" [(ngModel)]="contactName" />
               </div>
               <div class="col-md-6">
                   <label for="inputPassword4" class="form-label">สถานะ</label>
-                  <select id="inputstatus" class="form-select" [(ngModel)]="status">
+                  <select id="inputstatus" class="form-select" name="status" [(ngModel)]="status">
                       <option disabled selected></option>
                       <option>Planned</option>
                       <option>Held</option>
@@ -22,7 +22,7 @@
               </div>
               <div class="col-md-6">
                 <label for="inputPassword4" class="form-label">Parent</label>
-                <select id="inputParent" class="form-select" #inputState (change)="loadData(inputState.value)" [(ngModel)]="parent">
+                <select id="inputParent" class="form-select" #inputState (change)="loadData(inputState.value)" name="parent" [(ngModel)]="parent">
                     <option disabled selected></option>
                     <option value="casetopics">ข้อมูลติดต่อ</option>
                     <option value="contacts">รายชื่อติดต่อ</option>
@@ -33,9 +33,9 @@
 
             <div class="col-6">
                 <label for="inputAddress" class="form-label">Parent</label>
-                <select id="inputParentSub" class="form-select" [(ngModel)]="parentSub">
+                <select id="inputParentSub" class="form-select" name="parentSub" [(ngModel)]="parentSub">
                     <option disabled selected></option>
-                    <option *ngFor="let item of selectedData" [value]="item.id">{{ item.name }}</option>
+                    <option *ngFor="let item of selectedData" [value]="item.name">{{ item.name }}</option>
                 </select>
             </div>
 
@@ -44,12 +44,12 @@
                 <div class="date-pik">
                   <mat-form-field class="date-time">
                     <mat-label>กรุณาเลือกวันที่</mat-label>
-                    <input matInput [matDatepicker]="picker1" [(ngModel)]="startTime">
+                    <input matInput [matDatepicker]="picker1" name="startTime" [(ngModel)]="startTime">
                     <mat-hint>MM/DD/YYYY</mat-hint>
                     <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
                     <mat-datepicker #picker1></mat-datepicker>
                   </mat-form-field>
-                  <ngb-timepicker [(ngModel)]="time" [seconds]="seconds" [ngModelOptions]="{standalone: true}"></ngb-timepicker>
+                  <ngb-timepicker name="timepickStart" [(ngModel)]="timepickStart" [seconds]="seconds" [ngModelOptions]="{standalone: true}"></ngb-timepicker>
                 </div>
               </div>
 
@@ -58,18 +58,18 @@
                 <div class="date-pik">
                   <mat-form-field class="date-time">
                     <mat-label>กรุณาเลือกวันที่</mat-label>
-                    <input matInput [matDatepicker]="picker2" [(ngModel)]="endTime">
+                    <input matInput [matDatepicker]="picker2" name="endTime" [(ngModel)]="endTime">
                     <mat-hint>MM/DD/YYYY</mat-hint>
                     <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
                     <mat-datepicker #picker2></mat-datepicker>
                   </mat-form-field>
-                  <ngb-timepicker [(ngModel)]="time1"  [seconds]="seconds" [ngModelOptions]="{standalone: true}"></ngb-timepicker>
+                  <ngb-timepicker name="timepickEnd" [(ngModel)]="timepickEnd"  [seconds]="seconds" [ngModelOptions]="{standalone: true}"></ngb-timepicker>
                 </div>
               </div>
 
               <div class="col-6">
                   <label for="inputdirection" class="form-label">ประเภทสาย</label>
-                  <select id="inputdirection" class="form-select" [(ngModel)]="direction">
+                  <select id="inputdirection" class="form-select" name="direction" [(ngModel)]="direction">
                       <option disabled selected></option>
                       <option>Inbound</option>
                       <option>Outbound</option>
@@ -77,14 +77,14 @@
               </div>
               <div class="col-md-6">
                   <label for="inputduration" class="form-label">ระยะเวลา</label>
-                  <select id="inputduration" class="form-select" [(ngModel)]="duration">
+                  <select id="inputduration" class="form-select" name="duration" [(ngModel)]="duration">
                       <option disabled selected></option>
                       <option>3 นาที</option>
                   </select>
               </div>
               <div class="col-12">
                   <label class="form-check-label" for="gridCheck"> รายละเอียด </label>
-                  <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea" [(ngModel)]="description"></textarea>
+                  <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea" name="description" [(ngModel)]="description"></textarea>
               </div>
           </form>
       </div>
