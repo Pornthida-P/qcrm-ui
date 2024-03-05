@@ -16,6 +16,8 @@ export class ProfileListComponent implements OnInit {
     @Output() editUserId: EventEmitter<User> = new EventEmitter<User>();
     @Output() viewUserId: EventEmitter<User> = new EventEmitter<User>();
 
+    constructor() {}
+
     ngOnInit(): void {}
 
     onDeleted(member: User) {

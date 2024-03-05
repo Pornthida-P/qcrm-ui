@@ -3,7 +3,7 @@
         <div class="col-auto">
             <span class="fs-5 color-primary d-flex flex-row gap-2">
                 <fa-icon [icon]="faAnnounce"></fa-icon>
-                <p class="cursor-default m-0">ประกาศ :</p>
+                <p class="cursor-default m-0">{{ 'component.announce.title' | translate }} :</p>
             </span>
         </div>
         <div class="col">
@@ -16,7 +16,10 @@
         <div class="col-auto">
             <div class="announcement-action d-flex flex-row gap-2">
                 <button class="btn btn-primary-color fs-5 text-white" (click)="onClickView()">
-                    <fa-icon [icon]="faEye"> </fa-icon>
+                    <div class="d-flex gap-1">
+                        <fa-icon [icon]="faEye" class="color-white"></fa-icon>
+                        <p class="m-0">{{ 'component.announce.view' | translate }}</p>
+                    </div>
                 </button>
             </div>
         </div>

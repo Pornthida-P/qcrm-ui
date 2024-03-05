@@ -21,9 +21,11 @@ interface Day {
 })
 export class CalendarPreviewComponent implements OnInit {
     @Output() selectedDate: EventEmitter<Date> = new EventEmitter();
+    @Output() event: EventEmitter<CalendarEvent[]> = new EventEmitter();
 
     events: CalendarEvent[] = [];
     currentMonth: string;
+    currentYear: string;
     weeks: Day[][] = [];
     selectDate: Date = new Date();
     onSelectEvent: CalendarEvent[] = [];
@@ -38,7 +40,8 @@ export class CalendarPreviewComponent implements OnInit {
         private sweetAlertService: SweetAlertService,
     ) {
         const currentDate = new Date();
-        this.currentMonth = currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        this.currentMonth = currentDate.toLocaleDateString('en-US', { month: 'long' });
+        this.currentYear = currentDate.toLocaleDateString('en-US', { year: 'numeric' });
         this.generateCalendar(currentDate.getMonth(), currentDate.getFullYear());
         this.selectDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
 
@@ -49,7 +52,7 @@ export class CalendarPreviewComponent implements OnInit {
 
     ngOnInit(): void {
         this.calendarService.onRefreshData().subscribe(() => {
-            this.findEventByMonth(this.currentMonth);
+            this.findEventByMonth(this.currentMonth, this.currentYear);
         });
     }
 
@@ -97,8 +100,9 @@ export class CalendarPreviewComponent implements OnInit {
 
         this.weeks = [];
         this.generateCalendar(newMonth, newYear);
-        this.currentMonth = new Date(newYear, newMonth).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-        this.findEventByMonth(this.currentMonth);
+        this.currentMonth = new Date(newYear, newMonth).toLocaleDateString('en-US', { month: 'long' });
+        this.currentYear = new Date(newYear, newMonth).toLocaleDateString('en-US', { year: 'numeric' });
+        this.findEventByMonth(this.currentMonth, this.currentYear);
     }
 
     previousMonth(): void {
@@ -117,8 +121,9 @@ export class CalendarPreviewComponent implements OnInit {
 
         this.weeks = [];
         this.generateCalendar(newMonth, newYear);
-        this.currentMonth = new Date(newYear, newMonth).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-        this.findEventByMonth(this.currentMonth);
+        this.currentMonth = new Date(newYear, newMonth).toLocaleDateString('en-US', { month: 'long' });
+        this.currentYear = new Date(newYear, newMonth).toLocaleDateString('en-US', { year: 'numeric' });
+        this.findEventByMonth(this.currentMonth, this.currentYear);
     }
 
     onClickSelectDate(date: Date): void {
@@ -204,16 +209,14 @@ export class CalendarPreviewComponent implements OnInit {
         }
     }
 
-    findEventByMonth(monthYear: string): void {
-        const monthYearParts = monthYear.split(' ');
-        const month = monthNames[monthYearParts[0].toLowerCase()];
-        const year = monthYearParts[1];
-
+    findEventByMonth(month: string, year: string): void {
+        const monthInt = monthNames[month.toLowerCase()];
         this.calendarService
-            .findEventByMonth(month, year)
+            .findEventByMonth(monthInt, year)
             .pipe(
                 tap((res: CalendarEvent[]) => {
                     this.events = res;
+                    this.event.emit(res);
                 }),
                 catchError((err) => {
                     this.sweetAlertService.handleError(err);

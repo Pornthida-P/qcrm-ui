@@ -11,6 +11,7 @@ import { User } from 'src/app/shared/interface/user.interface';
     styleUrl: './menagement-password.component.scss',
 })
 export class MenagementPasswordComponent implements OnInit {
+    title = 'menagement-password';
     userData?: User | null;
     currentPassword: string = '';
     newPassword: string = '';
@@ -18,7 +19,6 @@ export class MenagementPasswordComponent implements OnInit {
     isAction: boolean = false;
 
     passwordForm: FormGroup = new FormGroup({});
-    title = 'จัดการพาสเวิร์ด';
 
     constructor(private userService: UserService, private fb: FormBuilder, private sweetalertService: SweetAlertService) {}
 

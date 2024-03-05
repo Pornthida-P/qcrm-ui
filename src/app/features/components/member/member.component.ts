@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { faGear } from '@fortawesome/free-solid-svg-icons';
+import { faGear, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { catchError, tap } from 'rxjs';
 import { ModalUserService } from 'src/app/services/modal-user/modal-user.service';
 import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
@@ -14,8 +14,7 @@ import { User } from 'src/app/shared/interface/user.interface';
     styleUrl: './member.component.scss',
 })
 export class MemberComponent implements OnInit {
-    title: string = 'จัดการสมาชิก';
-
+    title: string = 'member';
     members: User[] = [];
     displayedColumns: string[] = [];
     dataSource = new MatTableDataSource<User>();
@@ -25,6 +24,7 @@ export class MemberComponent implements OnInit {
     userData: User | null = null;
 
     faGear = faGear;
+    faPlusCircle = faPlusCircle;
 
     get columnVisibilityKeys(): string[] {
         return Object.keys(this.columnVisibility);

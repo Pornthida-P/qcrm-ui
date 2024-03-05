@@ -14,6 +14,8 @@ export class AttachmentsListComponent {
 
     faPlus = faPlusCircle;
 
+    constructor() {}
+
     ngOnInit(): void {}
 
     onDeletedAttachment(attachmentId: string) {

@@ -1,7 +1,9 @@
 <div *ngIf="members?.length === 0" class="row g-2 p-4 justify-content-center align-items-center profile-list-container">
     <div class="col-auto m-0">
         <div class="profile-list">
-            <p class="fs-7 m-auto">ไม่พบ Member</p>
+            <p class="fs-7 m-auto">
+                {{ 'component.profile-list.noMember' | translate }}
+            </p>
         </div>
     </div>
 </div>

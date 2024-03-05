@@ -1,0 +1,230 @@
+{
+    "title": {
+        "home": "หน้าหลัก",
+        "announcement": "ประกาศ",
+        "tag": "จัดการแท็ก",
+        "team": "จัดการทีม",
+        "member": "จัดการสมาชิก",
+        "menagement-password": "จัดการรหัสผ่าน",
+        "menagement-account": "จัดการบัญชี",
+        "menagement-appearance": "จัดการรูปแบบ",
+        "management-announcement": "จัดการประกาศ",
+        "menagement-calendar-event": "จัดการอีเว้นท์",
+        "menagement-tag": "จัดการแท็ก",
+        "menagement-team": "จัดการทีม",
+        "menagement-user": "จัดการผู้ใช้"
+    },
+    "page": {
+        "password": {
+            "currentPassword": "รหัสผ่านปัจจุบัน",
+            "newPassword": "รหัสผ่านใหม่",
+            "verifyPassword": "ยืนยันรหัสผ่าน",
+            "currentPasswordRequired": "กรุณากรอกรหัสผ่านปัจจุบัน",
+            "newPasswordRequired": "กรุณากรอกรหัสผ่านใหม่",
+            "verifyPasswordRequired": "กรุณายืนยันรหัสผ่าน",
+            "save": "บันทึก"
+        },
+        "member": {
+            "add": "เพิ่มสมาชิก",
+            "placeHolder": "ค้นหาสมาชิก",
+            "save": "บันทึก"
+        },
+        "tag": {
+            "add": "เพิ่มแท็ก",
+            "placeHolder": "ค้นหาแท็ก",
+            "save": "บันทึก"
+        },
+        "team": {
+            "add": "เพิ่มทีม",
+            "placeHolder": "ค้นหาทีม",
+            "lengthTypeMember": "คน",
+            "save": "บันทึก",
+            "noGroup": "ไม่พบทีม"
+        },
+        "appearance": {
+            "titleTheme": "เปลี่ยนธีม"
+        },
+        "announcement": {
+            "add": "เพิ่มประกาศ",
+            "placeHolder": "ค้นหาประกาศ",
+            "title": "หัวข้อ",
+            "description": "รายละเอียด",
+            "startDate": "วันที่เริ่ม",
+            "endDate": "วันที่สิ้นสุด",
+            "save": "บันทึก"
+        },
+        "home": {
+            "add": "เพิ่มอีเว้นท์",
+            "menuHome": "หน้าหลัก"
+        }
+    },
+    "table": {
+        "announcement": {
+            "announceId": "ลำดับ",
+            "announceTitle": "หัวข้อ",
+            "description": "รายละเอียด",
+            "startDate": "วันที่เริ่ม",
+            "endDate": "วันที่สิ้นสุด",
+            "createdAt": "วันที่สร้าง",
+            "createdById": "สร้างโดย",
+            "modifiedAt": "วันที่แก้ไขล่าสุด",
+            "modifiedById": "แก้ไขโดย"
+        },
+        "member": {
+            "userId": "ลำดับ",
+            "username": "ชื่อผู้ใช้",
+            "email": "อีเมล",
+            "role": "บทบาท",
+            "profile": "โปรไฟล์",
+            "lastLogin": "เข้าสู่ระบบล่าสุด",
+            "isActive": "สถานะ"
+        },
+        "tag": {
+            "tagId": "ลำดับ",
+            "tagName": "ชื่อแท็ก",
+            "description": "รายละเอียด",
+            "color": "สี",
+            "createdAt": "วันที่สร้าง",
+            "createdById": "สร้างโดย",
+            "modifyAt": "วันที่แก้ไขล่าสุด",
+            "modifyById": "แก้ไขโดย"
+        },
+        "Actions": "การกระทำ",
+        "paginatorLabel": "เลือกจำนวนที่แสดง"
+    },
+    "component": {
+        "navbar": {
+            "search": "ค้นหา",
+            "notification": "การแจ้งเตือน",
+            "newNotifications": "การแจ้งเตือนใหม่",
+            "readNotifications": "การแจ้งเตือนที่อ่านแล้ว",
+            "noNotification": "ไม่มีการแจ้งเตือน"
+        },
+        "account-profile": {
+            "username": "ชื่อผู้ใช้",
+            "usernameRequired": "กรุณากรอกชื่อผู้ใช้",
+            "usernamePattern": "ชื่อผู้ใช้งานต้องประกอบด้วยตัวอักษร a-z A-Z และ 0-9 เท่านั้น",
+            "role": "บทบาท",
+            "roleRequired": "กรุณาเลือกบทบาท",
+            "email": "อีเมล",
+            "emailRequired": "กรุณากรอกอีเมล",
+            "emailPattern": "รูปแบบอีเมลไม่ถูกต้อง",
+            "save": "บันทึก",
+            "upload": "อัพโหลด",
+            "UploadDiscrption": "JPG, GIF or PNG 400x400"
+        },
+        "announce": {
+            "title": "ประกาศ",
+            "view": "ดูประกาศ"
+        },
+        "calendar-card": {
+            "members": "สมาชิก",
+            "membersCount": "คน",
+            "attachments": "ไฟล์แนบ",
+            "fileCount": "ไฟล์",
+            "noAttachment": "ไม่พบไฟล์แนบ"
+        },
+        "calendar-preview": {
+            "sun": "อา.",
+            "mon": "จ.",
+            "tue": "อ.",
+            "wed": "พ.",
+            "thu": "พฤ.",
+            "fri": "ศ.",
+            "sat": "ส."
+        },
+        "card-event-list": {
+            "add": "เพิ่มอีเว้นท์",
+            "placeholder": "ค้นหาอีเว้นท์",
+            "day": "วัน",
+            "week": "สัปดาห์",
+            "month": "เดือน",
+            "year": "ปี",
+            "all": "ทั้งหมด",
+            "haveAttachment": "มีไฟล์แนบ",
+            "save": "บันทึก",
+            "sort": "เรียงลำดับ",
+            "noEvent": "ไม่พบอีเว้นท์"
+        },
+        "pop-overs-event": {
+            "event": "อีเว้นท์",
+            "noEvent": "ไม่พบอีเว้นท์"
+        },
+        "profile-list": {
+            "noMember": "ไม่พบสมาชิก"
+        },
+        "attachments-list": {
+            "noAttachment": "ไม่พบไฟล์แนบ"
+        }
+    },
+    "modal": {
+        "calendar": {
+            "menuDetail": "รายละเอียด",
+            "menuAttachments": "ไฟล์แนบ",
+            "title": "หัวข้อ",
+            "tag": "แท็ก",
+            "location": "สถานที่",
+            "startDate": "วันที่เริ่ม",
+            "endDate": "วันที่สิ้นสุด",
+            "description": "รายละเอียด",
+            "members": "สมาชิก",
+            "attachments": "ไฟล์แนบ",
+            "add": "เพิ่ม",
+            "save": "บันทึก"
+        },
+        "tag": {
+            "tagName": "ชื่อแท็ก",
+            "description": "รายละเอียด",
+            "color": "สี",
+            "save": "บันทึก"
+        },
+        "group": {
+            "groupTitle": "ชื่อทีม",
+            "groupTitleRequired": "กรุณากรอกชื่อทีม",
+            "description": "รายละเอียด",
+            "members": "สมาชิก",
+            "save": "บันทึก"
+        }
+    },
+    "menuNavber": {
+        "search": "ค้นหา",
+        "notification": "การแจ้งเตือน",
+        "setting": "การตั้งค่า",
+        "logout": "ออกจากระบบ"
+    },
+    "menuSidebar": {
+        "home": "หน้าหลัก",
+        "contacts": "ฐานข้อมูลผู้ใช้บริการและประวัติผู้ติดต่อ",
+        "surveyform": "แบบฟอร์มสำรวจและติดตามประเมินผล",
+        "call": "ประวัติการโทร",
+        "report-page": "รายงาน"
+    },
+    "menuSetting": {
+        "menagement-account": "จัดการบัญชี",
+        "menagement-password": "จัดการรหัสผ่าน",
+        "menagement-member": "จัดการสมาชิก",
+        "tag": "จัดการแท็ก",
+        "menagement-team": "จัดการทีม",
+        "menagement-appearance": "จัดการรูปแบบ",
+        "logout": "ออกจากระบบ"
+    },
+    "mode": {
+        "add": "เพิ่ม",
+        "edit": "แก้ไข",
+        "view": "ดู"
+    },
+    "month": {
+        "January": "มกราคม",
+        "February": "กุมภาพันธ์",
+        "March": "มีนาคม",
+        "April": "เมษายน",
+        "May": "พฤษภาคม",
+        "June": "มิถุนายน",
+        "July": "กรกฎาคม",
+        "August": "สิงหาคม",
+        "September": "กันยายน",
+        "October": "ตุลาคม",
+        "November": "พฤศจิกายน",
+        "December": "ธันวาคม"
+    }
+}

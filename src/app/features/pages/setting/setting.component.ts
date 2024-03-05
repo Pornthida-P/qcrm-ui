@@ -17,45 +17,40 @@ export class SettingComponent implements OnInit {
     ngOnInit(): void {
         this.menuSetting = [
             {
-                label: 'ตั้งค่าบัญชี',
+                label: 'menagement-account',
                 icon: '',
                 routerLink: 'menagement-account',
             },
             {
-                label: 'พาสเวิร์ด',
+                label: 'menagement-password',
                 icon: '',
                 routerLink: 'menagement-password',
             },
             {
-                label: 'สมาชิก',
+                label: 'menagement-member',
                 icon: '',
                 routerLink: 'menagement-member',
             },
             {
-                label: 'ทีม',
-                icon: '',
-                routerLink: 'menagement-team',
-            },
-            {
-                label: 'แท็ก',
+                label: 'tag',
                 icon: '',
                 routerLink: 'tag',
             },
             {
-                label: 'รูปร่าง',
+                label: 'menagement-team',
+                icon: '',
+                routerLink: 'menagement-team',
+            },
+            {
+                label: 'menagement-appearance',
                 icon: '',
                 routerLink: 'menagement-appearance',
             },
+            {
+                label: 'logout',
+                icon: '',
+                routerLink: '/logout',
+            },
         ];
-
-        this.menuLogout = {
-            label: 'ออกจากระบบ',
-            icon: '',
-            routerLink: '',
-        };
-    }
-
-    logout() {
-        this.router.navigate(['logout']);
     }
 }

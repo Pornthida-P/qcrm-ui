@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { faEdit, faEye, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faEye, faPlusCircle, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { tap, catchError } from 'rxjs';
 import { ModalTeamService } from 'src/app/services/modal-team/modal-team.service';
 import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
@@ -14,11 +14,12 @@ import { User } from 'src/app/shared/interface/user.interface';
     styleUrl: './team.component.scss',
 })
 export class TeamComponent {
-    title = 'จัดการทีม';
+    title: string = 'team';
 
     faEdit = faEdit;
     faTrash = faTrash;
     faEye = faEye;
+    faPlusCircle = faPlusCircle;
 
     isAction: boolean = false;
     groupMembers: Group[] = [];

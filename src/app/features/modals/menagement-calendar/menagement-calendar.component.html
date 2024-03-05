@@ -1,7 +1,7 @@
 <div class="container">
     <div class="row p-4">
         <div class="col-8">
-            <p class="form-label fs-5">{{ title | uppercase }}({{ data.mode | uppercase }})</p>
+            <p class="form-label fs-5">{{ 'title.' + title | translate }}({{ 'mode.' + data.mode | translate }})</p>
         </div>
         <div class="col-4 d-flex justify-content-end">
             <a class="color-red cursor-pointer" (click)="onClickClose()">
@@ -12,10 +12,14 @@
         <div class="col-12 py-3">
             <ul class="nav nav-tabs" id="calendarEventTab">
                 <li class="nav-item">
-                    <a class="nav-link active color-primary" id="details-tab" data-bs-toggle="tab" href="#details">Details</a>
+                    <a class="nav-link active color-primary" id="details-tab" data-bs-toggle="tab" href="#details">{{
+                        'modal.calendar.menuDetail' | translate
+                    }}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link color-primary" id="attachments-tab" data-bs-toggle="tab" href="#attachments">Attachments</a>
+                    <a class="nav-link color-primary" id="attachments-tab" data-bs-toggle="tab" href="#attachments">
+                        {{ 'modal.calendar.menuAttachments' | translate }}
+                    </a>
                 </li>
             </ul>
             <div class="tab-content">
@@ -23,7 +27,9 @@
                     <div class="row">
                         <form class="col-12" [formGroup]="calendarEvent">
                             <div class="my-3">
-                                <label for="title" class="form-label">Title</label>
+                                <label for="title" class="form-label">
+                                    {{ 'modal.calendar.title' | translate }}
+                                </label>
                                 <input
                                     type="text"
                                     class="form-control"
@@ -41,7 +47,9 @@
 
                             <div class="row my-3">
                                 <div class="col-sm-12 col-md-12">
-                                    <label for="tag" class="form-label">Tag</label>
+                                    <label for="tag" class="form-label">
+                                        {{ 'modal.calendar.tag' | translate }}
+                                    </label>
                                     <select
                                         class="form-select"
                                         id="tag"
@@ -60,14 +68,18 @@
 
                             <div class="row my-3">
                                 <div class="col-sm-12 col-md-12">
-                                    <label for="location" class="form-label">Location</label>
+                                    <label for="location" class="form-label">
+                                        {{ 'modal.calendar.location' | translate }}
+                                    </label>
                                     <input type="text" class="form-control" id="location" formControlName="location" name="location" />
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-sm-12 col-md-6">
-                                    <label for="startDate" class="label">Start Date</label>
+                                    <label for="startDate" class="label">
+                                        {{ 'modal.calendar.startDate' | translate }}
+                                    </label>
                                     <div class="row justify-content-center align-items-center">
                                         <div class="col">
                                             <div class="input-group start-date">
@@ -98,7 +110,9 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-12 col-md-6">
-                                    <label for="endDate" class="label">End Date</label>
+                                    <label for="endDate" class="label">
+                                        {{ 'modal.calendar.endDate' | translate }}
+                                    </label>
                                     <div class="row justify-content-center align-items-center">
                                         <div class="col">
                                             <div class="input-group end-date">
@@ -130,12 +144,16 @@
                             </div>
 
                             <div class="my-3">
-                                <label for="description" class="form-label">Description</label>
+                                <label for="description" class="form-label">
+                                    {{ 'modal.calendar.description' | translate }}
+                                </label>
                                 <angular-editor formControlName="description" [config]="editorConfig"></angular-editor>
                             </div>
 
                             <div class="my-3">
-                                <label for="members" class="form-label">Members</label>
+                                <label for="members" class="form-label">
+                                    {{ 'modal.calendar.members' | translate }}
+                                </label>
                                 <mat-select
                                     class="form-control"
                                     formControlName="members"
@@ -171,12 +189,14 @@
                 <div class="tab-pane fade" id="attachments">
                     <div class="row align-items-center my-3">
                         <div class="col">
-                            <label for="attachments" class="form-label">Attachments list</label>
+                            <label for="attachments" class="form-label">
+                                {{ 'modal.calendar.attachments' | translate }}
+                            </label>
                         </div>
                         <div class="col-auto">
                             <button class="btn btn-primary-color text-white" (click)="openFileInput()" [disabled]="data.mode === 'view'">
                                 <fa-icon [icon]="faPlus"></fa-icon>
-                                Add
+                                {{ 'modal.calendar.add' | translate }}
                             </button>
                             <input type="file" #fileInput style="display: none" (change)="onFileSelected($event)" />
                         </div>
@@ -195,7 +215,7 @@
         </div>
         <div class="footer">
             <button type="submit" class="btn btn-primary-color text-white" (click)="onSubmit()" [disabled]="data.mode === 'view'">
-                Save
+                {{ 'modal.calendar.save' | translate }}
             </button>
         </div>
     </div>

@@ -14,13 +14,8 @@
                             >
                                 <a class="text-menu text-decoration-none">
                                     <fa-icon *ngIf="item?.icon" [icon]="item.icon" class="pe-2"></fa-icon>
-                                    {{ item.label }}
+                                    {{ 'menuSetting.' + item.label | translate }}
                                 </a>
-                            </li>
-
-                            <li class="sidebar-list cursor-pointer list-unstyled p-4 m-0" (click)="logout()">
-                                <fa-icon *ngIf="menuLogout?.icon" [icon]="menuLogout.icon" class="pe-2"></fa-icon>
-                                <a class="text-menu text-decoration-none">{{ menuLogout?.label }}</a>
                             </li>
                         </ul>
                     </div>

@@ -16,7 +16,7 @@ import { User } from 'src/app/shared/interface/user.interface';
     styleUrl: './menagement-tag.component.scss',
 })
 export class MenagementTagComponent implements OnInit {
-    title: string = 'Tag Management';
+    title: string = 'menagement-tag';
     tagData: FormGroup = new FormGroup({});
     userData: User | null = null;
     isAction: boolean = false;

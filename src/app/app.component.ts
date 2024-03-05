@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ThemeService } from './services/theme/theme.service';
 import { SocketIoService } from './services/socket-io/socket-io.service';
 import { UserService } from './services/user/user.service';
-import { tap } from 'rxjs';
 import { User } from './shared/interface/user.interface';
 import { LoaderService } from './services/loader/loader.service';
 

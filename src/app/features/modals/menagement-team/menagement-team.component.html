@@ -1,7 +1,7 @@
 <div class="container">
     <div class="row p-4">
         <div class="col-8">
-            <p class="form-label fs-5">{{ title | uppercase }}({{ data.mode | uppercase }})</p>
+            <p class="form-label fs-5">{{ 'title.' + title | translate }}({{ 'mode.' + data.mode | translate }})</p>
         </div>
         <div class="col-4 d-flex justify-content-end">
             <a class="color-red cursor-pointer" (click)="close()">
@@ -13,7 +13,9 @@
             <div class="col-12">
                 <form [formGroup]="groupForm" (ngSubmit)="onSubmit()">
                     <div class="form-group px-3 py-2">
-                        <label class="mb-2" for="groupTitle">Group Title</label>
+                        <label class="mb-2" for="groupTitle">
+                            {{ 'modal.group.groupTitle' | translate }}
+                        </label>
                         <input
                             type="text"
                             class="form-control"
@@ -35,11 +37,13 @@
                             "
                             class="fs-8 pt-2 text-danger"
                         >
-                            Group Title is required
+                            {{ 'modal.group.groupTitleRequired' | translate }}
                         </div>
                     </div>
                     <div class="form-group px-3 py-2">
-                        <label class="mb-2" for="description">Description</label>
+                        <label class="mb-2" for="description">
+                            {{ 'modal.group.description' | translate }}
+                        </label>
                         <input
                             type="text"
                             class="form-control"
@@ -51,7 +55,9 @@
                     </div>
 
                     <div class="form-group px-3 py-2">
-                        <label for="members" class="form-label">Members</label>
+                        <label for="members" class="form-label">
+                            {{ 'modal.group.members' | translate }}
+                        </label>
                         <mat-select
                             class="form-control"
                             formControlName="members"
@@ -77,7 +83,9 @@
                     </div>
 
                     <div class="footer px-3 py-2">
-                        <button type="submit" class="btn btn-primary-color text-white" [disabled]="data.mode === 'view'">Save</button>
+                        <button type="submit" class="btn btn-primary-color text-white" [disabled]="data.mode === 'view'">
+                            {{ 'modal.group.save' | translate }}
+                        </button>
                     </div>
                 </form>
             </div>
