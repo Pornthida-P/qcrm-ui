@@ -290,13 +290,13 @@ export class CallComponent implements OnInit {
                 (acc: any, cur: any) => [
                     ...acc,
                     {
-                        createdAt: cur.StartTime,
+                        createdAt: cur.createdAt,
                         name: cur.CallerID,
                         direction: cur.CallType,
                         caseTopicName: cur.caseTopicName,
                         description: cur.description,
-                        solutions: cur.Solutions,
-                        createBy: cur.createdById,
+                        solution: cur.solution,
+                        username: cur.username,
                     },
                 ],
                 [],

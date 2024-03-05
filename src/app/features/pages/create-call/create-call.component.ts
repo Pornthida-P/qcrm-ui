@@ -30,6 +30,7 @@ export class CreateCallComponent {
     description: string = '';
     timepickStart: any;
     hour: any;
+    solutions: string = '';
 
     selectedItem: any;
     selectedData: any[] = [];
@@ -149,13 +150,14 @@ export class CreateCallComponent {
             startTime: this.combinedDateTimeStart,
             endTime: this.combinedDateTimeEnd,
             duration: this.duration,
+            solution: this.solutions,
             createdById: userData.userId,
         };
         this.callServive
             .createCalls(data)
             .pipe(
                 tap((res) => {
-                    this.sweetalertServices.getSwal('บันทึกข้อมูลเรียบร้อยแล้ว', 'Save data success.', '', false, '/contacts');
+                    this.sweetalertServices.getSwal('success','บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '/contacts');
                 }),
                 catchError((error) => {
                     this.sweetalertServices.handleError(error);

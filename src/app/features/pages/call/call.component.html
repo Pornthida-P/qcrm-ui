@@ -92,7 +92,7 @@
                                     />
                                 </td>
                                 <td>
-                                    {{ calls.StartTime | date : 'dd/MM/yyyy HH:mm' }}
+                                    {{ calls.createdAt | date : 'dd/MM/yyyy HH:mm' }}
                                 </td>
                                 <td
                                     (click)="showSideBar(i)"
@@ -118,10 +118,10 @@
                                 </td>
                                 <td class="w-max-ellipsis">
                                     <div [ngbTooltip]="calls.Solutions" placement="bottom" class="text-ellipsis">
-                                        {{ calls.Solutions }}
+                                        {{ calls.solution }}
                                     </div>
                                 </td>
-                                <td>{{ calls.createdById }}</td>
+                                <td>{{ calls.username }}</td>
                                 <!-- <td class="text-center" scope="row">
                                     <div class="d-flex flex-row flex-nowrap">
                                         <div class="me-3 color-primary cursor-pointer" placement="top" ngbTooltip="แก้ไข" (click)="editPage()">
