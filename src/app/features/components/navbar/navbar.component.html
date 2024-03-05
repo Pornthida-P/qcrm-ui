@@ -22,7 +22,7 @@
                         type="text"
                         class="form-control border border-start-0 shadow-none"
                         [(ngModel)]="value"
-                        placeholder="ค้นหา..."
+                        [placeholder]="'component.navbar.search' | translate"
                         aria-describedby="basic-addon1"
                         [ngbPopover]="popContentSearch"
                         popoverClass="border rounded popover-search"
@@ -65,8 +65,12 @@
                                 [(ngModel)]="showReadNotifications"
                                 (change)="getNotifications()"
                             />
-                            <label for="switchNewNotification">New notifications</label>
-                            <label for="switchReadNotification">Read notifications</label>
+                            <label for="switchNewNotification">
+                                {{ 'component.navbar.newNotifications' | translate }}
+                            </label>
+                            <label for="switchReadNotification">
+                                {{ 'component.navbar.readNotifications' | translate }}
+                            </label>
                             <div class="switch-wrapper">
                                 <div class="switch">
                                     <div>
@@ -115,7 +119,9 @@
                         </div>
                         <ng-template #noNotification>
                             <div class="p-3 text-center">
-                                <p class="label">ไม่มีการแจ้งเตือน</p>
+                                <p class="label">
+                                    {{ 'component.navbar.noNotification' | translate }}
+                                </p>
                             </div>
                         </ng-template>
                     </div>
@@ -151,7 +157,7 @@
                                 <li (click)="item.click()">
                                     <a class="dropdown-item cursor-pointer">
                                         <fa-icon [icon]="item.icon" class="pe-2"></fa-icon>
-                                        {{ item.label }}
+                                        {{ 'menuNavber.' + item.label | translate }}
                                     </a>
                                 </li>
                             </div>
@@ -180,7 +186,7 @@
                                 <li (click)="item.click()">
                                     <a class="dropdown-item cursor-pointer">
                                         <fa-icon [icon]="item.icon" class="pe-2"></fa-icon>
-                                        {{ item.label }}
+                                        {{ 'menuNavber.' + item.label | translate }}
                                     </a>
                                 </li>
                             </div>
@@ -223,6 +229,8 @@
         <div class="text-end">
             <i class="fa-solid fa-xmark" (click)="closeNotificationSideBar()"></i>
         </div>
-        <p class="m-0">การแจ้งเตือน</p>
+        <p class="m-0">
+            {{ 'component.navbar.notification' | translate }}
+        </p>
     </div>
 </div>

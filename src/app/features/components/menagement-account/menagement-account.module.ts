@@ -4,6 +4,13 @@ import { RouterModule } from '@angular/router';
 import { MenagementAccountComponent } from './menagement-account.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AccountProfileModule } from '../account-profile/account-profile.module';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { HttpClient } from '@angular/common/http';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+
+export function HttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http, './assets/nea-qcrm-ui/i18n/', '.json');
+}
 
 @NgModule({
     declarations: [MenagementAccountComponent],
@@ -18,6 +25,13 @@ import { AccountProfileModule } from '../account-profile/account-profile.module'
                 component: MenagementAccountComponent,
             },
         ]),
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient],
+            },
+        }),
     ],
     exports: [],
 })

@@ -6,6 +6,13 @@ import { ProfileListModule } from '../profile-list/profile-list.module';
 import { TableListModule } from '../table-list/table-list.module';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { HttpClient } from '@angular/common/http';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+
+export function HttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http, './assets/nea-qcrm-ui/i18n/', '.json');
+}
 
 @NgModule({
     declarations: [MemberComponent],
@@ -22,6 +29,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
                 component: MemberComponent,
             },
         ]),
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient],
+            },
+        }),
     ],
 })
 export class MemberModule {}

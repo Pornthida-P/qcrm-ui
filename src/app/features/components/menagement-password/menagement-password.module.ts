@@ -3,6 +3,13 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MenagementPasswordComponent } from './menagement-password.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { HttpClient } from '@angular/common/http';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+
+export function HttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http, './assets/nea-qcrm-ui/i18n/', '.json');
+}
 
 @NgModule({
     declarations: [MenagementPasswordComponent],
@@ -16,6 +23,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
                 component: MenagementPasswordComponent,
             },
         ]),
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient],
+            },
+        }),
     ],
 })
 export class MenagementPasswordModule {}

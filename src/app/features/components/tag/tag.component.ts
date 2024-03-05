@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { faGear } from '@fortawesome/free-solid-svg-icons';
+import { faGear, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { catchError, tap } from 'rxjs';
 import { CalendarEventService } from 'src/app/services/calendar-event/calendar-event.service';
 import { ModalTagService } from 'src/app/services/modal-tag/modal-tag.service';
@@ -8,6 +8,7 @@ import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.serv
 import { UserService } from 'src/app/services/user/user.service';
 import { CalendarTag } from 'src/app/shared/interface/calendar.interface';
 import { User } from 'src/app/shared/interface/user.interface';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-tag',
@@ -15,7 +16,7 @@ import { User } from 'src/app/shared/interface/user.interface';
     styleUrl: './tag.component.scss',
 })
 export class TagComponent implements OnInit {
-    title = 'แท็ก';
+    title = 'tag';
     tags: CalendarTag[] = [];
     displayedColumns: string[] = [];
     dataSource = new MatTableDataSource<CalendarTag>();
@@ -25,6 +26,7 @@ export class TagComponent implements OnInit {
     userDatas: User | null = null;
 
     faGear = faGear;
+    faPlusCircle = faPlusCircle;
 
     get columnVisibilityKeys(): string[] {
         return Object.keys(this.columnVisibility);
@@ -35,7 +37,10 @@ export class TagComponent implements OnInit {
         private sweetAlertService: SweetAlertService,
         private userService: UserService,
         private modalTagService: ModalTagService,
-    ) {}
+        private translate: TranslateService,
+    ) {
+        this.translate.setDefaultLang('th');
+    }
 
     ngOnInit(): void {
         this.initzation();

@@ -6,13 +6,13 @@
                 <button *ngIf="isAction" type="button" class="btn btn-primary-color text-white" (click)="onClickAddEvent()">
                     <div class="d-flex gap-2">
                         <fa-icon [icon]="faPlus"></fa-icon>
-                        <span class="label">เพิ่ม</span>
+                        <span class="label">{{ 'page.home.add' | translate }}</span>
                     </div>
                 </button>
             </div>
         </div>
         <div class="col-12">
-            <div class="container px-5 py-3">
+            <div class="container py-3" style="max-width: 75vh">
                 <app-calendar-preview (selectedDate)="onSelectDate($event)"></app-calendar-preview>
             </div>
         </div>

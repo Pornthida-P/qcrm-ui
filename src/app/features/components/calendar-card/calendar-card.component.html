@@ -83,7 +83,10 @@
                 <span class="fs-5 color-primary"><fa-icon [icon]="faUserGroup"></fa-icon></span>
             </div>
             <div class="col-md-10 d-flex flex-column">
-                <p class="card-text fs-6">จำนวนผู้เข้าร่วม {{ event.members.length }} คน</p>
+                <p class="card-text fs-6">
+                    {{ 'component.calendar-card.members' | translate }}
+                    {{ event.members.length }} {{ 'component.calendar-card.membersCount' | translate }}
+                </p>
                 <app-profile-list
                     [members]="event.members"
                     [isShowToolbar]="true"
@@ -99,7 +102,10 @@
                 <span class="fs-5 color-primary"><fa-icon [icon]="faPaperclip"></fa-icon></span>
             </div>
             <div class="col-md-10 d-flex flex-column">
-                <p class="card-text fs-6">ไฟล์แนบ</p>
+                <p class="card-text fs-6">
+                    {{ 'component.calendar-card.attachments' | translate }}
+                    {{ event.attachments.length }} {{ 'component.calendar-card.fileCount' | translate }}
+                </p>
                 <div *ngIf="event.attachments">
                     <div class="col-md-12">
                         <app-attachments-list
@@ -110,7 +116,9 @@
                     </div>
                 </div>
                 <div *ngIf="!event.attachments">
-                    <p class="card-text fs-6">ไม่มีไฟล์แนบ</p>
+                    <p class="card-text fs-6">
+                        {{ 'component.calendar-card.noAttachments' | translate }}
+                    </p>
                 </div>
             </div>
         </div>

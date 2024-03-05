@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ThemeService } from './services/theme/theme.service';
 import { SocketIoService } from './services/socket-io/socket-io.service';
 import { UserService } from './services/user/user.service';
-import { tap } from 'rxjs';
 import { User } from './shared/interface/user.interface';
 import { LoaderService } from './services/loader/loader.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-root',
@@ -21,7 +21,10 @@ export class AppComponent implements OnInit {
         private socketIO: SocketIoService,
         private userService: UserService,
         private loaderService: LoaderService,
-    ) {}
+        private translate: TranslateService,
+    ) {
+        this.translate.setDefaultLang('th');
+    }
 
     async ngOnInit() {
         this.initzation();
@@ -59,5 +62,9 @@ export class AppComponent implements OnInit {
         this.loaderService.getLoaderStatus().subscribe((res) => {
             this.isLoading = res;
         });
+    }
+
+    switchLanguage(language: string) {
+        this.translate.use(language);
     }
 }

@@ -9,6 +9,7 @@ import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.serv
 import { UserService } from 'src/app/services/user/user.service';
 import { CalendarTag } from 'src/app/shared/interface/calendar.interface';
 import { User } from 'src/app/shared/interface/user.interface';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-menagement-tag',
@@ -16,7 +17,7 @@ import { User } from 'src/app/shared/interface/user.interface';
     styleUrl: './menagement-tag.component.scss',
 })
 export class MenagementTagComponent implements OnInit {
-    title: string = 'Tag Management';
+    title: string = 'menagement-tag';
     tagData: FormGroup = new FormGroup({});
     userData: User | null = null;
     isAction: boolean = false;
@@ -27,9 +28,12 @@ export class MenagementTagComponent implements OnInit {
         private userService: UserService,
         private sweetalertServices: SweetAlertService,
         private calendarService: CalendarEventService,
+        private translateService: TranslateService,
         public dialogRef: MatDialogRef<MenagementTagComponent>,
         @Inject(MAT_DIALOG_DATA) public data: { mode: 'add' | 'view' | 'edit'; tag?: CalendarTag },
-    ) {}
+    ) {
+        translateService.setDefaultLang('th');
+    }
 
     ngOnInit(): void {
         this.initzaion();

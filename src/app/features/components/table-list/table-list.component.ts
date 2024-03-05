@@ -3,6 +3,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { faEdit, faEye, faGear, faTrash, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-table-list',
@@ -12,6 +13,7 @@ import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
 export class TableListComponent implements OnInit, OnChanges {
     @ViewChild(MatPaginator) paginator?: MatPaginator;
 
+    @Input() title: string = '';
     @Input() dataSource: MatTableDataSource<any> = new MatTableDataSource<any>([]);
     @Input() displayedColumns: string[] = [];
     @Input() isAction: boolean = false;
@@ -34,7 +36,9 @@ export class TableListComponent implements OnInit, OnChanges {
 
     profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
 
-    constructor(private socketIO: SocketIoService) {}
+    constructor(private socketIO: SocketIoService, private translate: TranslateService) {
+        this.translate.setDefaultLang('th');
+    }
 
     ngOnInit(): void {}
 

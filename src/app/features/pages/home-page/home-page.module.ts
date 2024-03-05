@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { TeamActivitiesComponent } from '../../components/team-activities/team-activities.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatCardModule } from '@angular/material/card';
@@ -17,7 +16,6 @@ import { AngularEditorModule } from '@kolkov/angular-editor';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatTableModule } from '@angular/material/table';
 import { MenagementAnnounceComponent } from '../../modals/menagement-announce/menagement-announce.component';
-import { MenagementAnnounceListComponent } from '../../modals/menagement-announce-list/menagement-announce-list/menagement-announce-list.component';
 import { NgbModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { AccountProfileModule } from '../../components/account-profile/account-profile.module';
 import { ProfileListModule } from '../../components/profile-list/profile-list.module';
@@ -27,17 +25,16 @@ import { CalendarPreviewModule } from '../../components/calendar-preview/calenda
 import { CalendarCardModule } from '../../components/calendar-card/calendar-card.module';
 import { CardEventListModule } from '../../components/card-event-list/card-event-list.module';
 import { AttachmentsListModule } from '../../components/attachments-list/attachments-list.module';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { HttpClient } from '@angular/common/http';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+
+export function HttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http, './assets/nea-qcrm-ui/i18n/', '.json');
+}
 
 @NgModule({
-    declarations: [
-        HomePageComponent,
-        TeamActivitiesComponent,
-        AnnounceComponent,
-        MenagementCalendarComponent,
-        MenagementAnnounceComponent,
-        HomeComponent,
-        MenagementAnnounceListComponent,
-    ],
+    declarations: [HomePageComponent, AnnounceComponent, MenagementCalendarComponent, MenagementAnnounceComponent, HomeComponent],
     imports: [
         MatCardModule,
         CommonModule,
@@ -67,6 +64,13 @@ import { AttachmentsListModule } from '../../components/attachments-list/attachm
                 component: HomePageComponent,
             },
         ]),
+        TranslateModule.forChild({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient],
+            },
+        }),
     ],
     providers: [],
     exports: [],

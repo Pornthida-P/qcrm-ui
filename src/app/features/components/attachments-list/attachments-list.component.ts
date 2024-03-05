@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { Attachment } from 'src/app/shared/interface/attachment.interface';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-attachments-list',
@@ -13,6 +14,8 @@ export class AttachmentsListComponent {
     @Input() mode?: 'view' | 'edit' | 'add';
 
     faPlus = faPlusCircle;
+
+    constructor(private translateService: TranslateService) {}
 
     ngOnInit(): void {}
 

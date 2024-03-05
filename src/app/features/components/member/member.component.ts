@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { faGear } from '@fortawesome/free-solid-svg-icons';
+import { faGear, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { catchError, tap } from 'rxjs';
 import { ModalUserService } from 'src/app/services/modal-user/modal-user.service';
 import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { User } from 'src/app/shared/interface/user.interface';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-member',
@@ -14,8 +15,7 @@ import { User } from 'src/app/shared/interface/user.interface';
     styleUrl: './member.component.scss',
 })
 export class MemberComponent implements OnInit {
-    title: string = 'จัดการสมาชิก';
-
+    title: string = 'member';
     members: User[] = [];
     displayedColumns: string[] = [];
     dataSource = new MatTableDataSource<User>();
@@ -25,6 +25,7 @@ export class MemberComponent implements OnInit {
     userData: User | null = null;
 
     faGear = faGear;
+    faPlusCircle = faPlusCircle;
 
     get columnVisibilityKeys(): string[] {
         return Object.keys(this.columnVisibility);
@@ -35,7 +36,10 @@ export class MemberComponent implements OnInit {
         private userService: UserService,
         private sweetalertService: SweetAlertService,
         private modalUserService: ModalUserService,
-    ) {}
+        private translateService: TranslateService,
+    ) {
+        this.translateService.setDefaultLang('th');
+    }
 
     ngOnInit(): void {
         this.initzation();

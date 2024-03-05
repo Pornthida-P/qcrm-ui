@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { faChartPie, faFileLines, faFilePen, faHouse, faPhoneVolume } from '@fortawesome/free-solid-svg-icons';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-sidebar',
@@ -9,32 +10,34 @@ import { faChartPie, faFileLines, faFilePen, faHouse, faPhoneVolume } from '@for
 export class SidebarComponent implements OnInit {
     items: any = [];
 
-    constructor() {}
+    constructor(private translateService: TranslateService) {
+        translateService.setDefaultLang('th');
+    }
 
     ngOnInit(): void {
         this.items = [
             {
-                label: 'หน้าแรก',
+                label: 'home',
                 icon: faHouse,
                 routerLink: '/home',
             },
             {
-                label: 'ฐานข้อมูลผู้ใช้บริการและประวัติผู้ติดต่อ',
+                label: 'contacts',
                 icon: faFileLines,
                 routerLink: '/contacts',
             },
             {
-                label: 'แบบฟอร์มสำรวจและติดตามประเมินผล',
+                label: 'surveyform',
                 icon: faFilePen,
                 routerLink: '/surveyform',
             },
             {
-                label: 'ประวัติการโทร',
+                label: 'call',
                 icon: faPhoneVolume,
                 routerLink: '/call',
             },
             {
-                label: 'รายงาน',
+                label: 'report-page',
                 icon: faChartPie,
                 routerLink: '/report-page',
             },

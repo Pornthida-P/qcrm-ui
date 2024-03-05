@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from 'src/app/services/user/user.service';
 import { User } from 'src/app/shared/interface/user.interface';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-menagement-account',
@@ -8,14 +9,16 @@ import { User } from 'src/app/shared/interface/user.interface';
     styleUrl: './menagement-account.component.scss',
 })
 export class MenagementAccountComponent implements OnInit {
+    title: string = 'menagement-account';
     userData?: User | null;
     isAction: boolean = false;
     mode: 'add' | 'view' | 'edit' = 'edit';
 
     profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
-    title: string = 'ตั้งค่าบัญชีผู้ใช้';
 
-    constructor(private userService: UserService) {}
+    constructor(private userService: UserService, private translateService: TranslateService) {
+        this.translateService.setDefaultLang('th');
+    }
 
     ngOnInit(): void {
         this.getDataUser();

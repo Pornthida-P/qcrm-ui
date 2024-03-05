@@ -4,13 +4,13 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { AnnouncementService } from 'src/app/services/announcement/announcement.service';
 import { Announce } from 'src/app/shared/interface/announce.interface';
-import { MenagementAnnounceListComponent } from '../menagement-announce-list/menagement-announce-list/menagement-announce-list.component';
 import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { catchError, tap } from 'rxjs';
 import { User } from 'src/app/shared/interface/user.interface';
 import { UserService } from 'src/app/services/user/user.service';
 import * as moment from 'moment';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-menagement-announce',
@@ -18,7 +18,7 @@ import * as moment from 'moment';
     styleUrl: './menagement-announce.component.scss',
 })
 export class MenagementAnnounceComponent implements OnInit {
-    title: string = 'Announcement Management';
+    title: string = 'management-announcement';
     announceData: FormGroup = new FormGroup({});
     startTime: NgbTimeStruct = { hour: 0, minute: 0, second: 0 };
     endTime: NgbTimeStruct = { hour: 23, minute: 59, second: 59 };
@@ -32,9 +32,11 @@ export class MenagementAnnounceComponent implements OnInit {
         private fb: FormBuilder,
         private userService: UserService,
         private sweetalertServices: SweetAlertService,
-        public dialogRef: MatDialogRef<MenagementAnnounceListComponent>,
+        private translateService: TranslateService,
+        public dialogRef: MatDialogRef<MenagementAnnounceComponent>,
         @Inject(MAT_DIALOG_DATA) public data: { mode: 'add' | 'view' | 'edit'; announcement?: Announce },
     ) {
+        translateService.setDefaultLang('th');
         if (data.announcement?.startDate) {
             const startDate = new Date(data.announcement.startDate);
             const hour = startDate.getHours();

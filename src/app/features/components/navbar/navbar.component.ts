@@ -50,22 +50,22 @@ export class NavbarComponent implements OnInit {
 
         this.menuUser = [
             {
-                label: 'ค้นหา',
+                label: 'search',
                 icon: faMagnifyingGlass,
                 click: () => this.openSearchSideBar(),
             },
             {
-                label: 'การแจ้งเตือน',
+                label: 'notification',
                 icon: faBell,
                 click: () => this.openNotificationSideBar(),
             },
             {
-                label: 'ตั้งค่า',
+                label: 'setting',
                 icon: faGear,
                 click: () => this.onClickSetting(),
             },
             {
-                label: 'ออกจากระบบ',
+                label: 'logout',
                 icon: faArrowRightFromBracket,
                 click: () => this.logout(),
             },
@@ -73,12 +73,12 @@ export class NavbarComponent implements OnInit {
 
         this.menuUserNoneSm = [
             {
-                label: 'ตั้งค่า',
+                label: 'setting',
                 icon: faGear,
                 click: () => this.onClickSetting(),
             },
             {
-                label: 'ออกจากระบบ',
+                label: 'logout',
                 icon: faArrowRightFromBracket,
                 click: () => this.logout(),
             },
@@ -94,7 +94,6 @@ export class NavbarComponent implements OnInit {
 
     openSearchSideBar() {
         this.searchSidebarVisible = true;
-        console.log(this.searchSidebarVisible);
     }
 
     closeSearchSideBar() {
@@ -102,7 +101,6 @@ export class NavbarComponent implements OnInit {
     }
 
     openNotificationSideBar() {
-        console.log('openNotificationSideBar');
         this.findNotificationUnRead();
         this.notificationSidebarVisible = true;
     }
@@ -170,10 +168,8 @@ export class NavbarComponent implements OnInit {
 
     getNotifications() {
         if (this.showReadNotifications) {
-            console.log(1);
             this.findNotificationRead();
         } else {
-            console.log(2);
             this.findNotificationUnRead();
         }
     }
