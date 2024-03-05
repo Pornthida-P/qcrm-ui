@@ -90,8 +90,10 @@ export class ManageContactsComponent implements OnInit {
 
     userData: any = JSON.parse(localStorage.getItem('userData') || '{}');
     userRole: string = '';
-    userId: string = '';
     roleCanAccessCUDForm: string[] = config.roleCanAccessCUDForm;
+
+    calls: string | null | undefined;
+    userId: string = '';
 
     constructor(
         private _location: Location,
@@ -126,6 +128,20 @@ export class ManageContactsComponent implements OnInit {
         this.contactsService.getAllOrganization().subscribe((organizations: any) => {
             this.organizations = organizations;
         });
+
+        this.route.queryParamMap.subscribe(params => {
+          this.calls = params.get('phone');
+
+          if (this.calls) {
+              this.contactsService.getContactsByParamPhone(this.calls).subscribe((data: any) => {
+                  if (data) {
+                      console.log('Data exists:', data);
+                  } else {
+                      console.log('Data does not exist');
+                  }
+              });
+          }
+      });
 
         if (this.contactId) {
             this.TableShowing = true;
@@ -312,7 +328,7 @@ export class ManageContactsComponent implements OnInit {
                 this.sweetalertServices.getSwal('warning', 'Warning', 'ไม่พบข้อมูลในระบบ Drive', false, '');
             });
         }
-    }    
+    }
 
     async getPage() {
         await this.surveyFormService.countSurveyForm(this.valueSearch, this.userId).subscribe((res: any) => {
@@ -378,7 +394,7 @@ export class ManageContactsComponent implements OnInit {
         }
         return page;
     }
-    
+
     @ViewChild(FormioComponent, { static: false })
     formio!: FormioComponent;
 
@@ -433,7 +449,7 @@ export class ManageContactsComponent implements OnInit {
                     this.formName = this.surveyForm[0].name;
                     this.formId = this.surveyForm[0].surveyFormId;
                      });
-                 } 
+                 }
         });
     }
 
@@ -451,7 +467,7 @@ export class ManageContactsComponent implements OnInit {
           this.form = JSON.parse(this.surveyForm[0].form);
           this.formName = this.surveyForm[0].name;
           this.formId = this.surveyForm[0].surveyFormId;
-      
+
           this.contactsService.getContactsSurvey(surveyId).subscribe((res) => {
             this.survey = res;
             this.formData = JSON.parse(this.survey[0].surveyData);
@@ -460,5 +476,5 @@ export class ManageContactsComponent implements OnInit {
           });
         });
       }
-       
+
 }

@@ -42,7 +42,11 @@ export class ContactsService {
         return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}${config.api.path.contacts.find}/${id}`);
     }
 
-    getContactActivities(id: string) {
+    getContactsByParamPhone(phone: string) {
+        return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}${config.api.path.contacts.paramsFide}/${phone}`);
+    }
+  
+      getContactActivities(id: string) {
         return this.http.get(`${this.baseUrl}/drive/user/activities/${id}`);
     }
 
