@@ -36,6 +36,13 @@ export function HttpLoaderFactory(http: HttpClient) {
         MatNativeDateModule,
         NgbDatepickerModule,
         LoaderModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient],
+            },
+        }),
     ],
     providers: [
         {

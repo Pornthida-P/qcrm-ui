@@ -24,7 +24,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         ReactiveFormsModule,
         NgbPopoverModule,
         NgbModule,
-        TranslateModule.forRoot({
+        TranslateModule.forChild({
             loader: {
                 provide: TranslateLoader,
                 useFactory: HttpLoaderFactory,

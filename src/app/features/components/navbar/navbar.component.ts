@@ -17,7 +17,8 @@ import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
 import { NotificationService } from 'src/app/services/notification/notification.service';
 import { Notification } from 'src/app/shared/interface/notification.interface';
 import { NgbPopoverConfig } from '@ng-bootstrap/ng-bootstrap';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService as Translate } from '@ngx-translate/core';
+import { TranslateService } from 'src/app/services/translate/translate.service';
 
 @Component({
     selector: 'app-navbar',
@@ -54,8 +55,7 @@ export class NavbarComponent implements OnInit {
         private translateService: TranslateService,
         configPopover: NgbPopoverConfig,
     ) {
-        translateService.setDefaultLang('th');
-        this.currentLanguage = translateService.getDefaultLang();
+        this.currentLanguage = this.translateService.getCurrentLanguage();
         configPopover.autoClose = 'outside';
     }
 
@@ -216,7 +216,7 @@ export class NavbarComponent implements OnInit {
     }
 
     changeLanguage(language: string) {
-        this.translateService.use(language);
+        this.translateService.setCurrentLanguage(language);
         this.currentLanguage = language;
     }
 
