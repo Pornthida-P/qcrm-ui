@@ -28,7 +28,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         MatSelectModule,
         MatMenuModule,
         MatPaginatorModule,
-        TranslateModule.forRoot({
+        TranslateModule.forChild({
             loader: {
                 provide: TranslateLoader,
                 useFactory: HttpLoaderFactory,

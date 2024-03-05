@@ -1,5 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { faBars, faMagnifyingGlass, faArrowRightFromBracket, faGear, faEnvelope, faEnvelopeOpen } from '@fortawesome/free-solid-svg-icons';
+import {
+    faBars,
+    faMagnifyingGlass,
+    faArrowRightFromBracket,
+    faGear,
+    faEnvelope,
+    faEnvelopeOpen,
+    faGlobe,
+} from '@fortawesome/free-solid-svg-icons';
 import { faBell } from '@fortawesome/free-regular-svg-icons';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs';
@@ -9,6 +17,7 @@ import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
 import { NotificationService } from 'src/app/services/notification/notification.service';
 import { Notification } from 'src/app/shared/interface/notification.interface';
 import { NgbPopoverConfig } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-navbar',
@@ -27,20 +36,26 @@ export class NavbarComponent implements OnInit {
     hideSidebar: boolean = false;
     userData: User | null = null;
     isAction: boolean = false;
+    currentLanguage: string = '';
+    languages: any[] = [];
 
     profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
 
     faBars = faBars;
     faEnvelope = faEnvelope;
     faEnvelopeOpen = faEnvelopeOpen;
+    faGlobe = faGlobe;
 
     constructor(
         private router: Router,
         private userService: UserService,
         private socketIO: SocketIoService,
         private notificationService: NotificationService,
+        private translateService: TranslateService,
         configPopover: NgbPopoverConfig,
     ) {
+        translateService.setDefaultLang('th');
+        this.currentLanguage = translateService.getDefaultLang();
         configPopover.autoClose = 'outside';
     }
 
@@ -81,6 +96,17 @@ export class NavbarComponent implements OnInit {
                 label: 'logout',
                 icon: faArrowRightFromBracket,
                 click: () => this.logout(),
+            },
+        ];
+
+        this.languages = [
+            {
+                label: 'th',
+                value: 'th',
+            },
+            {
+                label: 'en',
+                value: 'en',
             },
         ];
     }
@@ -187,6 +213,11 @@ export class NavbarComponent implements OnInit {
             const diffDays = Math.floor(diffHours / 24);
             return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
         }
+    }
+
+    changeLanguage(language: string) {
+        this.translateService.use(language);
+        this.currentLanguage = language;
     }
 
     logout() {

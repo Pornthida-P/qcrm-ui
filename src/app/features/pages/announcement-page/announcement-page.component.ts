@@ -8,7 +8,6 @@ import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.serv
 import { UserService } from 'src/app/services/user/user.service';
 import { Announce } from 'src/app/shared/interface/announce.interface';
 import { User } from 'src/app/shared/interface/user.interface';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-announcement-page',
@@ -37,10 +36,7 @@ export class AnnouncementPageComponent {
         private userService: UserService,
         private announcementService: AnnouncementService,
         private modalAnnouncementService: ModalAnnouncementService,
-        private translateService: TranslateService,
-    ) {
-        translateService.setDefaultLang('th');
-    }
+    ) {}
 
     ngOnInit(): void {
         this.initzation();

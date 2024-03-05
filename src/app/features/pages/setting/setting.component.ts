@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-setting',
@@ -13,9 +12,7 @@ export class SettingComponent implements OnInit {
 
     title: string = 'ตั้งค่า';
 
-    constructor(private router: Router, private translateService: TranslateService) {
-        translateService.setDefaultLang('th');
-    }
+    constructor(private router: Router) {}
 
     ngOnInit(): void {
         this.menuSetting = [

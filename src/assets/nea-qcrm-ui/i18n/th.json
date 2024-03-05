@@ -1,5 +1,6 @@
 {
     "title": {
+        "home": "หน้าหลัก",
         "announcement": "ประกาศ",
         "tag": "จัดการแท็ก",
         "team": "จัดการทีม",
@@ -88,7 +89,8 @@
             "modifyAt": "วันที่แก้ไขล่าสุด",
             "modifyById": "แก้ไขโดย"
         },
-        "Actions": "การกระทำ"
+        "Actions": "การกระทำ",
+        "paginatorLabel": "เลือกจำนวนที่แสดง"
     },
     "component": {
         "navbar": {

@@ -7,7 +7,6 @@ import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.serv
 import { UserService } from 'src/app/services/user/user.service';
 import { Group } from 'src/app/shared/interface/group.interface';
 import { User } from 'src/app/shared/interface/user.interface';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-team',
@@ -34,10 +33,7 @@ export class TeamComponent {
         private sweetalertService: SweetAlertService,
         private socketIO: SocketIoService,
         private modalTeamService: ModalTeamService,
-        private translateService: TranslateService,
-    ) {
-        translateService.setDefaultLang('th');
-    }
+    ) {}
 
     ngOnInit(): void {
         this.userService.getGroupOnRefrash().subscribe(() => {

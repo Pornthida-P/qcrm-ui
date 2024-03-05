@@ -4,7 +4,6 @@ import { catchError, tap } from 'rxjs';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { User } from 'src/app/shared/interface/user.interface';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-menagement-password',
@@ -21,14 +20,7 @@ export class MenagementPasswordComponent implements OnInit {
 
     passwordForm: FormGroup = new FormGroup({});
 
-    constructor(
-        private userService: UserService,
-        private fb: FormBuilder,
-        private sweetalertService: SweetAlertService,
-        private translate: TranslateService,
-    ) {
-        this.translate.setDefaultLang('th');
-    }
+    constructor(private userService: UserService, private fb: FormBuilder, private sweetalertService: SweetAlertService) {}
 
     ngOnInit(): void {
         this.initializeForm();

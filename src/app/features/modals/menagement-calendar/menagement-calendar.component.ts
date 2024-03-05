@@ -13,7 +13,6 @@ import { UserService } from 'src/app/services/user/user.service';
 import { Attachment } from 'src/app/shared/interface/attachment.interface';
 import { CalendarEvent, CalendarTag } from 'src/app/shared/interface/calendar.interface';
 import { User } from 'src/app/shared/interface/user.interface';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-menagement-calendar',
@@ -96,11 +95,9 @@ export class MenagementCalendarComponent implements OnInit {
         private attachmentService: AttachmentService,
         private sweetalertServices: SweetAlertService,
         private cdRef: ChangeDetectorRef,
-        private translateService: TranslateService,
         public dialogRef: MatDialogRef<MenagementCalendarComponent>,
         @Inject(MAT_DIALOG_DATA) public data: { mode: 'add' | 'view' | 'edit'; eventData?: CalendarEvent },
     ) {
-        translateService.setDefaultLang('th');
         this.startTime = {
             hour: data.eventData ? moment(data.eventData.startDate).hour() : 0,
             minute: data.eventData ? moment(data.eventData.startDate).minute() : 0,

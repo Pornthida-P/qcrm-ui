@@ -8,7 +8,6 @@ import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.serv
 import { UserService } from 'src/app/services/user/user.service';
 import { Group } from 'src/app/shared/interface/group.interface';
 import { User } from 'src/app/shared/interface/user.interface';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-menagement-team',
@@ -30,12 +29,9 @@ export class MenagementTeamComponent implements OnInit {
         private sweetalertService: SweetAlertService,
         private userService: UserService,
         private cdRef: ChangeDetectorRef,
-        private translateService: TranslateService,
         private dialogRef: MatDialogRef<MenagementTeamComponent>,
         @Inject(MAT_DIALOG_DATA) public data: { mode: 'add' | 'view' | 'edit'; group?: Group },
-    ) {
-        translateService.setDefaultLang('th');
-    }
+    ) {}
 
     ngOnInit(): void {
         this.initializeForm();

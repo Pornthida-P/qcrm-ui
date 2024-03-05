@@ -10,7 +10,6 @@ import { catchError, tap } from 'rxjs';
 import { User } from 'src/app/shared/interface/user.interface';
 import { UserService } from 'src/app/services/user/user.service';
 import * as moment from 'moment';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-menagement-announce',
@@ -32,11 +31,9 @@ export class MenagementAnnounceComponent implements OnInit {
         private fb: FormBuilder,
         private userService: UserService,
         private sweetalertServices: SweetAlertService,
-        private translateService: TranslateService,
         public dialogRef: MatDialogRef<MenagementAnnounceComponent>,
         @Inject(MAT_DIALOG_DATA) public data: { mode: 'add' | 'view' | 'edit'; announcement?: Announce },
     ) {
-        translateService.setDefaultLang('th');
         if (data.announcement?.startDate) {
             const startDate = new Date(data.announcement.startDate);
             const hour = startDate.getHours();

@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { User } from 'src/app/shared/interface/user.interface';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-profile-list',
@@ -17,7 +16,7 @@ export class ProfileListComponent implements OnInit {
     @Output() editUserId: EventEmitter<User> = new EventEmitter<User>();
     @Output() viewUserId: EventEmitter<User> = new EventEmitter<User>();
 
-    constructor(private translateService: TranslateService) {}
+    constructor() {}
 
     ngOnInit(): void {}
 

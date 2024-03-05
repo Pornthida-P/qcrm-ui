@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { faChartPie, faFileLines, faFilePen, faHouse, faPhoneVolume } from '@fortawesome/free-solid-svg-icons';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-sidebar',
@@ -10,9 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 export class SidebarComponent implements OnInit {
     items: any = [];
 
-    constructor(private translateService: TranslateService) {
-        translateService.setDefaultLang('th');
-    }
+    constructor() {}
 
     ngOnInit(): void {
         this.items = [

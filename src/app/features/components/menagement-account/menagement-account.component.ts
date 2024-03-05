@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from 'src/app/services/user/user.service';
 import { User } from 'src/app/shared/interface/user.interface';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-menagement-account',
@@ -16,9 +15,7 @@ export class MenagementAccountComponent implements OnInit {
 
     profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
 
-    constructor(private userService: UserService, private translateService: TranslateService) {
-        this.translateService.setDefaultLang('th');
-    }
+    constructor(private userService: UserService) {}
 
     ngOnInit(): void {
         this.getDataUser();

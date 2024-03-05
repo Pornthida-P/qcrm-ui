@@ -4,7 +4,6 @@ import { CalendarEventService } from 'src/app/services/calendar-event/calendar-e
 import { ModalCalendarService } from 'src/app/services/modal-calendar/modal-calendar.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { CalendarEvent, CalendarTag } from 'src/app/shared/interface/calendar.interface';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-home-page',
@@ -21,10 +20,7 @@ export class HomePageComponent implements OnInit {
         private calendarService: CalendarEventService,
         private sweetAlertService: SweetAlertService,
         private modalCalendarService: ModalCalendarService,
-        private translateService: TranslateService,
-    ) {
-        translateService.setDefaultLang('th');
-    }
+    ) {}
 
     ngOnInit(): void {
         this.initzation();

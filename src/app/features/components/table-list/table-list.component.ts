@@ -36,17 +36,17 @@ export class TableListComponent implements OnInit, OnChanges {
 
     profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
 
-    constructor(private socketIO: SocketIoService, private translate: TranslateService) {
-        this.translate.setDefaultLang('th');
-    }
+    constructor(private socketIO: SocketIoService, private translate: TranslateService) {}
 
     ngOnInit(): void {}
 
     ngOnChanges(): void {
-        if (this.paginator) {
-            this.dataSource.paginator = this.paginator;
-            this.dataSource.paginator._intl.itemsPerPageLabel = 'เลือกจำนวนที่แสดง';
-        }
+        this.translate.get('table.paginatorLabel').subscribe((translation: string) => {
+            if (this.paginator) {
+                this.dataSource.paginator = this.paginator;
+                this.dataSource.paginator._intl.itemsPerPageLabel = translation;
+            }
+        });
     }
 
     onClickView(element: any): void {

@@ -19,7 +19,6 @@ import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.serv
 import { UserService } from 'src/app/services/user/user.service';
 import { CalendarEvent } from 'src/app/shared/interface/calendar.interface';
 import { User } from 'src/app/shared/interface/user.interface';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-calendar-card',
@@ -60,10 +59,7 @@ export class CalendarCardComponent implements OnInit {
         private modalCalendarService: ModalCalendarService,
         private calendarService: CalendarEventService,
         private sweetalertServices: SweetAlertService,
-        private translateService: TranslateService,
-    ) {
-        translateService.setDefaultLang('th');
-    }
+    ) {}
 
     ngOnInit(): void {
         this.getDataUser();

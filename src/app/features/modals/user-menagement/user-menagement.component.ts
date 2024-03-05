@@ -2,7 +2,6 @@ import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { User } from 'src/app/shared/interface/user.interface';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-user-menagement',
@@ -17,12 +16,9 @@ export class UserMenagementComponent {
     profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
 
     constructor(
-        private translateService: TranslateService,
         public dialogRef: MatDialogRef<UserMenagementComponent>,
         @Inject(MAT_DIALOG_DATA) public data: { mode: 'add' | 'view' | 'edit'; member?: User },
-    ) {
-        translateService.setDefaultLang('th');
-    }
+    ) {}
 
     ngOnInit(): void {}
 

@@ -4,7 +4,6 @@ import * as moment from 'moment';
 import { UserService } from 'src/app/services/user/user.service';
 import { CalendarEvent } from 'src/app/shared/interface/calendar.interface';
 import { User } from 'src/app/shared/interface/user.interface';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-card-event-list',
@@ -34,9 +33,7 @@ export class CardEventListComponent implements OnInit, OnChanges {
     faArrowUpWideShort = faArrowUpWideShort;
     faArrowUpShortWide = faArrowUpShortWide;
 
-    constructor(private userService: UserService, private translateService: TranslateService) {
-        translateService.setDefaultLang('th');
-    }
+    constructor(private userService: UserService) {}
 
     ngOnInit(): void {
         this.initzation();

@@ -8,7 +8,6 @@ import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.serv
 import { UserService } from 'src/app/services/user/user.service';
 import { CalendarTag } from 'src/app/shared/interface/calendar.interface';
 import { User } from 'src/app/shared/interface/user.interface';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-tag',
@@ -37,10 +36,7 @@ export class TagComponent implements OnInit {
         private sweetAlertService: SweetAlertService,
         private userService: UserService,
         private modalTagService: ModalTagService,
-        private translate: TranslateService,
-    ) {
-        this.translate.setDefaultLang('th');
-    }
+    ) {}
 
     ngOnInit(): void {
         this.initzation();

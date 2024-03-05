@@ -8,7 +8,6 @@ import { CalendarEventService } from 'src/app/services/calendar-event/calendar-e
 import { catchError, tap } from 'rxjs';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { monthNames } from 'src/app/config/month';
-import { TranslateService } from '@ngx-translate/core';
 
 interface Day {
     number: number;
@@ -39,9 +38,7 @@ export class CalendarPreviewComponent implements OnInit {
         private modalCalendarService: ModalCalendarService,
         private calendarService: CalendarEventService,
         private sweetAlertService: SweetAlertService,
-        private translateService: TranslateService,
     ) {
-        translateService.setDefaultLang('th');
         const currentDate = new Date();
         this.currentMonth = currentDate.toLocaleDateString('en-US', { month: 'long' });
         this.currentYear = currentDate.toLocaleDateString('en-US', { year: 'numeric' });

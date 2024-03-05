@@ -34,7 +34,7 @@ export function HttpLoaderFactory(http: HttpClient) {
                 component: TagComponent,
             },
         ]),
-        TranslateModule.forRoot({
+        TranslateModule.forChild({
             loader: {
                 provide: TranslateLoader,
                 useFactory: HttpLoaderFactory,

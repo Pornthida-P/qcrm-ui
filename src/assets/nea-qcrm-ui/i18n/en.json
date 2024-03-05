@@ -1,5 +1,6 @@
 {
     "title": {
+        "home": "Home",
         "announcement": "Announcement",
         "tag": "Tag Management",
         "team": "Team Management",
@@ -88,7 +89,8 @@
             "modifyAt": "Modified At",
             "modifyById": "Modified By"
         },
-        "Actions": "Actions"
+        "Actions": "Actions",
+        "paginatorLabel": "Rows per page:"
     },
     "component": {
         "navbar": {

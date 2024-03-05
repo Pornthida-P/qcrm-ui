@@ -23,19 +23,19 @@ export function HttpLoaderFactory(http: HttpClient) {
         ProfileListModule,
         FormsModule,
         ReactiveFormsModule,
-        RouterModule.forChild([
-            {
-                path: '',
-                component: MemberComponent,
-            },
-        ]),
-        TranslateModule.forRoot({
+        TranslateModule.forChild({
             loader: {
                 provide: TranslateLoader,
                 useFactory: HttpLoaderFactory,
                 deps: [HttpClient],
             },
         }),
+        RouterModule.forChild([
+            {
+                path: '',
+                component: MemberComponent,
+            },
+        ]),
     ],
 })
 export class MemberModule {}

@@ -2,7 +2,6 @@ import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@
 import { faChevronLeft, faChevronRight, faPlusCircle, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { CalendarEvent } from 'src/app/shared/interface/calendar.interface';
 import { User } from 'src/app/shared/interface/user.interface';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-pop-overs-event',
@@ -26,9 +25,7 @@ export class PopOversEventComponent implements OnInit {
     faChevronRight = faChevronRight;
     faPlusCircle = faPlusCircle;
 
-    constructor(private translateService: TranslateService) {
-        translateService.setDefaultLang('th');
-    }
+    constructor() {}
 
     ngOnInit(): void {}
 

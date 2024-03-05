@@ -7,7 +7,6 @@ import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { User } from 'src/app/shared/interface/user.interface';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-member',
@@ -36,10 +35,7 @@ export class MemberComponent implements OnInit {
         private userService: UserService,
         private sweetalertService: SweetAlertService,
         private modalUserService: ModalUserService,
-        private translateService: TranslateService,
-    ) {
-        this.translateService.setDefaultLang('th');
-    }
+    ) {}
 
     ngOnInit(): void {
         this.initzation();

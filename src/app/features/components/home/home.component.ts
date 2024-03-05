@@ -4,7 +4,6 @@ import { ModalCalendarService } from 'src/app/services/modal-calendar/modal-cale
 import { UserService } from 'src/app/services/user/user.service';
 import { CalendarEvent } from 'src/app/shared/interface/calendar.interface';
 import { User } from 'src/app/shared/interface/user.interface';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-home',
@@ -23,15 +22,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     faPlus = faPlusCircle;
 
-    title: string = 'หน้าหลัก';
+    title: string = 'home';
 
-    constructor(
-        private userService: UserService,
-        private modalCalendarService: ModalCalendarService,
-        private translateService: TranslateService,
-    ) {
-        translateService.setDefaultLang('th');
-    }
+    constructor(private userService: UserService, private modalCalendarService: ModalCalendarService) {}
 
     ngOnInit(): void {
         this.initzation();

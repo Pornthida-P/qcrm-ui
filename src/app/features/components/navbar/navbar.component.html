@@ -127,6 +127,23 @@
                     </div>
                 </ng-template>
 
+                <div class="dropdown">
+                    <button
+                        class="btn btn-primary-color text-white dropdown-toggle"
+                        type="button"
+                        id="dropdownLanguage"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                    >
+                        {{ currentLanguage | uppercase }}
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownLanguage">
+                        <li *ngFor="let lang of languages" (click)="changeLanguage(lang.value)">
+                            <a class="dropdown-item cursor-pointer">{{ lang.label | uppercase }}</a>
+                        </li>
+                    </ul>
+                </div>
+
                 <div class="d-none d-md-flex d-lg-flex flex-column cursor-default text-end">
                     <p class="m-0 fw-semibold">{{ userData?.username }}</p>
                     <p class="m-0">{{ userData?.role?.roleTitle }}</p>
