@@ -11,9 +11,25 @@
                 </button>
             </div>
         </div>
-        <div class="col-12">
-            <div class="container py-3" style="max-width: 75vh">
-                <app-calendar-preview (selectedDate)="onSelectDate($event)"></app-calendar-preview>
+        <div class="col-6" #calendar>
+            <app-calendar-preview (selectedDate)="onSelectDate($event)" (event)="onEventChange($event)"></app-calendar-preview>
+        </div>
+        <div class="col-6 overflow-auto" #event>
+            <div class="row gap-3">
+                <div *ngIf="!events || events.length === 0; else eventsContent" class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="card-text text-center p-5">
+                                {{ 'component.card-event-list.noEvent' | translate }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <ng-template #eventsContent>
+                    <div *ngFor="let event of events" class="col-12">
+                        <app-calendar-card [event]="event"></app-calendar-card>
+                    </div>
+                </ng-template>
             </div>
         </div>
     </div>

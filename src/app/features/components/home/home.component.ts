@@ -1,5 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatCalendar } from '@angular/material/datepicker';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { ModalCalendarService } from 'src/app/services/modal-calendar/modal-calendar.service';
 import { UserService } from 'src/app/services/user/user.service';
@@ -12,8 +11,9 @@ import { TranslateService } from '@ngx-translate/core';
     templateUrl: './home.component.html',
     styleUrl: './home.component.scss',
 })
-export class HomeComponent implements OnInit {
-    @ViewChild(MatCalendar, { static: false }) calendar!: MatCalendar<Date>;
+export class HomeComponent implements OnInit, AfterViewInit {
+    @ViewChild('calendar') calendar!: ElementRef;
+    @ViewChild('event') event!: ElementRef;
 
     selectedCalendarDate: Date | null = new Date();
     calendarDateEvents: CalendarEvent[] = [];
@@ -37,6 +37,11 @@ export class HomeComponent implements OnInit {
         this.initzation();
     }
 
+    ngAfterViewInit() {
+        const calendarHeight = this.calendar.nativeElement.offsetHeight;
+        this.event.nativeElement.style.maxHeight = `${calendarHeight}px`;
+    }
+
     initzation() {
         this.getUserData();
     }
@@ -46,6 +51,10 @@ export class HomeComponent implements OnInit {
             this.userData = res;
             this.isAction = this.userData?.role.roleTitle.toLowerCase() === 'admin' ? true : false;
         });
+    }
+
+    onEventChange(event: CalendarEvent[]) {
+        this.events = event;
     }
 
     onSelectDate(date: Date) {

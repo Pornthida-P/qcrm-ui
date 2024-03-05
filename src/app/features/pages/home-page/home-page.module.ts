@@ -57,6 +57,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         CardEventListModule,
         NgbModule,
         CalendarPreviewModule,
+        CardEventListModule,
         AttachmentsListModule,
         RouterModule.forChild([
             {

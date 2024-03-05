@@ -14,6 +14,8 @@ import { TranslateService } from '@ngx-translate/core';
 export class CardEventListComponent implements OnInit, OnChanges {
     @Input() events: CalendarEvent[] = [];
     @Input() title?: string = '';
+    @Input() isShowFilter?: boolean = true;
+    @Input() isShowTitle?: boolean = true;
 
     @Output() onClickAdd: EventEmitter<any> = new EventEmitter();
 
@@ -40,7 +42,7 @@ export class CardEventListComponent implements OnInit, OnChanges {
         this.initzation();
     }
 
-    ngOnChanges(changes: SimpleChanges): void {}
+    ngOnChanges(changes: any): void {}
 
     initzation() {
         this.findAllMembers();

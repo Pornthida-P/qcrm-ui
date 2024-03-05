@@ -22,6 +22,7 @@ interface Day {
 })
 export class CalendarPreviewComponent implements OnInit {
     @Output() selectedDate: EventEmitter<Date> = new EventEmitter();
+    @Output() event: EventEmitter<CalendarEvent[]> = new EventEmitter();
 
     events: CalendarEvent[] = [];
     currentMonth: string;
@@ -218,6 +219,7 @@ export class CalendarPreviewComponent implements OnInit {
             .pipe(
                 tap((res: CalendarEvent[]) => {
                     this.events = res;
+                    this.event.emit(res);
                 }),
                 catchError((err) => {
                     this.sweetAlertService.handleError(err);
