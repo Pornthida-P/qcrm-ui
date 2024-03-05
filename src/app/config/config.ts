@@ -79,6 +79,9 @@ export const config = {
                 findNotificationReadByUserId: '/notification/read/',
                 readAllNotificationByUserId: '/notification/read-all/',
             },
+            report:{
+                channelByAgent: '/report/channelByAgent'
+            }
         },
     },
     file: {
