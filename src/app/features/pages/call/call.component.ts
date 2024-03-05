@@ -108,16 +108,16 @@ export class CallComponent implements OnInit {
     sortIcon: string = '';
     checkedValues: any;
     selectValue: number[] = [];
-  call_id: any;
+    call_id: any;
 
-  fileType: string = config.file.type;
+    fileType: string = config.file.type;
 
     constructor(
         private callService: CallService,
         private router: Router,
         private activeRoute: ActivatedRoute,
         private userService: UserService,
-        private sweetAlertService: SweetAlertService
+        private sweetAlertService: SweetAlertService,
     ) {}
 
     ngOnInit() {
@@ -281,62 +281,62 @@ export class CallComponent implements OnInit {
     // }
 
     exportExcel() {
-      if (this.selectValue.length != 0) {
-          this.selectedCalls = this.calls.filter((calls: any) => this.selectValue.includes(calls.call_id));
-      }
+        if (this.selectValue.length != 0) {
+            this.selectedCalls = this.calls.filter((calls: any) => this.selectValue.includes(calls.call_id));
+        }
 
-      if (this.selectedCalls.length != 0) {
-          const processedForms = this.selectedCalls.reduce(
-              (acc: any, cur: any) => [
-                  ...acc,
-                  {
-                    createdAt: cur.createdAt,
-                    name: cur.name,
-                    direction: cur.direction,
-                    caseTopicName: cur.caseTopicName,
-                    description: cur.description,
-                    solutions: cur.solutions,
-                    modified: cur.modified
-                  },
-              ],
-              [],
-          );
+        if (this.selectedCalls.length != 0) {
+            const processedForms = this.selectedCalls.reduce(
+                (acc: any, cur: any) => [
+                    ...acc,
+                    {
+                        createdAt: cur.StartTime,
+                        name: cur.CallerID,
+                        direction: cur.CallType,
+                        caseTopicName: cur.caseTopicName,
+                        description: cur.description,
+                        solutions: cur.Solutions,
+                        createBy: cur.createdById,
+                    },
+                ],
+                [],
+            );
 
-          const columns = [['เวลา', 'เบอร์โทร', 'ประเภทสาย', 'เรื่องที่ติดต่อ', 'รายละเอียด', 'แนวทางการแก้ไข', 'ผู้ที่รับผิดชอบ']];
-          const wb = XLSX.utils.book_new();
-          const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet([]);
-          XLSX.utils.sheet_add_aoa(ws, columns);
+            const columns = [['เวลา', 'เบอร์โทร', 'ประเภทสาย', 'เรื่องที่ติดต่อ', 'รายละเอียด', 'แนวทางการแก้ไข', 'ผู้ที่รับผิดชอบ']];
+            const wb = XLSX.utils.book_new();
+            const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet([]);
+            XLSX.utils.sheet_add_aoa(ws, columns);
 
-          XLSX.utils.sheet_add_json(ws, processedForms, { origin: 'A2', skipHeader: true });
+            XLSX.utils.sheet_add_json(ws, processedForms, { origin: 'A2', skipHeader: true });
 
-          XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
 
-          XLSX.writeFile(wb, `ประวัติการโทร${this.fileType}`);
-      }
-  }
+            XLSX.writeFile(wb, `ประวัติการโทร${this.fileType}`);
+        }
+    }
 
     deleteSelectForm() {}
 
     selectCheckbox(callId: number): void {
-      if (this.selectValue.includes(callId)) {
-          this.selectValue = this.selectValue.filter((id) => id !== callId);
-      } else {
-          this.selectValue.push(callId);
-      }
-  }
+        if (this.selectValue.includes(callId)) {
+            this.selectValue = this.selectValue.filter((id) => id !== callId);
+        } else {
+            this.selectValue.push(callId);
+        }
+    }
 
-  checkAll(ev: any) {
-      this.calls.forEach((x: any) => {
-          x.state = ev.target.checked;
-          if (ev.target.checked) {
-              this.selectValue.push(x.call_id);
-          } else {
-              this.selectValue = [];
-          }
-      });
-  }
+    checkAll(ev: any) {
+        this.calls.forEach((x: any) => {
+            x.state = ev.target.checked;
+            if (ev.target.checked) {
+                this.selectValue.push(x.call_id);
+            } else {
+                this.selectValue = [];
+            }
+        });
+    }
 
-  isAllChecked() {
-      return this.calls && this.calls.every((_: any) => _.state);
-  }
+    isAllChecked() {
+        return this.calls && this.calls.every((_: any) => _.state);
+    }
 }

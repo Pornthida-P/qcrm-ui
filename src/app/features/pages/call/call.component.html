@@ -92,7 +92,7 @@
                                     />
                                 </td>
                                 <td>
-                                    {{ calls.createdAt | date : 'dd/MM/yyyy HH:mm' }}
+                                    {{ calls.StartTime | date : 'dd/MM/yyyy HH:mm' }}
                                 </td>
                                 <td
                                     (click)="showSideBar(i)"
@@ -102,10 +102,10 @@
                                     aria-controls="offcanvasRight"
                                 >
                                     <div class="" ngbTooltip="คลิกดูรายละเอียด" placement="bottom">
-                                        {{ calls.name }}
+                                        {{ calls.CallerID }}
                                     </div>
                                 </td>
-                                <td>{{ calls.direction }}</td>
+                                <td>{{ calls.CallType }}</td>
                                 <td class="w-max-ellipsis">
                                     <div [ngbTooltip]="calls.caseTopicName" placement="bottom" class="text-ellipsis">
                                         {{ calls.caseTopicName }}
@@ -117,11 +117,11 @@
                                     </div>
                                 </td>
                                 <td class="w-max-ellipsis">
-                                    <div [ngbTooltip]="calls.solutions" placement="bottom" class="text-ellipsis">
-                                        {{ calls.solutions }}
+                                    <div [ngbTooltip]="calls.Solutions" placement="bottom" class="text-ellipsis">
+                                        {{ calls.Solutions }}
                                     </div>
                                 </td>
-                                <td>{{ calls.modified }}</td>
+                                <td>{{ calls.createdById }}</td>
                                 <!-- <td class="text-center" scope="row">
                                     <div class="d-flex flex-row flex-nowrap">
                                         <div class="me-3 color-primary cursor-pointer" placement="top" ngbTooltip="แก้ไข" (click)="editPage()">
