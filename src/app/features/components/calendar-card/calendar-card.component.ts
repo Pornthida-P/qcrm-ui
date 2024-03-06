@@ -123,6 +123,7 @@ export class CalendarCardComponent implements OnInit {
     }
 
     isNewCard(startDateStr: string): boolean {
+        console.log('startDateStr', startDateStr);
         const twentyFourHoursInMilliseconds = 24 * 60 * 60 * 1000;
         const startDate = new Date(startDateStr);
         const currentDate = new Date();
