@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { catchError, tap } from 'rxjs';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { UserService } from 'src/app/services/user/user.service';
@@ -20,7 +21,12 @@ export class MenagementPasswordComponent implements OnInit {
 
     passwordForm: FormGroup = new FormGroup({});
 
-    constructor(private userService: UserService, private fb: FormBuilder, private sweetalertService: SweetAlertService) {}
+    constructor(
+        private userService: UserService,
+        private fb: FormBuilder,
+        private sweetalertService: SweetAlertService,
+        private router: Router,
+    ) {}
 
     ngOnInit(): void {
         this.initializeForm();
@@ -68,9 +74,11 @@ export class MenagementPasswordComponent implements OnInit {
                     return error;
                 }),
             )
-            .subscribe((res) => {
+            .subscribe(() => {
                 this.sweetalertService.getSwal('success', 'Success', 'Password has been updated.', false, '');
                 this.passwordForm.reset();
+
+                this.router.navigate(['/logout']);
             });
     }
 }
