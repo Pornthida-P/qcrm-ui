@@ -1,0 +1,70 @@
+<div>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="width: 16%" scope="col">
+                        <a>Username</a>
+                    </th>
+                    <th style="width: 9%" scope="col">
+                        <a>Hotlin (Inbound) </a>
+                    </th>
+                    <th style="width: 9%" scope="col">
+                        <a>Hotline (Outbound) </a>
+                    </th>
+                    <th style="width: 9%" scope="col">
+                        <a>Email (Inbound)</a>
+                    </th>
+                    <th style="width: 9%" scope="col">
+                        <a>Email (Outbound)</a>
+                    </th>
+                    <th style="width: 9%" scope="col">
+                        <a>Mobile Unit </a>
+                    </th>
+                    <th style="width: 9%" scope="col">
+                        <a>Live Chat</a>
+                    </th>
+                    <th style="width: 9%" scope="col">
+                        <a>อื่นๆ</a>
+                    </th>
+                    <th style="width: 9%" scope="col">
+                        <a>รวม</a>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="reportTable?.length > 0; else noDataTemplate">
+                    <tr *ngFor="let data of reportTable; let i = index">
+                        <td scope="row">{{ data.username }}</td>
+                        <td scope="row">{{ data.HotIn }}</td>
+                        <td scope="row">{{ data.HotOut }}</td>
+                        <td scope="row">{{ data.MailIn }}</td>
+                        <td scope="row">{{ data.MailOut }}</td>
+                        <td scope="row">{{ data.Mobile }}</td>
+                        <td scope="row">{{ data.LiveChat }}</td>
+                        <td scope="row">{{ data.Other }}</td>
+                        <td scope="row">{{ data.Total }}</td>
+                    </tr>
+                </ng-container>
+                <ng-template #noDataTemplate>
+                    <tr>
+                        <td colspan="4" class="text-center">ไม่มีข้อมูล</td>
+                    </tr>
+                </ng-template>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td scope="row">รวมทั้งหมด</td>
+                    <td scope="row">{{ getTotal('HotIn') }}</td>
+                    <td scope="row">{{ getTotal('HotOut') }}</td>
+                    <td scope="row">{{ getTotal('MailIn') }}</td>
+                    <td scope="row">{{ getTotal('MailOut') }}</td>
+                    <td scope="row">{{ getTotal('Mobile') }}</td>
+                    <td scope="row">{{ getTotal('LiveChat') }}</td>
+                    <td scope="row">{{ getTotal('Other') }}</td>
+                    <td scope="row">{{ getTotal('Total') }}</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>

@@ -142,6 +142,14 @@ export class ReportPageComponent implements OnInit {
     //     });
     // }
 
+    onChannelByAgentReport() {
+        this.router.navigate(['/report-page/channel-by-agent']);
+    }
+
+    onCaseTypeByAgentReport() {
+        this.router.navigate(['/report-page/case-type-by-agent']);
+    }
+
     get pages(): number[] {
         var page: number[] = [];
         this.totalPages = Math.ceil(this.totalItems / this.pageSize);

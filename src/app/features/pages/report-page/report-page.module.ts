@@ -6,7 +6,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgbPaginationModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClientModule } from '@angular/common/http';
-import { GetLinkSurveyModule } from '../../modals/get-link-survey/get-link-survey.module';
+import { ReportChannelByAgentComponent } from '../../components/report-channel-by-agent/report-channel-by-agent.component';
+import { ReportCaseTypeByAgentComponent } from '../../components/report-case-type-by-agent/report-case-type-by-agent.component';
+import { ReportChannelByAgentModule } from '../../components/report-channel-by-agent/report-channel-by-agent.module';
+import { ReportCaseTypeByAgentModule } from '../../components/report-case-type-by-agent/report-case-type-by-agent.module';
 
 @NgModule({
     declarations: [ReportPageComponent],
@@ -19,12 +22,23 @@ import { GetLinkSurveyModule } from '../../modals/get-link-survey/get-link-surve
             {
                 path: '',
                 component: ReportPageComponent,
+                children: [
+                    {
+                        path: 'channel-by-agent',
+                        component: ReportChannelByAgentComponent,
+                    },
+                    {
+                        path: 'case-type-by-agent',
+                        component: ReportCaseTypeByAgentComponent,
+                    }
+                ],
             },
         ]),
         NgbPaginationModule,
         HttpClientModule,
         NgbTooltipModule,
-        GetLinkSurveyModule,
+        ReportChannelByAgentModule,
+        ReportCaseTypeByAgentModule,
     ],
 })
 export class ReportPageModule {}
