@@ -3,7 +3,7 @@
         <div class="container p-0">
             <h1 class="fs-4 mb-3">{{ title }}</h1>
             <div class="row">
-                <div class="col-md-4 col-xl-4">
+                <div class="col-md-4 col-xl-4" #menu>
                     <div class="sidebar card">
                         <ul class="p-0 m-0">
                             <li
@@ -20,7 +20,7 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-md-8 col-xl-8">
+                <div class="col-md-8 col-xl-8 overflow-scroll" #content>
                     <div class="content card">
                         <router-outlet></router-outlet>
                     </div>

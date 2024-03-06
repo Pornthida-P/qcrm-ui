@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -6,7 +6,10 @@ import { Router } from '@angular/router';
     templateUrl: './setting.component.html',
     styleUrl: './setting.component.scss',
 })
-export class SettingComponent implements OnInit {
+export class SettingComponent implements OnInit, AfterViewInit {
+    @ViewChild('menu') menu: ElementRef | undefined;
+    @ViewChild('content') content: ElementRef | undefined;
+
     menuSetting: any[] = [];
     menuLogout: any = {};
 
@@ -52,5 +55,12 @@ export class SettingComponent implements OnInit {
                 routerLink: '/logout',
             },
         ];
+    }
+
+    ngAfterViewInit() {
+        if (this.menu && this.content) {
+            const menuHeight = this.menu.nativeElement.offsetHeight;
+            this.content.nativeElement.style.maxHeight = `${menuHeight}px`;
+        }
     }
 }

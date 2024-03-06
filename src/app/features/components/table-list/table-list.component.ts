@@ -29,10 +29,10 @@ export class TableListComponent implements OnInit, OnChanges {
 
     newDataSouce: MatTableDataSource<any> = new MatTableDataSource<any>([]);
     currentPage: number = 1;
-    totalPages: number = 0;
+    totalPages: number = 1;
     pages: any[] = [];
-    pageSize: number = 1;
-    pageSizeOptions = [1, 5, 10, 25, 100];
+    pageSize: number = 5;
+    pageSizeOptions = [5, 10, 25, 100];
 
     faGear = faGear;
     faEye = faEye;
