@@ -11,6 +11,10 @@ export interface CalendarEvent {
     description: string;
     members: User[];
     attachments: Attachment[];
+    createdAt: string;
+    createdById: string;
+    modifyAt: string;
+    modifyById: string;
 }
 
 export interface CalendarTag {

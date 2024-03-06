@@ -1,11 +1,11 @@
 <div *ngIf="event" class="position-relative" [class.card]="isBorder">
     <div
-        *ngIf="isNewCard(event.startDate)"
+        *ngIf="isNewCard(event.createdAt)"
         class="position-absolute"
         style="width: 80px; height: auto"
         [style.scale]="isBorder ? '1.2' : '1'"
     >
-        <img class="w-100 h-auto" src="/assets/nea-qcrm-ui/image/card/pngtree-new-red-ribbon-tag-mark-png-image_4685171.png" alt="" />
+        <img class="w-100 h-auto" src="assets/nea-qcrm-ui/image/card/pngtree-new-red-ribbon-tag-mark-png-image_4685171.png" alt="" />
     </div>
     <div class="card-body">
         <div class="row">
