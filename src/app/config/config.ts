@@ -80,7 +80,8 @@ export const config = {
                 readAllNotificationByUserId: '/notification/read-all/',
             },
             report:{
-                channelByAgent: '/report/channelByAgent'
+                channelByAgent: '/report/channelByAgent',
+                caseTypeByAgent: '/report/caseTypeByAgent'
             }
         },
     },

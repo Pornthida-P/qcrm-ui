@@ -1,5 +1,44 @@
 <div>
-    <div class="table-responsive">
+    <div class="row justify-content-end align-items-center pe-4" [formGroup]="datePick">
+        <div class="col-auto">
+            <div class="input-group start-date">
+                <input
+                    matInput
+                    [matDatepicker]="startDatePicker"
+                    formControlName="startDate"
+                    name="datetime"
+                    class="input-date form-control"
+                    (dateChange)="onStartDateChange($event)"
+                />
+                <span class="input-group-text" ngbTooltip="From Date">
+                    <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+                    <mat-datepicker #startDatePicker></mat-datepicker>
+                </span>
+            </div>
+        </div>
+        <div class="col-auto">
+            <div class="input-group end-date">
+                <input
+                    matInput
+                    [matDatepicker]="endDatePicker"
+                    formControlName="endDate"
+                    name="datetime"
+                    class="input-date form-control"
+                    (dateChange)="onEndDateChange($event)"
+                />
+                <span class="input-group-text" ngbTooltip="To Date">
+                    <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+                    <mat-datepicker #endDatePicker></mat-datepicker>
+                </span>
+            </div>
+        </div>
+        <div class="col-auto">
+            <div class="align-self-end">
+                <button class="d-flex gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white" (click)="clickgo()">ค้นหา</button>
+            </div>
+        </div>
+    </div>
+    <div class="table-responsive pe-4 ps-4">
         <table class="table">
             <thead>
                 <tr>
@@ -7,22 +46,25 @@
                         <a>Username</a>
                     </th>
                     <th style="width: 9%" scope="col">
-                        <a>Hotlin (Inbound) </a>
+                        <a>ข้อมูลทั่วไป </a>
                     </th>
                     <th style="width: 9%" scope="col">
-                        <a>Hotline (Outbound) </a>
+                        <a>ระบบ Drive </a>
                     </th>
                     <th style="width: 9%" scope="col">
-                        <a>Email (Inbound)</a>
+                        <a>E-Academy</a>
                     </th>
                     <th style="width: 9%" scope="col">
-                        <a>Email (Outbound)</a>
+                        <a>ติดต่อประสานงาน</a>
                     </th>
                     <th style="width: 9%" scope="col">
-                        <a>Mobile Unit </a>
+                        <a>ประชาสัมพันธ์และติดตามผล</a>
                     </th>
                     <th style="width: 9%" scope="col">
-                        <a>Live Chat</a>
+                        <a>ร้องเรียน</a>
+                    </th>
+                    <th style="width: 9%" scope="col">
+                        <a>ชมเชย</a>
                     </th>
                     <th style="width: 9%" scope="col">
                         <a>อื่นๆ</a>
@@ -36,13 +78,14 @@
                 <ng-container *ngIf="reportTable?.length > 0; else noDataTemplate">
                     <tr *ngFor="let data of reportTable; let i = index">
                         <td scope="row">{{ data.username }}</td>
-                        <td scope="row">{{ data.HotIn }}</td>
-                        <td scope="row">{{ data.HotOut }}</td>
-                        <td scope="row">{{ data.MailIn }}</td>
-                        <td scope="row">{{ data.MailOut }}</td>
-                        <td scope="row">{{ data.Mobile }}</td>
-                        <td scope="row">{{ data.LiveChat }}</td>
-                        <td scope="row">{{ data.Other }}</td>
+                        <td scope="row">{{ data.Topic1 }}</td>
+                        <td scope="row">{{ data.Topic2 }}</td>
+                        <td scope="row">{{ data.Topic3 }}</td>
+                        <td scope="row">{{ data.Topic4 }}</td>
+                        <td scope="row">{{ data.Topic5 }}</td>
+                        <td scope="row">{{ data.Topic7 }}</td>
+                        <td scope="row">{{ data.Topic8 }}</td>
+                        <td scope="row">{{ data.Topic6 }}</td>
                         <td scope="row">{{ data.Total }}</td>
                     </tr>
                 </ng-container>
@@ -52,19 +95,6 @@
                     </tr>
                 </ng-template>
             </tbody>
-            <tfoot>
-                <tr>
-                    <td scope="row">รวมทั้งหมด</td>
-                    <td scope="row">{{ getTotal('HotIn') }}</td>
-                    <td scope="row">{{ getTotal('HotOut') }}</td>
-                    <td scope="row">{{ getTotal('MailIn') }}</td>
-                    <td scope="row">{{ getTotal('MailOut') }}</td>
-                    <td scope="row">{{ getTotal('Mobile') }}</td>
-                    <td scope="row">{{ getTotal('LiveChat') }}</td>
-                    <td scope="row">{{ getTotal('Other') }}</td>
-                    <td scope="row">{{ getTotal('Total') }}</td>
-                </tr>
-            </tfoot>
         </table>
     </div>
 </div>
