@@ -88,9 +88,7 @@ export class ReportPageComponent implements OnInit {
         if (this.selectedFilter !== 'all') {
             this.userId = this.userData.userId;
         }
-        this.getReport();
-        // this.getForm((this.currentPage - 1) * this.pageSize, this.pageSize);
-        // this.getPage();
+    
     }
 
     checkRole(): boolean {
@@ -127,13 +125,6 @@ export class ReportPageComponent implements OnInit {
                 this.surveyForms = res;
                 // this.spareSurveyForms = res;
             });
-    }
-
-    async getReport() {
-        await this.reportService.getchannelByAgent().subscribe((res: any) => {
-            this.reportTable = res.value;
-            this.calculateTotal();
-        });
     }
 
     // async getPage() {
