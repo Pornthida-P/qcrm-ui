@@ -17,16 +17,19 @@ import Swal from 'sweetalert2';
     styleUrls: ['./manage-contacts.component.scss'],
 })
 export class ManageContactsComponent implements OnInit {
-    organizations: any[] = [];
+    
     contactActivities: any[] = [];
     contactDrive: any;
     contactSurveyForm: any[] = [];
     contactCall: any[] = [];
+    industryType: any[] = [];
+    productTypes: any[] = [];
     contact: any = {};
     contactFirstName: string = '';
     contactLastName: string = '';
     contactIden: string = '';
     contactOrg: string = '';
+    contactOrgName: string = '';
     contactType: string = '';
     contactEmail: string = '';
     contactNum: string = '';
@@ -43,6 +46,8 @@ export class ManageContactsComponent implements OnInit {
     TableShowing: boolean = false;
     FormShowing: boolean = false;
     SearchFormShowing: boolean = true;
+    SearchOrgShowing: boolean = false;
+    AddOrgShowing: boolean = false;
     submitButtonShowing: boolean = true;
     SearchButton: boolean = true;
     emptyItem: String = 'ว่าง';
@@ -51,8 +56,17 @@ export class ManageContactsComponent implements OnInit {
     spareSurveyForms!: any;
     selectedSurveyForms: any = [];
     valueSearch!: string;
+    valueSearchOrg!: string;
     checkedValues: string[] = [];
+    checkedValueOrgs: string[] = [];
     formData: any = {};
+
+    organizations!: any;
+    spareorganizations!: any;
+    orgName: string = '';
+    orgIden: string = '';
+    orgIndustryType: string = '';
+    orgProductType: string = '';
 
     formId: string = '';
     formName: string = '';
@@ -62,12 +76,19 @@ export class ManageContactsComponent implements OnInit {
     thanks: boolean = false;
     existing: boolean = false;
 
-    pageSizeOptions = [10, 20];
-    pageSize = 10;
+    pageSizeOptions = [5, 10, 20];
+    pageSize = 5;
     currentPage = 1;
     totalItems = 0;
     totalPages = 0;
     pagesToShow = 3;
+
+    pageSizeOptionOrgs = [5 ,10, 20];
+    pageSizeOrg = 5;
+    currentPageOrg = 1;
+    totalItemOrgs = 0;
+    totalPageOrgs = 0;
+    pagesToShowOrg = 3;
 
     faPenToSquare = faPenToSquare;
     faTrashCan = faTrashCan;
@@ -82,6 +103,9 @@ export class ManageContactsComponent implements OnInit {
     sortId: string = 'createdAt';
     sortOrder: string = 'DESC';
     sortIcon: string = '';
+
+    sortIdOrg: string = 'createdAt';
+    sortOrderOrg: string = 'DESC';
 
     filterOption!: any[];
     selectedFilter: any | undefined;
@@ -125,9 +149,6 @@ export class ManageContactsComponent implements OnInit {
         }
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
         this.userRole = userData.role.roleTitle.toLocaleLowerCase();
-        this.contactsService.getAllOrganization().subscribe((organizations: any) => {
-            this.organizations = organizations;
-        });
 
         this.route.queryParamMap.subscribe(params => {
           this.calls = params.get('phone');
@@ -151,21 +172,23 @@ export class ManageContactsComponent implements OnInit {
             this.SearchButton = true;
         }
 
-        this.activeRoute.queryParams.subscribe((params) => {
-            if (params['cb'] != undefined && params['cb'] != '') {
-                const cbArray = params['cb'].split(',').map(Number);
-                this.pageSize = cbArray[0];
-                this.currentPage = cbArray[1];
-                this.totalItems = cbArray[2];
-                this.totalPages = cbArray[3];
-            }
-        });
+        // this.activeRoute.queryParams.subscribe((params) => {
+        //     if (params['cb'] != undefined && params['cb'] != '') {
+        //         const cbArray = params['cb'].split(',').map(Number);
+        //         this.pageSize = cbArray[0];
+        //         this.currentPage = cbArray[1];
+        //         this.totalItems = cbArray[2];
+        //         this.totalPages = cbArray[3];
+        //     }
+        // });
         this.selectedFilter = 'all';
         if (this.selectedFilter !== 'all') {
             this.userId = this.userData.userId;
         }
         this.getForm((this.currentPage - 1) * this.pageSize, this.pageSize);
         this.getPage();
+        this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
+        this.getPageOrg();
     }
 
     checkRole(): boolean {
@@ -188,6 +211,13 @@ export class ManageContactsComponent implements OnInit {
             if (this.contactIden != '' && this.contactIden != null && this.contactIden != undefined){
                 this.contactsService.getContactActivities(this.contactIden).subscribe((res: any) => {
                     this.contactActivities = res;
+                });
+            }
+
+            if (this.contactOrg != '' && this.contactOrg != null && this.contactOrg != undefined){
+                this.contactsService.getOrganizationById(this.contactOrg).subscribe((res: any) => {
+                    this.contactOrgName = res[0].orgName;
+                    this.contactProductType = res[0].prodName;
                 });
             }
         });
@@ -272,7 +302,9 @@ export class ManageContactsComponent implements OnInit {
         this.visibleRightSideBar = true;
         this.FormShowing = false;
         this.SearchFormShowing = true;
+        this.SearchOrgShowing = false;
         this.thanks = false;
+        this.AddOrgShowing = false;
     }
 
     deleteSurvey(surveyId: string) {
@@ -371,14 +403,6 @@ export class ManageContactsComponent implements OnInit {
         this.getForm((this.currentPage - 1) * this.pageSize, this.pageSize);
     }
 
-    updateCheckedValues(formId: string): void {
-        if (this.checkedValues.includes(formId)) {
-            this.checkedValues = this.checkedValues.filter((id) => id !== formId);
-        } else {
-            this.checkedValues.push(formId);
-        }
-    }
-
     pageSizeChange() {
         this.currentPage = 1;
         this.getForm((this.currentPage - 1) * this.pageSize, this.pageSize);
@@ -441,7 +465,9 @@ export class ManageContactsComponent implements OnInit {
             this.FormShowing = true;
             this.SearchFormShowing = false;
             this.submitButtonShowing = true;
+            this.SearchOrgShowing = false;
             this.readOnlyForm = false;
+            this.AddOrgShowing = false;
             if (this.existing == false){
                     this.surveyFormService.getSurveyFormById(formId).subscribe((res) => {
                     this.surveyForm = res;
@@ -459,8 +485,10 @@ export class ManageContactsComponent implements OnInit {
         this.FormShowing = true;
         this.SearchFormShowing = false;
         this.submitButtonShowing = false;
+        this.SearchOrgShowing = false;
         this.thanks = false;
         this.readOnlyForm = true;
+        this.AddOrgShowing = false;
         // Get the survey form by ID
         this.surveyFormService.getSurveyFormById(formId).subscribe((res) => {
           this.surveyForm = res;
@@ -477,4 +505,131 @@ export class ManageContactsComponent implements OnInit {
         });
       }
 
+    showSideBarOrg() {
+        this.visibleLeftSideBar = true;
+        this.visibleRightSideBar = true;
+        this.FormShowing = false;
+        this.SearchFormShowing = false;
+        this.thanks = false;
+        this.SearchOrgShowing = true;
+        this.AddOrgShowing = false;
+    }  
+
+    searchOrg() {
+        if (this.selectedFilter !== 'all') {
+            this.userId = this.userData.userId;
+        } else {
+            this.userId = '';
+        }
+        this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
+        this.getPageOrg();
+    }
+
+    async getPageOrg() {
+        await this.contactsService.countOrg(this.valueSearchOrg, this.userId).subscribe((res: any) => {
+            this.totalItemOrgs = res.count;
+        });
+    }
+
+    async getFormOrg(pageOrg: number, pageSizeOrg: number) {
+        await this.contactsService
+            .getOrgByPage(pageOrg, pageSizeOrg, `${this.sortIdOrg},${this.sortOrderOrg}`, this.valueSearchOrg, this.selectedFilter)
+            .subscribe((res: any) => {
+                this.organizations = res;
+                this.spareorganizations = res;
+            });
+    }
+
+
+    async pageChangeOrg(pageOrg: number) {
+        if (pageOrg != this.currentPageOrg) {
+            if (pageOrg >= 1 && pageOrg <= this.totalPageOrgs) {
+                this.currentPageOrg = pageOrg;
+                await this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
+                this.checkedValueOrgs = [];
+            }
+        }
+    }
+
+    sortOrg(value: string) {
+        if (this.sortIdOrg == value) {
+            if (this.sortIcon == 'fa-solid fa-sort-down') {
+                this.sortIcon = 'fa-solid fa-sort-up';
+                this.sortOrderOrg = 'DESC';
+            } else {
+                this.sortIcon = 'fa-solid fa-sort-down';
+                this.sortOrderOrg = 'ASC';
+            }
+        } else {
+            this.sortIdOrg = value;
+        }
+        this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
+    }
+
+    pageSizeChangeOrg() {
+        this.currentPage = 1;
+        this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
+    }
+
+    get pageOrgs(): number[] {
+        var pageOrg: number[] = [];
+        this.totalPageOrgs = Math.ceil(this.totalItemOrgs / this.pageSizeOrg);
+        for (var i = -this.pagesToShowOrg; i <= this.pagesToShowOrg; i++) {
+            if (this.currentPageOrg + i > 0 && this.currentPageOrg + i <= this.totalPageOrgs) {
+                pageOrg.push(this.currentPageOrg + i);
+            }
+        }
+        return pageOrg;
+    }
+
+    chooseOrg(orgId: string) {
+        this.contactOrg = orgId;
+        this.contactsService.getOrganizationById(orgId).subscribe((res: any) => {
+            this.contactOrgName = res[0].orgName;
+            this.contactProductType = res[0].prodName;
+        });
+    }
+
+    showAddOrg() {
+        this.AddOrgShowing = true;
+        this.FormShowing = false;
+        this.SearchFormShowing = false;
+        this.thanks = false;
+        this.SearchOrgShowing = false;
+        this.contactsService.getAllIndustryType().subscribe((res: any) => {
+            this.industryType = res;
+        });
+
+        this.contactsService.getAllProductTypes().subscribe((res: any) => {
+            this.productTypes = res;
+        });
+    } 
+
+    submitOrg() {
+        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        if (this.orgName.length > 0) {
+                const data = {
+                    name: this.orgName,
+                    identification: this.orgIden,
+                    industryTypeId: this.orgIndustryType,
+                    productTypeId: this.orgProductType,
+                    createdById: userData.userId,
+                };
+
+                this.contactsService
+                    .createOrg(data)
+                    .pipe(
+                        tap((res) => {
+                            this.showSideBarOrg();
+                        }),
+                        catchError((error) => {
+                            this.sweetalertServices.handleError(error);
+                            throw error;
+                        }),
+                    )
+                    .subscribe();
+        } else {
+            this.sweetalertServices.getSwal('error', 'organization name cannot be empty.', '', false, '');
+        }
+    }
 }

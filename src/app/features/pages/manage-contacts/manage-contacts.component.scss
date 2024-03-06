@@ -21,3 +21,8 @@ label:has(+ input:required):after {
   .mg-3 {
     margin: 0 3% 3% 3%;
   }
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}

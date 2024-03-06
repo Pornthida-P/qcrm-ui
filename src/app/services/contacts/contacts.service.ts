@@ -46,7 +46,7 @@ export class ContactsService {
         return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}${config.api.path.contacts.paramsFide}/${phone}`);
     }
   
-      getContactActivities(id: string) {
+    getContactActivities(id: string) {
         return this.http.get(`${this.baseUrl}/drive/user/activities/${id}`);
     }
 
@@ -70,6 +70,18 @@ export class ContactsService {
         return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}/organization`);
     }
 
+    getAllIndustryType() {
+        return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}/industryType`);
+    }
+
+    getAllProductTypes() {
+        return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}/productTypes`);
+    }
+
+    getOrganizationById(id: string) {
+        return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}/organization/${id}`);
+    }
+
     countContacts(searchText: string, createdById: string) {
         if (searchText == '' || searchText == null) {
             searchText = 'undefined';
@@ -84,5 +96,28 @@ export class ContactsService {
 
     saveContactsData(data: any) {
         return this.http.post(`${this.baseUrl}${config.api.path.contacts.baseUrl}`, data);
+    }
+
+    countOrg(searchText: string, createdById: string) {
+        if (searchText == '' || searchText == null) {
+            searchText = 'undefined';
+        }
+        if (createdById == '' || createdById == null) {
+            createdById = 'undefined';
+        }
+        return this.http.get(
+            `${this.baseUrl}${config.api.path.contacts.baseUrl}/organization${config.api.path.contacts.count}/${searchText}/${createdById}`,
+        );
+    }
+
+    getOrgByPage(page: number, limit: number, sortId: string, searchText: string, createdBy: string) {
+        if (searchText == '' || searchText == null) {
+            searchText = 'undefined';
+        }
+        return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}/organization/${page}/${limit}/${sortId}/${searchText}/${createdBy}`);
+    }
+
+    createOrg(data: any) {
+        return this.http.post(`${this.baseUrl}${config.api.path.contacts.baseUrl}/organization`, data);
     }
 }
