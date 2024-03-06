@@ -41,14 +41,20 @@
               </div>
               <div class="col-md-6">
                   <label for="inputContactOrg" class="form-label">ร้านค้า/บริษัท</label>
-                  <select
+                  <input class="form-control" list="datalistOptions" id="inputContactOrg" name="contactOrg" [(ngModel)]="contactOrg" placeholder="" />
+                  <datalist>
+                      <option value="">กรุณาเลือกข้อมูล</option>
+                      <option  *ngFor="let organization of organizations" [value]="organization.name"></option>
+                    </datalist>
+
+                  <!-- <select
                       class="form-select"
                       name="contactOrg"
                       id="inputContactOrg"
                       [(ngModel)]="contactOrg"
                   >
                   <option *ngFor="let organization of organizations" [value]="organization.organizationId">{{ organization.name }}</option>
-                </select>
+                </select> -->
               </div>
               <div class="col-md-6">
                   <label for="inputContactType" class="form-label">ประเภทผู้ประกอบการ</label>
