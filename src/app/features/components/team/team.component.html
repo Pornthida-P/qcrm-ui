@@ -34,32 +34,46 @@
                     <li class="card mb-3" *ngFor="let groupMember of inputSearch.value.length > 0 ? searchGroup : groupMembers">
                         <div class="card-body">
                             <div class="row align-items-center">
-                                <div class="col-md-6 col-xl-8">
+                                <div class="col">
                                     <div class="row">
-                                        <div class="col-auto group d-flex align-items-center">
+                                        <div class="col group d-flex align-items-center">
                                             <p class="m-1 cursor-default" [ngbTooltip]="groupMember.description">
                                                 {{ groupMember?.groupTitle }}
                                             </p>
                                         </div>
-                                        <div class="col member d-flex align-items-center justify-content-end">
-                                            <div class="position-relative" *ngFor="let member of groupMember?.members">
-                                                <div class="profile-container">
-                                                    <img
-                                                        class="profile-image img-fluid"
-                                                        [src]="member?.profile"
-                                                        [alt]="member?.username"
-                                                        (error)="handleProfileError($event)"
-                                                        style="max-width: 100%"
-                                                    />
-                                                </div>
-                                                <div class="dot">
-                                                    <div
-                                                        class="dot-inner dot-status"
-                                                        [ngbTooltip]="getStatusOnline(member?.userId) ? 'Online' : 'Offline'"
-                                                        [class.dot-status-online]="getStatusOnline(member?.userId)"
-                                                    ></div>
-                                                </div>
+                                        <div class="col-auto member d-flex align-items-center justify-content-end">
+                                            <div class="position-relative" *ngFor="let member of groupMember?.members; let i = index">
+                                                <ng-container *ngIf="i < 4">
+                                                    <div class="profile-container">
+                                                        <img
+                                                            class="profile-image img-fluid"
+                                                            [src]="member?.profile"
+                                                            [alt]="member?.username"
+                                                            (error)="handleProfileError($event)"
+                                                            style="max-width: 100%"
+                                                        />
+                                                    </div>
+                                                    <div class="dot">
+                                                        <div
+                                                            class="dot-inner dot-status"
+                                                            [ngbTooltip]="getStatusOnline(member?.userId) ? 'Online' : 'Offline'"
+                                                            [class.dot-status-online]="getStatusOnline(member?.userId)"
+                                                        ></div>
+                                                    </div>
+                                                </ng-container>
                                             </div>
+                                            <ng-container *ngIf="groupMember && groupMember.members.length > 4">
+                                                <div class="position-relative">
+                                                    <div class="profile-container">
+                                                        <img
+                                                            class="profile-image img-fluid"
+                                                            src="assets/nea-qcrm-ui/image/more.webp"
+                                                            alt="More"
+                                                            style="max-width: 100%; background-color: var(--color-white)"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </ng-container>
                                         </div>
                                     </div>
                                 </div>
