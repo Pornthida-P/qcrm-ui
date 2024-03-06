@@ -129,8 +129,15 @@ export class CalendarPreviewComponent implements OnInit {
     onClickSelectDate(date: Date): void {
         this.onSelectEvent = this.events.filter((event) => {
             const startDate = new Date(event.startDate);
+            startDate.setHours(0, 0, 0, 0);
+
             const endDate = new Date(event.endDate);
-            return date >= startDate && date <= endDate;
+            endDate.setHours(23, 59, 59, 999);
+
+            const targetDate = new Date(date);
+            targetDate.setHours(0, 0, 0, 0);
+
+            return targetDate >= startDate && targetDate <= endDate;
         });
 
         this.selectDate = date;
@@ -145,9 +152,15 @@ export class CalendarPreviewComponent implements OnInit {
         let count = 0;
         for (const event of this.events) {
             const startDate = new Date(event.startDate);
-            const endDate = new Date(event.endDate);
+            startDate.setHours(0, 0, 0, 0);
 
-            if (date >= startDate && date <= endDate) {
+            const endDate = new Date(event.endDate);
+            endDate.setHours(23, 59, 59, 999);
+
+            const targetDate = new Date(date);
+            targetDate.setHours(0, 0, 0, 0);
+
+            if (targetDate >= startDate && targetDate <= endDate) {
                 count++;
                 if (count >= 4) {
                     return 4;
@@ -158,15 +171,23 @@ export class CalendarPreviewComponent implements OnInit {
     }
 
     getDotColor(index: number, date: Date): string {
-        const filteredEvents = this.events.filter((event) => {
-            const startDate = new Date(event.startDate);
-            const endDate = new Date(event.endDate);
-            return date >= startDate && date <= endDate;
-        });
-
-        if (filteredEvents.length === 0) {
+        const eventsCount = this.hasEvent(date);
+        if (eventsCount === 0) {
             return '';
         }
+
+        const filteredEvents = this.events.filter((event) => {
+            const startDate = new Date(event.startDate);
+            startDate.setHours(0, 0, 0, 0);
+
+            const endDate = new Date(event.endDate);
+            endDate.setHours(23, 59, 59, 999);
+
+            const targetDate = new Date(date);
+            targetDate.setHours(0, 0, 0, 0);
+
+            return targetDate >= startDate && targetDate <= endDate;
+        });
 
         const tagColor = filteredEvents[index]?.tag?.color;
         return tagColor ? tagColor : 'var(--primary)';
