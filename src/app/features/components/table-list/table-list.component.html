@@ -61,7 +61,7 @@
     <tr mat-row *matRowDef="let row; columns: isShowTool ? displayedColumns.concat('actions') : displayedColumns"></tr>
 </table>
 
-<ul class="pagination cursor-pointer justify-content-center">
+<ul class="pagination cursor-pointer justify-content-center m-0 pt-3">
     <li class="page-item" [class.disabled]="currentPage == 1">
         <a class="page-link custom-link preBtn" (click)="pageChange(1)" aria-label="Previous">
             <i class="fa-solid fa-angles-left"></i>
