@@ -1,122 +1,152 @@
-<div class="h-100">
+<div class="">
     <div class="bg-white rounded shadow w-100 h-100">
         <div class="p-4 d-flex flex-column justify-content-between gap-4 w-100">
             <div class="d-flex justify-content-between mg-bt">
                 <button type="button" (click)="prev()" class="btn btn-outline-danger">ย้อนกลับ</button>
                 <button type="button" (click)="submit()" class="btn btn-primary rounded text-white">บันทึก</button>
             </div>
-            <p class="fs-5 mg-bt-0">สร้างการโทร</p>
+            <p class="fs-5 mg-bt-0">สร้างข้อมูลการติดต่อ</p>
             <form class="row g-3 mg-3">
                 <div class="col-md-6">
-                    <label for="inputContactName" class="form-label">ชื่อ</label>
-                    <input type="text" class="form-control" name="contactName" id="inputContactName" [(ngModel)]="contactName" />
-                </div>
-                <div class="col-md-6">
-                    <label for="inputPassword4" class="form-label">สถานะ</label>
-                    <select id="inputstatus" class="form-select" name="status" [(ngModel)]="status">
-                        <option disabled selected></option>
-                        <option>Planned</option>
-                        <option>Held</option>
-                        <option>Not Held</option>
+                    <label for="inputPassword4" class="form-label">ผู้ติดต่อ</label>
+                    <select id="inputContact" class="form-select" name="contacts" [(ngModel)]="contacts">
+                        <option disabled selected value="">กรุณาเลือกข้อมูล</option>
+                        <!-- <option *ngFor="let contact of contacts"
+              [value]="contact.contactId">{{ contact.name }}</option> -->
                     </select>
                 </div>
+                <!-- <div class="col-md-6">
+          <label for="inputPassword4" class="form-label">ผู้ติดต่อ</label>
+          <select id="inputContact" class="form-select" name="contacts"
+            [(ngModel)]="contacts">
+            <option disabled selected value="">กรุณาเลือกข้อมูล</option>
+            <option *ngFor="let contact of contacts"
+              [value]="contact.contactId">{{ contact.name }}</option>
+          </select>
+        </div> -->
                 <div class="col-md-6">
-                    <label for="inputPassword4" class="form-label">ข้อมูลติดต่อ</label>
-                    <select id="inputParent" class="form-select" name="parent" [(ngModel)]="parent">
+                    <label for="inputContactOrg" class="form-label">ร้านค้า/บริษัท</label>
+                    <input
+                        class="form-control"
+                        list="datalistOptions"
+                        id="inputContactOrg"
+                        name="contactOrg"
+                        [(ngModel)]="contactOrg"
+                        placeholder="Type to search..."
+                    />
+                    <datalist id="datalistOptions">
+                        <option *ngFor="let organization of organizations" [value]="organization.name">{{ organization.name }}</option>
+                    </datalist>
+                </div>
+                <div class="col-md-6">
+                    <label for="inputParent" class="form-label">หัวข้อที่ติดต่อ<span class="color-red">*</span></label>
+                    <select id="inputParent" class="form-select" name="parent" [(ngModel)]="selectedTopics">
                         <option disabled selected value="">กรุณาเลือกข้อมูล</option>
                         <option *ngFor="let casetopics of casetopic" [value]="casetopics.casetopicsId">{{ casetopics.name }}</option>
                     </select>
                 </div>
-                <div class="col-6">
-                    <label for="inputdirection" class="form-label">ประเภทสาย</label>
-                    <select id="inputdirection" class="form-select" name="direction" [(ngModel)]="direction">
-                        <option disabled selected></option>
-                        <option>Inbound</option>
-                        <option>Outbound</option>
+
+                <div class="col-md-6">
+                    <label for="inputCaseSubject" class="form-label">เรื่องที่ติดต่อ</label>
+                    <select id="inputCaseSubject" class="form-select" name="casesubject" [(ngModel)]="selectedCasesubject">
+                        <option disabled value="">กรุณาเลือกข้อมูล</option>
+                        <option *ngFor="let casesubject of casesubjects" [value]="casesubject.caseSubjectId">{{ casesubject.name }}</option>
                     </select>
                 </div>
-                <div class="col-12">
-                  <label class="form-check-label" for="gridCheck"> รายละเอียด </label>
-                  <textarea
-                      class="form-control"
-                      placeholder="กรุณากรอกข้อมูล"
-                      id="floatingTextarea"
-                      name="description"
-                      [(ngModel)]="description"
-                  ></textarea>
-              </div>
-              <div class="col-12">
-                  <label class="form-check-label" for="gridCheck"> แนวทางการแก้ไข </label>
-                  <textarea
-                      class="form-control"
-                      placeholder="กรุณากรอกข้อมูล"
-                      id="floatingTextarea"
-                      name="solutions"
-                      [(ngModel)]="solutions"
-                  ></textarea>
-              </div>
-                <div class="col-md-5">
-                    <label for="inputAddress" class="">วันที่เริ่ม</label>
-                    <div class="date-pik">
-                        <mat-form-field class="date-time">
-                            <mat-label>กรุณาเลือกวันที่</mat-label>
-                            <input
-                                matInput
-                                [matDatepicker]="picker1"
-                                name="startTime"
-                                [(ngModel)]="startTime"
-                                (dateInput)="formatStartDate()"
-                            />
-                            <mat-hint>MM/DD/YYYY</mat-hint>
-                            <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
-                            <mat-datepicker #picker1></mat-datepicker>
-                        </mat-form-field>
-                        <ngb-timepicker
-                            name="timepickStart"
-                            [(ngModel)]="timepickStart"
-                            [seconds]="seconds"
-                            [ngModelOptions]="{ standalone: true }"
-                            (dateInput)="(formatTimepickStart)"
-                            (ngModelChange)="onTimepickStartChange($event)"
-                        ></ngb-timepicker>
+
+                <div class="col-6">
+                    <label for="inputChannel" class="form-label">ช่องทางติดต่อ</label>
+                    <select id="inputChannel" class="form-select" name="channels" [(ngModel)]="channels">
+                        <option disabled value="">กรุณาเลือกข้อมูล</option>
+                        <option *ngFor="let channel of channels" [value]="channel.channelId">{{ channel.name }}</option>
+                    </select>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked />
+                        <label class="form-check-label" for="flexCheckChecked"> รับข้อมูลทางอีเมล </label>
                     </div>
+                </div>
+                <div class="col-6">
+                  <label for="inputAddress" class="">กรุณาเลือกวันที่</label>
+                  <div class="date-pik">
+                      <div class="col-auto">
+                          <div class="input-group start-date">
+                              <input
+                                  matInput
+                                  [matDatepicker]="startDatePicker"
+                                  name="datetime"
+                                  required
+                                  class="input-date form-control"
+                              />
+                              <span class="input-group-text">
+                                  <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+                                  <mat-datepicker #startDatePicker></mat-datepicker>
+                              </span>
+                          </div>
+                      </div>
+                      <!-- <mat-form-field class="date-time">
+                      <mat-label>กรุณาเลือกวันที่</mat-label>
+                      <input
+                          matInput
+                          [matDatepicker]="picker1"
+                          name="startTime"
+                          [(ngModel)]="startTime"
+                          (dateInput)="formatStartDate()"
+                      />
+                      <mat-hint>MM/DD/YYYY</mat-hint>
+                      <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+                      <mat-datepicker #picker1></mat-datepicker>
+                  </mat-form-field> -->
+                      <ngb-timepicker
+                          name="timepickStart"
+                          [(ngModel)]="timepickStart"
+                          [seconds]="seconds"
+                          [ngModelOptions]="{ standalone: true }"
+                          (dateInput)="(formatTimepickStart)"
+                          (ngModelChange)="onTimepickStartChange($event)"
+                      ></ngb-timepicker>
                   </div>
-
-
-                    <div class="col-5">
-                        <label for="inputAddress" class="">วันที่สิ้นสุด</label>
-                        <div class="date-pik">
-                            <mat-form-field class="date-time">
-                                <mat-label>กรุณาเลือกวันที่</mat-label>
-                                <input
-                                    matInput
-                                    [matDatepicker]="picker2"
-                                    name="endTime"
-                                    [(ngModel)]="endTime"
-                                    (dateInput)="formatEndDate()"
-                                />
-                                <mat-hint>MM/DD/YYYY</mat-hint>
-                                <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
-                                <mat-datepicker #picker2></mat-datepicker>
-                            </mat-form-field>
-                            <ngb-timepicker
-                                name="timepickEnd"
-                                [(ngModel)]="timepickEnd"
-                                [seconds]="seconds"
-                                [ngModelOptions]="{ standalone: true }"
-                                (ngModelChange)="onTimepickEndChange($event)"
-                            ></ngb-timepicker>
+              </div>
+                <div class="col-6">
+                    <p class="mg-b">ประเภทกิจกรรม</p>
+                    <div class="div-form-check">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                            <label class="form-check-label" for="flexCheckDefault"> โครงการอบรม/สัมมนา </label>
+                        </div>
+                        <div class="form-check pd-l-50">
+                            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked />
+                            <label class="form-check-label" for="flexCheckChecked"> หลักสูตร E-learning </label>
                         </div>
                     </div>
-
-                <div class="col-md-2">
-                    <label for="inputduration" class="form-label">ระยะเวลา</label>
-                    <select id="inputduration" class="form-select" name="duration" [(ngModel)]="duration">
-                        <option disabled selected></option>
-                        <option>3 นาที</option>
-                    </select>
                 </div>
-
+                <div class="col-12">
+                    <label class="form-check-label" for="gridCheck"> รายละเอียด </label>
+                    <textarea
+                        class="form-control"
+                        placeholder="กรุณากรอกข้อมูล"
+                        id="floatingTextarea"
+                        name="description"
+                        [(ngModel)]="description"
+                    ></textarea>
+                </div>
+                <div class="col-12">
+                    <label class="form-check-label" for="gridCheck"> แนวทางการแก้ไข </label>
+                    <textarea
+                        class="form-control"
+                        placeholder="กรุณากรอกข้อมูล"
+                        id="floatingTextarea"
+                        name="solutions"
+                        [(ngModel)]="solutions"
+                    ></textarea>
+                </div>
+                <div class="col-6">
+                    <label for="formFileSm" class="form-label">ไฟล์แนบ</label>
+                    <div class="mb-3">
+                        <div class="form-input-file">
+                            <input class="form-control form-control-sm" id="formFileSm" type="file" />
+                        </div>
+                    </div>
+                </div>
             </form>
         </div>
     </div>

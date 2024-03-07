@@ -39,7 +39,30 @@
 .date-time {
   margin-right: 7%;
 }
-::ng-deep .mat-mdc-text-field-wrapper {
-  background-color: rgba(255, 255, 255, 0.15) !important;
-  width: 120%;
+.input-group-text {
+  padding: 0;
+  max-width: 38px !important;
+  max-height: 38px !important;
+  margin-right: 10px;
+}
+::ng-deep {
+  .mdc-icon-button {
+      padding: 6px !important;
+      max-width: 38px !important;
+      max-height: 38px !important;
+      margin: auto;
+  }
+}
+.pd-l-50 {
+ padding-left: 50px;
+}
+.mg-b {
+  margin-bottom: 3px;
+}
+.div-form-check {
+  display: flex;
+}
+.form-input-file {
+  display: flex;
+  align-items: center;
 }

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Location } from '@angular/common';
-import { FormControl } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { CallService } from 'src/app/services/call/call.service';
 import { catchError, debounceTime, distinctUntilChanged, map, Observable, OperatorFunction, tap } from 'rxjs';
@@ -17,7 +17,7 @@ export class CreateCallComponent {
     casetopic: any[] = [];
     organizations: any;
     contacts: any[] = [];
-
+    casesubjects: any[] = [];
     contactName!: string;
     status: string = '';
     parentSub: any;
@@ -35,11 +35,17 @@ export class CreateCallComponent {
     detailItem: any;
     combinedDateTimeStart: string = '';
     combinedDateTimeEnd: string = '';
+    contactOrg: string = '';
+    selectedTopics: string[] = [];
+    selectedCasesubject: any;
 
     parent: any = null;
 
     model: any;
     organizationName: string | undefined;
+
+    myForm: FormGroup | any; //
+    channels: any;
 
     constructor(
         private location: Location,
@@ -122,37 +128,28 @@ export class CreateCallComponent {
         });
 
         this.callServive.getOrganizations().subscribe((organizations: any) => {
-          this.organizations = organizations;
-      });
+            this.organizations = organizations;
+        });
 
+        this.callServive.getAllContacts().subscribe((contacts: any) => {
+            this.contacts = contacts;
+        });
 
+        this.callServive.getAllCaseSubjects().subscribe((casesubjects: any) => {
+            this.casesubjects = casesubjects;
+        });
+
+        this.callServive.getAllChannels().subscribe((channels: any) => {
+            this.channels = channels;
+        });
+
+        this.myForm = new FormGroup({
+            contactId: new FormControl(''),
+        });
     }
-  searchFunction() {
-    throw new Error('Method not implemented.');
-  }
-
-    // loadData(option: string) {
-    //     switch (option) {
-    //         case 'contacts':
-    //             this.callServive.getAllContacts().subscribe((contacts: any) => {
-    //                 this.selectedData = contacts;
-    //             });
-    //             break;
-    //         case 'organizations':
-    //             this.callServive.getOrganizations().subscribe((organizations: any) => {
-    //                 this.selectedData = organizations;
-    //             });
-    //             break;
-    //         case 'casetopics':
-    //             this.callServive.getCaseTopic().subscribe((casetopics: any) => {
-    //                 this.selectedData = casetopics;
-    //             });
-    //             break;
-    //         default:
-    //             this.selectedData = [];
-    //             break;
-    //     }
-    // }
+    searchFunction() {
+        throw new Error('Method not implemented.');
+    }
 
     submit() {
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
@@ -182,5 +179,4 @@ export class CreateCallComponent {
             )
             .subscribe();
     }
-
 }
