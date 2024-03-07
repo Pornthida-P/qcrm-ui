@@ -102,10 +102,10 @@
                                     aria-controls="offcanvasRight"
                                 >
                                     <div class="" ngbTooltip="คลิกดูรายละเอียด" placement="bottom">
-                                        {{ calls.name }}
+                                        {{ calls.CallerID }}
                                     </div>
                                 </td>
-                                <td>{{ calls.direction }}</td>
+                                <td>{{ calls.CallType }}</td>
                                 <td class="w-max-ellipsis">
                                     <div [ngbTooltip]="calls.caseTopicName" placement="bottom" class="text-ellipsis">
                                         {{ calls.caseTopicName }}
@@ -117,11 +117,11 @@
                                     </div>
                                 </td>
                                 <td class="w-max-ellipsis">
-                                    <div [ngbTooltip]="calls.solutions" placement="bottom" class="text-ellipsis">
-                                        {{ calls.solutions }}
+                                    <div [ngbTooltip]="calls.Solutions" placement="bottom" class="text-ellipsis">
+                                        {{ calls.solution }}
                                     </div>
                                 </td>
-                                <td>{{ calls.modified }}</td>
+                                <td>{{ calls.username }}</td>
                                 <!-- <td class="text-center" scope="row">
                                     <div class="d-flex flex-row flex-nowrap">
                                         <div class="me-3 color-primary cursor-pointer" placement="top" ngbTooltip="แก้ไข" (click)="editPage()">
@@ -208,7 +208,7 @@
 
                         <div>
                             <h4>เบอร์โทร</h4>
-                            <h5 class="font-b">{{ detailItem?.name || emptyItem }}</h5>
+                            <h5 class="font-b">{{ detailItem?.CallerID || emptyItem }}</h5>
                         </div>
                         <div class="row row-side">
                             <div class="col">
@@ -217,13 +217,13 @@
                             </div>
                             <div class="col">
                                 <h5>ประเภทสาย</h5>
-                                <div class="font-b">{{ detailItem?.direction || emptyItem }}</div>
+                                <div class="font-b">{{ detailItem?.CallType || emptyItem }}</div>
                             </div>
                         </div>
                         <div class="grid pt-2">
                             <div class="col row-side">
                                 <h5>ผู้ที่รับผิดชอบ</h5>
-                                <div class="font-b">{{ detailItem?.modified || emptyItem }}</div>
+                                <div class="font-b">{{ detailItem?.username || emptyItem }}</div>
                             </div>
                             <div class="col row-side">
                                 <h5>เรื่องที่ติดต่อ</h5>
@@ -233,7 +233,7 @@
                         <div class="grid pt-2 row-side">
                             <div class="col row-side">
                                 <h5>แนวทางการแก้ไข</h5>
-                                <div class="font-b">{{ detailItem?.solutions || emptyItem }}</div>
+                                <div class="font-b">{{ detailItem?.solution || emptyItem }}</div>
                             </div>
                             <div class="col row-side">
                                 <h5>รายละเอียด</h5>
@@ -245,21 +245,17 @@
                         <div class="row row-side">
                             <div class="col">
                                 <h5>สร้างโดยผู้ใช้</h5>
-                                <div class="font-b">{{ detailItem?.modified || emptyItem }}</div>
+                                <div class="font-b">{{ detailItem?.username || emptyItem }}</div>
                             </div>
                             <div class="col">
-                                <h5>เวลาที่แก้ไข</h5>
-                                <div class="font-b">{{ detailItem?.createAt || emptyItem }}</div>
-                            </div>
+                              <h5>แก้ไขล่าสุดโดยผู้ใช้</h5>
+                              <div class="font-b">{{ detailItem?.modifiedByUsername || emptyItem }}</div>
+                          </div>
                         </div>
                         <div class="row row-side">
                             <div class="col">
-                                <h5>แก้ไขล่าสุดโดยผู้ใช้</h5>
-                                <div class="font-b">{{ detailItem?.modified || emptyItem }}</div>
-                            </div>
-                            <div class="col">
                                 <h5>เวลาที่แก้ไขล่าสุด</h5>
-                                <div class="font-b">{{ detailItem?.createAt || emptyItem }}</div>
+                                <div class="font-b">{{ detailItem?.modifiedAt | date : 'dd/MM/yyyy HH:mm' || emptyItem }}</div>
                             </div>
                         </div>
                     </div>

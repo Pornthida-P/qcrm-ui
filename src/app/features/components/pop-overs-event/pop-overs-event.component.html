@@ -4,7 +4,7 @@
             <ng-container *ngIf="events.length > 0; else noEventsTemplate">
                 <div *ngFor="let event of events; let i = index" class="carousel-item" [class.active]="i === 0">
                     <div class="d-flex justify-content-center align-items-center">
-                        <p class="fs-5 label">{{ i + 1 }}/{{ events.length }}</p>
+                        <p class="fs-5 label">{{ 'component.pop-overs-event.event' | translate }} {{ i + 1 }}/{{ events.length }}</p>
                     </div>
                     <app-calendar-card
                         [event]="event"
@@ -21,7 +21,9 @@
             <ng-template #noEventsTemplate>
                 <div class="carousel-item active">
                     <div class="d-flex justify-content-center align-items-center">
-                        <p class="fs-5 label">ไม่มีกิจกรรม</p>
+                        <p class="fs-5 label">
+                            {{ 'component.pop-overs-event.noEvent' | translate }}
+                        </p>
                     </div>
                 </div>
             </ng-template>

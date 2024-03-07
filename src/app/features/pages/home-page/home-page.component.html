@@ -12,14 +12,15 @@
                     (click)="onClickHome()"
                 >
                     <div class="d-flex align-items-center">
-                        <p class="label">Home</p>
+                        <p class="label">{{ 'page.home.menuHome' | translate }}</p>
                     </div>
                 </button>
                 <button
                     *ngFor="let tag of tags"
                     type="button"
-                    class="btn btn-primary-color text-white button"
+                    class="btn text-white button"
                     [class.button-active]="onSelectTag?.tagId === tag.tagId"
+                    [style.background-color]="tag.color ? tag.color : 'var(--primary-color)'"
                     (click)="onClickChangeMenu(tag)"
                 >
                     <div class="d-flex align-items-center">

@@ -20,7 +20,7 @@ import { User } from 'src/app/shared/interface/user.interface';
     styleUrl: './menagement-calendar.component.scss',
 })
 export class MenagementCalendarComponent implements OnInit {
-    title: string = 'Calendar Event';
+    title: string = 'menagement-calendar-event';
     calendarEvent: FormGroup = new FormGroup({});
     members: User[] = [];
     userData: User | null = null;
@@ -281,7 +281,6 @@ export class MenagementCalendarComponent implements OnInit {
             .upload(file, file.name, createdAt, this.userData?.userId || '')
             .pipe(
                 tap((response: any) => {
-                    console.log('Attachment response:', response);
                     this.attachments.push(response);
                 }),
                 catchError((error) => {

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { faGear } from '@fortawesome/free-solid-svg-icons';
+import { faGear, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { catchError, tap } from 'rxjs';
 import { CalendarEventService } from 'src/app/services/calendar-event/calendar-event.service';
 import { ModalTagService } from 'src/app/services/modal-tag/modal-tag.service';
@@ -15,7 +15,7 @@ import { User } from 'src/app/shared/interface/user.interface';
     styleUrl: './tag.component.scss',
 })
 export class TagComponent implements OnInit {
-    title = 'แท็ก';
+    title = 'tag';
     tags: CalendarTag[] = [];
     displayedColumns: string[] = [];
     dataSource = new MatTableDataSource<CalendarTag>();
@@ -25,6 +25,7 @@ export class TagComponent implements OnInit {
     userDatas: User | null = null;
 
     faGear = faGear;
+    faPlusCircle = faPlusCircle;
 
     get columnVisibilityKeys(): string[] {
         return Object.keys(this.columnVisibility);

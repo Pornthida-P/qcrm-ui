@@ -71,7 +71,7 @@ export class ContactsComponent implements OnInit {
         this.userRole = this.userData.role.roleTitle.toLocaleLowerCase();
         this.filterOption = [
             { name: 'ทั้งหมด', code: 'all' },
-            { name: 'Only My', code: this.userData.username },
+            { name: 'Only My', code: this.userData.userId },
         ];
         this.activeRoute.queryParams.subscribe((params) => {
             if (params['cb'] != undefined && params['cb'] != '') {
@@ -292,37 +292,6 @@ export class ContactsComponent implements OnInit {
 
     contactsManage() {
         this.router.navigate(['/contacts/new']);
-    }
-
-    exportExcel() {
-        if (this.checkedValues.length != 0) {
-            this.selectedContacts = this.contacts.filter((contact: any) => this.checkedValues.includes(contact.contactId));
-        }
-
-        if (this.selectedContacts.length != 0) {
-            const processedContacts = this.selectedContacts.reduce(
-                (acc: any, cur: any) => [
-                    ...acc,
-                    {
-                        name: cur.name,
-                        createdAt: cur.createdAt,
-                        createdBy: cur.createdBy,
-                    },
-                ],
-                [],
-            );
-
-            const columns = [['แบบฟอร์มสำรวจ', 'วันที่บันทึก', 'บันทึกโดย']];
-            const wb = XLSX.utils.book_new();
-            const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet([]);
-            XLSX.utils.sheet_add_aoa(ws, columns);
-
-            XLSX.utils.sheet_add_json(ws, processedContacts, { origin: 'A2', skipHeader: true });
-
-            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-
-            XLSX.writeFile(wb, `แบบฟอร์มสำรวจ${this.fileType}`);
-        }
     }
 
     search() {

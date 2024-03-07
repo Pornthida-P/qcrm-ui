@@ -1,11 +1,11 @@
 <div *ngIf="event" class="position-relative" [class.card]="isBorder">
     <div
-        *ngIf="isNewCard(event.startDate)"
+        *ngIf="isNewCard(event.createdAt)"
         class="position-absolute"
         style="width: 80px; height: auto"
         [style.scale]="isBorder ? '1.2' : '1'"
     >
-        <img class="w-100 h-auto" src="/assets/nea-qcrm-ui/image/card/pngtree-new-red-ribbon-tag-mark-png-image_4685171.png" alt="" />
+        <img class="w-100 h-auto" src="assets/nea-qcrm-ui/image/card/pngtree-new-red-ribbon-tag-mark-png-image_4685171.png" alt="" />
     </div>
     <div class="card-body">
         <div class="row">
@@ -73,8 +73,8 @@
             <div class="col-md-2 d-flex justify-content-center">
                 <span class="fs-5 color-primary"><fa-icon [icon]="faList"></fa-icon></span>
             </div>
-            <div class="col-md-10 d-flex align-items-center">
-                <p class="card-text fs-6" [innerHtml]="event.description"></p>
+            <div class="col-md-10 d-flex align-items-center over">
+                <p class="card-text fs-6 overflow-auto" [innerHtml]="event.description"></p>
             </div>
         </div>
 
@@ -83,7 +83,10 @@
                 <span class="fs-5 color-primary"><fa-icon [icon]="faUserGroup"></fa-icon></span>
             </div>
             <div class="col-md-10 d-flex flex-column">
-                <p class="card-text fs-6">จำนวนผู้เข้าร่วม {{ event.members.length }} คน</p>
+                <p class="card-text fs-6">
+                    {{ 'component.calendar-card.members' | translate }}
+                    {{ event.members.length }} {{ 'component.calendar-card.membersCount' | translate }}
+                </p>
                 <app-profile-list
                     [members]="event.members"
                     [isShowToolbar]="true"
@@ -99,7 +102,10 @@
                 <span class="fs-5 color-primary"><fa-icon [icon]="faPaperclip"></fa-icon></span>
             </div>
             <div class="col-md-10 d-flex flex-column">
-                <p class="card-text fs-6">ไฟล์แนบ</p>
+                <p class="card-text fs-6">
+                    {{ 'component.calendar-card.attachments' | translate }}
+                    {{ event.attachments.length }} {{ 'component.calendar-card.fileCount' | translate }}
+                </p>
                 <div *ngIf="event.attachments">
                     <div class="col-md-12">
                         <app-attachments-list
@@ -110,7 +116,9 @@
                     </div>
                 </div>
                 <div *ngIf="!event.attachments">
-                    <p class="card-text fs-6">ไม่มีไฟล์แนบ</p>
+                    <p class="card-text fs-6">
+                        {{ 'component.calendar-card.noAttachments' | translate }}
+                    </p>
                 </div>
             </div>
         </div>

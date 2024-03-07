@@ -2,7 +2,7 @@
     <div class="col-md-7 px-4 pt-2 pb-4">
         <form [formGroup]="userDataForm">
             <div class="form-group px-3 py-2">
-                <label class="mb-2" for="username">ชื่อผู้ใช้งาน</label>
+                <label class="mb-2" for="username">{{ 'component.account-profile.username' | translate }}</label>
                 <input
                     type="text"
                     class="form-control"
@@ -23,14 +23,16 @@
                     "
                     class="fs-8 pt-2 text-danger"
                 >
-                    <div *ngIf="userDataForm.get('username')?.errors?.hasOwnProperty('required')">ชื่อผู้ใช้งานจำเป็นต้องกรอก</div>
+                    <div *ngIf="userDataForm.get('username')?.errors?.hasOwnProperty('required')">
+                        {{ 'component.account-profile.usernameRequired' | translate }}
+                    </div>
                     <div *ngIf="userDataForm.get('username')?.errors?.hasOwnProperty('pattern')">
-                        ชื่อผู้ใช้งานต้องประกอบด้วยตัวอักษร a-z A-Z และ 0-9 เท่านั้น
+                        {{ 'component.account-profile.usernamePattern' | translate }}
                     </div>
                 </div>
             </div>
             <div class="form-group px-3 py-2">
-                <label class="mb-2" for="role">บทบาท</label>
+                <label class="mb-2" for="role">{{ 'component.account-profile.role' | translate }}</label>
                 <select
                     class="form-select"
                     formControlName="role"
@@ -48,12 +50,12 @@
                     *ngIf="userDataForm.get('role')?.invalid && (userDataForm.get('role')?.dirty || userDataForm.get('role')?.touched)"
                     class="fs-8 pt-2 text-danger"
                 >
-                    บทบาทจำเป็นต้องกรอก
+                    {{ 'component.account-profile.roleRequired' | translate }}
                 </div>
             </div>
 
             <div class="form-group px-3 py-2">
-                <label class="mb-2" for="email">อีเมลล์</label>
+                <label class="mb-2" for="email">{{ 'component.account-profile.email' | translate }}</label>
                 <input
                     type="email"
                     class="form-control"
@@ -70,8 +72,12 @@
                     *ngIf="userDataForm.get('email')?.invalid && (userDataForm.get('email')?.dirty || userDataForm.get('email')?.touched)"
                     class="fs-8 pt-2 text-danger"
                 >
-                    <div *ngIf="userDataForm.get('email')?.errors?.hasOwnProperty('required')">อีเมลล์จำเป็นต้องกรอก</div>
-                    <div *ngIf="userDataForm.get('email')?.errors?.hasOwnProperty('email')">กรุณากรอกอีเมลล์ให้ถูกต้อง</div>
+                    <div *ngIf="userDataForm.get('email')?.errors?.hasOwnProperty('required')">
+                        {{ 'component.account-profile.emailRequired' | translate }}
+                    </div>
+                    <div *ngIf="userDataForm.get('email')?.errors?.hasOwnProperty('email')">
+                        {{ 'component.account-profile.emailPattern' | translate }}
+                    </div>
                 </div>
             </div>
             <div class="form-group px-3 py-2" *ngIf="mode !== 'view'">
@@ -81,7 +87,7 @@
                     (click)="onClickSave()"
                     [disabled]="!userDataForm.dirty"
                 >
-                    Save
+                    {{ 'component.account-profile.save' | translate }}
                 </button>
             </div>
         </form>
@@ -108,10 +114,10 @@
             </div>
             <div *ngIf="mode === 'edit'" class="text-center px-3 py-2">
                 <input hidden type="file" #uploader (change)="onFileChanged($event)" />
-                <button type="button" class="btn btn-primary-color text-white m-1" (click)="uploader.click()">Upload</button>
-                <p class="fs-6 m-1">
-                    <small>JPG, GIF or PNG 400x400, &lt; 2 MB.</small>
-                </p>
+                <button type="button" class="btn btn-primary-color text-white m-1" (click)="uploader.click()">
+                    {{ 'component.account-profile.upload' | translate }}
+                </button>
+                <p class="fs-8 m-1">{{ 'component.account-profile.UploadDiscrption' | translate }}</p>
             </div>
         </div>
     </div>

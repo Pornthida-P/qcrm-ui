@@ -8,12 +8,12 @@ import { User } from 'src/app/shared/interface/user.interface';
     styleUrl: './menagement-account.component.scss',
 })
 export class MenagementAccountComponent implements OnInit {
+    title: string = 'menagement-account';
     userData?: User | null;
     isAction: boolean = false;
     mode: 'add' | 'view' | 'edit' = 'edit';
 
     profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
-    title: string = 'ตั้งค่าบัญชีผู้ใช้';
 
     constructor(private userService: UserService) {}
 

@@ -14,27 +14,27 @@ export class SidebarComponent implements OnInit {
     ngOnInit(): void {
         this.items = [
             {
-                label: 'หน้าแรก',
+                label: 'home',
                 icon: faHouse,
                 routerLink: '/home',
             },
             {
-                label: 'ฐานข้อมูลผู้ใช้บริการและประวัติผู้ติดต่อ',
+                label: 'contacts',
                 icon: faFileLines,
                 routerLink: '/contacts',
             },
             {
-                label: 'แบบฟอร์มสำรวจและติดตามประเมินผล',
+                label: 'surveyform',
                 icon: faFilePen,
                 routerLink: '/surveyform',
             },
             {
-                label: 'ประวัติการโทร',
+                label: 'call',
                 icon: faPhoneVolume,
                 routerLink: '/call',
             },
             {
-                label: 'รายงาน',
+                label: 'report-page',
                 icon: faChartPie,
                 routerLink: '/report-page',
             },

@@ -27,6 +27,10 @@ export class ContactsService {
         return this.http.delete(`${this.baseUrl}${config.api.path.contacts.baseUrl}`, data);
     }
 
+    deleteSurvey(data: any) {
+        return this.http.delete(`${this.baseUrl}${config.api.path.contacts.baseUrl}/survey`, data);
+    }
+
     getContactsByPage(page: number, limit: number, sortId: string, searchText: string, createdBy: string) {
         if (searchText == '' || searchText == null) {
             searchText = 'undefined';
@@ -38,8 +42,44 @@ export class ContactsService {
         return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}${config.api.path.contacts.find}/${id}`);
     }
 
+    getContactsByParamPhone(phone: string) {
+        return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}${config.api.path.contacts.paramsFide}/${phone}`);
+    }
+  
+    getContactActivities(id: string) {
+        return this.http.get(`${this.baseUrl}/drive/user/activities/${id}`);
+    }
+
+    getDriveContact(id: string) {
+        return this.http.get(`${this.baseUrl}/drive/user/${id}`);
+    }
+
+    getContactSurveyForm(id: string) {
+        return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}${config.api.path.contacts.surveyForm}/${id}`);
+    }
+
+    getContactCall(id: string) {
+        return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}${config.api.path.contacts.call}/${id}`);
+    }
+
+    getContactsSurvey(id: string) {
+        return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}/survey/${id}`);
+    }
+
     getAllOrganization() {
         return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}/organization`);
+    }
+
+    getAllIndustryType() {
+        return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}/industryType`);
+    }
+
+    getAllProductTypes() {
+        return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}/productTypes`);
+    }
+
+    getOrganizationById(id: string) {
+        return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}/organization/${id}`);
     }
 
     countContacts(searchText: string, createdById: string) {
@@ -56,5 +96,28 @@ export class ContactsService {
 
     saveContactsData(data: any) {
         return this.http.post(`${this.baseUrl}${config.api.path.contacts.baseUrl}`, data);
+    }
+
+    countOrg(searchText: string, createdById: string) {
+        if (searchText == '' || searchText == null) {
+            searchText = 'undefined';
+        }
+        if (createdById == '' || createdById == null) {
+            createdById = 'undefined';
+        }
+        return this.http.get(
+            `${this.baseUrl}${config.api.path.contacts.baseUrl}/organization${config.api.path.contacts.count}/${searchText}/${createdById}`,
+        );
+    }
+
+    getOrgByPage(page: number, limit: number, sortId: string, searchText: string, createdBy: string) {
+        if (searchText == '' || searchText == null) {
+            searchText = 'undefined';
+        }
+        return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}/organization/${page}/${limit}/${sortId}/${searchText}/${createdBy}`);
+    }
+
+    createOrg(data: any) {
+        return this.http.post(`${this.baseUrl}${config.api.path.contacts.baseUrl}/organization`, data);
     }
 }

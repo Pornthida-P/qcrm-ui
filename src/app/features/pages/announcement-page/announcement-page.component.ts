@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
+import { faGear, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { catchError, tap } from 'rxjs';
 import { AnnouncementService } from 'src/app/services/announcement/announcement.service';
 import { ModalAnnouncementService } from 'src/app/services/modal-announcement/modal-announcement.service';
@@ -15,7 +15,7 @@ import { User } from 'src/app/shared/interface/user.interface';
     styleUrl: './announcement-page.component.scss',
 })
 export class AnnouncementPageComponent {
-    title: string = 'ประกาศ';
+    title: string = 'announcement';
     displayedColumns: string[] = [];
     dataSource = new MatTableDataSource<Announce>();
     columnVisibility: { [key: string]: boolean } = {};
@@ -25,6 +25,7 @@ export class AnnouncementPageComponent {
     userDatas: User | null = null;
 
     faPlusCircle = faPlusCircle;
+    faGear = faGear;
 
     get columnVisibilityKeys(): string[] {
         return Object.keys(this.columnVisibility);

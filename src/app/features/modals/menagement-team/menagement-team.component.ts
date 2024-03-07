@@ -16,7 +16,7 @@ import { User } from 'src/app/shared/interface/user.interface';
 })
 export class MenagementTeamComponent implements OnInit {
     groupForm: FormGroup = new FormGroup({});
-    title: string = 'Group Management';
+    title: string = 'menagement-team';
     userData?: User | null;
     selectedMembers: User[] = [];
     members: User[] = [];
