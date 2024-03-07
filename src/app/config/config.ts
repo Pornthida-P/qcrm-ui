@@ -68,6 +68,8 @@ export const config = {
                 caseTopic: '/casetopic',
                 organizations: '/organizations',
                 contacts: '/allcontact',
+                caseSubjects: '/casesubjects',
+                channels: '/channels',
             },
             survey: {
                 baseUrl: '/survey',
