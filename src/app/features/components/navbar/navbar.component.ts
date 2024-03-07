@@ -170,7 +170,11 @@ export class NavbarComponent implements OnInit {
                 .findNotificationRead(userId)
                 .pipe(
                     tap((res) => {
-                        this.notifications = res;
+                        const sorted = res.sort((a: any, b: any) => {
+                            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+                        });
+
+                        this.notifications = sorted;
                     }),
                 )
                 .subscribe(() => {});
