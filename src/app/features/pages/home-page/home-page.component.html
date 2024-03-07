@@ -18,8 +18,9 @@
                 <button
                     *ngFor="let tag of tags"
                     type="button"
-                    class="btn btn-primary-color text-white button"
+                    class="btn text-white button"
                     [class.button-active]="onSelectTag?.tagId === tag.tagId"
+                    [style.background-color]="tag.color ? tag.color : 'var(--primary-color)'"
                     (click)="onClickChangeMenu(tag)"
                 >
                     <div class="d-flex align-items-center">
