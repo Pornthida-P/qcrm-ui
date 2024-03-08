@@ -81,10 +81,23 @@ export class SurveyComponent implements OnInit {
                 this.surveyFormService.saveSurveyData(surveyData).subscribe((res: any) => {
                     if (res.success) {
                         this.sweetalertService.getSwal('success', 'Success', 'Survey submitted successfully.', false, '');
-                        this.auditLogService.log('', 'Survey', 'Save Survey', `Survey ID : ${surveyData.surveyFormId}, Contact ID : ${surveyData.contactId}`);
+                        this.auditLogService.log(
+                            '',
+                            'Survey',
+                            'Save Survey',
+                            `Survey ID : ${surveyData.surveyFormId}, Contact ID : ${surveyData.contactId}`,
+                            `Success`,
+                        );
                         this.thanks = true;
                     } else {
                         this.sweetalertService.getSwal('error', 'Error', res.message, false, '');
+                        this.auditLogService.log(
+                            '',
+                            'Survey',
+                            'Save Survey',
+                            `Survey ID : ${surveyData.surveyFormId}, Contact ID : ${surveyData.contactId}`,
+                            `Failed, Error : ${res.message}`,
+                        );
                     }
                 });
             }

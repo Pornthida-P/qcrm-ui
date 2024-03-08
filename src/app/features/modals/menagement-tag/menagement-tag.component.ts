@@ -108,7 +108,13 @@ export class MenagementTagComponent implements OnInit {
                 .pipe(
                     tap(() => {
                         this.sweetalertServices.getSwal('success', 'success', 'Tag added successfully', false, '');
-                        this.auditLogService.log('', 'Setting', 'Add Tag', `Name : ${tagData.tagName}, Description: ${tagData.description}, Color : ${tagData.color}`);
+                        this.auditLogService.log(
+                            '',
+                            'Setting',
+                            'Add Tag',
+                            `Name : ${tagData.tagName}, Description: ${tagData.description}, Color : ${tagData.color}`,
+                            `Success`,
+                        );
                         this.dialogRef.close(tagData);
                     }),
                 )
@@ -122,7 +128,13 @@ export class MenagementTagComponent implements OnInit {
                 .pipe(
                     tap(() => {
                         this.sweetalertServices.getSwal('success', 'success', 'Tag updated successfully', false, '');
-                        this.auditLogService.log('', 'Setting', 'Edit Tag', `Name : ${tagData.tagName}, Description: ${tagData.description}, Color : ${tagData.color}`);
+                        this.auditLogService.log(
+                            '',
+                            'Setting',
+                            'Edit Tag',
+                            `Name : ${tagData.tagName}, Description: ${tagData.description}, Color : ${tagData.color}`,
+                            `Success`,
+                        );
                         this.dialogRef.close(tagData);
                     }),
                 )

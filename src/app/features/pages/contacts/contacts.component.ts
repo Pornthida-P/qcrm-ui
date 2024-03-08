@@ -249,11 +249,12 @@ export class ContactsComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.getSwal('success', 'Delete data success.', '', false, '');
-                            this.auditLogService.log('', 'Contact', 'Delete Contact', `Contact ID : ${contactId}`);
+                            this.auditLogService.log('', 'Contact', 'Delete Contact', `Contact ID : ${contactId}`, `Success`);
                             window.location.reload();
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
+                            this.auditLogService.log('', 'Contact', 'Delete Contact', `Contact ID : ${contactId}`, `Failed, Error : ${error}`);
                             throw error;
                         }),
                     )
@@ -281,11 +282,12 @@ export class ContactsComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.getSwal('success', 'Delete data success.', '', false, '');
-                            this.auditLogService.log('', 'Contact', 'Delete Contact', `Contact ID : ${this.checkedValues.join(', ')}`);
+                            this.auditLogService.log('', 'Contact', 'Delete Contact', `Contact ID : ${this.checkedValues.join(', ')}`, `Success`);
                             window.location.reload();
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
+                            this.auditLogService.log('', 'Contact', 'Delete Contact', `Contact ID : ${this.checkedValues.join(', ')}`, `Failed, Error : ${error}`);
                             throw error;
                         }),
                     )

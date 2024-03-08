@@ -46,7 +46,7 @@ export class LogoutComponent implements OnInit {
         if (this.userData) {
             this.loginService.logout(this.userData).subscribe();
         }
-        this.auditLogService.log('', 'Authen', 'Logout', '');
+        this.auditLogService.log('', 'Authen', 'Logout', '', `Success`);
         this.userService.clearDataUser();
         this.tokenService.clearDataToken();
         this.router.navigate(['/login']);

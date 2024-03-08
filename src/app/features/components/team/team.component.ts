@@ -101,7 +101,7 @@ export class TeamComponent {
             )
             .subscribe(() => {
                 this.sweetalertService.getSwal('success', 'Success', 'Group has been deleted.', false, '');
-                this.auditLogService.log('', 'Setting', 'Delete Group', `Group : ${group.groupTitle}`);
+                this.auditLogService.log('', 'Setting', 'Delete Group', `Group : ${group.groupTitle}`,`Success`);
             });
     }
 

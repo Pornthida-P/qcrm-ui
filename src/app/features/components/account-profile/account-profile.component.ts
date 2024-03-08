@@ -181,9 +181,9 @@ export class AccountProfileComponent {
                     image.filepath = `${environment.api.url}${image.filepath}`;
                     this.userDataForm.get('profile')?.setValue(image.filepath);
                 }
-                this.auditLogService.log('', 'Account', 'Upload Image', `Path: ${image.filepath}`);
+                this.auditLogService.log('', 'Account', 'Upload Image', `Path: ${image.filepath}`, `Success`);
             } catch (err) {
-                this.auditLogService.log('', 'Account', 'Upload Image', `Failed ${err}`);
+                this.auditLogService.log('', 'Account', 'Upload Image', `File Name : ${filename}`, `Failed ${err}`);
                 this.sweetalertServices.handleError(err);
             }
         }
@@ -203,10 +203,11 @@ export class AccountProfileComponent {
                         'Account',
                         'Add',
                         `Username : ${userData.username}, Role : ${userData.role.roleTitle}, Email : ${userData.email}`,
+                        `Success`,
                     );
                 }),
                 catchError((err) => {
-                    this.auditLogService.log('', 'Account', 'Add', `Failed ${err}`);
+                    this.auditLogService.log('', 'Account', 'Add', `Username : ${userData.username}`, `Failed ${err}`);
                     this.sweetalertServices.handleError(err);
                     throw err;
                 }),
@@ -228,10 +229,11 @@ export class AccountProfileComponent {
                     'Account',
                     'Edit',
                     `Username : ${userData.username}, Role : ${userData.role.roleTitle}, Email : ${userData.email}, Profile: ${userData.profile}`,
+                    `Success`,
                 );
             },
             (err) => {
-                this.auditLogService.log('', 'Account', 'Edit', `Failed`);
+                this.auditLogService.log('', 'Account', 'Edit', `Username : ${userData.username}`, `Failed`);
                 this.sweetalertServices.handleError(err);
             },
         );

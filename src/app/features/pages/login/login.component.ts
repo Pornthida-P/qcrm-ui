@@ -73,11 +73,11 @@ export class LoginComponent {
                         this.userServices.setDataUser(res.user);
                         this.tokenServices.setDataToken(res.token);
                         this.router.navigate(['/home']);
-                        this.auditLogService.log(username, 'Authen', 'Login', 'Success');
+                        this.auditLogService.log(username, 'Authen', 'Login', '', `Success`);
                     }),
                     catchError((error) => {
                         this.sweetalertServices.handleError(error);
-                        this.auditLogService.log(username, 'Authen', 'Login', 'Failed : ' + error.error.message);
+                        this.auditLogService.log(username, 'Authen', 'Login', '','Failed, Error : ' + error.error.message);
                         return throwError(error);
                     }),
                 )

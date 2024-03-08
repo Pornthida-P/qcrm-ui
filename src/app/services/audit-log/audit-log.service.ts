@@ -13,7 +13,7 @@ export class AuditLogService {
         this.http = new HttpClient(httpBackend);
     }
 
-    async log(username: string, menu: string, action: string, detail: string) {
+    async log(username: string, menu: string, action: string, detail: string, status: string) {
         const userData = localStorage.getItem('userData');
         if (userData && username == '') username = this.getJson(userData).username;
 
@@ -22,9 +22,10 @@ export class AuditLogService {
             const body = {
                 data: {
                     user: username,
-                    menu: menu,
-                    action: action,
-                    detail: detail,
+                    menu,
+                    action,
+                    detail,
+                    status,
                 },
             };
 

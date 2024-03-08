@@ -18,7 +18,6 @@ import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
     styleUrls: ['./manage-contacts.component.scss'],
 })
 export class ManageContactsComponent implements OnInit {
-    
     contactActivities: any[] = [];
     contactDrive: any;
     contactSurveyForm: any[] = [];
@@ -84,7 +83,7 @@ export class ManageContactsComponent implements OnInit {
     totalPages = 0;
     pagesToShow = 3;
 
-    pageSizeOptionOrgs = [5 ,10, 20];
+    pageSizeOptionOrgs = [5, 10, 20];
     pageSizeOrg = 5;
     currentPageOrg = 1;
     totalItemOrgs = 0;
@@ -152,19 +151,19 @@ export class ManageContactsComponent implements OnInit {
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
         this.userRole = userData.role.roleTitle.toLocaleLowerCase();
 
-        this.route.queryParamMap.subscribe(params => {
-          this.calls = params.get('phone');
+        this.route.queryParamMap.subscribe((params) => {
+            this.calls = params.get('phone');
 
-          if (this.calls) {
-              this.contactsService.getContactsByParamPhone(this.calls).subscribe((data: any) => {
-                  if (data) {
-                      console.log('Data exists:', data);
-                  } else {
-                      console.log('Data does not exist');
-                  }
-              });
-          }
-      });
+            if (this.calls) {
+                this.contactsService.getContactsByParamPhone(this.calls).subscribe((data: any) => {
+                    if (data) {
+                        console.log('Data exists:', data);
+                    } else {
+                        console.log('Data does not exist');
+                    }
+                });
+            }
+        });
 
         if (this.contactId) {
             this.TableShowing = true;
@@ -210,13 +209,13 @@ export class ManageContactsComponent implements OnInit {
             this.contactProvince = this.detailItem.province;
             this.contactProductType = this.detailItem.product_type;
             this.contactSource = this.detailItem.sourced;
-            if (this.contactIden != '' && this.contactIden != null && this.contactIden != undefined){
+            if (this.contactIden != '' && this.contactIden != null && this.contactIden != undefined) {
                 this.contactsService.getContactActivities(this.contactIden).subscribe((res: any) => {
                     this.contactActivities = res;
                 });
             }
 
-            if (this.contactOrg != '' && this.contactOrg != null && this.contactOrg != undefined){
+            if (this.contactOrg != '' && this.contactOrg != null && this.contactOrg != undefined) {
                 this.contactsService.getOrganizationById(this.contactOrg).subscribe((res: any) => {
                     this.contactOrgName = res[0].orgName;
                     this.contactProductType = res[0].prodName;
@@ -231,7 +230,6 @@ export class ManageContactsComponent implements OnInit {
         await this.contactsService.getContactCall(contactId).subscribe((res: any) => {
             this.contactCall = res;
         });
-
     }
 
     prev() {
@@ -242,62 +240,80 @@ export class ManageContactsComponent implements OnInit {
     submit() {
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
         // if (userData && this.contactId && this.contactId !== '' && this.contact.components.length > 1) {
-            if (this.detailItem && this.state != 'copy') {
-                const data = {
-                    contactId: this.contactId,
-                    firstName: this.contactFirstName,
-                    lastName: this.contactLastName,
-                    identification: this.contactIden,
-                    organizationId: this.contactOrg,
-                    contactType: this.contactType,
-                    email: this.contactEmail,
-                    contactNumber: this.contactNum,
-                    province: this.contactProvince,
-                    modifiedById: userData.userId,
-                };
+        if (this.detailItem && this.state != 'copy') {
+            const data = {
+                contactId: this.contactId,
+                firstName: this.contactFirstName,
+                lastName: this.contactLastName,
+                identification: this.contactIden,
+                organizationId: this.contactOrg,
+                contactType: this.contactType,
+                email: this.contactEmail,
+                contactNumber: this.contactNum,
+                province: this.contactProvince,
+                modifiedById: userData.userId,
+            };
 
-                this.contactsService
-                    .editContacts(data)
-                    .pipe(
-                        tap((res) => {
-                            this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/contacts');
-                            this.auditLogService.log('', 'Contact', 'Edit Contact', `ContactID : ${data.contactId}`);
-                        }),
-                        catchError((error) => {
-                            this.sweetalertServices.handleError(error);
-                            this.auditLogService.log('', 'Contact', 'Edit Contact', `Failed, ContactID : ${data.contactId}, Error : ${error}`);
-                            throw error;
-                        }),
-                    )
-                    .subscribe();
-            } else {
-                const data = {
-                    firstName: this.contactFirstName,
-                    lastName: this.contactLastName,
-                    identification: this.contactIden,
-                    organizationId: this.contactOrg,
-                    contactType: this.contactType,
-                    email: this.contactEmail,
-                    contactNumber: this.contactNum,
-                    province: this.contactProvince,
-                    createdById: userData.userId,
-                };
+            this.contactsService
+                .editContacts(data)
+                .pipe(
+                    tap((res) => {
+                        this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/contacts');
+                        this.auditLogService.log('', 'Contact', 'Edit Contact', `ContactID : ${data.contactId}`, `Success`);
+                    }),
+                    catchError((error) => {
+                        this.sweetalertServices.handleError(error);
+                        this.auditLogService.log(
+                            '',
+                            'Contact',
+                            'Edit Contact',
+                            `ContactID : ${data.contactId}`,
+                            `Failed, Error : ${error}`,
+                        );
+                        throw error;
+                    }),
+                )
+                .subscribe();
+        } else {
+            const data = {
+                firstName: this.contactFirstName,
+                lastName: this.contactLastName,
+                identification: this.contactIden,
+                organizationId: this.contactOrg,
+                contactType: this.contactType,
+                email: this.contactEmail,
+                contactNumber: this.contactNum,
+                province: this.contactProvince,
+                createdById: userData.userId,
+            };
 
-                this.contactsService
-                    .createContacts(data)
-                    .pipe(
-                        tap((res) => {
-                            this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/contacts');
-                            this.auditLogService.log('', 'Contact', 'Create Contact', `Contact : ${data.firstName}, Email : ${data.email}`);
-                        }),
-                        catchError((error) => {
-                            this.sweetalertServices.handleError(error);
-                            this.auditLogService.log('', 'Contact', 'Create Contact', `Failed, Contact : ${data.firstName}, Email : ${data.email}, Error : ${error}`);
-                            throw error;
-                        }),
-                    )
-                    .subscribe();
-            }
+            this.contactsService
+                .createContacts(data)
+                .pipe(
+                    tap((res) => {
+                        this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/contacts');
+                        this.auditLogService.log(
+                            '',
+                            'Contact',
+                            'Create Contact',
+                            `Contact : ${data.firstName}, Email : ${data.email}`,
+                            `Success`,
+                        );
+                    }),
+                    catchError((error) => {
+                        this.sweetalertServices.handleError(error);
+                        this.auditLogService.log(
+                            '',
+                            'Contact',
+                            'Create Contact',
+                            `Contact : ${data.firstName}, Email : ${data.email}`,
+                            `Failed, Error : ${error}`,
+                        );
+                        throw error;
+                    }),
+                )
+                .subscribe();
+        }
         // } else {
         //     this.sweetalertServices.getSwal('error', 'Contact name and contact component cannot be empty.', '', false, '');
         // }
@@ -331,11 +347,12 @@ export class ManageContactsComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.getSwal('success', 'Unassigned success.', '', false, '');
-                            this.auditLogService.log('', 'Contact', 'Delete Survey', `Survey ID : ${surveyId}`);
+                            this.auditLogService.log('', 'Contact', 'Delete Survey', `Survey ID : ${surveyId}`, `Success`);
                             window.location.reload();
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
+                            this.auditLogService.log('', 'Contact', 'Delete Survey', `Survey ID : ${surveyId}`, `Failed, Error : ${error}`);
                             throw error;
                         }),
                     )
@@ -355,17 +372,20 @@ export class ManageContactsComponent implements OnInit {
     }
 
     async searchDrive() {
-        if (this.contactIden != '' && this.contactIden != null && this.contactIden != undefined){
-            this.contactsService.getDriveContact(this.contactIden).subscribe((res: any) => {
-                this.contactDrive = res;
-                this.contactFirstName = this.contactDrive.firstname_TH;
-                this.contactLastName = this.contactDrive.lastname_TH;
-                this.contactEmail = this.contactDrive.email;
-                this.contactNum = this.contactDrive.mobile;
-                this.contactProvince = this.contactDrive.province.name;
-            }, (error: any) => {
-                this.sweetalertServices.getSwal('warning', 'Warning', 'ไม่พบข้อมูลในระบบ Drive', false, '');
-            });
+        if (this.contactIden != '' && this.contactIden != null && this.contactIden != undefined) {
+            this.contactsService.getDriveContact(this.contactIden).subscribe(
+                (res: any) => {
+                    this.contactDrive = res;
+                    this.contactFirstName = this.contactDrive.firstname_TH;
+                    this.contactLastName = this.contactDrive.lastname_TH;
+                    this.contactEmail = this.contactDrive.email;
+                    this.contactNum = this.contactDrive.mobile;
+                    this.contactProvince = this.contactDrive.province.name;
+                },
+                (error: any) => {
+                    this.sweetalertServices.getSwal('warning', 'Warning', 'ไม่พบข้อมูลในระบบ Drive', false, '');
+                },
+            );
         }
     }
 
@@ -383,7 +403,6 @@ export class ManageContactsComponent implements OnInit {
                 this.spareSurveyForms = res;
             });
     }
-
 
     async pageChange(page: number) {
         if (page != this.currentPage) {
@@ -456,11 +475,18 @@ export class ManageContactsComponent implements OnInit {
                 this.surveyFormService.saveSurveyData(surveyData).subscribe((res: any) => {
                     if (res.success) {
                         this.sweetalertServices.getSwal('success', 'Success', 'Survey submitted successfully.', false, '');
-                        this.auditLogService.log('', 'Contact', 'Save Survey', `Contact ID : ${contactId}, Form ID : ${formId}`);
+                        this.auditLogService.log('', 'Contact', 'Save Survey', `Contact ID : ${contactId}, Form ID : ${formId}`, `Success`);
                         this.thanks = true;
                         location.reload();
                     } else {
                         this.sweetalertServices.getSwal('error', 'Error', res.message, false, '');
+                        this.auditLogService.log(
+                            '',
+                            'Contact',
+                            'Save Survey',
+                            `Contact ID : ${contactId}, Form ID : ${formId}`,
+                            `Failed, Error : ${res.message}`,
+                        );
                     }
                 });
             }
@@ -476,14 +502,14 @@ export class ManageContactsComponent implements OnInit {
             this.SearchOrgShowing = false;
             this.readOnlyForm = false;
             this.AddOrgShowing = false;
-            if (this.existing == false){
-                    this.surveyFormService.getSurveyFormById(formId).subscribe((res) => {
+            if (this.existing == false) {
+                this.surveyFormService.getSurveyFormById(formId).subscribe((res) => {
                     this.surveyForm = res;
                     this.form = JSON.parse(this.surveyForm[0].form);
                     this.formName = this.surveyForm[0].name;
                     this.formId = this.surveyForm[0].surveyFormId;
-                     });
-                 }
+                });
+            }
         });
     }
 
@@ -499,19 +525,19 @@ export class ManageContactsComponent implements OnInit {
         this.AddOrgShowing = false;
         // Get the survey form by ID
         this.surveyFormService.getSurveyFormById(formId).subscribe((res) => {
-          this.surveyForm = res;
-          this.form = JSON.parse(this.surveyForm[0].form);
-          this.formName = this.surveyForm[0].name;
-          this.formId = this.surveyForm[0].surveyFormId;
+            this.surveyForm = res;
+            this.form = JSON.parse(this.surveyForm[0].form);
+            this.formName = this.surveyForm[0].name;
+            this.formId = this.surveyForm[0].surveyFormId;
 
-          this.contactsService.getContactsSurvey(surveyId).subscribe((res) => {
-            this.survey = res;
-            this.formData = JSON.parse(this.survey[0].surveyData);
+            this.contactsService.getContactsSurvey(surveyId).subscribe((res) => {
+                this.survey = res;
+                this.formData = JSON.parse(this.survey[0].surveyData);
 
-            console.log(this.formData);
-          });
+                console.log(this.formData);
+            });
         });
-      }
+    }
 
     showSideBarOrg() {
         this.visibleLeftSideBar = true;
@@ -521,7 +547,7 @@ export class ManageContactsComponent implements OnInit {
         this.thanks = false;
         this.SearchOrgShowing = true;
         this.AddOrgShowing = false;
-    }  
+    }
 
     searchOrg() {
         if (this.selectedFilter !== 'all') {
@@ -547,7 +573,6 @@ export class ManageContactsComponent implements OnInit {
                 this.spareorganizations = res;
             });
     }
-
 
     async pageChangeOrg(pageOrg: number) {
         if (pageOrg != this.currentPageOrg) {
@@ -611,31 +636,31 @@ export class ManageContactsComponent implements OnInit {
         this.contactsService.getAllProductTypes().subscribe((res: any) => {
             this.productTypes = res;
         });
-    } 
+    }
 
     submitOrg() {
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
         if (this.orgName.length > 0) {
-                const data = {
-                    name: this.orgName,
-                    identification: this.orgIden,
-                    industryTypeId: this.orgIndustryType,
-                    productTypeId: this.orgProductType,
-                    createdById: userData.userId,
-                };
+            const data = {
+                name: this.orgName,
+                identification: this.orgIden,
+                industryTypeId: this.orgIndustryType,
+                productTypeId: this.orgProductType,
+                createdById: userData.userId,
+            };
 
-                this.contactsService
-                    .createOrg(data)
-                    .pipe(
-                        tap((res) => {
-                            this.showSideBarOrg();
-                        }),
-                        catchError((error) => {
-                            this.sweetalertServices.handleError(error);
-                            throw error;
-                        }),
-                    )
-                    .subscribe();
+            this.contactsService
+                .createOrg(data)
+                .pipe(
+                    tap((res) => {
+                        this.showSideBarOrg();
+                    }),
+                    catchError((error) => {
+                        this.sweetalertServices.handleError(error);
+                        throw error;
+                    }),
+                )
+                .subscribe();
         } else {
             this.sweetalertServices.getSwal('error', 'organization name cannot be empty.', '', false, '');
         }

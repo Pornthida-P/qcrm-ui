@@ -94,11 +94,11 @@ export class ManageSurveyFormComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/surveyform');
-                            this.auditLogService.log('', 'Survey', 'Edit Survey', `Survey Name : ${data.name}`);
+                            this.auditLogService.log('', 'Survey', 'Edit Survey', `Survey Name : ${data.name}`, `Success`);
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
-                            this.auditLogService.log('', 'Survey', 'Edit Survey', `Failed, Survey Name : ${data.name}, Error : ${error}`);
+                            this.auditLogService.log('', 'Survey', 'Edit Survey', `Survey Name : ${data.name}`, `Failed, Error : ${error}`);
                             throw error;
                         }),
                     )
@@ -116,11 +116,17 @@ export class ManageSurveyFormComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/surveyform');
-                            this.auditLogService.log('', 'Survey', 'Create Survey', `Survey Name : ${data.name}`);
+                            this.auditLogService.log('', 'Survey', 'Create Survey', `Survey Name : ${data.name}`, `Success`);
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
-                            this.auditLogService.log('', 'Survey', 'Create Survey', `Failed, Survey Name : ${data.name}, Error : ${error}`);
+                            this.auditLogService.log(
+                                '',
+                                'Survey',
+                                'Create Survey',
+                                `Survey Name : ${data.name}`,
+                                `Failed, Error : ${error}`,
+                            );
                             throw error;
                         }),
                     )

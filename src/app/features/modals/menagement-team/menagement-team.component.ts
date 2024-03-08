@@ -124,11 +124,11 @@ export class MenagementTeamComponent implements OnInit {
                     tap(() => {
                         this.dialogRef.close();
                         this.sweetalertService.getSwal('success', 'Success', 'Group added successfully.', false, '');
-                        this.auditLogService.log('', 'Setting', 'Add Group', `Group : ${form.groupTitle}`);
+                        this.auditLogService.log('', 'Setting', 'Add Group', `Group : ${form.groupTitle}`, `Success`);
                     }),
                     catchError((error) => {
                         this.sweetalertService.handleError(error);
-                        this.auditLogService.log('', 'Setting', 'Add Group', `Failed, Group : ${form.groupTitle}`);
+                        this.auditLogService.log('', 'Setting', 'Add Group', `Group : ${form.groupTitle}`, `Failed, Error : ${error}`);
                         throw error;
                     }),
                 )
@@ -149,6 +149,7 @@ export class MenagementTeamComponent implements OnInit {
                             'Setting',
                             'Edit Group',
                             `Group : ${form.groupTitle}, Members: ${memberUsernames.join(', ')}`,
+                            `Success`
                         );
                     }),
                     catchError((error) => {
@@ -157,7 +158,8 @@ export class MenagementTeamComponent implements OnInit {
                             '',
                             'Setting',
                             'Edit Group',
-                            `Failed, Group : ${form.groupTitle}, Members: ${memberUsernames.join(', ')}`,
+                            `Group : ${form.groupTitle}, Members: ${memberUsernames.join(', ')}`,
+                            `Failed, Error : ${error}`
                         );
                         throw error;
                     }),

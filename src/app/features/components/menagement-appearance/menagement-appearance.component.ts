@@ -29,6 +29,6 @@ export class MenagementAppearanceComponent implements OnInit {
 
     changeTheme(primaryColor: string, secondaryColor: string): void {
         this.themeService.setThemeVariables(primaryColor, secondaryColor);
-        this.auditLogService.log('', 'Setting', 'Change Theme', `Theme : ${primaryColor}, ${secondaryColor}`);
+        this.auditLogService.log('', 'Setting', 'Change Theme', `Theme : ${primaryColor}, ${secondaryColor}`, `Success`);
     }
 }
