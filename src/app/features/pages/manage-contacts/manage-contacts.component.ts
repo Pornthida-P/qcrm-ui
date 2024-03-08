@@ -10,6 +10,7 @@ import { SurveyService } from 'src/app/services/survey/survey.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { config } from 'src/app/config/config';
 import Swal from 'sweetalert2';
+import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
 
 @Component({
     selector: 'app-manage-contacts',
@@ -128,6 +129,7 @@ export class ManageContactsComponent implements OnInit {
         private activeRoute: ActivatedRoute,
         private route: ActivatedRoute,
         private router: Router,
+        private auditLogService: AuditLogService,
     ) {
         this.contact = { components: [] };
     }
@@ -259,9 +261,11 @@ export class ManageContactsComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/contacts');
+                            this.auditLogService.log('', 'Contact', 'Save Contact', `ContactID : ${data.contactId}`);
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
+                            this.auditLogService.log('', 'Contact', 'Save Contact', `Failed, ContactID : ${data.contactId}, Error : ${error}`);
                             throw error;
                         }),
                     )
@@ -284,9 +288,11 @@ export class ManageContactsComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/contacts');
+                            this.auditLogService.log('', 'Contact', 'Save Contact', `Contact : ${data.firstName}, Email : ${data.email}`);
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
+                            this.auditLogService.log('', 'Contact', 'Save Contact', `Failed, Contact : ${data.firstName}, Email : ${data.email}, Error : ${error}`);
                             throw error;
                         }),
                     )
