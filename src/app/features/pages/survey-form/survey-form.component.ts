@@ -354,5 +354,6 @@ export class SurveyFormComponent implements OnInit {
 
     openDialog(item: any) {
         this.surveyFormService.openDialog(item.surveyFormId);
+        this.auditLogService.log('', 'Survey', 'Open Survey Link', `Survey ID : ${item.surveyFormId}`, `Success`);
     }
 }
