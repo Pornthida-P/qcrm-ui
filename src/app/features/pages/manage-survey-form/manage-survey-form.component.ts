@@ -5,6 +5,7 @@ import { catchError, tap } from 'rxjs';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { config } from 'src/app/config/config';
+import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
 @Component({
     selector: 'app-manage-survey-form',
     templateUrl: './manage-survey-form.component.html',
@@ -30,6 +31,7 @@ export class ManageSurveyFormComponent implements OnInit {
         private sweetalertServices: SweetAlertService,
         private route: ActivatedRoute,
         private router: Router,
+        private auditLogService: AuditLogService,
     ) {
         this.form = { components: [] };
     }
@@ -92,9 +94,11 @@ export class ManageSurveyFormComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/surveyform');
+                            this.auditLogService.log('', 'Survey', 'Edit Survey', `Survey Name : ${data.name}`, `Success`);
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
+                            this.auditLogService.log('', 'Survey', 'Edit Survey', `Survey Name : ${data.name}`, `Failed, Error : ${error}`);
                             throw error;
                         }),
                     )
@@ -112,9 +116,17 @@ export class ManageSurveyFormComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/surveyform');
+                            this.auditLogService.log('', 'Survey', 'Create Survey', `Survey Name : ${data.name}`, `Success`);
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
+                            this.auditLogService.log(
+                                '',
+                                'Survey',
+                                'Create Survey',
+                                `Survey Name : ${data.name}`,
+                                `Failed, Error : ${error}`,
+                            );
                             throw error;
                         }),
                     )

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { catchError, tap } from 'rxjs';
+import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { User } from 'src/app/shared/interface/user.interface';
@@ -11,6 +13,7 @@ import { User } from 'src/app/shared/interface/user.interface';
     styleUrl: './menagement-password.component.scss',
 })
 export class MenagementPasswordComponent implements OnInit {
+    title = 'menagement-password';
     userData?: User | null;
     currentPassword: string = '';
     newPassword: string = '';
@@ -18,9 +21,14 @@ export class MenagementPasswordComponent implements OnInit {
     isAction: boolean = false;
 
     passwordForm: FormGroup = new FormGroup({});
-    title = 'จัดการพาสเวิร์ด';
 
-    constructor(private userService: UserService, private fb: FormBuilder, private sweetalertService: SweetAlertService) {}
+    constructor(
+        private userService: UserService,
+        private fb: FormBuilder,
+        private sweetalertService: SweetAlertService,
+        private router: Router,
+        private auditLogService: AuditLogService,
+    ) {}
 
     ngOnInit(): void {
         this.initializeForm();
@@ -56,6 +64,7 @@ export class MenagementPasswordComponent implements OnInit {
         const { newPassword, verifyPassword, currentPassword } = this.passwordForm.value;
         if (newPassword !== verifyPassword) {
             this.sweetalertService.getSwal('error', 'Warning', 'Password does not match.', false, '');
+            this.auditLogService.log('', 'Account', 'Change Password', ``, `Failed, Password does not match`);
             this.passwordForm.reset();
             return;
         }
@@ -68,9 +77,11 @@ export class MenagementPasswordComponent implements OnInit {
                     return error;
                 }),
             )
-            .subscribe((res) => {
+            .subscribe(() => {
                 this.sweetalertService.getSwal('success', 'Success', 'Password has been updated.', false, '');
                 this.passwordForm.reset();
+                this.auditLogService.log('', 'Account', 'Change Password', ``, `Success`);
+                this.router.navigate(['/logout']);
             });
     }
 }

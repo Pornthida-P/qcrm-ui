@@ -4,7 +4,6 @@ import { faBullhorn, faEdit, faEye } from '@fortawesome/free-solid-svg-icons';
 import * as moment from 'moment';
 import { catchError, tap } from 'rxjs';
 import { AnnouncementService } from 'src/app/services/announcement/announcement.service';
-import { ModalAnnouncementService } from 'src/app/services/modal-announcement/modal-announcement.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { Announce } from 'src/app/shared/interface/announce.interface';
@@ -29,7 +28,6 @@ export class AnnounceComponent {
 
     constructor(
         private userService: UserService,
-        private modalAnnouncementService: ModalAnnouncementService,
         private announcementService: AnnouncementService,
         private sweetalertServices: SweetAlertService,
         private router: Router,

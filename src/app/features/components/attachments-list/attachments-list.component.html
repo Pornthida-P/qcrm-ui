@@ -1,7 +1,9 @@
 <div *ngIf="attachments.length === 0" class="row g-2 p-2 justify-content-center align-items-center attachment-container">
     <div class="col-auto m-0 px-3">
         <div class="attachment">
-            <p class="fs-7 m-auto">ไม่พบไฟล์แนบ</p>
+            <p class="fs-7 m-auto">
+                {{ 'component.attachments-list.noAttachment' | translate }}
+            </p>
         </div>
     </div>
 </div>

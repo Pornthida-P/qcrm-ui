@@ -2,13 +2,24 @@
     <div class="row g-3 p-3">
         <div class="col-md-12">
             <div class="d-flex justify-content-between align-items-center">
-                <h2 class="fs-5 m-0">{{ title }}</h2>
-                <button type="button" class="btn btn-primary-color text-white" (click)="onClickAdd()">เพิ่ม</button>
+                <h2 class="fs-5 m-0">{{ 'title.' + title | translate }}</h2>
+                <button type="button" class="btn btn-primary-color text-white" (click)="onClickAdd()">
+                    <div class="d-flex gap-1">
+                        <fa-icon [icon]="faPlusCircle" class="color-white"></fa-icon>
+                        <p class="m-0">{{ 'page.team.add' | translate }}</p>
+                    </div>
+                </button>
             </div>
         </div>
         <div class="col-12 px-3">
             <div class="d-flex">
-                <input type="text" class="form-control" placeholder="ค้นหา" #inputSearch (input)="onSearch(inputSearch.value)" />
+                <input
+                    type="text"
+                    class="form-control"
+                    [placeholder]="'page.team.placeHolder' | translate"
+                    #inputSearch
+                    (input)="onSearch(inputSearch.value)"
+                />
             </div>
         </div>
         <div class="col-md-12 list-item">
@@ -23,38 +34,53 @@
                     <li class="card mb-3" *ngFor="let groupMember of inputSearch.value.length > 0 ? searchGroup : groupMembers">
                         <div class="card-body">
                             <div class="row align-items-center">
-                                <div class="col-md-6 col-xl-8">
+                                <div class="col">
                                     <div class="row">
-                                        <div class="col-6 group d-flex align-items-center">
+                                        <div class="col group d-flex align-items-center">
                                             <p class="m-1 cursor-default" [ngbTooltip]="groupMember.description">
                                                 {{ groupMember?.groupTitle }}
                                             </p>
                                         </div>
-                                        <div class="col-6 member d-flex align-items-center justify-content-end">
-                                            <div class="position-relative" *ngFor="let member of groupMember?.members">
-                                                <div class="profile-container">
-                                                    <img
-                                                        class="profile-image img-fluid"
-                                                        [src]="member?.profile"
-                                                        [alt]="member?.username"
-                                                        (error)="handleProfileError($event)"
-                                                    />
-                                                </div>
-                                                <div class="dot">
-                                                    <div
-                                                        class="dot-inner dot-status"
-                                                        [ngbTooltip]="getStatusOnline(member?.userId) ? 'Online' : 'Offline'"
-                                                        [class.dot-status-online]="getStatusOnline(member?.userId)"
-                                                    ></div>
-                                                </div>
+                                        <div class="col-auto member d-flex align-items-center justify-content-end">
+                                            <div class="position-relative" *ngFor="let member of groupMember?.members; let i = index">
+                                                <ng-container *ngIf="i < 4">
+                                                    <div class="profile-container">
+                                                        <img
+                                                            class="profile-image img-fluid"
+                                                            [src]="member?.profile"
+                                                            [alt]="member?.username"
+                                                            (error)="handleProfileError($event)"
+                                                            style="max-width: 100%"
+                                                        />
+                                                    </div>
+                                                    <div class="dot">
+                                                        <div
+                                                            class="dot-inner dot-status"
+                                                            [ngbTooltip]="getStatusOnline(member?.userId) ? 'Online' : 'Offline'"
+                                                            [class.dot-status-online]="getStatusOnline(member?.userId)"
+                                                        ></div>
+                                                    </div>
+                                                </ng-container>
                                             </div>
+                                            <ng-container *ngIf="groupMember && groupMember.members.length > 4">
+                                                <div class="position-relative">
+                                                    <div class="profile-container">
+                                                        <img
+                                                            class="profile-image img-fluid"
+                                                            src="assets/nea-qcrm-ui/image/more.webp"
+                                                            alt="More"
+                                                            style="max-width: 100%; background-color: var(--color-white)"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </ng-container>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-3 col-xl-2 group-length d-flex align-items-center justify-content-end">
-                                    <p class="m-1">{{ groupMember?.members?.length }} Members</p>
+                                <div class="col-auto mx-1 group-length d-flex align-items-center justify-content-end">
+                                    <p class="m-1">{{ groupMember?.members?.length }} {{ 'page.team.lengthTypeMember' | translate }}</p>
                                 </div>
-                                <div class="col-md-3 col-xl-2 action d-flex justify-content-end">
+                                <div class="col-auto mx-1 action d-flex justify-content-end">
                                     <button type="button" class="btn" (click)="onClickView(groupMember)">
                                         <fa-icon [icon]="faEye" class="color-primary"></fa-icon>
                                     </button>
@@ -72,7 +98,7 @@
             </ng-container>
             <ng-template #noGroups>
                 <div class="no-group p-3">
-                    <p class="m-0 text-center">No groups available.</p>
+                    <p class="m-0 text-center">{{ 'page.team.noGroup' | translate }}</p>
                 </div>
             </ng-template>
         </div>

@@ -68,6 +68,8 @@ export const config = {
                 caseTopic: '/casetopic',
                 organizations: '/organizations',
                 contacts: '/allcontact',
+                caseSubjects: '/casesubjects',
+                channels: '/channels',
             },
             survey: {
                 baseUrl: '/survey',
@@ -84,6 +86,13 @@ export const config = {
                 caseTypeByAgent: '/report/caseTypeByAgent'
             }
         },
+    },
+    strapi: {
+        url: 'https://devel.convtech.dev/nea-qcrm-strapi/api',
+        path: {
+            auditlog: '/auditlogs',
+        },
+        key: '8c8cb1eb42112e450ac048f4e70878e4becdfc27544d14a8b65c942b9a9fab9333596d26aeedeeb1b65322ffe5e380eee7fe8d1b61c91d0f2427b972015f744c35ebd634f4d28cdd750dd2fd37088173eb7cf85d615ff6dacaa1eec1dfa87b751590302093fed23336e67691e8afb78032e9cf19b4e169a04faeb481b8d612a7',
     },
     file: {
         maxSize: 2 * 1024 * 1024,

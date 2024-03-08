@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import * as moment from 'moment';
 import { catchError, tap } from 'rxjs';
+import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { Group } from 'src/app/shared/interface/group.interface';
@@ -16,7 +17,7 @@ import { User } from 'src/app/shared/interface/user.interface';
 })
 export class MenagementTeamComponent implements OnInit {
     groupForm: FormGroup = new FormGroup({});
-    title: string = 'Group Management';
+    title: string = 'menagement-team';
     userData?: User | null;
     selectedMembers: User[] = [];
     members: User[] = [];
@@ -30,6 +31,7 @@ export class MenagementTeamComponent implements OnInit {
         private userService: UserService,
         private cdRef: ChangeDetectorRef,
         private dialogRef: MatDialogRef<MenagementTeamComponent>,
+        private auditLogService: AuditLogService,
         @Inject(MAT_DIALOG_DATA) public data: { mode: 'add' | 'view' | 'edit'; group?: Group },
     ) {}
 
@@ -122,9 +124,11 @@ export class MenagementTeamComponent implements OnInit {
                     tap(() => {
                         this.dialogRef.close();
                         this.sweetalertService.getSwal('success', 'Success', 'Group added successfully.', false, '');
+                        this.auditLogService.log('', 'Setting', 'Add Group', `Group : ${form.groupTitle}`, `Success`);
                     }),
                     catchError((error) => {
                         this.sweetalertService.handleError(error);
+                        this.auditLogService.log('', 'Setting', 'Add Group', `Group : ${form.groupTitle}`, `Failed, Error : ${error}`);
                         throw error;
                     }),
                 )
@@ -132,6 +136,7 @@ export class MenagementTeamComponent implements OnInit {
         } else if (this.data.mode === 'edit') {
             form.modifiedAt = moment().format('YYYY-MM-DD HH:mm:ss');
             form.modifiedById = this.userData?.userId;
+            const memberUsernames = form.members.map((member: any) => member.username);
 
             this.userService
                 .updateGroup(form)
@@ -139,9 +144,23 @@ export class MenagementTeamComponent implements OnInit {
                     tap(() => {
                         this.dialogRef.close();
                         this.sweetalertService.getSwal('success', 'Success', 'Group updated successfully.', false, '');
+                        this.auditLogService.log(
+                            '',
+                            'Setting',
+                            'Edit Group',
+                            `Group : ${form.groupTitle}, Members: ${memberUsernames.join(', ')}`,
+                            `Success`
+                        );
                     }),
                     catchError((error) => {
                         this.sweetalertService.handleError(error);
+                        this.auditLogService.log(
+                            '',
+                            'Setting',
+                            'Edit Group',
+                            `Group : ${form.groupTitle}, Members: ${memberUsernames.join(', ')}`,
+                            `Failed, Error : ${error}`
+                        );
                         throw error;
                     }),
                 )

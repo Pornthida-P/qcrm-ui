@@ -11,6 +11,7 @@ import { environment } from 'src/environments/environment';
 import { config } from 'src/app/config/config';
 import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
 import { LoaderService } from 'src/app/services/loader/loader.service';
+import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
 
 @Component({
     selector: 'app-account-profile',
@@ -41,6 +42,7 @@ export class AccountProfileComponent {
         private userService: UserService,
         private sweetalertServices: SweetAlertService,
         private socketIO: SocketIoService,
+        private auditLogService: AuditLogService,
     ) {}
 
     ngOnInit(): void {
@@ -179,7 +181,9 @@ export class AccountProfileComponent {
                     image.filepath = `${environment.api.url}${image.filepath}`;
                     this.userDataForm.get('profile')?.setValue(image.filepath);
                 }
+                this.auditLogService.log('', 'Account', 'Upload Image', `Path: ${image.filepath}`, `Success`);
             } catch (err) {
+                this.auditLogService.log('', 'Account', 'Upload Image', `File Name : ${filename}`, `Failed ${err}`);
                 this.sweetalertServices.handleError(err);
             }
         }
@@ -194,8 +198,16 @@ export class AccountProfileComponent {
                     this.sweetalertServices.getSwal('success', 'Success', 'User has been added successfully.', false, '');
                     this.userDataForm.markAsPristine();
                     this.userDataForm.markAsUntouched();
+                    this.auditLogService.log(
+                        '',
+                        'Account',
+                        'Add',
+                        `Username : ${userData.username}, Role : ${userData.role.roleTitle}, Email : ${userData.email}`,
+                        `Success`,
+                    );
                 }),
                 catchError((err) => {
+                    this.auditLogService.log('', 'Account', 'Add', `Username : ${userData.username}`, `Failed ${err}`);
                     this.sweetalertServices.handleError(err);
                     throw err;
                 }),
@@ -212,8 +224,16 @@ export class AccountProfileComponent {
                 this.sweetalertServices.getSwal('success', 'Success', 'User has been updated successfully.', false, '');
                 this.userDataForm.markAsPristine();
                 this.userDataForm.markAsUntouched();
+                this.auditLogService.log(
+                    '',
+                    'Account',
+                    'Edit',
+                    `Username : ${userData.username}, Role : ${userData.role.roleTitle}, Email : ${userData.email}, Profile: ${userData.profile}`,
+                    `Success`,
+                );
             },
             (err) => {
+                this.auditLogService.log('', 'Account', 'Edit', `Username : ${userData.username}`, `Failed`);
                 this.sweetalertServices.handleError(err);
             },
         );

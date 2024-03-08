@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -6,7 +6,10 @@ import { Router } from '@angular/router';
     templateUrl: './setting.component.html',
     styleUrl: './setting.component.scss',
 })
-export class SettingComponent implements OnInit {
+export class SettingComponent implements OnInit, AfterViewInit {
+    @ViewChild('menu') menu: ElementRef | undefined;
+    @ViewChild('content') content: ElementRef | undefined;
+
     menuSetting: any[] = [];
     menuLogout: any = {};
 
@@ -17,45 +20,47 @@ export class SettingComponent implements OnInit {
     ngOnInit(): void {
         this.menuSetting = [
             {
-                label: 'ตั้งค่าบัญชี',
+                label: 'menagement-account',
                 icon: '',
                 routerLink: 'menagement-account',
             },
             {
-                label: 'พาสเวิร์ด',
+                label: 'menagement-password',
                 icon: '',
                 routerLink: 'menagement-password',
             },
             {
-                label: 'สมาชิก',
+                label: 'menagement-member',
                 icon: '',
                 routerLink: 'menagement-member',
             },
             {
-                label: 'ทีม',
-                icon: '',
-                routerLink: 'menagement-team',
-            },
-            {
-                label: 'แท็ก',
+                label: 'tag',
                 icon: '',
                 routerLink: 'tag',
             },
             {
-                label: 'รูปร่าง',
+                label: 'menagement-team',
+                icon: '',
+                routerLink: 'menagement-team',
+            },
+            {
+                label: 'menagement-appearance',
                 icon: '',
                 routerLink: 'menagement-appearance',
             },
+            {
+                label: 'logout',
+                icon: '',
+                routerLink: '/logout',
+            },
         ];
-
-        this.menuLogout = {
-            label: 'ออกจากระบบ',
-            icon: '',
-            routerLink: '',
-        };
     }
 
-    logout() {
-        this.router.navigate(['logout']);
+    ngAfterViewInit() {
+        if (this.menu && this.content) {
+            const menuHeight = this.menu.nativeElement.offsetHeight;
+            this.content.nativeElement.style.maxHeight = `${menuHeight}px`;
+        }
     }
 }

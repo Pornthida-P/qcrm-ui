@@ -8,6 +8,7 @@ import { catchError, tap } from 'rxjs';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import Swal from 'sweetalert2';
 import { Clipboard } from '@angular/cdk/clipboard';
+import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
 
 @Component({
     selector: 'app-survey-form',
@@ -65,6 +66,7 @@ export class SurveyFormComponent implements OnInit {
         private activeRoute: ActivatedRoute,
         private sweetalertServices: SweetAlertService,
         private clipboard: Clipboard,
+        private auditLogService: AuditLogService,
     ) {}
 
     ngOnInit() {
@@ -247,10 +249,12 @@ export class SurveyFormComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.getSwal('success', 'Delete data success.', '', false, '');
+                            this.auditLogService.log('', 'Survey', 'Delete Survey', `Survey ID : ${id}`, `Success`);
                             window.location.reload();
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
+                            this.auditLogService.log('', 'Survey', 'Delete Survey', `Survey ID : ${id}`, `Failed, Error : ${error}`);
                             throw error;
                         }),
                     )
@@ -277,10 +281,24 @@ export class SurveyFormComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.getSwal('success', 'Delete data success.', '', false, '');
+                            this.auditLogService.log(
+                                '',
+                                'Survey',
+                                'Delete Survey',
+                                `Survey ID : ${this.checkedValues.join(', ')}`,
+                                `Success`,
+                            );
                             window.location.reload();
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
+                            this.auditLogService.log(
+                                '',
+                                'Survey',
+                                'Delete Survey',
+                                `Survey ID : ${this.checkedValues.join(', ')}`,
+                                `Failed, Error : ${error}`,
+                            );
                             throw error;
                         }),
                     )
@@ -336,5 +354,6 @@ export class SurveyFormComponent implements OnInit {
 
     openDialog(item: any) {
         this.surveyFormService.openDialog(item.surveyFormId);
+        this.auditLogService.log('', 'Survey', 'Open Survey Link', `Survey ID : ${item.surveyFormId}`, `Success`);
     }
 }

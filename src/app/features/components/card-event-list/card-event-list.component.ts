@@ -1,13 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import {
-    faArrowUpShortWide,
-    faArrowUpWideShort,
-    faPlusCircle,
-    faSort,
-    faSortAlphaAsc,
-    faSortAlphaDesc,
-    faUser,
-} from '@fortawesome/free-solid-svg-icons';
+import { faArrowUpShortWide, faArrowUpWideShort, faPlusCircle, faSort, faUser } from '@fortawesome/free-solid-svg-icons';
 import * as moment from 'moment';
 import { UserService } from 'src/app/services/user/user.service';
 import { CalendarEvent } from 'src/app/shared/interface/calendar.interface';
@@ -21,6 +13,8 @@ import { User } from 'src/app/shared/interface/user.interface';
 export class CardEventListComponent implements OnInit, OnChanges {
     @Input() events: CalendarEvent[] = [];
     @Input() title?: string = '';
+    @Input() isShowFilter?: boolean = true;
+    @Input() isShowTitle?: boolean = true;
 
     @Output() onClickAdd: EventEmitter<any> = new EventEmitter();
 
@@ -45,7 +39,7 @@ export class CardEventListComponent implements OnInit, OnChanges {
         this.initzation();
     }
 
-    ngOnChanges(changes: SimpleChanges): void {}
+    ngOnChanges(changes: any): void {}
 
     initzation() {
         this.findAllMembers();

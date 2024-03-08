@@ -1,5 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { faBars, faMagnifyingGlass, faArrowRightFromBracket, faGear, faEnvelope, faEnvelopeOpen } from '@fortawesome/free-solid-svg-icons';
+import {
+    faBars,
+    faMagnifyingGlass,
+    faArrowRightFromBracket,
+    faGear,
+    faEnvelope,
+    faEnvelopeOpen,
+    faGlobe,
+} from '@fortawesome/free-solid-svg-icons';
 import { faBell } from '@fortawesome/free-regular-svg-icons';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs';
@@ -9,6 +17,8 @@ import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
 import { NotificationService } from 'src/app/services/notification/notification.service';
 import { Notification } from 'src/app/shared/interface/notification.interface';
 import { NgbPopoverConfig } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateService as Translate } from '@ngx-translate/core';
+import { TranslateService } from 'src/app/services/translate/translate.service';
 
 @Component({
     selector: 'app-navbar',
@@ -27,20 +37,25 @@ export class NavbarComponent implements OnInit {
     hideSidebar: boolean = false;
     userData: User | null = null;
     isAction: boolean = false;
+    currentLanguage: string = '';
+    languages: any[] = [];
 
     profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
 
     faBars = faBars;
     faEnvelope = faEnvelope;
     faEnvelopeOpen = faEnvelopeOpen;
+    faGlobe = faGlobe;
 
     constructor(
         private router: Router,
         private userService: UserService,
         private socketIO: SocketIoService,
         private notificationService: NotificationService,
+        private translateService: TranslateService,
         configPopover: NgbPopoverConfig,
     ) {
+        this.currentLanguage = this.translateService.getCurrentLanguage();
         configPopover.autoClose = 'outside';
     }
 
@@ -50,22 +65,22 @@ export class NavbarComponent implements OnInit {
 
         this.menuUser = [
             {
-                label: 'ค้นหา',
+                label: 'search',
                 icon: faMagnifyingGlass,
                 click: () => this.openSearchSideBar(),
             },
             {
-                label: 'การแจ้งเตือน',
+                label: 'notification',
                 icon: faBell,
                 click: () => this.openNotificationSideBar(),
             },
             {
-                label: 'ตั้งค่า',
+                label: 'setting',
                 icon: faGear,
                 click: () => this.onClickSetting(),
             },
             {
-                label: 'ออกจากระบบ',
+                label: 'logout',
                 icon: faArrowRightFromBracket,
                 click: () => this.logout(),
             },
@@ -73,14 +88,25 @@ export class NavbarComponent implements OnInit {
 
         this.menuUserNoneSm = [
             {
-                label: 'ตั้งค่า',
+                label: 'setting',
                 icon: faGear,
                 click: () => this.onClickSetting(),
             },
             {
-                label: 'ออกจากระบบ',
+                label: 'logout',
                 icon: faArrowRightFromBracket,
                 click: () => this.logout(),
+            },
+        ];
+
+        this.languages = [
+            {
+                label: 'th',
+                value: 'th',
+            },
+            {
+                label: 'en',
+                value: 'en',
             },
         ];
     }
@@ -94,7 +120,6 @@ export class NavbarComponent implements OnInit {
 
     openSearchSideBar() {
         this.searchSidebarVisible = true;
-        console.log(this.searchSidebarVisible);
     }
 
     closeSearchSideBar() {
@@ -102,7 +127,6 @@ export class NavbarComponent implements OnInit {
     }
 
     openNotificationSideBar() {
-        console.log('openNotificationSideBar');
         this.findNotificationUnRead();
         this.notificationSidebarVisible = true;
     }
@@ -146,7 +170,11 @@ export class NavbarComponent implements OnInit {
                 .findNotificationRead(userId)
                 .pipe(
                     tap((res) => {
-                        this.notifications = res;
+                        const sorted = res.sort((a: any, b: any) => {
+                            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+                        });
+
+                        this.notifications = sorted;
                     }),
                 )
                 .subscribe(() => {});
@@ -170,10 +198,8 @@ export class NavbarComponent implements OnInit {
 
     getNotifications() {
         if (this.showReadNotifications) {
-            console.log(1);
             this.findNotificationRead();
         } else {
-            console.log(2);
             this.findNotificationUnRead();
         }
     }
@@ -191,6 +217,11 @@ export class NavbarComponent implements OnInit {
             const diffDays = Math.floor(diffHours / 24);
             return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
         }
+    }
+
+    changeLanguage(language: string) {
+        this.translateService.setCurrentLanguage(language);
+        this.currentLanguage = language;
     }
 
     logout() {

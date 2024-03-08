@@ -9,7 +9,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
-import { MAT_DATE_LOCALE } from '@angular/material/core'
+import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 @NgModule({
   declarations: [CreateCallComponent],
   imports: [
@@ -27,7 +27,8 @@ import { MAT_DATE_LOCALE } from '@angular/material/core'
     MatInputModule,
     MatFormFieldModule,
     NgbTimepickerModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgbTypeaheadModule
   ]
 })
 export class CreateCallModule { }

@@ -1,0 +1,230 @@
+{
+    "title": {
+        "home": "Home",
+        "announcement": "Announcement",
+        "tag": "Tag Management",
+        "team": "Team Management",
+        "member": "Member Management",
+        "menagement-password": "Password Management",
+        "menagement-account": "Account Management",
+        "menagement-appearance": "Appearance Management",
+        "management-announcement": "Announcement Management",
+        "menagement-calendar-event": "Event Management",
+        "menagement-tag": "Tag Management",
+        "menagement-team": "Team Management",
+        "menagement-user": "User Management"
+    },
+    "page": {
+        "password": {
+            "currentPassword": "Current Password",
+            "newPassword": "New Password",
+            "verifyPassword": "Verify Password",
+            "currentPasswordRequired": "Please enter current password",
+            "newPasswordRequired": "Please enter new password",
+            "verifyPasswordRequired": "Please verify password",
+            "save": "Save"
+        },
+        "member": {
+            "add": "Add Member",
+            "placeHolder": "Search Member",
+            "save": "Save"
+        },
+        "tag": {
+            "add": "Add Tag",
+            "placeHolder": "Search Tag",
+            "save": "Save"
+        },
+        "team": {
+            "add": "Add Team",
+            "placeHolder": "Search Team",
+            "lengthTypeMember": "members",
+            "save": "Save",
+            "noGroup": "No group found"
+        },
+        "appearance": {
+            "titleTheme": "Change Theme"
+        },
+        "announcement": {
+            "add": "Add Announcement",
+            "placeHolder": "Search Announcement",
+            "title": "Title",
+            "description": "Description",
+            "startDate": "Start Date",
+            "endDate": "End Date",
+            "save": "Save"
+        },
+        "home": {
+            "add": "Add Event",
+            "menuHome": "Home"
+        }
+    },
+    "table": {
+        "announcement": {
+            "announceId": "ID",
+            "announceTitle": "Title",
+            "description": "Description",
+            "startDate": "Start Date",
+            "endDate": "End Date",
+            "createdAt": "Created At",
+            "createdById": "Created By",
+            "modifiedAt": "Modified At",
+            "modifiedById": "Modified By"
+        },
+        "member": {
+            "userId": "ID",
+            "username": "Username",
+            "email": "Email",
+            "role": "Role",
+            "profile": "Profile",
+            "lastLogin": "Last Login",
+            "isActive": "Status"
+        },
+        "tag": {
+            "tagId": "ID",
+            "tagName": "Tag Name",
+            "description": "Description",
+            "color": "Color",
+            "createdAt": "Created At",
+            "createdById": "Created By",
+            "modifyAt": "Modified At",
+            "modifyById": "Modified By"
+        },
+        "Actions": "Actions",
+        "paginatorLabel": "Rows per page:"
+    },
+    "component": {
+        "navbar": {
+            "search": "Search",
+            "notification": "Notification",
+            "newNotifications": "New Notifications",
+            "readNotifications": "Read Notifications",
+            "noNotification": "No notifications"
+        },
+        "account-profile": {
+            "username": "Username",
+            "usernameRequired": "Please enter username",
+            "usernamePattern": "Username must contain only letters a-z A-Z and numbers 0-9",
+            "role": "Role",
+            "roleRequired": "Please select role",
+            "email": "Email",
+            "emailRequired": "Please enter email",
+            "emailPattern": "Invalid email format",
+            "save": "Save",
+            "upload": "Upload",
+            "UploadDiscrption": "JPG, GIF or PNG 400x400"
+        },
+        "announce": {
+            "title": "Announcements",
+            "view": "View Announcements"
+        },
+        "calendar-card": {
+            "members": "Members",
+            "membersCount": "people",
+            "attachments": "Attachments",
+            "fileCount": "Files",
+            "noAttachment": "No attachments"
+        },
+        "calendar-preview": {
+            "sun": "Sun",
+            "mon": "Mon",
+            "tue": "Tue",
+            "wed": "Wed",
+            "thu": "Thu",
+            "fri": "Fri",
+            "sat": "Sat"
+        },
+        "card-event-list": {
+            "add": "Add Event",
+            "placeholder": "Search Events",
+            "day": "Day",
+            "week": "Week",
+            "month": "Month",
+            "year": "Year",
+            "all": "All",
+            "haveAttachment": "Have Attachments",
+            "save": "Save",
+            "sort": "Sort",
+            "noEvent": "No events found"
+        },
+        "pop-overs-event": {
+            "event": "Event",
+            "noEvent": "No events"
+        },
+        "profile-list": {
+            "noMember": "No members found"
+        },
+        "attachments-list": {
+            "noAttachment": "No attachments found"
+        }
+    },
+    "modal": {
+        "calendar": {
+            "menuDetail": "Details",
+            "menuAttachments": "Attachments",
+            "title": "Title",
+            "tag": "Tag",
+            "location": "Location",
+            "startDate": "Start Date",
+            "endDate": "End Date",
+            "description": "Description",
+            "members": "Members",
+            "attachments": "Attachments",
+            "add": "Add",
+            "save": "Save"
+        },
+        "tag": {
+            "tagName": "Tag Name",
+            "description": "Description",
+            "color": "Color",
+            "save": "Save"
+        },
+        "group": {
+            "groupTitle": "Group Title",
+            "groupTitleRequired": "Please enter group title",
+            "description": "Description",
+            "members": "Members",
+            "save": "Save"
+        }
+    },
+    "menuNavber": {
+        "search": "Search",
+        "notification": "Notification",
+        "setting": "Setting",
+        "logout": "Logout"
+    },
+    "menuSidebar": {
+        "home": "Home",
+        "contacts": "Contacts",
+        "surveyform": "Survey Form",
+        "call": "Call History",
+        "report-page": "Reports"
+    },
+    "menuSetting": {
+        "menagement-account": "Account Management",
+        "menagement-password": "Password Management",
+        "menagement-member": "Member Management",
+        "tag": "Tag Management",
+        "menagement-team": "Team Management",
+        "menagement-appearance": "Appearance Management",
+        "logout": "Logout"
+    },
+    "mode": {
+        "add": "Add",
+        "edit": "Edit",
+        "view": "View"
+    },
+    "month": {
+        "January": "January",
+        "February": "February",
+        "March": "March",
+        "April": "April",
+        "May": "May",
+        "June": "June",
+        "July": "July",
+        "August": "August",
+        "September": "September",
+        "October": "October",
+        "November": "November",
+        "December": "December"
+    }
+}
