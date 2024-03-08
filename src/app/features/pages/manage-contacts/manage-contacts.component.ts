@@ -261,11 +261,11 @@ export class ManageContactsComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/contacts');
-                            this.auditLogService.log('', 'Contact', 'Save Contact', `ContactID : ${data.contactId}`);
+                            this.auditLogService.log('', 'Contact', 'Edit Contact', `ContactID : ${data.contactId}`);
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
-                            this.auditLogService.log('', 'Contact', 'Save Contact', `Failed, ContactID : ${data.contactId}, Error : ${error}`);
+                            this.auditLogService.log('', 'Contact', 'Edit Contact', `Failed, ContactID : ${data.contactId}, Error : ${error}`);
                             throw error;
                         }),
                     )
@@ -288,11 +288,11 @@ export class ManageContactsComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/contacts');
-                            this.auditLogService.log('', 'Contact', 'Save Contact', `Contact : ${data.firstName}, Email : ${data.email}`);
+                            this.auditLogService.log('', 'Contact', 'Create Contact', `Contact : ${data.firstName}, Email : ${data.email}`);
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
-                            this.auditLogService.log('', 'Contact', 'Save Contact', `Failed, Contact : ${data.firstName}, Email : ${data.email}, Error : ${error}`);
+                            this.auditLogService.log('', 'Contact', 'Create Contact', `Failed, Contact : ${data.firstName}, Email : ${data.email}, Error : ${error}`);
                             throw error;
                         }),
                     )
@@ -331,6 +331,7 @@ export class ManageContactsComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.getSwal('success', 'Unassigned success.', '', false, '');
+                            this.auditLogService.log('', 'Contact', 'Delete Survey', `Survey ID : ${surveyId}`);
                             window.location.reload();
                         }),
                         catchError((error) => {
@@ -455,6 +456,7 @@ export class ManageContactsComponent implements OnInit {
                 this.surveyFormService.saveSurveyData(surveyData).subscribe((res: any) => {
                     if (res.success) {
                         this.sweetalertServices.getSwal('success', 'Success', 'Survey submitted successfully.', false, '');
+                        this.auditLogService.log('', 'Contact', 'Save Survey', `Contact ID : ${contactId}, Form ID : ${formId}`);
                         this.thanks = true;
                         location.reload();
                     } else {
