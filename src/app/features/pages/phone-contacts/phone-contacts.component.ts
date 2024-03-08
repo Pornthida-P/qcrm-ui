@@ -30,7 +30,9 @@ export class PhoneContactsComponent {
     organizations: any;
     contactProvince: any;
     contactId: any;
-    contactOrg: any;
+    // contactOrg: any;
+
+    contactOrg: string = '';
 
     constructor(
         private _location: Location,
@@ -141,7 +143,7 @@ export class PhoneContactsComponent {
                 province: this.contactProvince,
                 createdById: userData.userId,
             };
-          console.log('data:', data)
+            console.log('data:', data);
             this.contactsService
                 .createContacts(data)
                 .pipe(
