@@ -17,4 +17,8 @@ export class ReportService {
     getCaseTypeByAgent(startDate: string, endDate: string) {
         return this.http.get(`${this.baseUrl}${config.api.path.report.caseTypeByAgent}/${startDate}/${endDate}`);
     }
+
+    getSummaryByMonth(startYear: string, endYear: string) {
+        return this.http.get(`${this.baseUrl}${config.api.path.report.summaryByMonth}/${startYear}/${endYear}`);
+    }
 }
