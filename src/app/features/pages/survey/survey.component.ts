@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormioComponent } from '@formio/angular';
+import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
 import { SurveyFormService } from 'src/app/services/survey-form/survey-form.service';
 import { SurveyService } from 'src/app/services/survey/survey.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
@@ -24,6 +25,7 @@ export class SurveyComponent implements OnInit {
         private activeRoute: ActivatedRoute,
         private sweetalertService: SweetAlertService,
         private surveyService: SurveyService,
+        private auditLogService: AuditLogService,
     ) {
         this.activeRoute.queryParams.subscribe((params) => {
             if (params['key1'] != undefined && params['key1'] != '') {
@@ -79,9 +81,23 @@ export class SurveyComponent implements OnInit {
                 this.surveyFormService.saveSurveyData(surveyData).subscribe((res: any) => {
                     if (res.success) {
                         this.sweetalertService.getSwal('success', 'Success', 'Survey submitted successfully.', false, '');
+                        this.auditLogService.log(
+                            '',
+                            'Survey',
+                            'Save Survey',
+                            `Survey ID : ${surveyData.surveyFormId}, Contact ID : ${surveyData.contactId}`,
+                            `Success`,
+                        );
                         this.thanks = true;
                     } else {
                         this.sweetalertService.getSwal('error', 'Error', res.message, false, '');
+                        this.auditLogService.log(
+                            '',
+                            'Survey',
+                            'Save Survey',
+                            `Survey ID : ${surveyData.surveyFormId}, Contact ID : ${surveyData.contactId}`,
+                            `Failed, Error : ${res.message}`,
+                        );
                     }
                 });
             }

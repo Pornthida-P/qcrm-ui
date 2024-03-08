@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
 import { ThemeService } from 'src/app/services/theme/theme.service';
 
 @Component({
@@ -18,7 +19,7 @@ export class MenagementAppearanceComponent implements OnInit {
         { color1: '#004d4d', color2: '#008080' },
     ];
 
-    constructor(private themeService: ThemeService) {}
+    constructor(private themeService: ThemeService, private auditLogService: AuditLogService) {}
 
     ngOnInit(): void {}
 
@@ -28,5 +29,6 @@ export class MenagementAppearanceComponent implements OnInit {
 
     changeTheme(primaryColor: string, secondaryColor: string): void {
         this.themeService.setThemeVariables(primaryColor, secondaryColor);
+        this.auditLogService.log('', 'Setting', 'Change Theme', `Theme : ${primaryColor}, ${secondaryColor}`, `Success`);
     }
 }

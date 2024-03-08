@@ -4,6 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import * as moment from 'moment';
 import { tap } from 'rxjs';
+import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
 import { CalendarEventService } from 'src/app/services/calendar-event/calendar-event.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { UserService } from 'src/app/services/user/user.service';
@@ -28,6 +29,7 @@ export class MenagementTagComponent implements OnInit {
         private sweetalertServices: SweetAlertService,
         private calendarService: CalendarEventService,
         public dialogRef: MatDialogRef<MenagementTagComponent>,
+        private auditLogService: AuditLogService,
         @Inject(MAT_DIALOG_DATA) public data: { mode: 'add' | 'view' | 'edit'; tag?: CalendarTag },
     ) {}
 
@@ -106,6 +108,13 @@ export class MenagementTagComponent implements OnInit {
                 .pipe(
                     tap(() => {
                         this.sweetalertServices.getSwal('success', 'success', 'Tag added successfully', false, '');
+                        this.auditLogService.log(
+                            '',
+                            'Setting',
+                            'Add Tag',
+                            `Name : ${tagData.tagName}, Description: ${tagData.description}, Color : ${tagData.color}`,
+                            `Success`,
+                        );
                         this.dialogRef.close(tagData);
                     }),
                 )
@@ -119,6 +128,13 @@ export class MenagementTagComponent implements OnInit {
                 .pipe(
                     tap(() => {
                         this.sweetalertServices.getSwal('success', 'success', 'Tag updated successfully', false, '');
+                        this.auditLogService.log(
+                            '',
+                            'Setting',
+                            'Edit Tag',
+                            `Name : ${tagData.tagName}, Description: ${tagData.description}, Color : ${tagData.color}`,
+                            `Success`,
+                        );
                         this.dialogRef.close(tagData);
                     }),
                 )

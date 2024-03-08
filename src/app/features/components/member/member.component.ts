@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { faGear, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { catchError, tap } from 'rxjs';
+import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
 import { ModalUserService } from 'src/app/services/modal-user/modal-user.service';
 import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
@@ -35,6 +36,7 @@ export class MemberComponent implements OnInit {
         private userService: UserService,
         private sweetalertService: SweetAlertService,
         private modalUserService: ModalUserService,
+        private auditLogService: AuditLogService,
     ) {}
 
     ngOnInit(): void {
@@ -128,8 +130,10 @@ export class MemberComponent implements OnInit {
                             tap(() => {
                                 this.sweetalertService.getSwal('success', 'Success', 'Delete user successfully.', false, '');
                                 this.findAllMember();
+                                this.auditLogService.log('', 'Account', 'Delete', `User : ${member.username}, Email: ${member.email}`, `Success`);
                             }),
                             catchError((error) => {
+                                this.auditLogService.log('', 'Account', 'Delete', `User : ${member.username}, Email: ${member.email}`, `Failed, Error ${error}`);
                                 this.sweetalertService.handleError(error);
                                 throw error;
                             }),

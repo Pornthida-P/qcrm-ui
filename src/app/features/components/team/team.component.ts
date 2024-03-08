@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { faEdit, faEye, faPlusCircle, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { tap, catchError } from 'rxjs';
+import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
 import { ModalTeamService } from 'src/app/services/modal-team/modal-team.service';
 import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
@@ -33,6 +34,7 @@ export class TeamComponent {
         private sweetalertService: SweetAlertService,
         private socketIO: SocketIoService,
         private modalTeamService: ModalTeamService,
+        private auditLogService: AuditLogService,
     ) {}
 
     ngOnInit(): void {
@@ -99,6 +101,7 @@ export class TeamComponent {
             )
             .subscribe(() => {
                 this.sweetalertService.getSwal('success', 'Success', 'Group has been deleted.', false, '');
+                this.auditLogService.log('', 'Setting', 'Delete Group', `Group : ${group.groupTitle}`,`Success`);
             });
     }
 
