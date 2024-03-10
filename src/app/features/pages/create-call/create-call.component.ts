@@ -7,6 +7,7 @@ import { catchError, debounceTime, distinctUntilChanged, map, Observable, Operat
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { ContactsService } from 'src/app/services/contacts/contacts.service';
 import { faArrowLeft, faArrowRight, faPenToSquare, faTrashCan, faCircleXmark, faEye, faClipboard } from '@fortawesome/free-solid-svg-icons';
+import { ContactService } from 'src/app/services/contact/contact.service';
 @Component({
     selector: 'app-create-call',
     templateUrl: './create-call.component.html',
@@ -55,37 +56,52 @@ export class CreateCallComponent {
     visibleLeftSideBar: boolean = true;
     FormShowing: boolean = false;
     SearchFormShowing: boolean = true;
-    SearchOrgShowing: boolean = false;
-    AddOrgShowing: boolean = false;
+    searchContactShowing: boolean = false;
+    AddContactShowing: boolean = false;
     thanks: boolean = false;
 
-    pageSizeOptionOrgs = [5, 10, 20];
+    pageSizeOptionContact = [5, 10, 20];
     currentPage = 1;
-    currentPageOrg = 1;
-    totalItemOrgs = 0;
-    totalPageOrgs = 0;
-    pagesToShowOrg = 3;
+    currentpageContact = 1;
+    totalItemContact = 0;
+    totalpageContacts = 0;
+    pagesToShowContact = 3;
 
     pageSizeOptions = [5, 10, 20];
-    pageSizeOrg = 5;
+    pageSizeContact = 5;
     pageSize = 5;
     totalItems = 0;
     totalPages = 0;
     pagesToShow = 3;
 
+    pageSizeOptionOrgs = [5, 10, 20];
+    pageSizeOrg = 5;
+    currentPageOrg = 1;
+    totalItemOrgs = 0;
+    totalPageOrgs = 0;
+    pagesToShowOrg = 3;
+
+    SearchOrgShowing: boolean = false;
+    valueSearchOrg!: string;
+
     sortIdOrg: string = 'createdAt';
     sortOrderOrg: string = 'DESC';
+    checkedValueOrgs: string[] = [];
+    AddOrgShowing: boolean = false;
+
+    sortIdContact: string = 'createdAt';
+    sortOrderContact: string = 'DESC';
 
     valueSearch!: string;
 
-    valueSearchOrg!: string;
+    valuesearchContact!: string;
     selectedFilter: any | undefined;
     spareorganizations!: any;
 
     sortIcon: string = '';
 
     contactProductType: string = '';
-    checkedValueOrgs: string[] = [];
+    checkedValueContact: string[] = [];
 
     faCircleXmark = faCircleXmark;
     sparecontacts: any;
@@ -95,7 +111,13 @@ export class CreateCallComponent {
     activitiestype: any;
     isEmailSubscribed: number = 0;
     contactIdSelect: string = '';
-  activityTypeId: any;
+    activityTypeId: any;
+    newDateTime: any;
+    selectedOrganizationId: string | null = null;
+
+    currentPageContact = 1;
+    showOrgSidebar: boolean = false;
+    showContactSidebar: boolean = false;
 
     constructor(
         private location: Location,
@@ -119,54 +141,38 @@ export class CreateCallComponent {
     date = new FormControl(new Date());
     serializedDate = new FormControl(new Date().toISOString());
 
-    formatStartDate() {
-        const startDate = new Date(this.startTime);
-
-        const formattedStartDate = startDate.toISOString().split('T')[0];
-
-        this.startTime = formattedStartDate;
+    formatDate(date: Date): string {
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
     }
 
-    formatEndDate() {
-        const endDate = new Date(this.endTime);
-
-        const formattedEndDate = endDate.toISOString().split('T')[0];
-
-        this.endTime = formattedEndDate;
+    formatStartDate() {
+        const startDate = new Date(this.startTime);
+        this.startTime = this.formatDate(startDate);
+        console.log('startTime: ', this.startTime);
     }
 
     formatTimepickStart() {
         const startTimepick = new Date(this.timepickStart);
         const formatTimepickStart = startTimepick.toISOString();
-        this.timepickStart = formatTimepickStart;
+        this.combinedDateTimeStart = formatTimepickStart;
     }
 
     onTimepickStartChange(event: any) {
-        const hour = event.hour;
-        const minute = event.minute;
-        const second = event.second;
+        if (event) {
+            const hour = event.hour;
+            const minute = event.minute;
+            const second = event.second;
 
-        this.timepickStart = event;
+            const formattedTimeStartPick = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:${second
+                .toString()
+                .padStart(2, '0')}`;
 
-        const formattedTimeStartPick = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:${second
-            .toString()
-            .padStart(2, '0')}`;
-
-        this.combinedDateTimeStart = `${this.startTime} ${formattedTimeStartPick}`;
-    }
-
-    onTimepickEndChange(event: any) {
-        const hour = event.hour;
-        const minute = event.minute;
-        const second = event.second;
-
-        this.timepickEnd = event;
-
-        const formattedTimeEndPick = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:${second
-            .toString()
-            .padStart(2, '0')}`;
-
-        this.combinedDateTimeEnd = `${this.endTime} ${formattedTimeEndPick}`;
+            this.newDateTime = `${this.formatDate(new Date(this.startTime))} ${formattedTimeStartPick}`;
+            console.log('New combined date and time: ', this.newDateTime);
+        }
     }
 
     ngOnInit(): void {
@@ -205,7 +211,9 @@ export class CreateCallComponent {
             console.log('user: ', this.userData.userId);
         }
 
-        this.getFormContact((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
+        this.getFormContact((this.currentPageContact - 1) * this.pageSizeContact, this.pageSizeContact);
+        this.getPageContact();
+        this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
         this.getPageOrg();
     }
 
@@ -218,10 +226,10 @@ export class CreateCallComponent {
             caseTopicId: this.selectedCaseTopics,
             caseSubject: this.selectedCasesubject,
             channel: this.selectedChannels,
-            emailInfo: this.isEmailSubscribed,
+            emailInfo: this.isEmailSubscribed ? 1 : null,
             activityType: this.activityTypeId,
             description: this.description,
-            startTime: this.combinedDateTimeStart,
+            startTime: this.newDateTime,
             solution: this.solutions,
             createdById: userData.userId,
         };
@@ -238,29 +246,135 @@ export class CreateCallComponent {
             )
             .subscribe();
     }
-    showSideBarOrg() {
+
+    showSideBarContact() {
         this.visibleLeftSideBar = true;
         this.visibleRightSideBar = true;
         this.FormShowing = false;
-        this.SearchFormShowing = true;
-        this.SearchOrgShowing = true;
+        this.SearchFormShowing = false;
+        this.searchContactShowing = true;
         this.thanks = false;
-        this.AddOrgShowing = false;
+        this.AddContactShowing = false;
+        this.showOrgSidebar = false;
+        this.showContactSidebar = true;
     }
 
-    pageSizeChangeOrg() {
+    pageSizeChangeContact() {
         this.currentPage = 1;
-        this.getFormContact((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
+        this.getFormContact((this.currentPageContact - 1) * this.pageSizeContact, this.pageSizeContact);
     }
 
-    async getFormContact(pageOrg: number, pageSizeOrg: number) {
+    async getFormContact(pageContact: number, pageSizeContact: number) {
         await this.callServive
-            .getContactByPage(pageOrg, pageSizeOrg, `${this.sortIdOrg},${this.sortOrderOrg}`, this.valueSearchOrg, this.selectedFilter)
+            .getContactByPage(
+                pageContact,
+                pageSizeContact,
+                `${this.sortIdContact},${this.sortOrderContact}`,
+                this.valuesearchContact,
+                this.selectedFilter,
+            )
             .subscribe((res: any) => {
+                console.log('API response:', res);
                 this.contacts = res;
                 this.sparecontacts = res;
                 console.log('contact:', this.contacts);
             });
+    }
+
+    sortContact(value: string) {
+        if (this.sortIdContact == value) {
+            if (this.sortIcon == 'fa-solid fa-sort-down') {
+                this.sortIcon = 'fa-solid fa-sort-up';
+                this.sortOrderContact = 'DESC';
+            } else {
+                this.sortIcon = 'fa-solid fa-sort-down';
+                this.sortOrderContact = 'ASC';
+            }
+        } else {
+            this.sortIdContact = value;
+        }
+        this.getFormContact((this.currentPageContact - 1) * this.pageSizeContact, this.pageSizeContact);
+    }
+
+    chooseContact(contactsId: string) {
+        this.contactIdSelect = contactsId;
+        this.callServive.getContactById(contactsId).subscribe((res: any) => {
+            this.contactName = `${res[0].firstName} ${res[0].lastName}`;
+        });
+    }
+
+    async pageChangeContact(pageContact: number) {
+        if (pageContact != this.currentPageContact) {
+            if (pageContact >= 1 && pageContact <= this.totalpageContacts) {
+                this.currentPageContact = pageContact;
+                await this.getFormContact((this.currentPageContact - 1) * this.pageSizeContact, this.pageSizeContact);
+                this.checkedValueContact = [];
+            }
+        }
+    }
+
+    get pageContacts(): number[] {
+        var pageContact: number[] = [];
+        this.totalpageContacts = Math.ceil(this.totalItemContact / this.pageSizeContact);
+        for (var i = -this.pagesToShowContact; i <= this.pagesToShowContact; i++) {
+            if (this.currentPageContact + i > 0 && this.currentPageContact + i <= this.totalpageContacts) {
+                pageContact.push(this.currentPageContact + i);
+            }
+        }
+        return pageContact;
+    }
+
+    searchContact() {
+        console.log('Search Contact:');
+        if (this.selectedFilter !== 'all') {
+            this.userId = this.userData.userId;
+        } else {
+            this.userId = '';
+        }
+        this.getFormContact((this.currentPageContact - 1) * this.pageSizeContact, this.pageSizeContact);
+        this.getPageContact();
+    }
+
+    async getPageContact() {
+        await this.callServive.countContact(this.valuesearchContact, this.userId).subscribe((res: any) => {
+            this.totalItemContact = res.count;
+        });
+    }
+
+    onCheckboxChange(event: any, activityTypeId: number) {
+        if (event.target.checked) {
+            this.activityTypeId = activityTypeId;
+        }
+    }
+
+    toggleEmailSubscription(event: any) {
+        this.isEmailSubscribed = event.target.checked ? 1 : 0;
+        console.log('email:', this.isEmailSubscribed);
+    }
+
+    chooseOrg(orgId: string) {
+        this.contactOrg = orgId;
+        this.contactService.getOrganizationById(orgId).subscribe((res: any) => {
+            this.contactOrgName = res[0].orgName;
+            // this.contactProductType = res[0].prodName;
+        });
+    }
+
+    showSideBarOrg() {
+        this.visibleLeftSideBar = true;
+        this.visibleRightSideBar = true;
+        this.FormShowing = false;
+        this.SearchFormShowing = false;
+        this.thanks = false;
+        this.SearchOrgShowing = true;
+        this.AddOrgShowing = false;
+        this.showOrgSidebar = true;
+        this.showContactSidebar = false;
+    }
+
+    pageSizeChangeOrg() {
+        this.currentPage = 1;
+        this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
     }
 
     sortOrg(value: string) {
@@ -275,21 +389,14 @@ export class CreateCallComponent {
         } else {
             this.sortIdOrg = value;
         }
-        this.getFormContact((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
-    }
-
-    chooseContact(contactsId: string) {
-        this.contactIdSelect = contactsId;
-        this.callServive.getContactById(contactsId).subscribe((res: any) => {
-            this.contactName = `${res[0].firstName} ${res[0].lastName}`;
-        });
+        this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
     }
 
     async pageChangeOrg(pageOrg: number) {
         if (pageOrg != this.currentPageOrg) {
             if (pageOrg >= 1 && pageOrg <= this.totalPageOrgs) {
                 this.currentPageOrg = pageOrg;
-                await this.getFormContact((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
+                await this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
                 this.checkedValueOrgs = [];
             }
         }
@@ -306,30 +413,30 @@ export class CreateCallComponent {
         return pageOrg;
     }
 
+    async getFormOrg(pageOrg: number, pageSizeOrg: number) {
+        await this.contactService
+            .getOrgByPage(pageOrg, pageSizeOrg, `${this.sortIdOrg},${this.sortOrderOrg}`, this.valueSearchOrg, this.selectedFilter)
+            .subscribe((res: any) => {
+                this.organizations = res;
+                this.spareorganizations = res;
+            });
+    }
+
+    async getPageOrg() {
+        await this.contactService.countOrg(this.valueSearchOrg, this.userId).subscribe((res: any) => {
+            this.totalItemOrgs = res.count;
+        });
+    }
+
     searchOrg() {
+        console.log('Search ORG:');
+
         if (this.selectedFilter !== 'all') {
             this.userId = this.userData.userId;
         } else {
             this.userId = '';
         }
-        this.getFormContact((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
+        this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
         this.getPageOrg();
-    }
-
-    async getPageOrg() {
-        await this.callServive.countContact(this.valueSearchOrg, this.userId).subscribe((res: any) => {
-            this.totalItemOrgs = res.count;
-        });
-    }
-
-    onCheckboxChange(event: any, activityTypeId: number) {
-        if (event.target.checked) {
-            console.log('Selected activity type ID:', activityTypeId);
-        }
-    }
-
-    toggleEmailSubscription(event: any) {
-        this.isEmailSubscribed = event.target.checked ? 1 : 0;
-        console.log('email:', this.isEmailSubscribed);
     }
 }
