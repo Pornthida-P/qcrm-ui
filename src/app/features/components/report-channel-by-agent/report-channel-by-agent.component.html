@@ -1,0 +1,96 @@
+<div>
+    <div class="row justify-content-end align-items-center pe-4" [formGroup]="datePick">
+        <div class="col-auto">
+            <div class="input-group start-date">
+                <input
+                    matInput
+                    [matDatepicker]="startDatePicker"
+                    formControlName="startDate"
+                    name="datetime"
+                    class="input-date form-control"
+                    (dateChange)="onStartDateChange($event)"
+                />
+                <span class="input-group-text" ngbTooltip="From Date">
+                    <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+                    <mat-datepicker #startDatePicker></mat-datepicker>
+                </span>
+            </div>
+        </div>
+        <div class="col-auto">
+            <div class="input-group end-date">
+                <input
+                    matInput
+                    [matDatepicker]="endDatePicker"
+                    formControlName="endDate"
+                    name="datetime"
+                    class="input-date form-control"
+                    (dateChange)="onEndDateChange($event)"
+                />
+                <span class="input-group-text" ngbTooltip="To Date">
+                    <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+                    <mat-datepicker #endDatePicker></mat-datepicker>
+                </span>
+            </div>
+        </div>
+        <div class="col-auto">
+            <div class="align-self-end">
+                <button class="d-flex gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white" (click)="clickgo()">ค้นหา</button>
+            </div>
+        </div>
+    </div>
+    <div class="table-responsive pe-4 ps-4">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="width: 16%" scope="col">
+                        <a>Username</a>
+                    </th>
+                    <th style="width: 9%" scope="col">
+                        <a>Hotline (Inbound) </a>
+                    </th>
+                    <th style="width: 9%" scope="col">
+                        <a>Hotline (Outbound) </a>
+                    </th>
+                    <th style="width: 9%" scope="col">
+                        <a>Email (Inbound)</a>
+                    </th>
+                    <th style="width: 9%" scope="col">
+                        <a>Email (Outbound)</a>
+                    </th>
+                    <th style="width: 9%" scope="col">
+                        <a>Mobile Unit </a>
+                    </th>
+                    <th style="width: 9%" scope="col">
+                        <a>Live Chat</a>
+                    </th>
+                    <th style="width: 9%" scope="col">
+                        <a>อื่นๆ</a>
+                    </th>
+                    <th style="width: 9%" scope="col">
+                        <a>รวม</a>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="reportTable?.length > 0; else noDataTemplate">
+                    <tr *ngFor="let data of reportTable; let i = index">
+                        <td scope="row">{{ data.username }}</td>
+                        <td scope="row">{{ data.HotIn }}</td>
+                        <td scope="row">{{ data.HotOut }}</td>
+                        <td scope="row">{{ data.MailIn }}</td>
+                        <td scope="row">{{ data.MailOut }}</td>
+                        <td scope="row">{{ data.Mobile }}</td>
+                        <td scope="row">{{ data.LiveChat }}</td>
+                        <td scope="row">{{ data.Other }}</td>
+                        <td scope="row">{{ data.Total }}</td>
+                    </tr>
+                </ng-container>
+                <ng-template #noDataTemplate>
+                    <tr>
+                        <td colspan="9" class="text-center">ไม่มีข้อมูล</td>
+                    </tr>
+                </ng-template>
+            </tbody>
+        </table>
+    </div>
+</div>

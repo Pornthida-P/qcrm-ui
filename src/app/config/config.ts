@@ -85,6 +85,10 @@ export const config = {
                 findNotificationReadByUserId: '/notification/read/',
                 readAllNotificationByUserId: '/notification/read-all/',
             },
+            report:{
+                channelByAgent: '/report/channelByAgent',
+                caseTypeByAgent: '/report/caseTypeByAgent'
+            }
         },
     },
     strapi: {
