@@ -8,6 +8,7 @@ import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.serv
 import { ContactsService } from 'src/app/services/contacts/contacts.service';
 import { faArrowLeft, faArrowRight, faPenToSquare, faTrashCan, faCircleXmark, faEye, faClipboard } from '@fortawesome/free-solid-svg-icons';
 import { ContactService } from 'src/app/services/contact/contact.service';
+import { NgSelectConfig } from '@ng-select/ng-select';
 @Component({
     selector: 'app-create-call',
     templateUrl: './create-call.component.html',
@@ -41,7 +42,7 @@ export class CreateCallComponent {
     contactOrg: any;
     selectedTopics: any;
     selectedCasesubject: any;
-    selectedCaseTopics: any;
+    selectedCaseTopics: any[] = [] ;
     selectedChannels: any;
 
     parent: any = null;
@@ -125,6 +126,7 @@ export class CreateCallComponent {
         private callServive: CallService,
         private sweetalertServices: SweetAlertService,
         private contactService: ContactsService,
+        private ngSelectConfig: NgSelectConfig,
     ) {
         this.selectedDate = new Date();
     }
