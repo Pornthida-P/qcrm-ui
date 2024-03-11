@@ -66,3 +66,12 @@
   display: flex;
   align-items: center;
 }
+.form-check {
+  margin-right: 12px;
+}
+::ng-deep .chevron .ngb-tp-chevron {
+  display: none !important;
+}
+::ng-deep .date-pik .btn-link {
+  display: none !important;
+}

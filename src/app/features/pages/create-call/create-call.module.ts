@@ -10,6 +10,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+
 @NgModule({
   declarations: [CreateCallComponent],
   imports: [
@@ -28,7 +30,8 @@ import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
     MatFormFieldModule,
     NgbTimepickerModule,
     ReactiveFormsModule,
-    NgbTypeaheadModule
+    NgbTypeaheadModule,
+    FontAwesomeModule
   ]
 })
 export class CreateCallModule { }
