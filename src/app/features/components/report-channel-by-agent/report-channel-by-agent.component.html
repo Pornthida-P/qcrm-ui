@@ -34,12 +34,12 @@
         </div>
         <div class="col-auto">
             <div class="align-self-end">
-                <button class="d-flex gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white" (click)="clickgo()">ค้นหา</button>
+                <button class="d-flex gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white" (click)="clickGetReport()">ค้นหา</button>
             </div>
         </div>
     </div>
-    <div class="table-responsive pe-4 ps-4">
-        <table class="table">
+    <div class="pe-4 ps-4 table-container">
+        <table class="table table-responsive">
             <thead>
                 <tr>
                     <th style="width: 16%" scope="col">
@@ -73,7 +73,7 @@
             </thead>
             <tbody>
                 <ng-container *ngIf="reportTable?.length > 0; else noDataTemplate">
-                    <tr *ngFor="let data of reportTable; let i = index">
+                    <tr *ngFor="let data of reportTable.slice(0, reportTable.length - 1); let i = index">
                         <td scope="row">{{ data.username }}</td>
                         <td scope="row">{{ data.HotIn }}</td>
                         <td scope="row">{{ data.HotOut }}</td>
@@ -91,6 +91,19 @@
                     </tr>
                 </ng-template>
             </tbody>
+            <tfoot>
+                <tr>
+                    <td scope="row">{{ reportTable[reportTable.length - 1]?.username }}</td>
+                    <td scope="row">{{ reportTable[reportTable.length - 1]?.HotIn }}</td>
+                    <td scope="row">{{ reportTable[reportTable.length - 1]?.HotOut }}</td>
+                    <td scope="row">{{ reportTable[reportTable.length - 1]?.MailIn }}</td>
+                    <td scope="row">{{ reportTable[reportTable.length - 1]?.MailOut }}</td>
+                    <td scope="row">{{ reportTable[reportTable.length - 1]?.Mobile }}</td>
+                    <td scope="row">{{ reportTable[reportTable.length - 1]?.LiveChat }}</td>
+                    <td scope="row">{{ reportTable[reportTable.length - 1]?.Other }}</td>
+                    <td scope="row">{{ reportTable[reportTable.length - 1]?.Total }}</td>
+                </tr>
+            </tfoot>
         </table>
     </div>
 </div>

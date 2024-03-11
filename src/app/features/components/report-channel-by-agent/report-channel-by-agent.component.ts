@@ -34,7 +34,7 @@ export class ReportChannelByAgentComponent implements OnInit {
         });
     }
 
-    clickgo() {
+    clickGetReport() {
         const startDate = moment(this.datePick.get('startDate')!.value).format('YYYY-MM-DD');
         const endDate = moment(this.datePick.get('endDate')!.value).format('YYYY-MM-DD');
         this.getReport(startDate, endDate);
@@ -55,6 +55,7 @@ export class ReportChannelByAgentComponent implements OnInit {
                 this.rowTotal();
                 this.columnTotal();
             }
+            console.log(this.reportTable);
         });
     }
 

@@ -38,8 +38,8 @@
             </div>
         </div>
     </div>
-    <div class="table-responsive pe-4 ps-4">
-        <table class="table">
+    <div class="pe-4 ps-4 table-container">
+        <table class="table table-responsive">
             <thead>
                 <tr>
                     <th style="width: 16%" scope="col">
@@ -76,7 +76,7 @@
             </thead>
             <tbody>
                 <ng-container *ngIf="reportTable?.length > 0; else noDataTemplate">
-                    <tr *ngFor="let data of reportTable; let i = index">
+                    <tr *ngFor="let data of reportTable.slice(0, reportTable.length - 1); let i = index">
                         <td scope="row">{{ data.username }}</td>
                         <td scope="row">{{ data.Topic1 }}</td>
                         <td scope="row">{{ data.Topic2 }}</td>
@@ -91,10 +91,24 @@
                 </ng-container>
                 <ng-template #noDataTemplate>
                     <tr>
-                        <td colspan="4" class="text-center">ไม่มีข้อมูล</td>
+                        <td colspan="10" class="text-center">ไม่มีข้อมูล</td>
                     </tr>
                 </ng-template>
             </tbody>
+            <tfoot>
+                <tr>
+                    <td scope="row">{{ reportTable[reportTable.length - 1]?.username }}</td>
+                    <td scope="row">{{ reportTable[reportTable.length - 1]?.Topic1 }}</td>
+                    <td scope="row">{{ reportTable[reportTable.length - 1]?.Topic2 }}</td>
+                    <td scope="row">{{ reportTable[reportTable.length - 1]?.Topic3 }}</td>
+                    <td scope="row">{{ reportTable[reportTable.length - 1]?.Topic4 }}</td>
+                    <td scope="row">{{ reportTable[reportTable.length - 1]?.Topic5 }}</td>
+                    <td scope="row">{{ reportTable[reportTable.length - 1]?.Topic6 }}</td>
+                    <td scope="row">{{ reportTable[reportTable.length - 1]?.Topic7 }}</td>
+                    <td scope="row">{{ reportTable[reportTable.length - 1]?.Total8 }}</td>
+                    <td scope="row">{{ reportTable[reportTable.length - 1]?.Total }}</td>
+                </tr>
+            </tfoot>
         </table>
     </div>
 </div>
