@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ReportService } from 'src/app/services/report/report.service';
+import * as moment from 'moment';
 
 @Component({
     selector: 'app-report-summary-by-month',
@@ -10,14 +12,33 @@ export class ReportSummaryByMonthComponent implements OnInit {
     reportTable!: any;
     topicArray!: any;
     channelArray!: any;
+    datePick: FormGroup = new FormGroup({});
 
-    constructor(private reportService: ReportService) {}
+    constructor(private reportService: ReportService, private fb: FormBuilder) {}
 
     ngOnInit(): void {
         const currentDate = new Date();
-        // const firstDayOfYearFormat = moment(new Date()).format('YYYY-MM-DD');
-        // const currentDateFormat = moment(new Date()).format('YYYY-MM-DD');
-        this.getReport('2023', '2024');
+        const firstDayOfYearFormat = moment(currentDate).format('YYYY');
+        const currentDateFormat = moment(currentDate).format('YYYY');
+        this.datePick = this.fb.group({
+            startDate: [firstDayOfYearFormat],
+            endDate: [currentDateFormat],
+        });
+        this.getReport(firstDayOfYearFormat, currentDateFormat);
+    }
+
+    onStartDateChange(event: any) {
+        this.datePick.get('startDate')!.setValue(event.value);
+    }
+
+    onEndDateChange(event: any) {
+        this.datePick.get('endDate')!.setValue(event.value);
+    }
+
+    clickGetReport() {
+        const startDate = this.datePick.get('startDate')!.value;
+        const endDate = this.datePick.get('endDate')!.value;
+        this.getReport(startDate, endDate);
     }
 
     async getReport(startYear: string, endYear: string) {

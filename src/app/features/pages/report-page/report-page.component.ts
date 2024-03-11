@@ -35,6 +35,7 @@ export class ReportPageComponent implements OnInit {
             { name: 'ทั้งหมด', code: 'all' },
             { name: 'Only My', code: this.userData.username },
         ];
+        this.onChangeReport('');
     }
 
     checkRole(): boolean {
