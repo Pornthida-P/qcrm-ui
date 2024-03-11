@@ -70,6 +70,10 @@ export const config = {
                 contacts: '/allcontact',
                 caseSubjects: '/casesubjects',
                 channels: '/channels',
+                countcontact: '/call-contact/count/',
+                contactbypage: '/contactbypage',
+                contactid: '/contacts',
+                activitiesType: '/activitiestype',
             },
             survey: {
                 baseUrl: '/survey',
