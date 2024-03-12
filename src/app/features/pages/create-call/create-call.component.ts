@@ -3,12 +3,16 @@ import { Location } from '@angular/common';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { CallService } from 'src/app/services/call/call.service';
-import { catchError, debounceTime, distinctUntilChanged, map, Observable, OperatorFunction, tap } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, map, Observable, OperatorFunction, tap, throwError } from 'rxjs';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { ContactsService } from 'src/app/services/contacts/contacts.service';
 import { faArrowLeft, faArrowRight, faPenToSquare, faTrashCan, faCircleXmark, faEye, faClipboard } from '@fortawesome/free-solid-svg-icons';
 import { ContactService } from 'src/app/services/contact/contact.service';
 import { NgSelectConfig } from '@ng-select/ng-select';
+import * as moment from 'moment';
+import { AttachmentService } from 'src/app/services/attachment/attachment.service';
+import { Attachment } from 'src/app/shared/interface/attachment.interface';
+import Swal from 'sweetalert2';
 @Component({
     selector: 'app-create-call',
     templateUrl: './create-call.component.html',
@@ -42,7 +46,7 @@ export class CreateCallComponent {
     contactOrg: any;
     selectedTopics: any;
     selectedCasesubject: any;
-    selectedCaseTopics: any[] = [] ;
+    selectedCaseTopics: any[] = [];
     selectedChannels: any;
 
     parent: any = null;
@@ -120,6 +124,11 @@ export class CreateCallComponent {
     showOrgSidebar: boolean = false;
     showContactSidebar: boolean = false;
 
+    files: File[] = [];
+    fileNames: any;
+    attachments: Attachment[] = [];
+    attachmentsId: string[] | undefined;
+
     constructor(
         private location: Location,
         private route: ActivatedRoute,
@@ -127,6 +136,7 @@ export class CreateCallComponent {
         private sweetalertServices: SweetAlertService,
         private contactService: ContactsService,
         private ngSelectConfig: NgSelectConfig,
+        private attachmentService: AttachmentService,
     ) {
         this.selectedDate = new Date();
     }
@@ -221,6 +231,8 @@ export class CreateCallComponent {
 
     submit() {
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        this.attachmentsId = this.attachments.map((attachment) => attachment.attachmentId.toString());
+        console.log('Id File: ', this.attachmentsId);
         const data = {
             contactId: this.contactId,
             name: this.contactIdSelect,
@@ -234,6 +246,7 @@ export class CreateCallComponent {
             startTime: this.newDateTime,
             solution: this.solutions,
             createdById: userData.userId,
+            attachment: this.attachmentsId,
         };
         this.callServive
             .createCalls(data)
@@ -440,5 +453,35 @@ export class CreateCallComponent {
         }
         this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
         this.getPageOrg();
+    }
+
+    onFileSelected(event: any) {
+        const files = event.target.files;
+        const createdAt = moment().format('YYYY-MM-DD HH:mm:ss');
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const filename = file.name;
+
+            this.attachmentService
+                .upload(file, filename, createdAt, this.userData?.userId || '')
+                .pipe(
+                    tap((response: any) => {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'อัพโหลดข้อมูลเรียบร้อยแล้ว',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            timerProgressBar: true,
+                        }).then(() => {});
+                        this.attachments.push(response);
+                    }),
+                    catchError((error) => {
+                        this.sweetalertServices.handleError(error);
+                        throw error;
+                    }),
+                )
+                .subscribe(() => {});
+        }
     }
 }
