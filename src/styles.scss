@@ -26,3 +26,6 @@ $qcrm-ui-theme: mat.define-light-theme(
 @import '~bootstrap/dist/css/bootstrap.css';
 
 @import 'bootstrap/scss/bootstrap';
+
+@import "~@ng-select/ng-select/themes/default.theme.css";
+@import "~@ng-select/ng-select/themes/material.theme.css";

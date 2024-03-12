@@ -11,7 +11,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-
+import { NgSelectModule } from '@ng-select/ng-select';
 @NgModule({
   declarations: [CreateCallComponent],
   imports: [
@@ -31,7 +31,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     NgbTimepickerModule,
     ReactiveFormsModule,
     NgbTypeaheadModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    NgSelectModule
   ]
 })
 export class CreateCallModule { }
