@@ -138,7 +138,13 @@
                     <label for="formFileSm" class="form-label">ไฟล์แนบ</label>
                     <div class="mb-3">
                         <div class="form-input-file">
-                            <input class="form-control form-control-sm" id="formFileSm" type="file" multiple />
+                            <input
+                             class="form-control form-control-sm"
+                             id="formFileSm"
+                             type="file"
+                             multiple
+                             (change)="onFileSelected($event)"
+                             />
                         </div>
                     </div>
                 </div>
