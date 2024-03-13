@@ -1,6 +1,6 @@
 <div>
-    <div class="row justify-content-end align-items-center pe-4" [formGroup]="datePick">
-        <div class="col-auto">
+    <div class="row justify-content-end align-items-center pe-4" >
+        <div class="col-auto" [formGroup]="datePick">
             <div class="input-group start-date">
                 <input
                     matInput
@@ -16,7 +16,7 @@
                 </span>
             </div>
         </div>
-        <div class="col-auto">
+        <div class="col-auto" [formGroup]="datePick">
             <div class="input-group end-date">
                 <input
                     matInput
@@ -32,9 +32,42 @@
                 </span>
             </div>
         </div>
-        <div class="col-auto">
+        <div class="col-auto" [formGroup]="datePick">
             <div class="align-self-end">
-                <button class="d-flex gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white" (click)="clickGetReport()">ค้นหา</button>
+                <button class="d-flex gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white" (click)="clickGetReport()">
+                    ค้นหา
+                </button>
+            </div>
+        </div>
+        <div class="col-auto">
+            <div class="dropdown">
+                <button
+                    class="dropdown-toggle d-md-none d-lg-flex btn-primary-color rounded p-2 text-white"
+                    type="button"
+                    id="dropdownMenuButton"
+                    data-bs-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                >
+                    <fa-icon [icon]="faGear"></fa-icon>
+                </button>
+
+                <div class="dropdown-menu p-3" aria-labelledby="dropdownMenuButton">
+                    <div class="form-check" *ngFor="let column of columnVisibilityKeys">
+                        <input
+                            class="form-check-input cursor-pointer"
+                            type="checkbox"
+                            [(ngModel)]="columnVisibility[column]"
+                            id="checkbox-{{ column }}"
+                        />
+                        <span class="form-check-label cursor-default">
+                            {{ column }}
+                        </span>
+                    </div>
+                    <button type="button" class="btn btn-primary-color text-white w-100 mt-1" (click)="applyColumnVisibility()">
+                        {{ 'page.tag.save' | translate }}
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -42,31 +75,31 @@
         <table class="table table-responsive">
             <thead>
                 <tr>
-                    <th style="width: 16%" scope="col">
+                    <th style="width: 16%" scope="col" *ngIf="columnVisibility['username']">
                         <a>Username</a>
                     </th>
-                    <th style="width: 9%" scope="col">
+                    <th style="width: 9%" scope="col" *ngIf="columnVisibility['HotIn']">
                         <a>Hotline (Inbound) </a>
                     </th>
-                    <th style="width: 9%" scope="col">
+                    <th style="width: 9%" scope="col" *ngIf="columnVisibility['HotOut']">
                         <a>Hotline (Outbound) </a>
                     </th>
-                    <th style="width: 9%" scope="col">
+                    <th style="width: 9%" scope="col" *ngIf="columnVisibility['MailIn']">
                         <a>Email (Inbound)</a>
                     </th>
-                    <th style="width: 9%" scope="col">
+                    <th style="width: 9%" scope="col" *ngIf="columnVisibility['MailOut']">
                         <a>Email (Outbound)</a>
                     </th>
-                    <th style="width: 9%" scope="col">
+                    <th style="width: 9%" scope="col" *ngIf="columnVisibility['Mobile']">
                         <a>Mobile Unit </a>
                     </th>
-                    <th style="width: 9%" scope="col">
+                    <th style="width: 9%" scope="col" *ngIf="columnVisibility['LiveChat']">
                         <a>Live Chat</a>
                     </th>
-                    <th style="width: 9%" scope="col">
+                    <th style="width: 9%" scope="col" *ngIf="columnVisibility['Other']">
                         <a>อื่นๆ</a>
                     </th>
-                    <th style="width: 9%" scope="col">
+                    <th style="width: 9%" scope="col" *ngIf="columnVisibility['Total']">
                         <a>รวม</a>
                     </th>
                 </tr>
@@ -74,15 +107,15 @@
             <tbody>
                 <ng-container *ngIf="reportTable?.length > 0; else noDataTemplate">
                     <tr *ngFor="let data of reportTable.slice(0, reportTable.length - 1); let i = index">
-                        <td scope="row">{{ data.username }}</td>
-                        <td scope="row">{{ data.HotIn }}</td>
-                        <td scope="row">{{ data.HotOut }}</td>
-                        <td scope="row">{{ data.MailIn }}</td>
-                        <td scope="row">{{ data.MailOut }}</td>
-                        <td scope="row">{{ data.Mobile }}</td>
-                        <td scope="row">{{ data.LiveChat }}</td>
-                        <td scope="row">{{ data.Other }}</td>
-                        <td scope="row">{{ data.Total }}</td>
+                        <td scope="row" *ngIf="columnVisibility['username']">{{ data.username }}</td>
+                        <td scope="row" *ngIf="columnVisibility['HotIn']">{{ data.HotIn }}</td>
+                        <td scope="row" *ngIf="columnVisibility['HotOut']">{{ data.HotOut }}</td>
+                        <td scope="row" *ngIf="columnVisibility['MailIn']">{{ data.MailIn }}</td>
+                        <td scope="row" *ngIf="columnVisibility['MailOut']">{{ data.MailOut }}</td>
+                        <td scope="row" *ngIf="columnVisibility['Mobile']">{{ data.Mobile }}</td>
+                        <td scope="row" *ngIf="columnVisibility['LiveChat']">{{ data.LiveChat }}</td>
+                        <td scope="row" *ngIf="columnVisibility['Other']">{{ data.Other }}</td>
+                        <td scope="row" *ngIf="columnVisibility['Total']">{{ data.Total }}</td>
                     </tr>
                 </ng-container>
                 <ng-template #noDataTemplate>
@@ -93,15 +126,15 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <td scope="row">{{ reportTable[reportTable.length - 1]?.username }}</td>
-                    <td scope="row">{{ reportTable[reportTable.length - 1]?.HotIn }}</td>
-                    <td scope="row">{{ reportTable[reportTable.length - 1]?.HotOut }}</td>
-                    <td scope="row">{{ reportTable[reportTable.length - 1]?.MailIn }}</td>
-                    <td scope="row">{{ reportTable[reportTable.length - 1]?.MailOut }}</td>
-                    <td scope="row">{{ reportTable[reportTable.length - 1]?.Mobile }}</td>
-                    <td scope="row">{{ reportTable[reportTable.length - 1]?.LiveChat }}</td>
-                    <td scope="row">{{ reportTable[reportTable.length - 1]?.Other }}</td>
-                    <td scope="row">{{ reportTable[reportTable.length - 1]?.Total }}</td>
+                    <td scope="row" *ngIf="columnVisibility['username']">{{ reportTable[reportTable.length - 1]?.username }}</td>
+                    <td scope="row" *ngIf="columnVisibility['HotIn']">{{ reportTable[reportTable.length - 1]?.HotIn }}</td>
+                    <td scope="row" *ngIf="columnVisibility['HotOut']">{{ reportTable[reportTable.length - 1]?.HotOut }}</td>
+                    <td scope="row" *ngIf="columnVisibility['MailIn']">{{ reportTable[reportTable.length - 1]?.MailIn }}</td>
+                    <td scope="row" *ngIf="columnVisibility['MailOut']">{{ reportTable[reportTable.length - 1]?.MailOut }}</td>
+                    <td scope="row" *ngIf="columnVisibility['Mobile']">{{ reportTable[reportTable.length - 1]?.Mobile }}</td>
+                    <td scope="row" *ngIf="columnVisibility['LiveChat']">{{ reportTable[reportTable.length - 1]?.LiveChat }}</td>
+                    <td scope="row" *ngIf="columnVisibility['Other']">{{ reportTable[reportTable.length - 1]?.Other }}</td>
+                    <td scope="row" *ngIf="columnVisibility['Total']">{{ reportTable[reportTable.length - 1]?.Total }}</td>
                 </tr>
             </tfoot>
         </table>

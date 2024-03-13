@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ReportService } from 'src/app/services/report/report.service';
 import * as moment from 'moment';
+import { faGear } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'app-report-summary-by-month',
@@ -14,6 +15,11 @@ export class ReportSummaryByMonthComponent implements OnInit {
     channelArray!: any;
     datePick: FormGroup = new FormGroup({});
 
+    faGear = faGear;
+    displayedColumns: string[] = [];
+    columnVisibility: { [key: string]: boolean } = {};
+    displayedColumnsTemp: any = null;
+
     constructor(private reportService: ReportService, private fb: FormBuilder) {}
 
     ngOnInit(): void {
@@ -25,6 +31,22 @@ export class ReportSummaryByMonthComponent implements OnInit {
             endDate: [currentDateFormat],
         });
         this.getReport(firstDayOfYearFormat, currentDateFormat);
+    }
+
+    get columnVisibilityKeys(): string[] {
+        return Object.keys(this.columnVisibility);
+    }
+
+    applyColumnVisibility(): void {
+        this.displayedColumnsTemp = this.columnVisibility;
+    }
+
+    setDisplayAllFields(): void {
+        if (this.reportTable !== null && this.reportTable !== undefined) {
+            Object.keys(this.reportTable[0])!.forEach((column) => {
+                if (column != 'month' && column != 'year') this.columnVisibility[column] = true;
+            });
+        }
     }
 
     onStartDateChange(event: any) {
@@ -56,11 +78,8 @@ export class ReportSummaryByMonthComponent implements OnInit {
                 this.channelArray = this.rowTotalChannel(this.channelArray);
             }
 
-            console.log(this.topicArray);
-            console.log(this.channelArray);
-
-            for (const item1 of this.topicArray) {
-                const matchingItem = this.channelArray.find((item2: any) => item2.month === item1.month && item2.year === item1.year);
+            for (const item1 of this.channelArray) {
+                const matchingItem = this.topicArray.find((item2: any) => item2.month === item1.month && item2.year === item1.year);
 
                 if (matchingItem) {
                     const mergedItem = { ...item1, ...matchingItem };
@@ -68,8 +87,7 @@ export class ReportSummaryByMonthComponent implements OnInit {
                 }
             }
             this.columnTotal();
-
-            console.log(this.reportTable);
+            if (!this.displayedColumnsTemp) this.setDisplayAllFields();
         });
     }
 
@@ -91,7 +109,6 @@ export class ReportSummaryByMonthComponent implements OnInit {
         }
         for (const row of array) {
             row['TotalChannel'] = totals[`${row.month}-${row.year}`];
-            row['date'] = `${row.month}/${row.year}`;
         }
 
         return array;
@@ -116,6 +133,7 @@ export class ReportSummaryByMonthComponent implements OnInit {
         }
         for (const row of array) {
             row['TotalTopic'] = totals[`${row.month}-${row.year}`];
+            row['date'] = `${row.month}/${row.year}`;
         }
 
         return array;

@@ -4,6 +4,7 @@ import { ReportService } from 'src/app/services/report/report.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import * as moment from 'moment';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { faGear } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'app-report-case-type-by-agent',
@@ -13,12 +14,15 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class ReportCaseTypeByAgentComponent implements OnInit {
     reportTable!: any;
     datePick: FormGroup = new FormGroup({});
+    selectedItems: string[] = [];
+
+    faGear = faGear;
+    displayedColumns: string[] = [];
+    columnVisibility: { [key: string]: boolean } = {};
+    displayedColumnsTemp: any = null;
 
     constructor(
-        private router: Router,
         private reportService: ReportService,
-        private activeRoute: ActivatedRoute,
-        private sweetalertServices: SweetAlertService,
         private fb: FormBuilder,
     ) {}
 
@@ -35,12 +39,18 @@ export class ReportCaseTypeByAgentComponent implements OnInit {
     }
 
     async getReport(startDate: string, endDate: string) {
+        this.reportTable = [];
         await this.reportService.getCaseTypeByAgent(startDate, endDate).subscribe((res: any) => {
             this.reportTable = res.value;
             if (this.reportTable.length != 0) {
                 this.rowTotal();
                 this.columnTotal();
             }
+            if (!this.displayedColumnsTemp) {
+                this.setDisplayAllFields();
+            }
+            this.filterTotal();
+            console.log(this.reportTable);
         });
     }
 
@@ -56,6 +66,29 @@ export class ReportCaseTypeByAgentComponent implements OnInit {
 
     onEndDateChange(event: any) {
         this.datePick.get('endDate')!.setValue(event.value);
+    }
+
+    clickGetReport() {
+        const startDate = moment(this.datePick.get('startDate')!.value).format('YYYY-MM-DD');
+        const endDate = moment(this.datePick.get('endDate')!.value).format('YYYY-MM-DD');
+        this.getReport(startDate, endDate);
+    }
+
+    get columnVisibilityKeys(): string[] {
+        return Object.keys(this.columnVisibility);
+    }
+
+    applyColumnVisibility(): void {
+        this.displayedColumnsTemp = this.columnVisibility;
+        this.clickGetReport();
+    }
+
+    setDisplayAllFields(): void {
+        if (this.reportTable !== null && this.reportTable !== undefined) {
+            Object.keys(this.reportTable[0])!.forEach((column) => {
+                if (column != 'month' && column != 'year') this.columnVisibility[column] = true;
+            });
+        }
     }
 
     rowTotal() {
@@ -75,6 +108,27 @@ export class ReportCaseTypeByAgentComponent implements OnInit {
                 Number(row.Topic6) +
                 Number(row.Topic7) +
                 Number(row.Topic8);
+        }
+        for (const row of this.reportTable) {
+            row['Total'] = totals[row.username];
+        }
+    }
+
+    filterTotal() {
+        const totals: Record<string, number> = {};
+        for (const row of this.reportTable) {
+            if (!totals[row.username]) {
+                totals[row.username] = 0;
+            }
+            totals[row.username] +=
+                (this.columnVisibility['Topic1'] ? Number(row.Topic1) : 0) +
+                (this.columnVisibility['Topic2'] ? Number(row.Topic2) : 0) +
+                (this.columnVisibility['Topic3'] ? Number(row.Topic3) : 0) +
+                (this.columnVisibility['Topic4'] ? Number(row.Topic4) : 0) +
+                (this.columnVisibility['Topic5'] ? Number(row.Topic5) : 0) +
+                (this.columnVisibility['Topic6'] ? Number(row.Topic6) : 0) +
+                (this.columnVisibility['Topic7'] ? Number(row.Topic7) : 0) +
+                (this.columnVisibility['Topic8'] ? Number(row.Topic8) : 0);
         }
         for (const row of this.reportTable) {
             row['Total'] = totals[row.username];
