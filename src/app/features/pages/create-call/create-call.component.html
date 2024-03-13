@@ -281,12 +281,12 @@
                         <div class="p-5 shadow call-side-detail" *ngIf="SearchOrgShowing">
                             <div>
                                 <h4>เลือกร้านค้า/บริษัท</h4>
-                                <div class="row">
+                                <div class="row search-contact">
                                     <div class="col-md-9">
                                         <input
                                             id="table-complete-search"
                                             type="text"
-                                            class="form-control border border-start-0 shadow-none"
+                                            class="form-control border shadow-none"
                                             name="searchOrg"
                                             [(ngModel)]="valueSearchOrg"
                                             placeholder="ค้นหา..."
@@ -295,6 +295,7 @@
                                             (change)="searchOrg()"
                                         />
                                     </div>
+                                    <button type="button" class="btn btn-primary btn-search-contact" (click)="searchOrg()">ค้นหา</button>
                                 </div>
                             </div>
                         </div>
