@@ -10,6 +10,10 @@ import { ReportChannelByAgentComponent } from '../../components/report-channel-b
 import { ReportCaseTypeByAgentComponent } from '../../components/report-case-type-by-agent/report-case-type-by-agent.component';
 import { ReportChannelByAgentModule } from '../../components/report-channel-by-agent/report-channel-by-agent.module';
 import { ReportCaseTypeByAgentModule } from '../../components/report-case-type-by-agent/report-case-type-by-agent.module';
+import { ReportSummaryByMonthComponent } from '../../components/report-summary-by-month/report-summary-by-month.component';
+import { ReportSummaryByMonthModule } from '../../components/report-summary-by-month/report-summary-by-month.module';
+import { ReportCaseDetailModule } from '../../components/report-case-detail/report-case-detail.module';
+import { ReportCaseDetailComponent } from '../../components/report-case-detail/report-case-detail.component';
 
 @NgModule({
     declarations: [ReportPageComponent],
@@ -30,7 +34,15 @@ import { ReportCaseTypeByAgentModule } from '../../components/report-case-type-b
                     {
                         path: 'case-type-by-agent',
                         component: ReportCaseTypeByAgentComponent,
-                    }
+                    },
+                    {
+                        path: 'case-detail',
+                        component: ReportCaseDetailComponent,
+                    },
+                    {
+                        path: 'summary-by-month',
+                        component: ReportSummaryByMonthComponent,
+                    },
                 ],
             },
         ]),
@@ -39,6 +51,8 @@ import { ReportCaseTypeByAgentModule } from '../../components/report-case-type-b
         NgbTooltipModule,
         ReportChannelByAgentModule,
         ReportCaseTypeByAgentModule,
+        ReportSummaryByMonthModule,
+        ReportCaseDetailModule,
     ],
 })
 export class ReportPageModule {}

@@ -8,3 +8,22 @@
     max-width: 44px !important;
     max-height: 38px !important;
 }
+
+.table-container {
+    max-height: 600px;
+    overflow-y: auto;
+    overflow-x: auto;
+}
+.table-container thead {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa;
+    z-index: 1;
+}
+
+.table-container tfoot {
+    position: sticky;
+    bottom: 0;
+    background-color: #f8f9fa; 
+    z-index: 1;
+}

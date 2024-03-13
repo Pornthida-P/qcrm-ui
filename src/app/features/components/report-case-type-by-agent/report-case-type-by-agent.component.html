@@ -1,6 +1,6 @@
 <div>
-    <div class="row justify-content-end align-items-center pe-4" [formGroup]="datePick">
-        <div class="col-auto">
+    <div class="row justify-content-end align-items-center pe-4">
+        <div class="col-auto" [formGroup]="datePick">
             <div class="input-group start-date">
                 <input
                     matInput
@@ -16,7 +16,7 @@
                 </span>
             </div>
         </div>
-        <div class="col-auto">
+        <div class="col-auto" [formGroup]="datePick">
             <div class="input-group end-date">
                 <input
                     matInput
@@ -37,64 +37,83 @@
                 <button class="d-flex gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white" (click)="clickgo()">ค้นหา</button>
             </div>
         </div>
+        <div class="col-auto">
+            <div class="dropdown">
+                <button
+                    class="dropdown-toggle d-md-none d-lg-flex btn-primary-color rounded p-2 text-white"
+                    type="button"
+                    id="dropdownMenuButton"
+                    data-bs-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                >
+                    <fa-icon [icon]="faGear"></fa-icon>
+                </button>
+
+                <div class="dropdown-menu p-3" aria-labelledby="dropdownMenuButton">
+                    <div class="form-check" *ngFor="let column of columnVisibilityKeys">
+                        <input
+                            class="form-check-input cursor-pointer"
+                            type="checkbox"
+                            [(ngModel)]="columnVisibility[column]"
+                            id="checkbox-{{ column }}"
+                        />
+                        <span class="form-check-label cursor-default">
+                            {{ column }}
+                        </span>
+                    </div>
+                    <button type="button" class="btn btn-primary-color text-white w-100 mt-1" (click)="applyColumnVisibility()">
+                        {{ 'page.tag.save' | translate }}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-auto">
+            <button
+                class="d-flex gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white"
+                (click)="exportExcel()"
+                ngbTooltip="Export to Excel"
+            >
+                <fa-icon [icon]="faFileExport"></fa-icon>
+            </button>
+        </div>
     </div>
-    <div class="table-responsive pe-4 ps-4">
-        <table class="table">
+    <div class="pe-4 ps-4 table-container">
+        <table class="table table-responsive">
             <thead>
                 <tr>
-                    <th style="width: 16%" scope="col">
-                        <a>Username</a>
-                    </th>
-                    <th style="width: 9%" scope="col">
-                        <a>ข้อมูลทั่วไป </a>
-                    </th>
-                    <th style="width: 9%" scope="col">
-                        <a>ระบบ Drive </a>
-                    </th>
-                    <th style="width: 9%" scope="col">
-                        <a>E-Academy</a>
-                    </th>
-                    <th style="width: 9%" scope="col">
-                        <a>ติดต่อประสานงาน</a>
-                    </th>
-                    <th style="width: 9%" scope="col">
-                        <a>ประชาสัมพันธ์และติดตามผล</a>
-                    </th>
-                    <th style="width: 9%" scope="col">
-                        <a>ร้องเรียน</a>
-                    </th>
-                    <th style="width: 9%" scope="col">
-                        <a>ชมเชย</a>
-                    </th>
-                    <th style="width: 9%" scope="col">
-                        <a>อื่นๆ</a>
-                    </th>
-                    <th style="width: 9%" scope="col">
-                        <a>รวม</a>
-                    </th>
+                    <ng-container *ngFor="let column of columnNames">
+                        <th scope="row" *ngIf="columnVisibility[column]">
+                            <a>{{ columnName[column] }}</a>
+                        </th>
+                    </ng-container>
                 </tr>
             </thead>
             <tbody>
                 <ng-container *ngIf="reportTable?.length > 0; else noDataTemplate">
-                    <tr *ngFor="let data of reportTable; let i = index">
-                        <td scope="row">{{ data.username }}</td>
-                        <td scope="row">{{ data.Topic1 }}</td>
-                        <td scope="row">{{ data.Topic2 }}</td>
-                        <td scope="row">{{ data.Topic3 }}</td>
-                        <td scope="row">{{ data.Topic4 }}</td>
-                        <td scope="row">{{ data.Topic5 }}</td>
-                        <td scope="row">{{ data.Topic7 }}</td>
-                        <td scope="row">{{ data.Topic8 }}</td>
-                        <td scope="row">{{ data.Topic6 }}</td>
-                        <td scope="row">{{ data.Total }}</td>
+                    <tr *ngFor="let data of reportTable.slice(0, reportTable.length - 1); let i = index">
+                        <ng-container *ngFor="let column of columnNames">
+                            <td scope="row" *ngIf="columnVisibility[column]">
+                                <a>{{ data[column] }}</a>
+                            </td>
+                        </ng-container>
                     </tr>
                 </ng-container>
                 <ng-template #noDataTemplate>
                     <tr>
-                        <td colspan="4" class="text-center">ไม่มีข้อมูล</td>
+                        <td colspan="10" class="text-center">ไม่มีข้อมูล</td>
                     </tr>
                 </ng-template>
             </tbody>
+            <tfoot>
+                <tr>
+                    <ng-container *ngFor="let column of columnNames">
+                        <td scope="row" *ngIf="columnVisibility[column]">
+                            <a>{{ getTotal(column) }}</a>
+                        </td>
+                    </ng-container>
+                </tr>
+            </tfoot>
         </table>
     </div>
 </div>
