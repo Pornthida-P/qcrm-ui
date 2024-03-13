@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
 import { ReportService } from 'src/app/services/report/report.service';
-import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import * as moment from 'moment';
-import { faGear } from '@fortawesome/free-solid-svg-icons';
+import { faFileExport, faGear } from '@fortawesome/free-solid-svg-icons';
+import * as XLSX from 'xlsx';
+import { config } from 'src/app/config/config';
+import { report } from 'src/app/config/report';
 
 @Component({
     selector: 'app-report-channel-by-agent',
@@ -16,14 +17,15 @@ export class ReportChannelByAgentComponent implements OnInit {
     datePick: FormGroup = new FormGroup({});
 
     faGear = faGear;
+    faFileExport = faFileExport;
     displayedColumns: string[] = [];
     columnVisibility: { [key: string]: boolean } = {};
     displayedColumnsTemp: any = null;
 
-    constructor(
-        private reportService: ReportService,
-        private fb: FormBuilder,
-    ) {}
+    columnName: any = report.channel;
+    fileType: string = config.file.type;
+
+    constructor(private reportService: ReportService, private fb: FormBuilder) {}
 
     ngOnInit(): void {
         const currentDate = new Date();
@@ -43,8 +45,17 @@ export class ReportChannelByAgentComponent implements OnInit {
         this.getReport(startDate, endDate);
     }
 
+    getTotal(column: string) {
+        if (this.reportTable[this.reportTable.length - 1]) return this.reportTable[this.reportTable.length - 1][column];
+        else return null;
+    }
+
     get columnVisibilityKeys(): string[] {
         return Object.keys(this.columnVisibility);
+    }
+
+    get columnNames(): string[] {
+        return Object.keys(this.columnName);
     }
 
     applyColumnVisibility(): void {
@@ -79,13 +90,12 @@ export class ReportChannelByAgentComponent implements OnInit {
             if (!this.displayedColumnsTemp) {
                 this.setDisplayAllFields();
             }
-            this.filterTotal()
+            this.filterTotal();
         });
     }
 
     rowTotal() {
         const totals: Record<string, number> = {};
-        console.log(this.columnVisibility);
         for (const row of this.reportTable) {
             if (!totals[row.username]) {
                 totals[row.username] = 0;
@@ -106,7 +116,6 @@ export class ReportChannelByAgentComponent implements OnInit {
 
     filterTotal() {
         const totals: Record<string, number> = {};
-        console.log(this.columnVisibility);
         for (const row of this.reportTable) {
             if (!totals[row.username]) {
                 totals[row.username] = 0;
@@ -148,5 +157,36 @@ export class ReportChannelByAgentComponent implements OnInit {
         });
 
         this.reportTable?.push(totalsRow);
+    }
+
+    exportExcel() {
+        if (this.reportTable.length != 0) {
+            var columnFilter: any = [];
+            const processedForms = this.reportTable.reduce((acc: any, cur: any) => {
+                const processedForm: any = {};
+                Object.keys(this.columnName).forEach((column: string) => {
+                    if (this.columnVisibility[column]) {
+                        if (column == 'username') processedForm[column] = cur[column];
+                        else processedForm[column] = Number(cur[column]);
+                    }
+                });
+                acc.push(processedForm);
+                return acc;
+            }, []);
+            Object.keys(processedForms[0]).forEach((column: string) => {
+                if (this.columnVisibility[column]) columnFilter.push(this.columnName[column]);
+            });
+
+            const columns = [columnFilter];
+            const wb = XLSX.utils.book_new();
+            const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet([]);
+            XLSX.utils.sheet_add_aoa(ws, columns);
+
+            XLSX.utils.sheet_add_json(ws, processedForms, { origin: 'A2', skipHeader: true });
+
+            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+            XLSX.writeFile(wb, `Summary-By-Month-Report${this.fileType}`);
+        }
     }
 }

@@ -62,6 +62,15 @@
                 </div>
             </div>
         </div>
+        <div class="col-auto">
+            <button
+                class="d-flex gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white"
+                (click)="exportExcel()"
+                ngbTooltip="Export to Excel"
+            >
+                <fa-icon [icon]="faFileExport"></fa-icon>
+            </button>
+        </div>
     </div>
     <div class="row justify-content-end align-items-center pe-4 pt-2"></div>
     <div>
@@ -69,83 +78,21 @@
             <table class="table table-responsive">
                 <thead>
                     <tr>
-                        <th scope="col" *ngIf="columnVisibility['date']">
-                            <a>Month</a>
-                        </th>
-                        <th scope="col" *ngIf="columnVisibility['HotIn']">
-                            <a>Hotline (Inbound) </a>
-                        </th>
-                        <th scope="col" *ngIf="columnVisibility['HotOut']">
-                            <a>Hotline (Outbound) </a>
-                        </th>
-                        <th scope="col" *ngIf="columnVisibility['MailIn']">
-                            <a>Email (Inbound)</a>
-                        </th>
-                        <th scope="col" *ngIf="columnVisibility['MailOut']">
-                            <a>Email (Outbound)</a>
-                        </th>
-                        <th scope="col" *ngIf="columnVisibility['Mobile']">
-                            <a>Mobile Unit </a>
-                        </th>
-                        <th scope="col" *ngIf="columnVisibility['LiveChat']">
-                            <a>Live Chat</a>
-                        </th>
-                        <th scope="col" *ngIf="columnVisibility['Other']">
-                            <a>อื่นๆ</a>
-                        </th>
-                        <th scope="col" *ngIf="columnVisibility['TotalChannel']">
-                            <a>รวม (Channel)</a>
-                        </th>
-                        <th scope="col" *ngIf="columnVisibility['Topic1']">
-                            <a>ข้อมูลทั่วไป </a>
-                        </th>
-                        <th scope="col" *ngIf="columnVisibility['Topic2']">
-                            <a>ระบบ Drive </a>
-                        </th>
-                        <th scope="col" *ngIf="columnVisibility['Topic3']">
-                            <a>E-Academy</a>
-                        </th>
-                        <th scope="col" *ngIf="columnVisibility['Topic4']">
-                            <a>ติดต่อประสานงาน</a>
-                        </th>
-                        <th scope="col" *ngIf="columnVisibility['Topic5']">
-                            <a>ประชาสัมพันธ์และติดตามผล</a>
-                        </th>
-                        <th scope="col" *ngIf="columnVisibility['Topic6']">
-                            <a>ร้องเรียน</a>
-                        </th>
-                        <th scope="col" *ngIf="columnVisibility['Topic7']">
-                            <a>ชมเชย</a>
-                        </th>
-                        <th scope="col" *ngIf="columnVisibility['Topic8']">
-                            <a>อื่นๆ</a>
-                        </th>
-                        <th scope="col" *ngIf="columnVisibility['TotalTopic']">
-                            <a>รวม (Case Type)</a>
-                        </th>
+                        <ng-container *ngFor="let column of columnNames">
+                            <th scope="col" *ngIf="columnVisibility[column]">
+                                <a>{{ columnName[column] }}</a>
+                            </th>
+                        </ng-container>
                     </tr>
                 </thead>
                 <tbody>
                     <ng-container *ngIf="reportTable?.length > 0; else noDataTemplate">
                         <tr *ngFor="let data of reportTable.slice(0, reportTable.length - 1); let i = index">
-                            <td scope="row" *ngIf="columnVisibility['date']">{{ data.date }}</td>
-                            <td scope="row" *ngIf="columnVisibility['HotIn']">{{ data.HotIn }}</td>
-                            <td scope="row" *ngIf="columnVisibility['HotOut']">{{ data.HotOut }}</td>
-                            <td scope="row" *ngIf="columnVisibility['MailIn']">{{ data.MailIn }}</td>
-                            <td scope="row" *ngIf="columnVisibility['MailOut']">{{ data.MailOut }}</td>
-                            <td scope="row" *ngIf="columnVisibility['Mobile']">{{ data.Mobile }}</td>
-                            <td scope="row" *ngIf="columnVisibility['LiveChat']">{{ data.LiveChat }}</td>
-                            <td scope="row" *ngIf="columnVisibility['Other']">{{ data.Other }}</td>
-                            <td scope="row" *ngIf="columnVisibility['TotalChannel']">{{ data.TotalChannel }}</td>
-                            <td scope="row" *ngIf="columnVisibility['Topic1']">{{ data.Topic1 }}</td>
-                            <td scope="row" *ngIf="columnVisibility['Topic2']">{{ data.Topic2 }}</td>
-                            <td scope="row" *ngIf="columnVisibility['Topic3']">{{ data.Topic3 }}</td>
-                            <td scope="row" *ngIf="columnVisibility['Topic4']">{{ data.Topic4 }}</td>
-                            <td scope="row" *ngIf="columnVisibility['Topic5']">{{ data.Topic5 }}</td>
-                            <td scope="row" *ngIf="columnVisibility['Topic7']">{{ data.Topic7 }}</td>
-                            <td scope="row" *ngIf="columnVisibility['Topic8']">{{ data.Topic8 }}</td>
-                            <td scope="row" *ngIf="columnVisibility['Topic6']">{{ data.Topic6 }}</td>
-                            <td scope="row" *ngIf="columnVisibility['TotalTopic']">{{ data.TotalTopic }}</td>
+                            <ng-container *ngFor="let column of columnNames">
+                                <td scope="row" *ngIf="columnVisibility[column]">
+                                    <a>{{ data[column] }}</a>
+                                </td>
+                            </ng-container>
                         </tr>
                     </ng-container>
                     <ng-template #noDataTemplate>
@@ -156,24 +103,11 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td scope="row" *ngIf="columnVisibility['date']">{{ reportTable[reportTable.length - 1]?.date }}</td>
-                        <td scope="row" *ngIf="columnVisibility['HotIn']">{{ reportTable[reportTable.length - 1]?.HotIn }}</td>
-                        <td scope="row" *ngIf="columnVisibility['HotOut']">{{ reportTable[reportTable.length - 1]?.HotOut }}</td>
-                        <td scope="row" *ngIf="columnVisibility['MailIn']">{{ reportTable[reportTable.length - 1]?.MailIn }}</td>
-                        <td scope="row" *ngIf="columnVisibility['MailOut']">{{ reportTable[reportTable.length - 1]?.MailOut }}</td>
-                        <td scope="row" *ngIf="columnVisibility['Mobile']">{{ reportTable[reportTable.length - 1]?.Mobile }}</td>
-                        <td scope="row" *ngIf="columnVisibility['LiveChat']">{{ reportTable[reportTable.length - 1]?.LiveChat }}</td>
-                        <td scope="row" *ngIf="columnVisibility['Other']">{{ reportTable[reportTable.length - 1]?.Other }}</td>
-                        <td scope="row" *ngIf="columnVisibility['TotalChannel']">{{ reportTable[reportTable.length - 1]?.TotalChannel }}</td>
-                        <td scope="row" *ngIf="columnVisibility['Topic1']">{{ reportTable[reportTable.length - 1]?.Topic1 }}</td>
-                        <td scope="row" *ngIf="columnVisibility['Topic2']">{{ reportTable[reportTable.length - 1]?.Topic2 }}</td>
-                        <td scope="row" *ngIf="columnVisibility['Topic3']">{{ reportTable[reportTable.length - 1]?.Topic3 }}</td>
-                        <td scope="row" *ngIf="columnVisibility['Topic4']">{{ reportTable[reportTable.length - 1]?.Topic4 }}</td>
-                        <td scope="row" *ngIf="columnVisibility['Topic5']">{{ reportTable[reportTable.length - 1]?.Topic5 }}</td>
-                        <td scope="row" *ngIf="columnVisibility['Topic7']">{{ reportTable[reportTable.length - 1]?.Topic7 }}</td>
-                        <td scope="row" *ngIf="columnVisibility['Topic8']">{{ reportTable[reportTable.length - 1]?.Topic8 }}</td>
-                        <td scope="row" *ngIf="columnVisibility['Topic6']">{{ reportTable[reportTable.length - 1]?.Topic6 }}</td>
-                        <td scope="row" *ngIf="columnVisibility['TotalTopic']">{{ reportTable[reportTable.length - 1]?.TotalTopic }}</td>
+                        <ng-container *ngFor="let column of columnNames">
+                            <td scope="row" *ngIf="columnVisibility[column]">
+                                <a>{{ getTotal(column) }}</a>
+                            </td>
+                        </ng-container>
                     </tr>
                 </tfoot>
             </table>

@@ -68,56 +68,35 @@
                 </div>
             </div>
         </div>
+        <div class="col-auto">
+            <button
+                class="d-flex gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white"
+                (click)="exportExcel()"
+                ngbTooltip="Export to Excel"
+            >
+                <fa-icon [icon]="faFileExport"></fa-icon>
+            </button>
+        </div>
     </div>
     <div class="pe-4 ps-4 table-container">
         <table class="table table-responsive">
             <thead>
                 <tr>
-                    <th style="width: 16%" scope="col" *ngIf="columnVisibility['username']">
-                        <a>Username</a>
-                    </th>
-                    <th style="width: 9%" scope="col" *ngIf="columnVisibility['Topic1']">
-                        <a>ข้อมูลทั่วไป </a>
-                    </th>
-                    <th style="width: 9%" scope="col" *ngIf="columnVisibility['Topic2']">
-                        <a>ระบบ Drive </a>
-                    </th>
-                    <th style="width: 9%" scope="col" *ngIf="columnVisibility['Topic3']">
-                        <a>E-Academy</a>
-                    </th>
-                    <th style="width: 9%" scope="col" *ngIf="columnVisibility['Topic4']">
-                        <a>ติดต่อประสานงาน</a>
-                    </th>
-                    <th style="width: 9%" scope="col" *ngIf="columnVisibility['Topic5']">
-                        <a>ประชาสัมพันธ์และติดตามผล</a>
-                    </th>
-                    <th style="width: 9%" scope="col" *ngIf="columnVisibility['Topic6']">
-                        <a>ร้องเรียน</a>
-                    </th>
-                    <th style="width: 9%" scope="col" *ngIf="columnVisibility['Topic7']">
-                        <a>ชมเชย</a>
-                    </th>
-                    <th style="width: 9%" scope="col" *ngIf="columnVisibility['Topic8']">
-                        <a>อื่นๆ</a>
-                    </th>
-                    <th style="width: 9%" scope="col" *ngIf="columnVisibility['Total']">
-                        <a>รวม</a>
-                    </th>
+                    <ng-container *ngFor="let column of columnNames">
+                        <th scope="row" *ngIf="columnVisibility[column]">
+                            <a>{{ columnName[column] }}</a>
+                        </th>
+                    </ng-container>
                 </tr>
             </thead>
             <tbody>
                 <ng-container *ngIf="reportTable?.length > 0; else noDataTemplate">
                     <tr *ngFor="let data of reportTable.slice(0, reportTable.length - 1); let i = index">
-                        <td scope="row" *ngIf="columnVisibility['username']">{{ data.username }}</td>
-                        <td scope="row" *ngIf="columnVisibility['Topic1']">{{ data.Topic1 }}</td>
-                        <td scope="row" *ngIf="columnVisibility['Topic2']">{{ data.Topic2 }}</td>
-                        <td scope="row" *ngIf="columnVisibility['Topic3']">{{ data.Topic3 }}</td>
-                        <td scope="row" *ngIf="columnVisibility['Topic4']">{{ data.Topic4 }}</td>
-                        <td scope="row" *ngIf="columnVisibility['Topic5']">{{ data.Topic5 }}</td>
-                        <td scope="row" *ngIf="columnVisibility['Topic7']">{{ data.Topic6 }}</td>
-                        <td scope="row" *ngIf="columnVisibility['Topic8']">{{ data.Topic7 }}</td>
-                        <td scope="row" *ngIf="columnVisibility['Topic6']">{{ data.Topic8 }}</td>
-                        <td scope="row" *ngIf="columnVisibility['Total']">{{ data.Total }}</td>
+                        <ng-container *ngFor="let column of columnNames">
+                            <td scope="row" *ngIf="columnVisibility[column]">
+                                <a>{{ data[column] }}</a>
+                            </td>
+                        </ng-container>
                     </tr>
                 </ng-container>
                 <ng-template #noDataTemplate>
@@ -128,16 +107,11 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <td scope="row" *ngIf="columnVisibility['username']">{{ reportTable[reportTable.length - 1]?.username }}</td>
-                    <td scope="row" *ngIf="columnVisibility['Topic1']">{{ reportTable[reportTable.length - 1]?.Topic1 }}</td>
-                    <td scope="row" *ngIf="columnVisibility['Topic2']">{{ reportTable[reportTable.length - 1]?.Topic2 }}</td>
-                    <td scope="row" *ngIf="columnVisibility['Topic3']">{{ reportTable[reportTable.length - 1]?.Topic3 }}</td>
-                    <td scope="row" *ngIf="columnVisibility['Topic4']">{{ reportTable[reportTable.length - 1]?.Topic4 }}</td>
-                    <td scope="row" *ngIf="columnVisibility['Topic5']">{{ reportTable[reportTable.length - 1]?.Topic5 }}</td>
-                    <td scope="row" *ngIf="columnVisibility['Topic7']">{{ reportTable[reportTable.length - 1]?.Topic6 }}</td>
-                    <td scope="row" *ngIf="columnVisibility['Topic8']">{{ reportTable[reportTable.length - 1]?.Topic7 }}</td>
-                    <td scope="row" *ngIf="columnVisibility['Topic6']">{{ reportTable[reportTable.length - 1]?.Topic8 }}</td>
-                    <td scope="row" *ngIf="columnVisibility['Total']">{{ reportTable[reportTable.length - 1]?.Total }}</td>
+                    <ng-container *ngFor="let column of columnNames">
+                        <td scope="row" *ngIf="columnVisibility[column]">
+                            <a>{{ getTotal(column) }}</a>
+                        </td>
+                    </ng-container>
                 </tr>
             </tfoot>
         </table>
