@@ -66,25 +66,26 @@ export class CreateCallComponent {
     thanks: boolean = false;
 
     pageSizeOptionContact = [5, 10, 20];
-    currentPage = 1;
-    currentpageContact = 1;
+    currentPageCt = 1;
+    currentPageContact = 1;
     totalItemContact = 0;
     totalpageContacts = 0;
     pagesToShowContact = 3;
+    pageSizeContact = 5;
 
     pageSizeOptions = [5, 10, 20];
-    pageSizeContact = 5;
     pageSize = 5;
     totalItems = 0;
     totalPages = 0;
     pagesToShow = 3;
 
     pageSizeOptionOrgs = [5, 10, 20];
-    pageSizeOrg = 5;
+    currentPageOganization = 1;
     currentPageOrg = 1;
     totalItemOrgs = 0;
     totalPageOrgs = 0;
     pagesToShowOrg = 3;
+    pageSizeOrg = 5;
 
     SearchOrgShowing: boolean = false;
     valueSearchOrg!: string;
@@ -120,7 +121,6 @@ export class CreateCallComponent {
     newDateTime: any;
     selectedOrganizationId: string | null = null;
 
-    currentPageContact = 1;
     showOrgSidebar: boolean = false;
     showContactSidebar: boolean = false;
 
@@ -194,10 +194,6 @@ export class CreateCallComponent {
 
         this.callServive.getCaseTopic().subscribe((casetopics: any) => {
             this.casetopics = casetopics;
-        });
-
-        this.callServive.getOrganizations().subscribe((organizations: any) => {
-            this.organizations = organizations;
         });
 
         this.callServive.getActivitiesType().subscribe((activitiestype: any) => {
@@ -275,7 +271,7 @@ export class CreateCallComponent {
     }
 
     pageSizeChangeContact() {
-        this.currentPage = 1;
+        this.currentPageCt = 1;
         this.getFormContact((this.currentPageContact - 1) * this.pageSizeContact, this.pageSizeContact);
     }
 
@@ -388,7 +384,7 @@ export class CreateCallComponent {
     }
 
     pageSizeChangeOrg() {
-        this.currentPage = 1;
+        this.currentPageOganization = 1;
         this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
     }
 
@@ -429,13 +425,15 @@ export class CreateCallComponent {
     }
 
     async getFormOrg(pageOrg: number, pageSizeOrg: number) {
-        await this.contactService
-            .getOrgByPage(pageOrg, pageSizeOrg, `${this.sortIdOrg},${this.sortOrderOrg}`, this.valueSearchOrg, this.selectedFilter)
-            .subscribe((res: any) => {
-                this.organizations = res;
-                this.spareorganizations = res;
-            });
-    }
+      await this.contactService
+          .getOrgByPage(pageOrg, pageSizeOrg, `${this.sortIdOrg},${this.sortOrderOrg}`, this.valueSearchOrg, this.selectedFilter)
+          .subscribe((res: any) => {
+              this.organizations = res;
+            this.spareorganizations = res;
+            console.log('Org: ',  this.organizations)
+          });
+  }
+
 
     async getPageOrg() {
         await this.contactService.countOrg(this.valueSearchOrg, this.userId).subscribe((res: any) => {
