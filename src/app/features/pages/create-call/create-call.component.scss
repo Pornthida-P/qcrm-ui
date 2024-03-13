@@ -1,77 +1,86 @@
 .mg-bt {
-  margin-bottom: 1%;
+    margin-bottom: 1%;
 }
 .mg-bt-0 {
-  margin-bottom: 0%;
+    margin-bottom: 0%;
 }
 .mg-3 {
-  margin: 0 3% 3% 3%;
+    margin: 0 3% 3% 3%;
 }
 .dp-hidden {
-  width: 0;
-  margin: 0;
-  border: none;
-  padding: 0;
+    width: 0;
+    margin: 0;
+    border: none;
+    padding: 0;
 }
 .custom-day {
-  text-align: center;
-  padding: 0.185rem 0.25rem;
-  display: inline-block;
-  height: 2rem;
-  width: 2rem;
+    text-align: center;
+    padding: 0.185rem 0.25rem;
+    display: inline-block;
+    height: 2rem;
+    width: 2rem;
 }
 .custom-day.focused {
-  background-color: #e6e6e6;
+    background-color: #e6e6e6;
 }
 .custom-day.range,
 .custom-day:hover {
-  background-color: rgb(2, 117, 216);
-  color: white;
+    background-color: rgb(2, 117, 216);
+    color: white;
 }
 .custom-day.faded {
-  background-color: rgba(2, 117, 216, 0.5);
+    background-color: rgba(2, 117, 216, 0.5);
 }
 .date-pik {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
 }
 .date-time {
-  margin-right: 7%;
+    margin-right: 7%;
 }
 .input-group-text {
-  padding: 0;
-  max-width: 38px !important;
-  max-height: 38px !important;
-  margin-right: 10px;
+    padding: 0;
+    max-width: 38px !important;
+    max-height: 38px !important;
+    margin-right: 10px;
 }
 ::ng-deep {
-  .mdc-icon-button {
-      padding: 6px !important;
-      max-width: 38px !important;
-      max-height: 38px !important;
-      margin: auto;
-  }
+    .mdc-icon-button {
+        padding: 6px !important;
+        max-width: 38px !important;
+        max-height: 38px !important;
+        margin: auto;
+    }
 }
 .pd-l-50 {
- padding-left: 50px;
+    padding-left: 50px;
 }
 .mg-b {
-  margin-bottom: 3px;
+    margin-bottom: 3px;
 }
 .div-form-check {
-  display: flex;
+    display: flex;
 }
 .form-input-file {
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
 }
 .form-check {
-  margin-right: 12px;
+    margin-right: 12px;
 }
 ::ng-deep .chevron .ngb-tp-chevron {
-  display: none !important;
+    display: none !important;
 }
 ::ng-deep .date-pik .btn-link {
-  display: none !important;
+    display: none !important;
+}
+.search-contact {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
+}
+.btn-search-contact {
+  width: 20%;
 }

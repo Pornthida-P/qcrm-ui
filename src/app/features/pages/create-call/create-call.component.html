@@ -164,12 +164,12 @@
                         <div class="p-5 shadow call-side-detail" *ngIf="searchContactShowing">
                             <div>
                                 <h4>เลือกผู้ติดต่อ</h4>
-                                <div class="row">
+                                <div class="row search-contact">
                                     <div class="col-md-9">
                                         <input
                                             id="table-complete-search"
                                             type="text"
-                                            class="form-control border border-start-0 shadow-none"
+                                            class="form-control border shadow-none"
                                             name="searchContact"
                                             [(ngModel)]="valuesearchContact"
                                             placeholder="ค้นหา..."
@@ -178,6 +178,7 @@
                                             (change)="searchContact()"
                                         />
                                     </div>
+                                    <button type="button" class="btn btn-primary btn-search-contact" (click)="searchContact()">ค้นหา</button>
                                 </div>
                             </div>
                         </div>
@@ -203,7 +204,7 @@
                                     <tbody>
                                         <ng-container>
                                             <tr *ngFor="let contact of contacts; let i = index">
-                                                <td scope="row">{{ contact.firstName }} {{ contact.lastName }}</td>
+                                                <td scope="row">{{ contact.name }}</td>
                                                 <td scope="row">{{ contact.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
                                                 <td scope="row">
                                                     <button
