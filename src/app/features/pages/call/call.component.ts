@@ -167,13 +167,6 @@ export class CallComponent implements OnInit {
         if (this.itemIdex == this.calls.length - 1 && this.currentPage == this.totalPages) this.visibleRightSideBar = false;
     }
 
-    // editPage(item: any) {
-    //     console.log('go to editpage');
-    //     console.log(item);
-    //     const cb = `${this.pageSize},${this.currentPage},${this.totalItems},${this.totalPages}`;
-    //     this.router.navigate(['/'], { queryParams: { itemId: item.activityTopicId, cb: cb } });
-    // }
-
     editPage() {
         this.router.navigate(['/call/edit']);
     }
@@ -250,36 +243,6 @@ export class CallComponent implements OnInit {
         });
     }
 
-    // deleteCall(id: string) {
-    //   Swal.fire({
-    //     icon: 'warning',
-    //     title: 'Do you want to delete this call ?',
-    //     showCancelButton: true,
-    //     confirmButtonColor: '#3066be',
-    //     cancelButtonColor: '#ec5365',
-    //     width: '50%',
-    // }).then((result) => {
-    //     if (result.isConfirmed) {
-    //         const data = {
-    //             body: [id],
-    //         };
-    //         this.callService
-    //             .deleteCalls(data)
-    //             .pipe(
-    //                 tap((res) => {
-    //                     this.sweetAlertService.getSwal('success', 'Delete data success.', '', false, '');
-    //                     window.location.reload();
-    //                 }),
-    //                 catchError((error) => {
-    //                     this.sweetAlertService.handleError(error);
-    //                     throw error;
-    //                 }),
-    //             )
-    //             .subscribe();
-    //     }
-    // });
-    // }
-
     exportExcel() {
         if (this.selectValue.length != 0) {
             this.selectedCalls = this.calls.filter((calls: any) => this.selectValue.includes(calls.call_id));
@@ -314,8 +277,6 @@ export class CallComponent implements OnInit {
             XLSX.writeFile(wb, `ประวัติการโทร${this.fileType}`);
         }
     }
-
-    deleteSelectForm() {}
 
     selectCheckbox(callId: number): void {
         if (this.selectValue.includes(callId)) {
