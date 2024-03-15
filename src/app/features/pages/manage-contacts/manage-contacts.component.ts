@@ -1,16 +1,21 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { FormioComponent } from '@formio/angular';
+import { FormGroup, FormControl } from '@angular/forms';
 import { ContactsService } from 'src/app/services/contacts/contacts.service';
 import { faArrowLeft, faArrowRight, faPenToSquare, faTrashCan, faCircleXmark, faEye, faClipboard } from '@fortawesome/free-solid-svg-icons';
 import { catchError, tap } from 'rxjs';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { SurveyFormService } from 'src/app/services/survey-form/survey-form.service';
+import { CallService } from 'src/app/services/call/call.service';
 import { SurveyService } from 'src/app/services/survey/survey.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { config } from 'src/app/config/config';
+import { AttachmentService } from 'src/app/services/attachment/attachment.service';
+import { Attachment } from 'src/app/shared/interface/attachment.interface';
 import Swal from 'sweetalert2';
 import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
+import * as moment from 'moment';
 
 @Component({
     selector: 'app-manage-contacts',
@@ -48,6 +53,7 @@ export class ManageContactsComponent implements OnInit {
     SearchFormShowing: boolean = true;
     SearchOrgShowing: boolean = false;
     AddOrgShowing: boolean = false;
+    AddCallShowing: boolean = false;
     submitButtonShowing: boolean = true;
     SearchButton: boolean = true;
     emptyItem: String = 'ว่าง';
@@ -60,6 +66,35 @@ export class ManageContactsComponent implements OnInit {
     checkedValues: string[] = [];
     checkedValueOrgs: string[] = [];
     formData: any = {};
+
+    selectedTopics: any;
+    casetopics: any[] = [];
+    casesubjects: any[] = [];
+    selectedCasesubject: any;
+    selectedCaseTopics: any[] = [];
+    selectedChannels: any;
+    channels: any;
+    isEmailSubscribed: number = 0;
+    activitiestype: any;
+    solutions: string = '';
+    description: string = '';
+    combinedDateTimeStart: string = '';
+    combinedDateTimeEnd: string = '';
+    timepickStart: any;
+    activityTypeId: any;
+    newDateTime: any;
+    startTime: string = '';
+    myForm: FormGroup | any; 
+
+    timepickEnd = true;
+    meridian = true;
+    seconds = true;
+    seconds1 = true;
+
+    files: File[] = [];
+    fileNames: any;
+    attachments: Attachment[] = [];
+    attachmentsId: string[] | undefined;
 
     organizations!: any;
     spareorganizations!: any;
@@ -129,6 +164,8 @@ export class ManageContactsComponent implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private auditLogService: AuditLogService,
+        private attachmentService: AttachmentService,
+        private callServive: CallService,
     ) {
         this.contact = { components: [] };
     }
@@ -327,6 +364,7 @@ export class ManageContactsComponent implements OnInit {
         this.SearchOrgShowing = false;
         this.thanks = false;
         this.AddOrgShowing = false;
+        this.AddCallShowing = false;
     }
 
     deleteSurvey(surveyId: string) {
@@ -502,6 +540,7 @@ export class ManageContactsComponent implements OnInit {
             this.SearchOrgShowing = false;
             this.readOnlyForm = false;
             this.AddOrgShowing = false;
+            this.AddCallShowing = false;
             if (this.existing == false) {
                 this.surveyFormService.getSurveyFormById(formId).subscribe((res) => {
                     this.surveyForm = res;
@@ -523,6 +562,7 @@ export class ManageContactsComponent implements OnInit {
         this.thanks = false;
         this.readOnlyForm = true;
         this.AddOrgShowing = false;
+        this.AddCallShowing = false;
         // Get the survey form by ID
         this.surveyFormService.getSurveyFormById(formId).subscribe((res) => {
             this.surveyForm = res;
@@ -547,6 +587,7 @@ export class ManageContactsComponent implements OnInit {
         this.thanks = false;
         this.SearchOrgShowing = true;
         this.AddOrgShowing = false;
+        this.AddCallShowing = false;
     }
 
     searchOrg() {
@@ -629,6 +670,7 @@ export class ManageContactsComponent implements OnInit {
         this.SearchFormShowing = false;
         this.thanks = false;
         this.SearchOrgShowing = false;
+        this.AddCallShowing = false;
         this.contactsService.getAllIndustryType().subscribe((res: any) => {
             this.industryType = res;
         });
@@ -664,5 +706,138 @@ export class ManageContactsComponent implements OnInit {
         } else {
             this.sweetalertServices.getSwal('error', 'organization name cannot be empty.', '', false, '');
         }
+    }
+
+    formatTimepickStart() {
+        const startTimepick = new Date(this.timepickStart);
+        const formatTimepickStart = startTimepick.toISOString();
+        this.combinedDateTimeStart = formatTimepickStart;
+    }
+
+    formatDate(date: Date): string {
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    onTimepickStartChange(event: any) {
+        if (event) {
+            const hour = event.hour;
+            const minute = event.minute;
+            const second = event.second;
+
+            const formattedTimeStartPick = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:${second
+                .toString()
+                .padStart(2, '0')}`;
+
+            this.newDateTime = `${this.formatDate(new Date(this.startTime))} ${formattedTimeStartPick}`;
+            console.log('New combined date and time: ', this.newDateTime);
+        }
+    }
+
+    toggleEmailSubscription(event: any) {
+        this.isEmailSubscribed = event.target.checked ? 1 : 0;
+        console.log('email:', this.isEmailSubscribed);
+    }
+
+    onCheckboxChange(event: any, activityTypeId: number) {
+        if (event.target.checked) {
+            this.activityTypeId = activityTypeId;
+        }
+    }
+
+    showAddCall() {
+        this.AddOrgShowing = false;
+        this.FormShowing = false;
+        this.SearchFormShowing = false;
+        this.thanks = false;
+        this.SearchOrgShowing = false;
+        this.AddCallShowing = true;
+
+        this.callServive.getCaseTopic().subscribe((casetopics: any) => {
+            this.casetopics = casetopics;
+        });
+    
+        this.callServive.getActivitiesType().subscribe((activitiestype: any) => {
+            this.activitiestype = activitiestype;
+        });
+    
+        this.callServive.getAllCaseSubjects().subscribe((casesubjects: any) => {
+            this.casesubjects = casesubjects;
+        });
+    
+        this.callServive.getAllChannels().subscribe((channels: any) => {
+            this.channels = channels;
+        });
+    }
+
+    onFileSelected(event: any) {
+        const files = event.target.files;
+        const createdAt = moment().format('YYYY-MM-DD HH:mm:ss');
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const filename = file.name;
+
+            this.attachmentService
+                .upload(file, filename, createdAt, this.userData?.userId || '')
+                .pipe(
+                    tap((response: any) => {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'อัพโหลดข้อมูลเรียบร้อยแล้ว',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            timerProgressBar: true,
+                        }).then(() => {});
+                        this.attachments.push(response);
+                    }),
+                    catchError((error) => {
+                        this.sweetalertServices.handleError(error);
+                        throw error;
+                    }),
+                )
+                .subscribe(() => {});
+        }
+    }
+
+    submitCall() {
+        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        this.attachmentsId = this.attachments.map((attachment) => attachment.attachmentId.toString());
+        console.log('Id File: ', this.attachmentsId);
+        if (this.selectedCaseTopics.length > 0) {
+            const data = {
+                contactId: this.contactId,
+                name: userData.userId,
+                organization: this.contactOrg,
+                caseTopicId: this.selectedCaseTopics,
+                caseSubject: this.selectedCasesubject,
+                channel: this.selectedChannels,
+                emailInfo: this.isEmailSubscribed ? 1 : null,
+                activityType: this.activityTypeId,
+                description: this.description,
+                startTime: this.newDateTime,
+                solution: this.solutions,
+                createdById: userData.userId,
+                attachment: this.attachmentsId,
+            };
+            console.log('Data: ', data);
+            this.callServive
+                .createCalls(data)
+                .pipe(
+                    tap((res) => {
+                        this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
+                        window.location.reload();
+                    }),
+                    catchError((error) => {
+                        this.sweetalertServices.handleError(error);
+                        throw error;
+                    }),
+                )
+                .subscribe();
+        } else {
+            this.sweetalertServices.getSwal('error', 'โปรดกรอกหัวข้อที่ติดต่อ', '', false, '');
+        }    
     }
 }

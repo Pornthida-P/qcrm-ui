@@ -164,7 +164,13 @@
         </div>
 
         <div class="flex flex-column" *ngIf="TableShowing">
-            <p class="mb-3 fs-5" style="margin-top: 5%;">ข้อมูลการติดต่อ</p>
+            <div class="d-flex align-items-center" style="margin-top: 5%;">
+                <p class="mb-3 fs-5" >ข้อมูลการติดต่อ</p>
+                <button class="btn btn-primary ms-2" style="margin-top: -14px;" (click)="showAddCall()"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasRight"
+                aria-controls="offcanvasRight"><i class="fa-solid fa-plus"></i></button>
+            </div>
             <div class="h-100">
 
                     <div class="table-responsive">
@@ -173,7 +179,7 @@
                                 <tr>
                                     <th style="width: 20%">เวลา</th>
                                     <th style="width: 20%">เบอร์โทร</th>
-                                    <th style="width: 20%">ประเภทสาย</th>
+                                    <th style="width: 20%">ช่องทางการติดต่อ</th>
                                     <th style="width: 20%">เรื่องที่ติดต่อ</th>
                                     <th style="width: 20%">ผู้ติดต่อ</th>
                                 </tr>
@@ -181,9 +187,9 @@
                             <tbody>
                                 <ng-container *ngIf="contactCall && contactCall.length > 0; else noDataTemplate">
                                     <tr *ngFor="let call of contactCall">
-                                        <td>{{ (call.createdAt | date : 'dd/MM/yyyy  HH:mm')}}</td>
-                                        <td>{{ call.name }}</td>
-                                        <td>{{ call.direction }}</td>
+                                        <td>{{ (call.startTime | date : 'dd/MM/yyyy  HH:mm')}}</td>
+                                        <td>{{ call.contactNumber }}</td>
+                                        <td>{{ call.channelName }}</td>
                                         <td>{{ call.caseTopicName }}</td>
                                         <td>{{ call.fullname }}</td>
                                     </tr>
@@ -452,6 +458,7 @@
                     </ul>
                     <button type="button" (click)="showSideBarOrg()" class="btn btn-outline-danger" style="margin-bottom: 5%;" *ngIf="AddOrgShowing">ย้อนกลับ</button>
                     <div class="flex flex-column" *ngIf="AddOrgShowing">
+                        <h4>เพิ่มร้านค้า/บริษัท</h4>
                         <form class="mb-3 p-2" style="width: 102.5%; margin-left: -1.5%; margin-bottom: 0%;">
                             <label for="inputOrgName" class="form-label">ชื่อ</label>
                             <div class="input-group">
@@ -510,8 +517,132 @@
                             </div>
                         </div>
                     </div>
+                    <div class="flex flex-column" *ngIf="AddCallShowing">
+                        <h4>เพิ่มข้อมูลการติดต่อ</h4>
+                        <form class="row g-3 mg-3">            
+                            <div class="col-md-6">
+                                <label for="inputTopic" class="form-label">หัวข้อที่ติดต่อ<span class="color-red">*</span></label>
+                                <ng-select id="inputTopic" [(ngModel)]="selectedCaseTopics" name="selectedCaseTopics" [multiple]="true">
+                                  <ng-option *ngFor="let casetopic of casetopics" [value]="casetopic.caseTopicId">{{casetopic.name}}</ng-option>
+                               </ng-select>
+                            </div>
+            
+                            <div class="col-md-6">
+                                <label for="inputCaseSubject" class="form-label">เรื่องที่ติดต่อ</label>
+                                <ng-select id="inputCaseSubject" [(ngModel)]="selectedCasesubject" name="selectedCasesubject" [multiple]="true">
+                                  <ng-option *ngFor="let casesubject of casesubjects" [value]="casesubject.caseSubjectId">{{casesubject.name}}</ng-option>
+                               </ng-select>
+                            </div>
+            
+                            <div class="col-6">
+                                <label for="inputChannel" class="form-label">ช่องทางติดต่อ</label>
+                                <select id="inputChannel" class="form-select" name="selectedChannels" [(ngModel)]="selectedChannels">
+                                    <option disabled value="">กรุณาเลือกข้อมูล</option>
+                                    <option *ngFor="let channel of channels" [value]="channel.channelId">{{ channel.name }}</option>
+                                </select>
+                                <div class="form-check" style="margin-top: 17px;">
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        value="1"
+                                        id="flexCheckChecked"
+                                        [checked]="isEmailSubscribed === 1"
+                                        (change)="toggleEmailSubscription($event)"
+                                    />
+                                    <label class="form-check-label" for="flexCheckChecked"> รับข้อมูลทางอีเมล </label>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="inputAddress" class="form-label">กรุณาเลือกวันที่</label>
+                                <div class="date-pik">
+                                    <div class="col-auto">
+                                        <div class="input-group start-date">
+                                            <input
+                                                matInput
+                                                [matDatepicker]="picker1"
+                                                name="startTime"
+                                                [(ngModel)]="startTime"
+                                                required
+                                                class="input-date form-control"
+                                            />
+                                            <span class="input-group-text">
+                                                <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                                                <mat-datepicker #picker1></mat-datepicker>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <ngb-timepicker
+                                        name="timepickStart"
+                                        [(ngModel)]="timepickStart"
+                                        [seconds]="seconds"
+                                        [ngModelOptions]="{ standalone: true }"
+                                        (dateInput)="(formatTimepickStart)"
+                                        class="tpk"
+                                        (ngModelChange)="onTimepickStartChange($event)"
+                                    ></ngb-timepicker>
+                                </div>
+                            </div>
+                            
+                            <div class="col-6">
+                                <p class="mg-b">ประเภทกิจกรรม</p>
+                                <div class="div-form-check pd-l-50">
+                                    <div *ngFor="let activityType of activitiestype" class="form-check">
+                                        <input
+                                            class="form-check-input"
+                                            type="checkbox"
+                                            [value]="activityType.activityTypeId"
+                                            id="{{ activityType.activityTypeId }}"
+                                            (change)="onCheckboxChange($event, activityType.activityTypeId)"
+                                        />
+                                        <label class="form-check-label" [for]="activityType.activityTypeId">{{ activityType.name }}</label>
+                                    </div>
+                                </div>
+                            </div>
+            
+                            <div class="col-12">
+                                <label class="form-check-label" for="gridCheck"> รายละเอียด </label>
+                                <textarea
+                                    class="form-control"
+                                    placeholder="กรุณากรอกข้อมูล"
+                                    id="floatingTextarea"
+                                    name="description"
+                                    [(ngModel)]="description"
+                                ></textarea>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-check-label" for="gridCheck"> แนวทางการแก้ไข </label>
+                                <textarea
+                                    class="form-control"
+                                    placeholder="กรุณากรอกข้อมูล"
+                                    id="floatingTextarea"
+                                    name="solutions"
+                                    [(ngModel)]="solutions"
+                                ></textarea>
+                            </div>
+                            <div class="col-6">
+                                <label for="formFileSm" class="form-label">ไฟล์แนบ</label>
+                                <div class="mb-3">
+                                    <div class="form-input-file">
+                                        <input
+                                         class="form-control form-control-sm"
+                                         id="formFileSm"
+                                         type="file"
+                                         multiple
+                                         (change)="onFileSelected($event)"
+                                         />
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                            <div class="col-md-3">
+                                <button class="btn btn-primary" type="button" (click)="submitCall()" style="height: 38px; margin-top: 20%;">
+                                    บันทึก
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>

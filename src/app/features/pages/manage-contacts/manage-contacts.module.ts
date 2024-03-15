@@ -6,6 +6,11 @@ import { Formio, FormioModule } from '@formio/angular';
 import bootstrap4 from '@formio/bootstrap/bootstrap4';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { ContactsService } from 'src/app/services/contacts/contacts.service';
 
 (Formio as any).use(bootstrap4);
@@ -24,7 +29,12 @@ import { ContactsService } from 'src/app/services/contacts/contacts.service';
         ]),
         FontAwesomeModule,
         FormsModule,
+        MatInputModule,
+        NgbTimepickerModule,
         ReactiveFormsModule,
+        MatFormFieldModule,
+        MatDatepickerModule,
+        NgSelectModule
     ],
     providers: [ContactsService, DecimalPipe],
 })

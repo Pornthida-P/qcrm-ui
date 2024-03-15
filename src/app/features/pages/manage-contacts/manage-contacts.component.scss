@@ -14,15 +14,107 @@ label:has(+ input:required):after {
 
 .mg-bt {
     margin-bottom: 1%;
-  }
-  .mg-bt-0 {
+}
+.mg-bt-0 {
     margin-bottom: 0%;
-  }
-  .mg-3 {
+}
+.mg-3 {
     margin: 0 3% 3% 3%;
-  }
+}
 
 .disabled {
     pointer-events: none;
     opacity: 0.5;
+}
+
+.dp-hidden {
+    width: 0;
+    margin: 0;
+    border: none;
+    padding: 0;
+}
+.custom-day {
+    text-align: center;
+    padding: 0.185rem 0.25rem;
+    display: inline-block;
+    height: 2rem;
+    width: 2rem;
+}
+.custom-day.focused {
+    background-color: #e6e6e6;
+}
+.custom-day.range,
+.custom-day:hover {
+    background-color: rgb(2, 117, 216);
+    color: white;
+}
+.custom-day.faded {
+    background-color: rgba(2, 117, 216, 0.5);
+}
+.date-pik {
+    // display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+.date-time {
+    margin-right: 7%;
+}
+.input-group-text {
+    padding: 0;
+    max-width: 38px !important;
+    max-height: 38px !important;
+    margin-right: 10px;
+}
+::ng-deep {
+    .mdc-icon-button {
+        padding: 6px !important;
+        max-width: 38px !important;
+        max-height: 38px !important;
+        margin: auto;
+    }
+}
+.pd-l-50 {
+    padding-left: 50px;
+}
+.mg-b {
+    margin-bottom: 3px;
+}
+.div-form-check {
+    display: flex;
+    margin-left: -18%;
+}
+.form-input-file {
+    display: flex;
+    align-items: center;
+}
+
+.form-check {
+    margin-top: 5px;
+    margin-right: 12px;
+    width:100%;
+}
+
+::ng-deep .chevron .ngb-tp-chevron {
+    display: none !important;
+}
+::ng-deep .date-pik .btn-link {
+    display: none ;
+}
+
+::ng-deep .tpk {
+    margin-left: 100px;
+}
+
+::ng-deep .cdk-overlay-container {
+    z-index: 2000;
+}
+
+.search-contact {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
+}
+.btn-search-contact {
+    width: 20%;
 }
