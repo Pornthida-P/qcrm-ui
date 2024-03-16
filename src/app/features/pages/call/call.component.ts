@@ -29,42 +29,6 @@ export class SearchPipe implements PipeTransform {
         }
     }
 }
-
-// search ทีละ field
-// export class SearchPipe implements PipeTransform {
-//   transform(value: any, args: any, filter: any): any {
-//       if (value) {
-//           return value.filter((val: Call) => {
-//               switch (filter) {
-//                   case 'all':
-//                       if (!args) return true;
-//                       else return val.mobilePhone.toLocaleLowerCase().includes(args)
-//                           || val.agent.toLocaleLowerCase().includes(args)
-//                           || val.solutions.toLocaleLowerCase().includes(args)
-//                           || val.detail.toLocaleLowerCase().includes(args)
-//                           || val.subject.toLocaleLowerCase().includes(args)
-//                           || val.typePhone.toLocaleLowerCase().includes(args)
-//                           || val.time.toLocaleLowerCase().includes(args);
-//                   default:
-//                       if (!args) return val.agent.toLocaleLowerCase().includes(filter)
-//                           || val.solutions.toLocaleLowerCase().includes(filter)
-//                           || val.detail.toLocaleLowerCase().includes(filter)
-//                           || val.subject.toLocaleLowerCase().includes(filter)
-//                           || val.typePhone.toLocaleLowerCase().includes(filter)
-//                           || val.time.toLocaleLowerCase().includes(filter);
-//                       else return val.agent.toLocaleLowerCase().includes(filter)
-//                           && val.mobilePhone.toLocaleLowerCase().includes(args)
-//                           && val.solutions.toLocaleLowerCase().includes(filter)
-//                           && val.detail.toLocaleLowerCase().includes(filter)
-//                           && val.subject.toLocaleLowerCase().includes(filter)
-//                           && val.typePhone.toLocaleLowerCase().includes(filter)
-//                           && val.time.toLocaleLowerCase().includes(filter);
-//               }
-//           });
-//       }
-//   }
-// }
-
 @Component({
     selector: 'app-call',
     templateUrl: './call.component.html',
@@ -101,10 +65,13 @@ export class CallComponent implements OnInit {
 
     valueSearch!: string;
 
-    userData: any;
+    userId: string = '';
 
-    sortId: string = '-';
-    sortOrder: string = 'ASC';
+    userData: any = JSON.parse(localStorage.getItem('userData') || '{}');
+    userRole: string = '';
+
+    sortId: string = 'createdAt';
+    sortOrder: string = 'DESC';
     sortIcon: string = '';
     checkedValues: any;
     selectValue: number[] = [];
@@ -122,7 +89,7 @@ export class CallComponent implements OnInit {
 
     ngOnInit() {
         this.getUserData();
-
+        this.userRole = this.userData.role.roleTitle.toLocaleLowerCase();
         this.filterOption = [
             { name: 'ทั้งหมด', code: 'all' },
             { name: 'Only My', code: this.userData.username },
@@ -137,15 +104,22 @@ export class CallComponent implements OnInit {
                 this.totalPages = cbArray[3];
             }
         });
+
         this.selectedFilter = this.filterOption[0].code;
+        if (this.selectedFilter !== 'all') {
+            this.userId = this.userData.userId;
+        }
+      
         this.getCallsData((this.currentPage - 1) * this.pageSize, this.pageSize);
         this.getPage();
     }
 
     async getCallsData(page: number, pageSize: number) {
-        await this.callService.getCallsPage(page, pageSize, `${this.sortId},${this.sortOrder}`).subscribe((res: any) => {
-            this.calls = Object.values(res);
-        });
+        await this.callService
+            .getCallsPage(page, pageSize, `${this.sortId},${this.sortOrder}`, this.valueSearch, this.selectedFilter)
+            .subscribe((res: any) => {
+                this.calls = res;
+            });
     }
 
     async getCallsSide(page: number, pageSize: number, value: string) {
@@ -171,16 +145,6 @@ export class CallComponent implements OnInit {
         this.router.navigate(['/call/edit']);
     }
 
-    async pageChange(page: number) {
-        console.log(`${this.pageSize},${this.currentPage},${this.totalItems},${this.totalPages}`);
-        if (page != this.currentPage) {
-            if (page >= 1 && page <= this.totalPages) {
-                this.currentPage = page;
-                await this.getCallsData((this.currentPage - 1) * this.pageSize, this.pageSize);
-            }
-        }
-    }
-
     get pages(): number[] {
         var page: number[] = [];
         this.totalPages = Math.ceil(this.totalItems / this.pageSize);
@@ -190,6 +154,16 @@ export class CallComponent implements OnInit {
             }
         }
         return page;
+    }
+
+    async pageChange(page: number) {
+        if (page != this.currentPage) {
+            if (page >= 1 && page <= this.totalPages) {
+                this.currentPage = page;
+                await this.getCallsData((this.currentPage - 1) * this.pageSize, this.pageSize);
+                this.checkedValues = [];
+            }
+        }
     }
 
     pageSizeChange() {
@@ -222,15 +196,36 @@ export class CallComponent implements OnInit {
         }
     }
 
-    getPage() {
-        this.callService.getCallsCount().subscribe((res: any) => {
+    async getPage() {
+        await this.callService.getCallsCount(this.valueSearch, this.userId).subscribe((res: any) => {
             this.totalItems = res.count;
         });
     }
 
     search() {
-        this.calls.filter((item: any) => item.mobilePhone.toLowerCase().includes(this.valueSearch.toLowerCase()));
+        if (this.selectedFilter !== 'all') {
+            this.userId = this.userData.userId;
+        } else {
+            this.userId = '';
+        }
+        this.getCallsData((this.currentPage - 1) * this.pageSize, this.pageSize);
+        this.getPage();
     }
+
+    sort(value: string) {
+      if (this.sortId == value) {
+          if (this.sortIcon == 'fa-solid fa-sort-down') {
+              this.sortIcon = 'fa-solid fa-sort-up';
+              this.sortOrder = 'DESC';
+          } else {
+              this.sortIcon = 'fa-solid fa-sort-down';
+              this.sortOrder = 'ASC';
+          }
+      } else {
+          this.sortId = value;
+      }
+      this.getCallsData((this.currentPage - 1) * this.pageSize, this.pageSize);
+  }
 
     createCall() {
         this.router.navigate(['/call/create']);
