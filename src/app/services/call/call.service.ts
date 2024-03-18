@@ -15,13 +15,24 @@ export class CallService {
         return this.http.get(`${this.baseUrl}${config.api.path.call.url}/${page}/${limit}`);
     }
 
-    getCallsPage(page: number, limit: number, sortId: string) {
-        return this.http.get(`${this.baseUrl}${config.api.path.call.url}/${page}/${limit}/${sortId}`);
+  getCallsPage(page: number, limit: number, sortId: string, searchText: string, createdBy: string) {
+    if (searchText == '' || searchText == null) {
+      searchText = 'undefined';
+  }
+        return this.http.get(`${this.baseUrl}${config.api.path.call.url}/${page}/${limit}/${sortId}/${searchText}/${createdBy}`);
     }
 
-    getCallsCount() {
-        return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.count}`);
-    }
+    getCallsCount(searchText: string, createdById: string) {
+      if (searchText == '' || searchText == null) {
+          searchText = 'undefined';
+      }
+      if (createdById == '' || createdById == null) {
+          createdById = 'undefined';
+      }
+      return this.http.get(
+          `${this.baseUrl}${config.api.path.call.url}${config.api.path.call.count}/${searchText}/${createdById}`,
+      );
+  }
 
     getCaseTopic() {
         return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.caseTopic}`);
@@ -65,15 +76,13 @@ export class CallService {
     }
 
     countContact(searchText: string, createdById: string) {
-      if (searchText == '' || searchText == null) {
-          searchText = 'undefined';
-      }
-      if (createdById == '' || createdById == null) {
-          createdById = 'undefined';
-      }
-      return this.http.get(
-          `${this.baseUrl}${config.api.path.call.url}${config.api.path.call.countcontact}${searchText}/${createdById}`,
-      );
-  }
+        if (searchText == '' || searchText == null) {
+            searchText = 'undefined';
+        }
+        if (createdById == '' || createdById == null) {
+            createdById = 'undefined';
+        }
+        return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.countcontact}${searchText}/${createdById}`);
+    }
 
 }
