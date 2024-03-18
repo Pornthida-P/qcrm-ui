@@ -21,7 +21,6 @@ export function HttpLoaderFactory(http: HttpClient) {
         FontAwesomeModule,
         MatDatepickerModule,
         MatInputModule,
-        MatDatepickerModule,
         ReactiveFormsModule,
         FormsModule,
         NgbTooltipModule,

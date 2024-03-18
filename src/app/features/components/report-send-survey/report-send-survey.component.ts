@@ -1,20 +1,21 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReportService } from 'src/app/services/report/report.service';
 import * as moment from 'moment';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { faFileExport, faGear } from '@fortawesome/free-solid-svg-icons';
 import * as XLSX from 'xlsx';
-import { config } from 'src/app/config/config';
 import { report } from 'src/app/config/report';
+import { config } from 'src/app/config/config';
 
 @Component({
-    selector: 'app-report-channel-by-agent',
-    templateUrl: './report-channel-by-agent.component.html',
-    styleUrl: './report-channel-by-agent.component.scss',
+    selector: 'app-report-send-survey',
+    templateUrl: './report-send-survey.component.html',
+    styleUrl: './report-send-survey.component.scss',
 })
-export class ReportChannelByAgentComponent implements OnInit {
+export class ReportSendSurveyComponent {
     reportTable!: any;
     datePick: FormGroup = new FormGroup({});
+    selectedItems: string[] = [];
 
     faGear = faGear;
     faFileExport = faFileExport;
@@ -22,21 +23,50 @@ export class ReportChannelByAgentComponent implements OnInit {
     columnVisibility: { [key: string]: boolean } = {};
     displayedColumnsTemp: any = null;
 
-    columnName: any = report.channel;
+    columnName: any = report.survey;
     fileType: string = config.file.type;
 
     constructor(private reportService: ReportService, private fb: FormBuilder) {}
 
-    ngOnInit(): void {
+    ngOnInit() {
         const currentDate = new Date();
         const firstDayOfYear = new Date(currentDate.getFullYear(), 0, 1);
         const firstDayOfYearFormat = moment(firstDayOfYear).format('YYYY-MM-DD');
         const currentDateFormat = moment(new Date()).format('YYYY-MM-DD');
+        this.getReport(firstDayOfYearFormat, currentDateFormat);
         this.datePick = this.fb.group({
             startDate: [firstDayOfYearFormat, Validators.required],
             endDate: [currentDate, Validators.required],
         });
-        this.getReport(firstDayOfYearFormat, currentDateFormat);
+    }
+
+    async getReport(startDate: string, endDate: string) {
+        this.reportTable = [];
+        await this.reportService.getEmailSurvey(startDate, endDate).subscribe((res: any) => {
+            this.reportTable = res.value;
+            if (this.reportTable.length != 0) {
+                // this.rowTotal();
+                this.columnTotal();
+            }
+            if (!this.displayedColumnsTemp) {
+                this.setDisplayAllFields();
+            }
+            // this.filterTotal();
+        });
+    }
+
+    clickgo() {
+        const startDate = moment(this.datePick.get('startDate')!.value).format('YYYY-MM-DD');
+        const endDate = moment(this.datePick.get('endDate')!.value).format('YYYY-MM-DD');
+        this.getReport(startDate, endDate);
+    }
+
+    onStartDateChange(event: any) {
+        this.datePick.get('startDate')!.setValue(event.value);
+    }
+
+    onEndDateChange(event: any) {
+        this.datePick.get('endDate')!.setValue(event.value);
     }
 
     clickGetReport() {
@@ -71,87 +101,35 @@ export class ReportChannelByAgentComponent implements OnInit {
         }
     }
 
-    onStartDateChange(event: any) {
-        this.datePick.get('startDate')!.setValue(event.value);
-    }
-
-    onEndDateChange(event: any) {
-        this.datePick.get('endDate')!.setValue(event.value);
-    }
-
-    async getReport(startDate: string, endDate: string) {
-        this.reportTable = [];
-        await this.reportService.getChannelByAgent(startDate, endDate).subscribe((res: any) => {
-            this.reportTable = res.value;
-            if (this.reportTable.length != 0) {
-                this.rowTotal();
-                this.columnTotal();
-            }
-            if (!this.displayedColumnsTemp) {
-                this.setDisplayAllFields();
-            }
-            this.filterTotal();
-        });
-    }
-
-    rowTotal() {
-        const totals: Record<string, number> = {};
-        for (const row of this.reportTable) {
-            if (!totals[row.username]) {
-                totals[row.username] = 0;
-            }
-            totals[row.username] +=
-                Number(row.HotIn) +
-                Number(row.HotOut) +
-                Number(row.MailIn) +
-                Number(row.MailOut) +
-                Number(row.Mobile) +
-                Number(row.LiveChat) +
-                Number(row.Other);
-        }
-        for (const row of this.reportTable) {
-            row['Total'] = totals[row.username];
-        }
-    }
-
-    filterTotal() {
-        const totals: Record<string, number> = {};
-        for (const row of this.reportTable) {
-            if (!totals[row.username]) {
-                totals[row.username] = 0;
-            }
-            totals[row.username] +=
-                (this.columnVisibility['HotIn'] ? Number(row.HotIn) : 0) +
-                (this.columnVisibility['HotOut'] ? Number(row.HotOut) : 0) +
-                (this.columnVisibility['MailIn'] ? Number(row.MailIn) : 0) +
-                (this.columnVisibility['MailOut'] ? Number(row.MailOut) : 0) +
-                (this.columnVisibility['Mobile'] ? Number(row.Mobile) : 0) +
-                (this.columnVisibility['LiveChat'] ? Number(row.LiveChat) : 0) +
-                (this.columnVisibility['Other'] ? Number(row.Other) : 0);
-        }
-        for (const row of this.reportTable) {
-            row['Total'] = totals[row.username];
-        }
-    }
-
     columnTotal() {
         const totals: Record<string, number> = {};
-
+        const totalSuvey = this.reportTable.length;
         for (const row of this.reportTable) {
-            Object.keys(row).forEach((column: string) => {
-                if (column !== 'username') {
-                    if (!totals[column]) {
-                        totals[column] = 0;
-                    }
+            if (row['createdDate']) {
+                const dateCreated = new Date(row['createdDate']);
+                row['createdDate'] = dateCreated.toLocaleString();
+            }
+            if (row['resendDate']) {
+                const dateResend = new Date(row['resendDate']);
+                row['resendDate'] = dateResend.toLocaleString();
+            }
 
-                    if (row[column] !== '-') {
-                        totals[column] += Number(row[column]);
+            Object.keys(row).forEach((column: string) => {
+                if (column !== 'ticketId') {
+                    if (column !== 'email' && column !== 'createdDate' && column !== 'resendDate') {
+                        if (!totals[column]) {
+                            totals[column] = 0;
+                        }
+
+                        if (row[column] !== '-') {
+                            totals[column] += Number(row[column]);
+                        }
                     }
                 }
             });
         }
 
-        const totalsRow: Record<string, number | string> = { username: 'Totals' };
+        const totalsRow: Record<string, number | string> = { ticketId: 'Totals : ' + totalSuvey };
         Object.keys(totals).forEach((column: string) => {
             totalsRow[column] = totals[column];
         });
@@ -166,8 +144,7 @@ export class ReportChannelByAgentComponent implements OnInit {
                 const processedForm: any = {};
                 Object.keys(this.columnName).forEach((column: string) => {
                     if (this.columnVisibility[column]) {
-                        if (column == 'username') processedForm[column] = cur[column];
-                        else processedForm[column] = Number(cur[column]);
+                        processedForm[column] = cur[column];
                     }
                 });
                 acc.push(processedForm);
@@ -186,7 +163,7 @@ export class ReportChannelByAgentComponent implements OnInit {
 
             XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
 
-            XLSX.writeFile(wb, `Channel-By-Agent-Report${this.fileType}`);
+            XLSX.writeFile(wb, `Survey-Send-Report${this.fileType}`);
         }
     }
 }

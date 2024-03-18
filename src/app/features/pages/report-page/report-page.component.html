@@ -27,13 +27,19 @@
                 >
                     Case detial (Full Report)
                 </button>
-
                 <button
                     class="d-flex align-items-center gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white"
                     [class.button-active]="onSelectReport === 'summary-by-month'"
                     (click)="onChangeReport('summary-by-month')"
                 >
                     Summary Report : สรุปข้อมูล by Agent เป็นรายเดือน
+                </button>
+                <button
+                    class="d-flex align-items-center gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white"
+                    [class.button-active]="onSelectReport === 'survey-send'"
+                    (click)="onChangeReport('survey-send')"
+                >
+                    Send Survey Email 
                 </button>
             </div>
         </div>

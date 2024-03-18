@@ -197,7 +197,7 @@ export class ReportCaseTypeByAgentComponent implements OnInit {
 
             XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
 
-            XLSX.writeFile(wb, `Summary-By-Month-Report${this.fileType}`);
+            XLSX.writeFile(wb, `Case-Type-By-Agent-Report${this.fileType}`);
         }
     }
 }

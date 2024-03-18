@@ -14,6 +14,8 @@ import { ReportSummaryByMonthComponent } from '../../components/report-summary-b
 import { ReportSummaryByMonthModule } from '../../components/report-summary-by-month/report-summary-by-month.module';
 import { ReportCaseDetailModule } from '../../components/report-case-detail/report-case-detail.module';
 import { ReportCaseDetailComponent } from '../../components/report-case-detail/report-case-detail.component';
+import { ReportSendSurveyComponent } from '../../components/report-send-survey/report-send-survey.component';
+import { ReportSendSurveyModule } from '../../components/report-send-survey/report-send-survey.module';
 
 @NgModule({
     declarations: [ReportPageComponent],
@@ -43,6 +45,10 @@ import { ReportCaseDetailComponent } from '../../components/report-case-detail/r
                         path: 'summary-by-month',
                         component: ReportSummaryByMonthComponent,
                     },
+                    {
+                        path: 'survey-send',
+                        component: ReportSendSurveyComponent,
+                    }
                 ],
             },
         ]),
@@ -53,6 +59,7 @@ import { ReportCaseDetailComponent } from '../../components/report-case-detail/r
         ReportCaseTypeByAgentModule,
         ReportSummaryByMonthModule,
         ReportCaseDetailModule,
+        ReportSendSurveyModule
     ],
 })
 export class ReportPageModule {}

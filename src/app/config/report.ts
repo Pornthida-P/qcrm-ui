@@ -30,6 +30,11 @@ export const report = {
         Other: 'อื่นๆ',
         Total: 'รวม',
     },
+    cases: {
+        username: 'Agent Name',
+        caseType: 'ข้อมูลทั่วไป',
+        caseSub: 'ระบบ Drive',
+    },
     topic: {
         username: 'Agent Name',
         Topic1: 'ข้อมูลทั่วไป',
@@ -41,5 +46,13 @@ export const report = {
         Topic8: 'ชมเชย',
         Topic6: 'อื่นๆ',
         Total: 'รวม ',
+    },
+    survey: {
+        ticketId: 'Contact ID',
+        resend: 'Resend',
+        status: 'Status',
+        email: 'Email',
+        createdDate: 'Send Date',
+        resendDate: 'Resend Date',
     },
 };
