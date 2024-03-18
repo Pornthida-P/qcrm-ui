@@ -226,5 +226,12 @@
         "October": "ตุลาคม",
         "November": "พฤศจิกายน",
         "December": "ธันวาคม"
+    },
+    "report": {
+        "channel-by-agent": "สถิติการให้บริการตามช่องทาง",
+        "case-type-by-agent": "สถิติการให้บริการตามประเภท",
+        "case-detail": "รายละเอียดเคส",
+        "summary-by-month": "สรุปสถิติรายเดือน",
+        "survey-send": "การส่งอีเมลแบบฟอร์ม"
     }
 }
