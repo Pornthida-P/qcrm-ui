@@ -31,9 +31,14 @@ export const report = {
         Total: 'รวม',
     },
     cases: {
-        username: 'Agent Name',
-        caseType: 'ข้อมูลทั่วไป',
-        caseSub: 'ระบบ Drive',
+        caseId: 'ID',
+        channel: 'Channel',
+        contact: 'Contact',
+        casetype: 'Topic',
+        casesub: 'Subject',
+        agent: 'Agent',
+        created: 'Created Date',
+        type: 'Type'
     },
     topic: {
         username: 'Agent Name',

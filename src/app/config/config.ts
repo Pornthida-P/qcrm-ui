@@ -89,7 +89,8 @@ export const config = {
                 channelByAgent: '/report/channelByAgent',
                 caseTypeByAgent: '/report/caseTypeByAgent',
                 summaryByMonth: '/report/summaryByMonth',
-                sendEmailSurvey: '/report/sendEmailSurvey'
+                sendEmailSurvey: '/report/sendEmailSurvey',
+                caseDetail: '/report/caseDetail'
             }
         },
     },
