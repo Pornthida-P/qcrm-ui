@@ -120,4 +120,20 @@ export class ContactsService {
     createOrg(data: any) {
         return this.http.post(`${this.baseUrl}${config.api.path.contacts.baseUrl}/organization`, data);
     }
+
+    checkEmail(data: any) {
+        return this.http.post(`${this.baseUrl}${config.api.path.contacts.baseUrl}/email`, data);
+    }
+
+    checkEmailSend(data: any) {
+        return this.http.post(`${this.baseUrl}${config.api.path.contacts.baseUrl}/email/check`, data);
+    }
+
+    getEmail(data: any) {
+        return this.http.post(`${this.baseUrl}${config.api.path.contacts.baseUrl}/email/get`, data);
+    }
+
+    sendEmail(data: any) {
+        return this.http.post(`${this.baseUrl}/email/survey`, data);
+    }
 }
