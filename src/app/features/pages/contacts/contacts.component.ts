@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { config } from 'src/app/config/config';
 import * as XLSX from 'xlsx';
 import { ContactsService } from 'src/app/services/contacts/contacts.service';
+import { SurveyFormService } from 'src/app/services/survey-form/survey-form.service';
 import { catchError, tap } from 'rxjs';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import Swal from 'sweetalert2';
@@ -20,11 +21,15 @@ export class ContactsComponent implements OnInit {
     spareContacts!: any;
     selectedContacts: any = [];
     valueSearch!: string;
+    valueSearchForm!: string;
     checkedValues: string[] = [];
+    surveyForms!: any;
+    spareSurveyForms!: any;
 
     filterOption!: any[];
     selectedFilter: any | undefined;
     selectedContact: any | undefined;
+    selectedFilterForm: any | undefined;
 
     fileType: string = config.file.type;
 
@@ -43,8 +48,18 @@ export class ContactsComponent implements OnInit {
     totalPages = 0;
     pagesToShow = 3;
 
-    visibleRightSideBar: boolean = true;
-    visibleLeftSideBar: boolean = true;
+    pageSizeOptionsForm = [5, 10, 20];
+    pageSizeForm = 5;
+    currentPageForm = 1;
+    totalItemsForm = 0;
+    totalPagesForm = 0;
+    pagesToShowForm = 3;
+
+    visibleRightSideBar: boolean = false;
+    visibleLeftSideBar: boolean = false;
+    contactShowing: boolean = false;
+    FormShowing: boolean = false;
+    sidebarShowing: boolean = false;
     detailItem: any = undefined;
     emptyItem: String = 'ว่าง';
     itemIdex: number = 0;
@@ -54,15 +69,24 @@ export class ContactsComponent implements OnInit {
     sortOrder: string = 'DESC';
     sortIcon: string = '';
 
+    sortIdForm: string = 'createdAt';
+    sortOrderForm: string = 'DESC';
+    sortIconForm: string = '';
+
     userData: any = JSON.parse(localStorage.getItem('userData') || '{}');
     userRole: string = '';
     userId: string = '';
     roleCanAccessCUDForm: string[] = config.roleCanAccessCUDForm;
     url: string = '';
 
+    invalid = 0;
+    AllEmail!: any[];
+    availableEmail: any[] = [];
+
     constructor(
         private router: Router,
         private contactsService: ContactsService,
+        private surveyFormService: SurveyFormService,
         private activeRoute: ActivatedRoute,
         private sweetalertServices: SweetAlertService,
         private clipboard: Clipboard,
@@ -88,19 +112,43 @@ export class ContactsComponent implements OnInit {
         if (this.selectedFilter !== 'all') {
             this.userId = this.userData.userId;
         }
+
+        this.selectedFilterForm = this.filterOption[0].code;
+        if (this.selectedFilterForm !== 'all') {
+            this.userId = this.userData.userId;
+        }
         this.getContacts((this.currentPage - 1) * this.pageSize, this.pageSize);
         this.getPage();
+
+        this.getForm((this.currentPageForm - 1) * this.pageSizeForm, this.pageSizeForm);
+        this.getFormPage();
     }
 
     checkRole(): boolean {
         return this.roleCanAccessCUDForm.includes(this.userRole);
     }
 
-    updateCheckedValues(contactId: string): void {
-        if (this.checkedValues.includes(contactId)) {
-            this.checkedValues = this.checkedValues.filter((id) => id !== contactId);
+    updateCheckedValues(contactId: string,Email: string): void {
+        if (Email){
+            if (this.checkedValues.includes(contactId)) {
+                this.checkedValues = this.checkedValues.filter((id) => id !== contactId);
+            } else {
+                this.checkedValues.push(contactId);
+            }
+        } else if (!Email)  {
+            if (this.checkedValues.includes(contactId)) {
+                this.checkedValues = this.checkedValues.filter((id) => id !== contactId);
+                this.invalid--;
+            } else {
+                this.checkedValues.push(contactId);
+                this.invalid++;
+            }
+        }
+
+        if (this.invalid > 0) {
+            this.sidebarShowing = false;
         } else {
-            this.checkedValues.push(contactId);
+            this.sidebarShowing = true;
         }
     }
 
@@ -109,10 +157,18 @@ export class ContactsComponent implements OnInit {
             x.state = ev.target.checked;
             if (ev.target.checked) {
                 this.checkedValues.push(x.contactId);
+                if (!x.email) this.invalid++;
             } else {
                 this.checkedValues = [];
+                this.invalid = 0;
             }
         });
+
+        if (this.invalid > 0) {
+            this.sidebarShowing = false;
+        } else {
+            this.sidebarShowing = true;
+        }
     }
 
     isAllChecked() {
@@ -183,11 +239,14 @@ export class ContactsComponent implements OnInit {
     }
 
     showSideBar(value: number, itemId: string) {
+        this.sidebarShowing = true;
         this.itemIdex = value;
         this.detailItem = this.contacts.find((contact: any) => contact.contactId == itemId);
         this.sideBarItemIndex = this.contacts.findIndex((contact: any) => contact.contactId == itemId);
         this.visibleLeftSideBar = true;
         this.visibleRightSideBar = true;
+        this.contactShowing = true;
+        this.FormShowing = false;
         if (this.itemIdex == 0 && this.currentPage == 1) this.visibleLeftSideBar = false;
         if (this.itemIdex == this.contacts.length - 1) this.visibleRightSideBar = false;
         if (this.itemIdex == this.contacts.length - 1 && this.currentPage == this.totalPages) this.visibleRightSideBar = false;
@@ -296,6 +355,53 @@ export class ContactsComponent implements OnInit {
         });
     }
 
+    sendEmailSideBar() {
+        this.contactsService.checkEmail(this.checkedValues).subscribe((res: any) => {
+            if (res.length > 0) {
+                this.sidebarShowing = false;
+                this.sweetalertServices.getSwal('warning', `ผู้ใช้ ${res} ไม่ได้ลงทะเบียนอีเมล์`, '', false, '');
+            } else {
+                this.visibleLeftSideBar = false;
+                this.visibleRightSideBar = false;
+                this.contactShowing = false;
+                this.FormShowing = true;
+            }
+        });    
+    }
+
+    async sendEmail(formID: string) {
+        await Swal.fire({
+            icon: 'question',
+            title: 'Do you want to send this survey?',
+            showCancelButton: true,
+            confirmButtonColor: '#3066be',
+            cancelButtonColor: '#ec5365',
+            width: '50%',
+        }).then(async (result) => {
+            this.availableEmail = [];
+            if (result.isConfirmed) {
+                const res: any = await this.contactsService.getEmail(this.checkedValues).toPromise();
+                this.AllEmail = res; 
+                for (const value of this.AllEmail) {
+                    const data = { email: value.email, contactId: value.contactId, formId: formID };
+                    const result: any = await this.contactsService.checkEmailSend(data).toPromise();
+                    if (result.email) {
+                        this.availableEmail.push(result);
+                    }
+                }
+                if (this.availableEmail.length > 0) {
+                    for (const value of this.availableEmail) {
+                        const data = { email: value.email, id: value.contactId, form: formID };
+                        const res: any = await this.contactsService.sendEmail(data).toPromise();
+                        console.log('res', res);
+                    } 
+                }
+                this.sweetalertServices.getSwal('success', 'Send Survey success.', '', false, '');   
+            }    
+        });
+    }
+    
+
     contactsManage() {
         this.router.navigate(['/contacts/new']);
     }
@@ -308,5 +414,71 @@ export class ContactsComponent implements OnInit {
         }
         this.getContacts((this.currentPage - 1) * this.pageSize, this.pageSize);
         this.getPage();
+    }
+
+    searchForm() {
+        if (this.selectedFilterForm !== 'all') {
+            this.userId = this.userData.userId;
+        } else {
+            this.userId = '';
+        }
+        this.getForm((this.currentPageForm - 1) * this.pageSizeForm, this.pageSizeForm);
+        this.getFormPage();
+    }
+
+    async getFormPage() {
+        await this.surveyFormService.countSurveyForm(this.valueSearchForm, this.userId).subscribe((res: any) => {
+            this.totalItemsForm = res.count;
+        });
+    }
+
+    async getForm(page: number, pageSize: number) {
+        await this.surveyFormService
+            .getSurveyFormByPage(page, pageSize, `${this.sortIdForm},${this.sortOrderForm}`, this.valueSearchForm, this.selectedFilterForm)
+            .subscribe((res: any) => {
+                console.log('res', res);
+                this.surveyForms = res;
+                this.spareSurveyForms = res;
+            });
+    }
+
+    async pageChangeForm(page: number) {
+        if (page != this.currentPageForm) {
+            if (page >= 1 && page <= this.totalPagesForm) {
+                this.currentPageForm = page;
+                await this.getForm((this.currentPageForm - 1) * this.pageSizeForm, this.pageSizeForm);
+            }
+        }
+    }
+
+    sortForm(value: string) {
+        if (this.sortIdForm == value) {
+            if (this.sortIcon == 'fa-solid fa-sort-down') {
+                this.sortIcon = 'fa-solid fa-sort-up';
+                this.sortOrder = 'DESC';
+            } else {
+                this.sortIcon = 'fa-solid fa-sort-down';
+                this.sortOrder = 'ASC';
+            }
+        } else {
+            this.sortIdForm = value;
+        }
+        this.getForm((this.currentPageForm - 1) * this.pageSizeForm, this.pageSizeForm);
+    }
+
+    pageSizeChangeForm() {
+        this.currentPageForm = 1;
+        this.getForm((this.currentPageForm - 1) * this.pageSizeForm, this.pageSizeForm);
+    }
+
+    get pagesForm(): number[] {
+        var pageForm: number[] = [];
+        this.totalPagesForm = Math.ceil(this.totalItemsForm / this.pageSizeForm);
+        for (var i = -this.pagesToShowForm; i <= this.pagesToShowForm; i++) {
+            if (this.currentPageForm + i > 0 && this.currentPageForm + i <= this.totalPagesForm) {
+                pageForm.push(this.currentPageForm + i);
+            }
+        }
+        return pageForm;
     }
 }

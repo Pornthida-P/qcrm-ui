@@ -45,11 +45,24 @@
         </div>
         <div *ngIf="checkedValues.length > 0">
             <div class="d-flex p-3 bg-body-tertiary">
+                 <button
+                    class="d-flex align-items-center d-md-none d-lg-flex rounded p-2 text-white btn btn-success"
+                    (click)="sendEmailSideBar()"
+                    placement="top"
+                    ngbTooltip="ส่งแบบฟอร์มสำรวจ"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasRight"
+                    aria-controls="offcanvasRight"
+                    scope="row"
+                >
+                    <i class="fa-solid fa-envelope"></i>
+                </button>
                 <button
                     class="d-flex align-items-center d-md-none d-lg-flex rounded p-2 text-white btn btn-danger"
                     (click)="deleteSelectcontacts()"
                     placement="top"
                     ngbTooltip="ลบ"
+                    style="margin-left: 8px;"
                 >
                     <i class="fa-solid fa-trash"></i>
                 </button>
@@ -99,7 +112,7 @@
                                         name="contacts[]"
                                         value="{{ contacts.id }}"
                                         [(ngModel)]="contacts.state"
-                                        (change)="updateCheckedValues(contacts.contactId)"
+                                        (change)="updateCheckedValues(contacts.contactId,contacts.email)"
                                     />
                                 </td>
                                 <td
@@ -172,7 +185,7 @@
                 </li>
             </ul>
 
-            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel" *ngIf="sidebarShowing">
                 <div class="offcanvas-body">
                     <div class="d-flex flex-wrap justify-content-between">
                         <div class="d-flex">
@@ -196,7 +209,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="p-5 shadow call-side-detail">
+                    <div class="p-5 shadow call-side-detail" *ngIf="contactShowing">
                         <div class="d-flex justify-content-end">
                             <div class="d-flex flex-wrap">
                                 <div
@@ -227,7 +240,24 @@
                             <h6>{{ detailItem?.fullname || emptyItem }}</h6>
                         </div>
                     </div>
-                    <div class="p-5 shadow call-side-change-by">
+                    <div class="p-5 shadow call-side-detail" *ngIf="FormShowing">
+
+                        <div>
+                            <h4>เลือกแบบฟอร์มสำรวจ</h4>
+                            <input
+                            id="table-complete-search"
+                            type="text"
+                            class="form-control border border-start-0 shadow-none"
+                            name="search"
+                            [(ngModel)]="valueSearchForm"
+                            placeholder="ค้นหา..."
+                            aria-describedby="basic-addon1"
+                            style="width: 70%"
+                            (change)="searchForm()"
+                        />
+                        </div>
+                    </div>
+                    <div class="p-5 shadow call-side-change-by" *ngIf="contactShowing">
                         <div class="row row-side">
                             <div class="col">
                                 <h5>ร้านค้า/บริษัท</h5>
@@ -245,7 +275,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="p-5 shadow call-side-change-by">
+                    <div class="p-5 shadow call-side-change-by" *ngIf="contactShowing">
                         <div class="row row-side">
                             <div class="col">
                                 <h5>สร้างโดยผู้ใช้</h5>
@@ -266,6 +296,70 @@
                                 <div>{{ (detailItem?.modified_at | date : 'dd/MM/yyyy  HH:mm') || emptyItem }}</div>
                             </div>
                         </div>
+                    </div>
+                    <div class="p-5 shadow call-side-change-by w-100 h-100 overflow-auto p-4" >
+                        <div class="table-responsive" *ngIf="FormShowing">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 70%" scope="col">
+                                            <a (click)="sort('name')">แบบฟอร์มสำรวจ </a><i *ngIf="sortIdForm == 'name'" class="{{ sortIcon }}"></i>
+                                        </th>
+                                        <th style="width: 15%" scope="col">
+                                            <a (click)="sort('createdAt')">วันที่บันทึก</a><i *ngIf="sortIdForm == 'createdAt'" class="{{ sortIcon }}"></i>
+                                        </th>
+                                        <th style="width: 15%" scope="col">
+                                            <a (click)="sort('createdById')">บันทึกโดย</a><i *ngIf="sortIdForm == 'createById'" class="{{ sortIcon }}"></i>
+                                        </th>
+    
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <ng-container *ngIf="surveyForms?.length > 0; else noDataTemplate">
+                                        <tr *ngFor="let form of surveyForms; let i = index">
+                                            <td scope="row" class="cursor-pointer w-max-ellipsis" (click)="sendEmail(form.surveyFormId)">{{ form.name }}</td>
+                                            <td scope="row">{{ form.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
+                                            <td scope="row">{{ form.createdBy }}</td>
+                                        </tr>
+                                    </ng-container>
+                                    <ng-template #noDataTemplate>
+                                        <tr>
+                                            <td colspan="4" class="text-center">ไม่มีข้อมูล</td>
+                                        </tr>
+                                    </ng-template>
+                                </tbody>
+                            </table>
+                        </div>
+                        <ul class="pagination cursor-pointer justify-content-center" *ngIf="FormShowing">
+                            <li class="page-item" [class.disabled]="currentPageForm == 1">
+                                <a class="page-link custom-link preBtn" (click)="pageChangeForm(1)" aria-label="Previous">
+                                    <i class="fa-solid fa-angles-left"></i>
+                                </a>
+                            </li>
+                            <li class="page-item" [class.disabled]="currentPageForm == 1">
+                                <a class="page-link custom-link" (click)="pageChangeForm(currentPageForm - 1)" aria-label="Previous">
+                                    <i class="fa-solid fa-angle-left"></i>
+                                </a>
+                            </li>
+                            <li *ngFor="let page of pagesForm" class="page-item" [class.active]="currentPageForm == page">
+                                <a class="page-link custom-link" (click)="pageChangeForm(page)">{{ page }}</a>
+                            </li>
+                            <li class="page-item" [class.disabled]="currentPageForm == totalPagesForm">
+                                <a class="page-link custom-link" (click)="pageChangeForm(currentPageForm + 1)" aria-label="Next">
+                                    <i class="fa-solid fa-angle-right"></i>
+                                </a>
+                            </li>
+                            <li class="page-item" [class.disabled]="currentPageForm == totalPagesForm">
+                                <a class="page-link custom-link nextBtn" (click)="pageChangeForm(totalPagesForm)" aria-label="Next">
+                                    <i class="fa-solid fa-angles-right"></i>
+                                </a>
+                            </li>
+                            <li class="page-item ms-3">
+                                <select class="form-select" aria-label="Default select example" [(ngModel)]="pageSizeForm" (change)="pageSizeChangeForm()">
+                                    <option class="dropdown-item" *ngFor="let option of pageSizeOptionsForm" [value]="option">{{ option }}</option>
+                                </select>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
