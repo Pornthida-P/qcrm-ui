@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { ReportCaseDetailComponent } from './report-case-detail.component';
+import { ReportSendSurveyComponent } from './report-send-survey.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { HttpClient } from '@angular/common/http';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -15,7 +15,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 }
 
 @NgModule({
-    declarations: [ReportCaseDetailComponent],
+    declarations: [ReportSendSurveyComponent],
     imports: [
         CommonModule,
         FontAwesomeModule,
@@ -32,6 +32,6 @@ export function HttpLoaderFactory(http: HttpClient) {
             },
         }),
     ],
-    exports: [ReportCaseDetailComponent]
+    exports: [ReportSendSurveyComponent],
 })
-export class ReportCaseDetailModule {}
+export class ReportSendSurveyModule {}

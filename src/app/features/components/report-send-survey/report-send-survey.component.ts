@@ -1,20 +1,21 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { ReportService } from 'src/app/services/report/report.service';
 import * as moment from 'moment';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { faFileExport, faGear } from '@fortawesome/free-solid-svg-icons';
 import * as XLSX from 'xlsx';
-import { config } from 'src/app/config/config';
 import { report } from 'src/app/config/report';
-import { ReportService } from 'src/app/services/report/report.service';
+import { config } from 'src/app/config/config';
 
 @Component({
-    selector: 'app-report-case-detail',
-    templateUrl: './report-case-detail.component.html',
-    styleUrl: './report-case-detail.component.scss',
+    selector: 'app-report-send-survey',
+    templateUrl: './report-send-survey.component.html',
+    styleUrl: './report-send-survey.component.scss',
 })
-export class ReportCaseDetailComponent {
+export class ReportSendSurveyComponent {
     reportTable!: any;
     datePick: FormGroup = new FormGroup({});
+    selectedItems: string[] = [];
 
     faGear = faGear;
     faFileExport = faFileExport;
@@ -22,21 +23,50 @@ export class ReportCaseDetailComponent {
     columnVisibility: { [key: string]: boolean } = {};
     displayedColumnsTemp: any = null;
 
-    columnName: any = report.cases;
+    columnName: any = report.survey;
     fileType: string = config.file.type;
 
     constructor(private reportService: ReportService, private fb: FormBuilder) {}
 
-    ngOnInit(): void {
+    ngOnInit() {
         const currentDate = new Date();
         const firstDayOfYear = new Date(currentDate.getFullYear(), 0, 1);
         const firstDayOfYearFormat = moment(firstDayOfYear).format('YYYY-MM-DD');
         const currentDateFormat = moment(new Date()).format('YYYY-MM-DD');
+        this.getReport(firstDayOfYearFormat, currentDateFormat);
         this.datePick = this.fb.group({
             startDate: [firstDayOfYearFormat, Validators.required],
             endDate: [currentDate, Validators.required],
         });
-        this.getReport(firstDayOfYearFormat, currentDateFormat);
+    }
+
+    async getReport(startDate: string, endDate: string) {
+        this.reportTable = [];
+        await this.reportService.getEmailSurvey(startDate, endDate).subscribe((res: any) => {
+            this.reportTable = res.value;
+            if (this.reportTable.length != 0) {
+                // this.rowTotal();
+                this.columnTotal();
+            }
+            if (!this.displayedColumnsTemp) {
+                this.setDisplayAllFields();
+            }
+            // this.filterTotal();
+        });
+    }
+
+    clickgo() {
+        const startDate = moment(this.datePick.get('startDate')!.value).format('YYYY-MM-DD');
+        const endDate = moment(this.datePick.get('endDate')!.value).format('YYYY-MM-DD');
+        this.getReport(startDate, endDate);
+    }
+
+    onStartDateChange(event: any) {
+        this.datePick.get('startDate')!.setValue(event.value);
+    }
+
+    onEndDateChange(event: any) {
+        this.datePick.get('endDate')!.setValue(event.value);
     }
 
     clickGetReport() {
@@ -71,45 +101,35 @@ export class ReportCaseDetailComponent {
         }
     }
 
-    onStartDateChange(event: any) {
-        this.datePick.get('startDate')!.setValue(event.value);
-    }
-
-    onEndDateChange(event: any) {
-        this.datePick.get('endDate')!.setValue(event.value);
-    }
-
-    async getReport(startDate: string, endDate: string) {
-        this.reportTable = [];
-        await this.reportService.getCaseDetail(startDate, endDate).subscribe((res: any) => {
-            this.reportTable = res.value;
-            if (this.reportTable.length != 0) {
-                this.columnTotal();
-            }
-            if (!this.displayedColumnsTemp) {
-                this.setDisplayAllFields();
-            }
-        });
-    }
-
     columnTotal() {
         const totals: Record<string, number> = {};
-
+        const totalSuvey = this.reportTable.length;
         for (const row of this.reportTable) {
-            Object.keys(row).forEach((column: string) => {
-                if (row['created']) {
-                    const dateCreated = new Date(row['created']);
-                    row['created'] = dateCreated.toLocaleString();
-                }
+            if (row['createdDate']) {
+                const dateCreated = new Date(row['createdDate']);
+                row['createdDate'] = dateCreated.toLocaleString();
+            }
+            if (row['resendDate']) {
+                const dateResend = new Date(row['resendDate']);
+                row['resendDate'] = dateResend.toLocaleString();
+            }
 
-                if (row['updated']) {
-                    const dateCreated = new Date(row['updated']);
-                    row['updated'] = dateCreated.toLocaleString();
+            Object.keys(row).forEach((column: string) => {
+                if (column !== 'ticketId') {
+                    if (column !== 'email' && column !== 'createdDate' && column !== 'resendDate') {
+                        if (!totals[column]) {
+                            totals[column] = 0;
+                        }
+
+                        if (row[column] !== '-') {
+                            totals[column] += Number(row[column]);
+                        }
+                    }
                 }
             });
         }
 
-        const totalsRow: Record<string, number | string> = { caseId: 'Totals :' + this.reportTable.length };
+        const totalsRow: Record<string, number | string> = { ticketId: 'Totals : ' + totalSuvey };
         Object.keys(totals).forEach((column: string) => {
             totalsRow[column] = totals[column];
         });
@@ -143,7 +163,7 @@ export class ReportCaseDetailComponent {
 
             XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
 
-            XLSX.writeFile(wb, `Channel-By-Agent-Report${this.fileType}`);
+            XLSX.writeFile(wb, `Survey-Send-Report${this.fileType}`);
         }
     }
 }

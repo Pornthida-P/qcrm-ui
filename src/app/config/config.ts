@@ -88,7 +88,9 @@ export const config = {
             report:{
                 channelByAgent: '/report/channelByAgent',
                 caseTypeByAgent: '/report/caseTypeByAgent',
-                summaryByMonth: '/report/summaryByMonth'
+                summaryByMonth: '/report/summaryByMonth',
+                sendEmailSurvey: '/report/sendEmailSurvey',
+                caseDetail: '/report/caseDetail'
             }
         },
     },

@@ -32,11 +32,9 @@
                 </span>
             </div>
         </div>
-        <div class="col-auto" [formGroup]="datePick">
+        <div class="col-auto">
             <div class="align-self-end">
-                <button class="d-flex gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white" (click)="clickGetReport()">
-                    ค้นหา
-                </button>
+                <button class="d-flex gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white" (click)="clickgo()">ค้นหา</button>
             </div>
         </div>
         <div class="col-auto">
@@ -103,7 +101,7 @@
                 </ng-container>
                 <ng-template #noDataTemplate>
                     <tr>
-                        <td colspan="9" class="text-center">ไม่มีข้อมูล</td>
+                        <td colspan="10" class="text-center">ไม่มีข้อมูล</td>
                     </tr>
                 </ng-template>
             </tbody>

@@ -21,7 +21,6 @@ export function HttpLoaderFactory(http: HttpClient) {
         CommonModule,
         MatDatepickerModule,
         MatInputModule,
-        MatDatepickerModule,
         MatSelectModule,
         ReactiveFormsModule,
         FormsModule,

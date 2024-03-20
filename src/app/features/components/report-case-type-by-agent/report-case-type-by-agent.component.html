@@ -50,18 +50,37 @@
                     <fa-icon [icon]="faGear"></fa-icon>
                 </button>
 
-                <div class="dropdown-menu p-3" aria-labelledby="dropdownMenuButton">
-                    <div class="form-check" *ngFor="let column of columnVisibilityKeys">
-                        <input
-                            class="form-check-input cursor-pointer"
-                            type="checkbox"
-                            [(ngModel)]="columnVisibility[column]"
-                            id="checkbox-{{ column }}"
-                        />
-                        <span class="form-check-label cursor-default">
-                            {{ column }}
-                        </span>
-                    </div>
+                <div class="dropdown-menu p-10" style="width: 270px" aria-labelledby="dropdownMenuButton">
+                    <ng-container *ngIf="columnVisibilityKeys.length <= 10; else newColumnLayout">
+                        <div class="form-check" *ngFor="let column of columnVisibilityKeys">
+                            <input
+                                class="form-check-input cursor-pointer"
+                                type="checkbox"
+                                [(ngModel)]="columnVisibility[column]"
+                                id="checkbox-{{ column }}"
+                            />
+                            <span class="form-check-label cursor-default">
+                                {{ column }}
+                            </span>
+                        </div>
+                    </ng-container>
+                    <ng-template #newColumnLayout>
+                        <div class="row">
+                            <div class="col-md-6 px-4" *ngFor="let column of columnVisibilityKeys">
+                                <div class="form-check">
+                                    <input
+                                        class="form-check-input cursor-pointer"
+                                        type="checkbox"
+                                        [(ngModel)]="columnVisibility[column]"
+                                        id="checkbox-{{ column }}"
+                                    />
+                                    <span class="form-check-label cursor-default">
+                                        {{ column }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
                     <button type="button" class="btn btn-primary-color text-white w-100 mt-1" (click)="applyColumnVisibility()">
                         {{ 'page.tag.save' | translate }}
                     </button>

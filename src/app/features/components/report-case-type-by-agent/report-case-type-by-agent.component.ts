@@ -95,21 +95,26 @@ export class ReportCaseTypeByAgentComponent implements OnInit {
 
     setDisplayAllFields(): void {
         if (this.reportTable !== null && this.reportTable !== undefined) {
-            Object.keys(this.reportTable[0])!.forEach((column) => {
-                if (column != 'month' && column != 'year') this.columnVisibility[column] = true;
+            Object.keys(this.reportTable[0])!.forEach((column, index) => {
+                if (column != 'month' && column != 'year' && index < 10) this.columnVisibility[column] = true;
+                else this.columnVisibility[column] = false;
             });
         }
     }
 
     rowTotal() {
-        const totals: Record<string, number> = {};
+        const totalsTopic: Record<string, number> = {};
+        const totalsSub: Record<string, number> = {};
 
         for (const row of this.reportTable) {
-            if (!totals[row.username]) {
-                totals[row.username] = 0;
+            if (!totalsTopic[row.username]) {
+                totalsTopic[row.username] = 0;
+            }
+            if (!totalsSub[row.username]) {
+                totalsSub[row.username] = 0;
             }
 
-            totals[row.username] +=
+            totalsTopic[row.username] +=
                 Number(row.Topic1) +
                 Number(row.Topic2) +
                 Number(row.Topic3) +
@@ -118,19 +123,55 @@ export class ReportCaseTypeByAgentComponent implements OnInit {
                 Number(row.Topic6) +
                 Number(row.Topic7) +
                 Number(row.Topic8);
+
+            totalsSub[row.username] +=
+                Number(row.Sub1) +
+                Number(row.Sub2) +
+                Number(row.Sub3) +
+                Number(row.Sub4) +
+                Number(row.Sub5) +
+                Number(row.Sub6) +
+                Number(row.Sub7) +
+                Number(row.Sub8) +
+                Number(row.Sub9) +
+                Number(row.Sub10) +
+                Number(row.Sub11) +
+                Number(row.Sub12) +
+                Number(row.Sub13) +
+                Number(row.Sub14) +
+                Number(row.Sub15) +
+                Number(row.Sub16) +
+                Number(row.Sub17) +
+                Number(row.Sub18) +
+                Number(row.Sub19) +
+                Number(row.Sub20) +
+                Number(row.Sub11) +
+                Number(row.Sub12) +
+                Number(row.Sub13) +
+                Number(row.Sub14) +
+                Number(row.Sub15) +
+                Number(row.Sub16) +
+                Number(row.Sub17) +
+                Number(row.Sub18);
         }
         for (const row of this.reportTable) {
-            row['Total'] = totals[row.username];
+            // row['Total'] = totals[row.username];
+            row['TotalTopic'] = totalsTopic[row.username];
+            row['TotalSub'] = totalsSub[row.username];
         }
     }
 
     filterTotal() {
-        const totals: Record<string, number> = {};
+        const totalsTopic: Record<string, number> = {};
+        const totalsSub: Record<string, number> = {};
         for (const row of this.reportTable) {
-            if (!totals[row.username]) {
-                totals[row.username] = 0;
+            if (!totalsTopic[row.username]) {
+                totalsTopic[row.username] = 0;
             }
-            totals[row.username] +=
+            if (!totalsSub[row.username]) {
+                totalsSub[row.username] = 0;
+            }
+            totalsTopic[row.username] +=
                 (this.columnVisibility['Topic1'] ? Number(row.Topic1) : 0) +
                 (this.columnVisibility['Topic2'] ? Number(row.Topic2) : 0) +
                 (this.columnVisibility['Topic3'] ? Number(row.Topic3) : 0) +
@@ -139,9 +180,40 @@ export class ReportCaseTypeByAgentComponent implements OnInit {
                 (this.columnVisibility['Topic6'] ? Number(row.Topic6) : 0) +
                 (this.columnVisibility['Topic7'] ? Number(row.Topic7) : 0) +
                 (this.columnVisibility['Topic8'] ? Number(row.Topic8) : 0);
+
+            totalsSub[row.username] +=
+                (this.columnVisibility['Sub1'] ? Number(row.Sub1) : 0) +
+                (this.columnVisibility['Sub2'] ? Number(row.Sub2) : 0) +
+                (this.columnVisibility['Sub3'] ? Number(row.Sub3) : 0) +
+                (this.columnVisibility['Sub4'] ? Number(row.Sub4) : 0) +
+                (this.columnVisibility['Sub5'] ? Number(row.Sub5) : 0) +
+                (this.columnVisibility['Sub6'] ? Number(row.Sub6) : 0) +
+                (this.columnVisibility['Sub7'] ? Number(row.Sub7) : 0) +
+                (this.columnVisibility['Sub8'] ? Number(row.Sub8) : 0) +
+                (this.columnVisibility['Sub9'] ? Number(row.Sub9) : 0) +
+                (this.columnVisibility['Sub10'] ? Number(row.Sub10) : 0) +
+                (this.columnVisibility['Sub11'] ? Number(row.Sub11) : 0) +
+                (this.columnVisibility['Sub12'] ? Number(row.Sub12) : 0) +
+                (this.columnVisibility['Sub13'] ? Number(row.Sub13) : 0) +
+                (this.columnVisibility['Sub14'] ? Number(row.Sub14) : 0) +
+                (this.columnVisibility['Sub15'] ? Number(row.Sub15) : 0) +
+                (this.columnVisibility['Sub16'] ? Number(row.Sub16) : 0) +
+                (this.columnVisibility['Sub17'] ? Number(row.Sub17) : 0) +
+                (this.columnVisibility['Sub18'] ? Number(row.Sub18) : 0) +
+                (this.columnVisibility['Sub19'] ? Number(row.Sub19) : 0) +
+                (this.columnVisibility['Sub20'] ? Number(row.Sub20) : 0) +
+                (this.columnVisibility['Sub21'] ? Number(row.Sub21) : 0) +
+                (this.columnVisibility['Sub22'] ? Number(row.Sub22) : 0) +
+                (this.columnVisibility['Sub23'] ? Number(row.Sub23) : 0) +
+                (this.columnVisibility['Sub24'] ? Number(row.Sub24) : 0) +
+                (this.columnVisibility['Sub25'] ? Number(row.Sub25) : 0) +
+                (this.columnVisibility['Sub26'] ? Number(row.Sub26) : 0) +
+                (this.columnVisibility['Sub27'] ? Number(row.Sub27) : 0) +
+                (this.columnVisibility['Sub28'] ? Number(row.Sub28) : 0);
         }
         for (const row of this.reportTable) {
-            row['Total'] = totals[row.username];
+            row['TotalTopic'] = totalsTopic[row.username];
+            row['TotalSub'] = totalsSub[row.username];
         }
     }
 
@@ -197,7 +269,7 @@ export class ReportCaseTypeByAgentComponent implements OnInit {
 
             XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
 
-            XLSX.writeFile(wb, `Summary-By-Month-Report${this.fileType}`);
+            XLSX.writeFile(wb, `Case-Type-By-Agent-Report${this.fileType}`);
         }
     }
 }

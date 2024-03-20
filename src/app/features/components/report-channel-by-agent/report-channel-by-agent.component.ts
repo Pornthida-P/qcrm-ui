@@ -186,7 +186,7 @@ export class ReportChannelByAgentComponent implements OnInit {
 
             XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
 
-            XLSX.writeFile(wb, `Summary-By-Month-Report${this.fileType}`);
+            XLSX.writeFile(wb, `Channel-By-Agent-Report${this.fileType}`);
         }
     }
 }

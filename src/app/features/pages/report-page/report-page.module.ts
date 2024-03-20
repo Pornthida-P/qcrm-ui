@@ -5,7 +5,7 @@ import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgbPaginationModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ReportChannelByAgentComponent } from '../../components/report-channel-by-agent/report-channel-by-agent.component';
 import { ReportCaseTypeByAgentComponent } from '../../components/report-case-type-by-agent/report-case-type-by-agent.component';
 import { ReportChannelByAgentModule } from '../../components/report-channel-by-agent/report-channel-by-agent.module';
@@ -14,6 +14,14 @@ import { ReportSummaryByMonthComponent } from '../../components/report-summary-b
 import { ReportSummaryByMonthModule } from '../../components/report-summary-by-month/report-summary-by-month.module';
 import { ReportCaseDetailModule } from '../../components/report-case-detail/report-case-detail.module';
 import { ReportCaseDetailComponent } from '../../components/report-case-detail/report-case-detail.component';
+import { ReportSendSurveyComponent } from '../../components/report-send-survey/report-send-survey.component';
+import { ReportSendSurveyModule } from '../../components/report-send-survey/report-send-survey.module';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+
+export function HttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http, './assets/nea-qcrm-ui/i18n/', '.json');
+}
 
 @NgModule({
     declarations: [ReportPageComponent],
@@ -43,6 +51,10 @@ import { ReportCaseDetailComponent } from '../../components/report-case-detail/r
                         path: 'summary-by-month',
                         component: ReportSummaryByMonthComponent,
                     },
+                    {
+                        path: 'survey-send',
+                        component: ReportSendSurveyComponent,
+                    }
                 ],
             },
         ]),
@@ -53,6 +65,14 @@ import { ReportCaseDetailComponent } from '../../components/report-case-detail/r
         ReportCaseTypeByAgentModule,
         ReportSummaryByMonthModule,
         ReportCaseDetailModule,
+        ReportSendSurveyModule,
+        TranslateModule.forChild({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient],
+            },
+        }),
     ],
 })
 export class ReportPageModule {}
