@@ -57,17 +57,6 @@
                         <option disabled value="">กรุณาเลือกข้อมูล</option>
                         <option *ngFor="let channel of channels" [value]="channel.channelId">{{ channel.name }}</option>
                     </select>
-                    <div class="form-check">
-                        <input
-                            class="form-check-input"
-                            type="checkbox"
-                            value="1"
-                            id="flexCheckChecked"
-                            [checked]="isEmailSubscribed === 1"
-                            (change)="toggleEmailSubscription($event)"
-                        />
-                        <label class="form-check-label" for="flexCheckChecked"> รับข้อมูลทางอีเมล </label>
-                    </div>
                 </div>
                 <div class="col-6">
                     <label for="inputAddress" class="form-label">กรุณาเลือกวันที่</label>
@@ -111,6 +100,22 @@
                             />
                             <label class="form-check-label" [for]="activityType.activityTypeId">{{ activityType.name }}</label>
                         </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <p class="mg-b">ช่องทางการรับข้อมูลข่าวสาร</p>
+                    <div class="div-form-check pd-l-50">
+                      <div class="form-check">
+                        <input
+                            class="form-check-input"
+                            type="checkbox"
+                            value="1"
+                            id="flexCheckChecked"
+                            [checked]="isEmailSubscribed === 1"
+                            (change)="toggleEmailSubscription($event)"
+                        />
+                        <label class="form-check-label" for="flexCheckChecked"> รับข้อมูลทางอีเมล </label>
+                    </div>
                     </div>
                 </div>
 
