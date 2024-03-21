@@ -74,6 +74,7 @@ export const config = {
                 contactbypage: '/contactbypage',
                 contactid: '/contacts',
                 activitiesType: '/activitiestype',
+                uploadFile: '/upload',
             },
             survey: {
                 baseUrl: '/survey',
@@ -85,13 +86,13 @@ export const config = {
                 findNotificationReadByUserId: '/notification/read/',
                 readAllNotificationByUserId: '/notification/read-all/',
             },
-            report:{
+            report: {
                 channelByAgent: '/report/channelByAgent',
                 caseTypeByAgent: '/report/caseTypeByAgent',
                 summaryByMonth: '/report/summaryByMonth',
                 sendEmailSurvey: '/report/sendEmailSurvey',
-                caseDetail: '/report/caseDetail'
-            }
+                caseDetail: '/report/caseDetail',
+            },
         },
     },
     strapi: {
