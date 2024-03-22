@@ -38,6 +38,9 @@ export class CreateCallComponent {
     solutions: string = '';
     contactOrgName: string = '';
 
+    call_id: string = '';
+    caller_id: string = '';
+
     selectedItem: any;
     selectedData: any[] = [];
     detailItem: any;
@@ -54,7 +57,7 @@ export class CreateCallComponent {
     model: any;
     organizationName: string | undefined;
 
-    myForm: FormGroup | any; //
+    myForm: FormGroup | any;
     channels: any;
 
     visibleRightSideBar: boolean = true;
@@ -163,7 +166,6 @@ export class CreateCallComponent {
     formatStartDate() {
         const startDate = new Date(this.startTime);
         this.startTime = this.formatDate(startDate);
-        console.log('startTime: ', this.startTime);
     }
 
     formatTimepickStart() {
@@ -183,13 +185,14 @@ export class CreateCallComponent {
                 .padStart(2, '0')}`;
 
             this.newDateTime = `${this.formatDate(new Date(this.startTime))} ${formattedTimeStartPick}`;
-            console.log('New combined date and time: ', this.newDateTime);
         }
     }
 
     ngOnInit(): void {
         this.route.queryParams.subscribe((params: any) => {
             this.contactId = params['contactId'];
+            this.call_id = params['call_id'];
+            this.caller_id = params['caller_id'];
         });
 
         this.callServive.getCaseTopic().subscribe((casetopics: any) => {
@@ -243,6 +246,8 @@ export class CreateCallComponent {
             solution: this.solutions,
             createdById: userData.userId,
             attachment: this.attachmentsId,
+            caller_id: this.caller_id,
+            call_id: this.call_id,
         };
         this.callServive
             .createCalls(data)
@@ -360,7 +365,6 @@ export class CreateCallComponent {
 
     toggleEmailSubscription(event: any) {
         this.isEmailSubscribed = event.target.checked ? 1 : 0;
-        console.log('email:', this.isEmailSubscribed);
     }
 
     chooseOrg(orgId: string) {
@@ -425,15 +429,13 @@ export class CreateCallComponent {
     }
 
     async getFormOrg(pageOrg: number, pageSizeOrg: number) {
-      await this.contactService
-          .getOrgByPage(pageOrg, pageSizeOrg, `${this.sortIdOrg},${this.sortOrderOrg}`, this.valueSearchOrg, this.selectedFilter)
-          .subscribe((res: any) => {
-              this.organizations = res;
-            this.spareorganizations = res;
-            console.log('Org: ',  this.organizations)
-          });
-  }
-
+        await this.contactService
+            .getOrgByPage(pageOrg, pageSizeOrg, `${this.sortIdOrg},${this.sortOrderOrg}`, this.valueSearchOrg, this.selectedFilter)
+            .subscribe((res: any) => {
+                this.organizations = res;
+                this.spareorganizations = res;
+            });
+    }
 
     async getPageOrg() {
         await this.contactService.countOrg(this.valueSearchOrg, this.userId).subscribe((res: any) => {
@@ -442,8 +444,6 @@ export class CreateCallComponent {
     }
 
     searchOrg() {
-        console.log('Search ORG:');
-
         if (this.selectedFilter !== 'all') {
             this.userId = this.userData.userId;
         } else {

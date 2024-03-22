@@ -33,6 +33,8 @@ export class PhoneContactsComponent {
     // contactOrg: any;
 
     contactOrg: string = '';
+    call_id: string = '';
+    caller_id: string = '';
 
     constructor(
         private _location: Location,
@@ -52,7 +54,12 @@ export class PhoneContactsComponent {
                 this.getContactByPhoneId(this.contactId);
             }
             if (this.calls) {
-                this.contactsService.getContactsByParamPhone(this.calls).subscribe((data: any) => {
+                const dataCallArray = this.calls.split(',');
+
+                this.call_id = dataCallArray[0];
+                this.caller_id = dataCallArray[1];
+
+                this.contactsService.getContactsByParamPhone(this.call_id).subscribe((data: any) => {
                     if (data && data.length > 0) {
                         this.contact = data[0].contactNumber;
                         this.getContactByPhoneId(this.contact);
@@ -101,6 +108,8 @@ export class PhoneContactsComponent {
         if (this.contactId) {
             const data = {
                 contactId: this.contactId,
+                call_id: this.call_id,
+                caller_id: this.caller_id,
                 firstName: this.contactFirstName,
                 lastName: this.contactLastName,
                 identification: this.contactIden,
@@ -122,7 +131,9 @@ export class PhoneContactsComponent {
                             timer: 3000,
                             timerProgressBar: true,
                         }).then(() => {
-                            this.router.navigate(['/call/create-call'], { queryParams: { contactId: this.contactId } });
+                            this.router.navigate(['/call/create-call'], {
+                                queryParams: { contactId: this.contactId, caller_id: this.caller_id, call_id: this.call_id },
+                            });
                         });
                     }),
                     catchError((error) => {
