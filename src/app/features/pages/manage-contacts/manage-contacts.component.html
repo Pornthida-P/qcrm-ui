@@ -7,8 +7,19 @@
             </div>
         </div>
         <div class="flex flex-column">
-            <p class="mb-3 fs-5">ข้อมูลทั่วไป</p>
             <form class="row g-3 mg-3">
+              <p class="mb-3 fs-5">ข้อมูลทั่วไป</p>
+              <div class="contact-number">
+                <div class="col-6 me-3">
+                  <label for="inputContactNumber" class="form-label">ช่องทางติดต่อ</label>
+                  <select id="inputContactNumber" class="form-select" name="selectedContactNumber" [(ngModel)]="phoneCall" >
+                    <option disabled value="">กรุณาเลือกเบอร์โทร</option>
+                    <option *ngFor="let contactNumber of contactNumbers" [value]="contactNumber.contactNumber">{{ contactNumber.contactNumber }}</option>
+                  </select>
+              </div>
+              <button type="button" class="btn btn-success me-3" (click)="connect()" [disabled]="!phoneCall">โทรออก</button>
+              <button type="button" class="btn btn-danger" [disabled]="!connected" (click)="disconnect()">วางสาย</button>
+              </div>
                 <form class="mb-3 p-2">
                     <label for="inputFormName" class="form-label">เลขประจำตัว</label>
                     <div class="input-group">
@@ -519,21 +530,21 @@
                     </div>
                     <div class="flex flex-column" *ngIf="AddCallShowing">
                         <h4>เพิ่มข้อมูลการติดต่อ</h4>
-                        <form class="row g-3 mg-3">            
+                        <form class="row g-3 mg-3">
                             <div class="col-md-6">
                                 <label for="inputTopic" class="form-label">หัวข้อที่ติดต่อ<span class="color-red">*</span></label>
                                 <ng-select id="inputTopic" [(ngModel)]="selectedCaseTopics" name="selectedCaseTopics" [multiple]="true">
                                   <ng-option *ngFor="let casetopic of casetopics" [value]="casetopic.caseTopicId">{{casetopic.name}}</ng-option>
                                </ng-select>
                             </div>
-            
+
                             <div class="col-md-6">
                                 <label for="inputCaseSubject" class="form-label">เรื่องที่ติดต่อ</label>
                                 <ng-select id="inputCaseSubject" [(ngModel)]="selectedCasesubject" name="selectedCasesubject" [multiple]="true">
                                   <ng-option *ngFor="let casesubject of casesubjects" [value]="casesubject.caseSubjectId">{{casesubject.name}}</ng-option>
                                </ng-select>
                             </div>
-            
+
                             <div class="col-6">
                                 <label for="inputChannel" class="form-label">ช่องทางติดต่อ</label>
                                 <select id="inputChannel" class="form-select" name="selectedChannels" [(ngModel)]="selectedChannels">
@@ -552,7 +563,7 @@
                                     <label class="form-check-label" for="flexCheckChecked"> รับข้อมูลทางอีเมล </label>
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-6">
                                 <label for="inputAddress" class="form-label">กรุณาเลือกวันที่</label>
                                 <div class="date-pik">
@@ -583,7 +594,7 @@
                                     ></ngb-timepicker>
                                 </div>
                             </div>
-                            
+
                             <div class="col-6">
                                 <p class="mg-b">ประเภทกิจกรรม</p>
                                 <div class="div-form-check pd-l-50">
@@ -599,7 +610,7 @@
                                     </div>
                                 </div>
                             </div>
-            
+
                             <div class="col-12">
                                 <label class="form-check-label" for="gridCheck"> รายละเอียด </label>
                                 <textarea

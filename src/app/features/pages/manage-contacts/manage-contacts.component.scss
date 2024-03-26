@@ -118,3 +118,8 @@ label:has(+ input:required):after {
 .btn-search-contact {
     width: 20%;
 }
+.contact-number {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+}
