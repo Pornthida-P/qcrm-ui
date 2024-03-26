@@ -862,10 +862,9 @@ export class ManageContactsComponent implements OnInit {
     }
 
     connect(): void {
-        // const phoneCall = '0611457951';
         this.dialCall = 'dial' + '|9' + `${this.phoneCall}`;
         this.connected = true;
-        const url = 'wss://echo.websocket.org'; //2000
+        const url = config.urlWebSocket.urlQAgent;
         this.socket$ = new WebSocketSubject({
             url: url,
             deserializer: (event) => {

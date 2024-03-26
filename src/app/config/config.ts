@@ -107,5 +107,8 @@ export const config = {
         maxSize: 2 * 1024 * 1024,
         type: '.xlsx',
     },
-    roleCanAccessCUDForm: ['admin', 'system', 'super admin'],
+  roleCanAccessCUDForm: ['admin', 'system', 'super admin'],
+  urlWebSocket: {
+      urlQAgent: `ws://127.0.0.1:8748/QAgent`
+    }
 };
