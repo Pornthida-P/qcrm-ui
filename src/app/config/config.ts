@@ -61,6 +61,7 @@ export const config = {
                 paramsFide: '/params-fide',
                 surveyForm: '/survey-form',
                 call: '/call',
+                contactNumberFide: '/contact-number',
             },
             call: {
                 url: '/call',
