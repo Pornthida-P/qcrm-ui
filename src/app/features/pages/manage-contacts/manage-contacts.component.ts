@@ -936,17 +936,20 @@ export class ManageContactsComponent implements OnInit {
                     this.connected = false;
                     return [];
                 }),
+                finalize(() => {
+                    console.log('WebSocket connection closed');
+                    this.results.push('WebSocket connection closed');
+                    this.connected = false;
+                    if (this.socket$) {
+                        this.socket$.unsubscribe();
+                    }
+                }),
             )
             .subscribe(
                 () => {},
                 (error) => {
                     console.error('Unexpected WebSocket error:', error);
                     this.results.push('Unexpected WebSocket error: ' + error);
-                    this.connected = false;
-                },
-                () => {
-                    console.log('WebSocket connection closed');
-                    this.results.push('WebSocket connection closed');
                     this.connected = false;
                 },
             );
@@ -958,7 +961,9 @@ export class ManageContactsComponent implements OnInit {
         if (this.socket$ && this.connected) {
             this.socket$.next(this.dialCall);
             this.results.push(this.dialCall);
+            console.log('dialCall: ' + this.dialCall);
         } else {
+            this.connect();
             console.error('WebSocket is not connected.');
         }
     }
