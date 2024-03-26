@@ -16,6 +16,7 @@ import { Attachment } from 'src/app/shared/interface/attachment.interface';
 import Swal from 'sweetalert2';
 import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
 import * as moment from 'moment';
+import { WebSocketSubject } from 'rxjs/webSocket';
 
 @Component({
     selector: 'app-manage-contacts',
@@ -84,7 +85,7 @@ export class ManageContactsComponent implements OnInit {
     activityTypeId: any;
     newDateTime: any;
     startTime: string = '';
-    myForm: FormGroup | any; 
+    myForm: FormGroup | any;
 
     timepickEnd = true;
     meridian = true;
@@ -154,6 +155,17 @@ export class ManageContactsComponent implements OnInit {
     calls: string | null | undefined;
     userId: string = '';
 
+    private socket$!: WebSocketSubject<any>;
+    urlSocket: string = '';
+    message: string = '';
+    results: string[] = [];
+    connected: boolean = false;
+    ws: any;
+    dialCall: string = '';
+    phoneCall: string = '';
+    selectedContactNumber: string = '';
+  contactNumbers: any;
+
     constructor(
         private _location: Location,
         private surveyFormService: SurveyFormService,
@@ -169,6 +181,7 @@ export class ManageContactsComponent implements OnInit {
     ) {
         this.contact = { components: [] };
     }
+
     ngOnInit(): void {
         const state = history.state;
         if (state.itemId) {
@@ -267,6 +280,13 @@ export class ManageContactsComponent implements OnInit {
         await this.contactsService.getContactCall(contactId).subscribe((res: any) => {
             this.contactCall = res;
         });
+
+        await this.contactsService.getContactNumberById(contactId).subscribe((res: any) => {
+            this.contactNumbers = res;
+            console.log('contact number: ', this.contactNumbers);
+        });
+
+        console.log('contact id: ', this.contactId);
     }
 
     prev() {
@@ -758,15 +778,15 @@ export class ManageContactsComponent implements OnInit {
         this.callServive.getCaseTopic().subscribe((casetopics: any) => {
             this.casetopics = casetopics;
         });
-    
+
         this.callServive.getActivitiesType().subscribe((activitiestype: any) => {
             this.activitiestype = activitiestype;
         });
-    
+
         this.callServive.getAllCaseSubjects().subscribe((casesubjects: any) => {
             this.casesubjects = casesubjects;
         });
-    
+
         this.callServive.getAllChannels().subscribe((channels: any) => {
             this.channels = channels;
         });
@@ -838,6 +858,78 @@ export class ManageContactsComponent implements OnInit {
                 .subscribe();
         } else {
             this.sweetalertServices.getSwal('error', 'โปรดกรอกหัวข้อที่ติดต่อ', '', false, '');
-        }    
+        }
+    }
+
+    connect(): void {
+        // const phoneCall = '0611457951';
+        this.dialCall = 'dial' + '|9' + `${this.phoneCall}`;
+        this.connected = true;
+        const url = 'wss://echo.websocket.org'; //2000
+        this.socket$ = new WebSocketSubject({
+            url: url,
+            deserializer: (event) => {
+                try {
+                    return event.data;
+                } catch (error) {
+                    console.error('WebSocket message error:', error);
+                    throw error;
+                }
+            },
+        });
+        console.log('url:' + url);
+
+        this.socket$
+            .pipe(
+                tap(() => {
+                    this.results.push('CONNECTED');
+                    this.connected = true;
+                    if (!this.connected) {
+                        this.socket$.next(this.dialCall);
+                    }
+                }),
+                catchError((error) => {
+                    console.error('WebSocket connection error:', error);
+                    this.results.push('WebSocket connection error: ' + error);
+                    this.connected = false;
+                    return [];
+                }),
+            )
+            .subscribe(
+                () => {},
+                (error) => {
+                    console.error('Unexpected WebSocket error:', error);
+                    this.results.push('Unexpected WebSocket error: ' + error);
+                    this.connected = false;
+                },
+                () => {
+                    console.log('WebSocket connection closed');
+                    this.results.push('WebSocket connection closed');
+                    this.connected = false;
+                },
+            );
+
+        console.log('Phone Call: ', this.phoneCall);
+        console.log('url Call:', this.dialCall);
+    }
+
+  disconnect(): void {
+    this.connected = false;
+
+        if (this.socket$) {
+            console.log('hangup');
+            this.socket$.next('hangup');
+            this.socket$.unsubscribe();
+            this.connected = false;
+        }
+    }
+
+    sendMessage(): void {
+        if (this.socket$ && this.connected) {
+            this.socket$.next(this.message);
+            this.results.push(this.message);
+        } else {
+            console.error('WebSocket is not connected.');
+        }
     }
 }

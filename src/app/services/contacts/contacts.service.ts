@@ -45,7 +45,7 @@ export class ContactsService {
     getContactsByParamPhone(phone: string) {
         return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}${config.api.path.contacts.paramsFide}/${phone}`);
     }
-  
+
     getContactActivities(id: string) {
         return this.http.get(`${this.baseUrl}/drive/user/activities/${id}`);
     }
@@ -80,6 +80,10 @@ export class ContactsService {
 
     getOrganizationById(id: string) {
         return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}/organization/${id}`);
+    }
+
+    getContactNumberById(id: string) {
+        return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}${config.api.path.contacts.contactNumberFide}/${id}`);
     }
 
     countContacts(searchText: string, createdById: string) {
