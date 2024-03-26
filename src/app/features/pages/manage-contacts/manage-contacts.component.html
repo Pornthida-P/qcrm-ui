@@ -17,8 +17,8 @@
                     <option *ngFor="let contactNumber of contactNumbers" [value]="contactNumber.contactNumber">{{ contactNumber.contactNumber }}</option>
                   </select>
               </div>
-              <button type="button" class="btn btn-success me-3" (click)="connect()" [disabled]="!phoneCall">โทรออก</button>
-              <button type="button" class="btn btn-danger" [disabled]="!connected" (click)="disconnect()">วางสาย</button>
+              <button type="button" class="btn btn-success me-3" (click)="sendMessage()" [disabled]="!phoneCall">โทรออก</button>
+              <!-- <button type="button" class="btn btn-danger" [disabled]="!connected" (click)="disconnect()">วางสาย</button> -->
               </div>
                 <form class="mb-3 p-2">
                     <label for="inputFormName" class="form-label">เลขประจำตัว</label>
