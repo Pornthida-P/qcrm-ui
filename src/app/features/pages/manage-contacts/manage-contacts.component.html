@@ -9,7 +9,7 @@
         <div class="flex flex-column">
             <form class="row g-3 mg-3">
               <p class="mb-3 fs-5">ข้อมูลทั่วไป</p>
-              <div class="contact-number">
+              <div class="contact-number" *ngIf="TableShowing">
                 <div class="col-6 me-3">
                   <label for="inputContactNumber" class="form-label">ช่องทางติดต่อ</label>
                   <select id="inputContactNumber" class="form-select" name="selectedContactNumber" [(ngModel)]="phoneCall" >
@@ -595,9 +595,9 @@
                                 </div>
                             </div>
 
-                            <div class="col-6">
+                            <div class="col-12">
                                 <p class="mg-b">ประเภทกิจกรรม</p>
-                                <div class="div-form-check pd-l-50">
+                                <div class="pd-l-30">
                                     <div *ngFor="let activityType of activitiestype" class="form-check">
                                         <input
                                             class="form-check-input"
