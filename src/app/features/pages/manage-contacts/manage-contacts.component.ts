@@ -956,24 +956,24 @@ export class ManageContactsComponent implements OnInit {
     }
 
     sendMessage(): void {
-        console.log('send');
-        this.dialCall = 'dial|9' + this.phoneCall;
-        if (this.socket$) {
-            if (this.socket$.closed) {
-                this.connect();
-            } else {
-                if (this.dialCall.trim() !== '') {
-                    this.socket$.next(this.dialCall);
-                    this.results.push(this.dialCall);
-                    console.log('call: ' + this.dialCall);
-                } else {
-                    console.error('Empty message cannot be sent.');
-                }
-            }
-        } else {
-            console.error('WebSocket is not initialized.');
-        }
-    }
+      console.log('send');
+      this.dialCall = 'dial|9' + this.phoneCall.trim();
+      if (this.socket$) {
+          if (this.socket$.closed) {
+              this.connect();
+          } else {
+              if (this.dialCall.trim() !== '') {
+                  this.socket$.next(this.dialCall);
+                  this.results.push(this.dialCall);
+                  console.log(this.dialCall);
+              } else {
+                  console.error('Empty message cannot be sent.');
+              }
+          }
+      } else {
+          console.error('WebSocket is not initialized.');
+      }
+  }
 
     disconnect(): void {
         this.connected = false;
