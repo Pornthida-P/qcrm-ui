@@ -7,7 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { config } from 'src/app/config/config';
 import { v4 as uuidv4 } from 'uuid';
 import Swal from 'sweetalert2';
-
+import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 @Component({
     selector: 'app-phone-contacts',
     templateUrl: './phone-contacts.component.html',
@@ -30,11 +30,67 @@ export class PhoneContactsComponent {
     organizations: any;
     contactProvince: any;
     contactId: any;
-    // contactOrg: any;
 
     contactOrg: string = '';
     call_id: string = '';
     caller_id: string = '';
+
+    visibleRightSideBar: boolean = true;
+    visibleLeftSideBar: boolean = true;
+    FormShowing: boolean = false;
+    SearchFormShowing: boolean = true;
+    searchContactShowing: boolean = false;
+    AddContactShowing: boolean = false;
+    thanks: boolean = false;
+    SearchOrgShowing: boolean = false;
+    AddOrgShowing: boolean = false;
+    selectedFilter: any | undefined;
+
+    AddCallShowing: boolean = false;
+
+    showOrgSidebar: boolean = false;
+
+    contactOrgName: string = '';
+
+    faCircleXmark = faCircleXmark;
+    sortIcon: string = '';
+
+    valueSearchOrg!: string;
+
+    pageSizeOptions = [5, 10, 20];
+    pageSize = 5;
+    currentPage = 1;
+    totalItems = 0;
+    totalPages = 0;
+    pagesToShow = 3;
+
+    pageSizeOptionOrgs = [5, 10, 20];
+    pageSizeOrg = 5;
+    currentPageOrg = 1;
+    totalItemOrgs = 0;
+    totalPageOrgs = 0;
+    pagesToShowOrg = 3;
+
+    sortIdOrg: string = 'createdAt';
+    sortOrderOrg: string = 'DESC';
+    checkedValueOrgs: string[] = [];
+
+    sortId: string = 'createdAt';
+    sortOrder: string = 'DESC';
+
+    industryType: any[] = [];
+    productTypes: any[] = [];
+
+    orgName: string = '';
+    orgIden: string = '';
+    orgIndustryType: string = '';
+    orgProductType: string = '';
+
+    userData: any = JSON.parse(localStorage.getItem('userData') || '{}');
+    userId: any;
+    userRole: string = '';
+
+    roleCanAccessCUDForm: string[] = config.roleCanAccessCUDForm;
 
     constructor(
         private _location: Location,
@@ -69,10 +125,22 @@ export class PhoneContactsComponent {
                 });
             }
         });
-        this.contactsService.getAllOrganization().subscribe((organizations: any) => {
-            this.organizations = organizations;
-        });
+
+        this.selectedFilter = 'all';
+
+        if (this.selectedFilter !== 'all') {
+            this.userId = this.userData.userId;
+            console.log('user: ', this.userData.userId);
+        }
+
+      this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
+      this.getPageOrg();
     }
+
+    checkRole(): boolean {
+        return this.roleCanAccessCUDForm.includes(this.userRole);
+    }
+
     async getContactByPhoneId(contactId: string) {
         try {
             const res: any = await this.contactsService.getContactsByParamPhone(contactId).toPromise();
@@ -89,7 +157,14 @@ export class PhoneContactsComponent {
                 this.contactNumber = detailItemByPhone.contactNumber;
                 this.contactProvince = detailItemByPhone.province;
                 this.contactProductType = detailItemByPhone.product_type;
-                this.contactSource = detailItemByPhone.source;
+              this.contactSource = detailItemByPhone.source;
+
+              if (this.contactOrg != '' && this.contactOrg != null && this.contactOrg != undefined) {
+                this.contactsService.getOrganizationById(this.contactOrg).subscribe((res: any) => {
+                    this.contactOrgName = res[0].orgName;
+                    this.contactProductType = res[0].prodName;
+                });
+            }
             } else {
                 console.log('Data does not exist');
             }
@@ -169,4 +244,134 @@ export class PhoneContactsComponent {
                 .subscribe();
         }
     }
+
+    showSideBarOrg() {
+      this.visibleLeftSideBar = true;
+      this.visibleRightSideBar = true;
+      this.FormShowing = false;
+      this.SearchFormShowing = false;
+      this.thanks = false;
+      this.SearchOrgShowing = true;
+      this.AddOrgShowing = false;
+      this.AddCallShowing = false;
+  }
+
+  chooseOrg(orgId: string) {
+    this.contactOrg = orgId;
+    this.contactsService.getOrganizationById(orgId).subscribe((res: any) => {
+        this.contactOrgName = res[0].orgName;
+        this.contactProductType = res[0].prodName;
+    });
+}
+
+    async getFormOrg(pageOrg: number, pageSizeOrg: number) {
+      await this.contactsService
+          .getOrgByPage(pageOrg, pageSizeOrg, `${this.sortIdOrg},${this.sortOrderOrg}`, this.valueSearchOrg, this.selectedFilter)
+          .subscribe((res: any) => {
+              this.organizations = res;
+              // this.spareorganizations = res;
+          });
+  }
+
+    searchOrg() {
+        if (this.selectedFilter !== 'all') {
+            this.userId = this.userData.userId;
+        } else {
+            this.userId = '';
+        }
+        this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
+        this.getPageOrg();
+    }
+
+    sortOrg(value: string) {
+      if (this.sortIdOrg == value) {
+          if (this.sortIcon == 'fa-solid fa-sort-down') {
+              this.sortIcon = 'fa-solid fa-sort-up';
+              this.sortOrderOrg = 'DESC';
+          } else {
+              this.sortIcon = 'fa-solid fa-sort-down';
+              this.sortOrderOrg = 'ASC';
+          }
+      } else {
+          this.sortIdOrg = value;
+      }
+      this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
+  }
+
+    async pageChangeOrg(pageOrg: number) {
+      if (pageOrg != this.currentPageOrg) {
+          if (pageOrg >= 1 && pageOrg <= this.totalPageOrgs) {
+              this.currentPageOrg = pageOrg;
+              await this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
+              this.checkedValueOrgs = [];
+          }
+      }
+  }
+
+  get pageOrgs(): number[] {
+    var pageOrg: number[] = [];
+    this.totalPageOrgs = Math.ceil(this.totalItemOrgs / this.pageSizeOrg);
+    for (var i = -this.pagesToShowOrg; i <= this.pagesToShowOrg; i++) {
+        if (this.currentPageOrg + i > 0 && this.currentPageOrg + i <= this.totalPageOrgs) {
+            pageOrg.push(this.currentPageOrg + i);
+        }
+    }
+    return pageOrg;
+}
+
+    pageSizeChangeOrg() {
+      this.currentPage = 1;
+      this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
+  }
+
+    async getPageOrg() {
+      await this.contactsService.countOrg(this.valueSearchOrg, this.userId).subscribe((res: any) => {
+          this.totalItemOrgs = res.count;
+      });
+  }
+
+  showAddOrg() {
+    this.AddOrgShowing = true;
+    this.FormShowing = false;
+    this.SearchFormShowing = false;
+    this.thanks = false;
+    this.SearchOrgShowing = false;
+    this.AddCallShowing = false;
+    this.contactsService.getAllIndustryType().subscribe((res: any) => {
+        this.industryType = res;
+    });
+
+    this.contactsService.getAllProductTypes().subscribe((res: any) => {
+        this.productTypes = res;
+    });
+}
+
+    submitOrg() {
+        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        if (this.orgName.length > 0) {
+            const data = {
+                name: this.orgName,
+                identification: this.orgIden,
+                industryTypeId: this.orgIndustryType,
+                productTypeId: this.orgProductType,
+                createdById: userData.userId,
+            };
+
+            this.contactsService
+                .createOrg(data)
+                .pipe(
+                    tap((res) => {
+                        this.showSideBarOrg();
+                    }),
+                    catchError((error) => {
+                        this.sweetalertServices.handleError(error);
+                        throw error;
+                    }),
+                )
+                .subscribe();
+        } else {
+            this.sweetalertServices.getSwal('error', 'organization name cannot be empty.', '', false, '');
+        }
+    }
+
 }

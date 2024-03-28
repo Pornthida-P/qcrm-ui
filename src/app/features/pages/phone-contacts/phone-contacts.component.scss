@@ -21,3 +21,16 @@ label:has(+ input:required):after {
 .mg-3 {
   margin: 0 3% 3% 3%;
 }
+.search-contact {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: stretch;
+}
+.btn-search-contact {
+width: 20%;
+}
+.side-org-menu {
+  display: flex;
+  justify-content: space-between
+}

@@ -107,8 +107,8 @@
                                 </td>
                                 <td>{{ calls.CallType }}</td>
                                 <td class="w-max-ellipsis">
-                                    <div [ngbTooltip]="calls.caseTopicName" placement="bottom" class="text-ellipsis">
-                                        {{ calls.caseTopicName }}
+                                    <div [ngbTooltip]="calls.caseTopicNames" placement="bottom" class="text-ellipsis">
+                                        {{ calls.caseTopicNames }}
                                     </div>
                                 </td>
                                 <td class="w-max-ellipsis">
@@ -226,9 +226,11 @@
                                 <div class="font-b">{{ detailItem?.username || emptyItem }}</div>
                             </div>
                             <div class="col row-side">
-                                <h5>เรื่องที่ติดต่อ</h5>
-                                <div class="font-b">{{ detailItem?.caseTopicName || emptyItem }}</div>
-                            </div>
+                              <h5>เรื่องที่ติดต่อ</h5>
+                              <div *ngIf="detailItem && detailItem.caseTopicNames" class="font-b">
+                                  <div *ngFor="let topic of detailItem.caseTopicNames.split(',');" class="font-b">{{ topic }}</div>
+                              </div>
+                          </div>
                         </div>
                         <div class="grid pt-2 row-side">
                             <div class="col row-side">
