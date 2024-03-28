@@ -109,7 +109,7 @@ export class CallComponent implements OnInit {
         if (this.selectedFilter !== 'all') {
             this.userId = this.userData.userId;
         }
-      
+
         this.getCallsData((this.currentPage - 1) * this.pageSize, this.pageSize);
         this.getPage();
     }
@@ -213,19 +213,19 @@ export class CallComponent implements OnInit {
     }
 
     sort(value: string) {
-      if (this.sortId == value) {
-          if (this.sortIcon == 'fa-solid fa-sort-down') {
-              this.sortIcon = 'fa-solid fa-sort-up';
-              this.sortOrder = 'DESC';
-          } else {
-              this.sortIcon = 'fa-solid fa-sort-down';
-              this.sortOrder = 'ASC';
-          }
-      } else {
-          this.sortId = value;
-      }
-      this.getCallsData((this.currentPage - 1) * this.pageSize, this.pageSize);
-  }
+        if (this.sortId == value) {
+            if (this.sortIcon == 'fa-solid fa-sort-down') {
+                this.sortIcon = 'fa-solid fa-sort-up';
+                this.sortOrder = 'DESC';
+            } else {
+                this.sortIcon = 'fa-solid fa-sort-down';
+                this.sortOrder = 'ASC';
+            }
+        } else {
+            this.sortId = value;
+        }
+        this.getCallsData((this.currentPage - 1) * this.pageSize, this.pageSize);
+    }
 
     createCall() {
         this.router.navigate(['/call/create']);
