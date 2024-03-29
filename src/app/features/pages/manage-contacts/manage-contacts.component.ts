@@ -859,55 +859,6 @@ export class ManageContactsComponent implements OnInit {
         }
     }
 
-    // connect(): void {
-    //     this.dialCall = 'dial|9' + this.phoneCall;
-    //     this.connected = true;
-    //     const url = config.urlWebSocket.urlQAgent;
-    //     this.socket$ = new WebSocketSubject({
-    //         url: url,
-    //         deserializer: (event) => {
-    //             try {
-    //                 return event.data;
-    //             } catch (error) {
-    //                 console.error('WebSocket message error:', error);
-    //                 throw error;
-    //             }
-    //         },
-    //     });
-    //     console.log('url:' + url);
-
-    //     this.socket$
-    //     .pipe(
-    //         tap(() => {
-    //             this.results.push('CONNECTED');
-    //             this.connected = true;
-    //             this.socket$.next(this.dialCall);
-    //         }),
-    //         catchError((error) => {
-    //             console.error('WebSocket connection error:', error);
-    //             this.results.push('WebSocket connection error: ' + error);
-    //             this.connected = false;
-    //             return [];
-    //         }),
-    //         finalize(() => {
-    //             console.log('WebSocket connection closed');
-    //             this.results.push('WebSocket connection closed');
-    //             this.connected = false;
-    //         })
-    //     )
-    //     .subscribe(
-    //         () => {},
-    //         (error) => {
-    //             console.error('Unexpected WebSocket error:', error);
-    //             this.results.push('Unexpected WebSocket error: ' + error);
-    //             this.connected = false;
-    //         }
-    //     );
-
-    //     console.log('Phone Call: ', this.phoneCall);
-    //     console.log('Type of this.dialCall:', typeof this.dialCall, this.dialCall);
-    //   }
-
     connect(): void {
         console.log('connect');
         const url = config.urlWebSocket.urlQAgent;
@@ -957,15 +908,17 @@ export class ManageContactsComponent implements OnInit {
 
     sendMessage(): void {
       console.log('send');
-      this.dialCall = `dial|9${this.phoneCall.trim()}`;
+      const cleanedPhoneCall = this.phoneCall.trim().replace(/"/g, '');
+      const messageToSend = `dial|9${cleanedPhoneCall}`;
+
       if (this.socket$) {
           if (this.socket$.closed) {
               this.connect();
           } else {
-              if (this.dialCall.trim() !== '') {
-                  this.socket$.next(this.dialCall);
-                  this.results.push(this.dialCall);
-                  console.log(this.dialCall);
+              if (messageToSend.trim() !== '') {
+                  this.socket$.next(messageToSend);
+                  this.results.push(messageToSend);
+                  console.log(messageToSend);
               } else {
                   console.error('Empty message cannot be sent.');
               }
@@ -973,6 +926,9 @@ export class ManageContactsComponent implements OnInit {
       } else {
           console.error('WebSocket is not initialized.');
       }
+      
+      console.log('results: ', this.results);
+      console.log('results: ', this.results[1]);
   }
 
     disconnect(): void {
