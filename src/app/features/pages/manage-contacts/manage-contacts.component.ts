@@ -909,7 +909,7 @@ export class ManageContactsComponent implements OnInit {
     sendMessage(): void {
       console.log('send');
       const cleanedPhoneCall = this.phoneCall.trim().replace(/"/g, '');
-      const messageToSend = `dial|9${cleanedPhoneCall}`;
+      const messageToSend = `dial|20${cleanedPhoneCall}`;
 
       if (this.socket$) {
           if (this.socket$.closed) {
@@ -926,7 +926,7 @@ export class ManageContactsComponent implements OnInit {
       } else {
           console.error('WebSocket is not initialized.');
       }
-      
+
       console.log('results: ', this.results);
       console.log('results: ', this.results[1]);
   }
