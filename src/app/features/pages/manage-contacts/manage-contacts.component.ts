@@ -957,7 +957,7 @@ export class ManageContactsComponent implements OnInit {
 
     sendMessage(): void {
       console.log('send');
-      this.dialCall = 'dial|9' + this.phoneCall.trim();
+      this.dialCall = `dial|9${this.phoneCall.trim()}`;
       if (this.socket$) {
           if (this.socket$.closed) {
               this.connect();
