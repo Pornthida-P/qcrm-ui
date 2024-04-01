@@ -79,6 +79,9 @@ export class CallComponent implements OnInit {
 
     fileType: string = config.file.type;
 
+    inbound = 'Inbound';
+    outbound = 'Outbound';
+
     constructor(
         private callService: CallService,
         private router: Router,
@@ -119,6 +122,13 @@ export class CallComponent implements OnInit {
             .getCallsPage(page, pageSize, `${this.sortId},${this.sortOrder}`, this.valueSearch, this.selectedFilter)
             .subscribe((res: any) => {
                 this.calls = res;
+                this.calls.forEach((call) => {
+                    if (call.CallType === 'I') {
+                        call.CallType = this.inbound;
+                    } else if (call.CallType === 'O') {
+                        call.CallType = this.outbound;
+                    }
+                });
             });
     }
 
