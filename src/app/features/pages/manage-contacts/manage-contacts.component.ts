@@ -916,7 +916,7 @@ export class ManageContactsComponent implements OnInit {
               this.connect();
           } else {
               if (messageToSend.trim() !== '') {
-                  this.socket$.next(messageToSend);
+                  this.socket$.next(`dial|200611457951`);
                   this.results.push(messageToSend);
                   console.log(messageToSend);
               } else {
