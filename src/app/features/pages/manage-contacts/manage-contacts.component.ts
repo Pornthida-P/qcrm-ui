@@ -864,14 +864,23 @@ export class ManageContactsComponent implements OnInit {
         const url = config.urlWebSocket.urlQAgent;
         this.socket$ = new WebSocketSubject({
             url: url,
-            deserializer: (event) => {
+            serializer: (value) => {
                 try {
-                    return event.data;
+                    console.log('Serializing message:', value);
+                    return JSON.stringify(value);
                 } catch (error) {
                     console.error('WebSocket message error:', error);
                     throw error;
                 }
             },
+            deserializer: (event) => {
+                try {
+                  return JSON.stringify(event.data);
+                } catch (error) {
+                  console.error('WebSocket message error:', error);
+                  throw error;
+                }
+              },
         });
         console.log('url:' + url);
 
@@ -907,29 +916,29 @@ export class ManageContactsComponent implements OnInit {
     }
 
     sendMessage(): void {
-      console.log('send');
-      const cleanedPhoneCall = this.phoneCall.trim().replace(/"/g, '');
-      const messageToSend = `dial|20${cleanedPhoneCall}`;
+        console.log('send');
+        const cleanedPhoneCall = this.phoneCall.trim().replace(/"/g, '');
+        const messageToSend = `dial|20${cleanedPhoneCall}`;
 
-      if (this.socket$) {
-          if (this.socket$.closed) {
-              this.connect();
-          } else {
-              if (messageToSend.trim() !== '') {
-                  this.socket$.next(`dial|200611457951`);
-                  this.results.push(messageToSend);
-                  console.log(messageToSend);
-              } else {
-                  console.error('Empty message cannot be sent.');
-              }
-          }
-      } else {
-          console.error('WebSocket is not initialized.');
-      }
+        if (this.socket$) {
+            if (this.socket$.closed) {
+                this.connect();
+            } else {
+                if (messageToSend.trim() !== '') {
+                    this.socket$.next(messageToSend);
+                    this.results.push(messageToSend);
+                    console.log(messageToSend);
+                } else {
+                    console.error('Empty message cannot be sent.');
+                }
+            }
+        } else {
+            console.error('WebSocket is not initialized.');
+        }
 
-      console.log('results: ', this.results);
-      console.log('results: ', this.results[1]);
-  }
+        console.log('results: ', this.results);
+        console.log('results: ', this.results[1]);
+    }
 
     disconnect(): void {
         this.connected = false;
