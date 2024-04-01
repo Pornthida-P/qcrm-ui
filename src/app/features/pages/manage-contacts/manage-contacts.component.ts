@@ -867,7 +867,7 @@ export class ManageContactsComponent implements OnInit {
             serializer: (value) => {
                 try {
                     console.log('Serializing message:', value);
-                    return JSON.stringify(value);
+                    return value;
                 } catch (error) {
                     console.error('WebSocket message error:', error);
                     throw error;
@@ -875,12 +875,13 @@ export class ManageContactsComponent implements OnInit {
             },
             deserializer: (event) => {
                 try {
-                  return JSON.stringify(event.data);
+                    console.log('Deserializing message:', event.data);
+                    return event.data;
                 } catch (error) {
-                  console.error('WebSocket message error:', error);
-                  throw error;
+                    console.error('WebSocket message error:', error);
+                    throw error;
                 }
-              },
+            },
         });
         console.log('url:' + url);
 
