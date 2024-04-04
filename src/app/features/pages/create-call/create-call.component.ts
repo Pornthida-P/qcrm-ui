@@ -13,6 +13,7 @@ import * as moment from 'moment';
 import { AttachmentService } from 'src/app/services/attachment/attachment.service';
 import { Attachment } from 'src/app/shared/interface/attachment.interface';
 import Swal from 'sweetalert2';
+import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
 @Component({
     selector: 'app-create-call',
     templateUrl: './create-call.component.html',
@@ -140,6 +141,7 @@ export class CreateCallComponent {
         private contactService: ContactsService,
         private ngSelectConfig: NgSelectConfig,
         private attachmentService: AttachmentService,
+        private auditLogService: AuditLogService,
     ) {
         this.selectedDate = new Date();
     }
@@ -253,10 +255,18 @@ export class CreateCallComponent {
             .createCalls(data)
             .pipe(
                 tap((res) => {
-                    this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '/contacts');
+                  this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '/contacts');
+                  this.auditLogService.log('', 'Create Call', 'Create Case Call', `ContactID : ${data.contactId}`, `Success`);
                 }),
                 catchError((error) => {
-                    this.sweetalertServices.handleError(error);
+                  this.sweetalertServices.handleError(error);
+                  this.auditLogService.log(
+                    '',
+                    'Create Call',
+                    'Create Case Call',
+                    `ContactID : ${data.contactId}`,
+                    `Failed, Error : ${error}`,
+                );
                     throw error;
                 }),
             )
