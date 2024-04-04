@@ -34,9 +34,13 @@ export const report = {
         caseId: 'ID',
         channel: 'Channel',
         contact: 'Contact',
+        caller: 'Number',
         casetype: 'Topic',
         casesub: 'Subject',
+        description: 'Description',
+        solution: 'Solution',
         agent: 'Agent',
+        province : 'Province',
         created: 'Created Date',
         type: 'Type'
     },
