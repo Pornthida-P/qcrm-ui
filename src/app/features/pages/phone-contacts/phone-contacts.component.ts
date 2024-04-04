@@ -8,6 +8,7 @@ import { config } from 'src/app/config/config';
 import { v4 as uuidv4 } from 'uuid';
 import Swal from 'sweetalert2';
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
 @Component({
     selector: 'app-phone-contacts',
     templateUrl: './phone-contacts.component.html',
@@ -98,6 +99,7 @@ export class PhoneContactsComponent {
         private sweetalertServices: SweetAlertService,
         private route: ActivatedRoute,
         private router: Router,
+        private auditLogService: AuditLogService,
     ) {
         this.contact = { components: [] };
     }
@@ -133,8 +135,8 @@ export class PhoneContactsComponent {
             console.log('user: ', this.userData.userId);
         }
 
-      this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
-      this.getPageOrg();
+        this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
+        this.getPageOrg();
     }
 
     checkRole(): boolean {
@@ -157,14 +159,14 @@ export class PhoneContactsComponent {
                 this.contactNumber = detailItemByPhone.contactNumber;
                 this.contactProvince = detailItemByPhone.province;
                 this.contactProductType = detailItemByPhone.product_type;
-              this.contactSource = detailItemByPhone.source;
+                this.contactSource = detailItemByPhone.source;
 
-              if (this.contactOrg != '' && this.contactOrg != null && this.contactOrg != undefined) {
-                this.contactsService.getOrganizationById(this.contactOrg).subscribe((res: any) => {
-                    this.contactOrgName = res[0].orgName;
-                    this.contactProductType = res[0].prodName;
-                });
-            }
+                if (this.contactOrg != '' && this.contactOrg != null && this.contactOrg != undefined) {
+                    this.contactsService.getOrganizationById(this.contactOrg).subscribe((res: any) => {
+                        this.contactOrgName = res[0].orgName;
+                        this.contactProductType = res[0].prodName;
+                    });
+                }
             } else {
                 console.log('Data does not exist');
             }
@@ -210,9 +212,17 @@ export class PhoneContactsComponent {
                                 queryParams: { contactId: this.contactId, caller_id: this.caller_id, call_id: this.call_id },
                             });
                         });
+                      this.auditLogService.log('', 'Phone Contact', 'Edit Phone Contact', `ContactID : ${data.contactId}`, `Success`);
                     }),
                     catchError((error) => {
-                        this.sweetalertServices.handleError(error);
+                      this.sweetalertServices.handleError(error);
+                      this.auditLogService.log(
+                        '',
+                        'Phone Contact',
+                        'Edit Phone Contact',
+                        `ContactID : ${data.contactId}`,
+                        `Failed, Error : ${error}`,
+                    );
                         throw error;
                     }),
                 )
@@ -234,10 +244,24 @@ export class PhoneContactsComponent {
                 .createContacts(data)
                 .pipe(
                     tap((res) => {
-                        this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '/call/create-call');
+                      this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '/call/create-call');
+                      this.auditLogService.log(
+                        '',
+                        'Phone Contact',
+                        'Create Phone Contact',
+                        `Phone Contact : ${data.firstName}, Email : ${data.email}`,
+                        `Success`,
+                    );
                     }),
                     catchError((error) => {
-                        this.sweetalertServices.handleError(error);
+                      this.sweetalertServices.handleError(error);
+                      this.auditLogService.log(
+                        '',
+                        'Phone Contact',
+                        'Create Phone Contact',
+                        `Phone Contact : ${data.firstName}, Email : ${data.email}`,
+                        `Failed, Error : ${error}`,
+                    );
                         throw error;
                     }),
                 )
@@ -246,32 +270,32 @@ export class PhoneContactsComponent {
     }
 
     showSideBarOrg() {
-      this.visibleLeftSideBar = true;
-      this.visibleRightSideBar = true;
-      this.FormShowing = false;
-      this.SearchFormShowing = false;
-      this.thanks = false;
-      this.SearchOrgShowing = true;
-      this.AddOrgShowing = false;
-      this.AddCallShowing = false;
-  }
+        this.visibleLeftSideBar = true;
+        this.visibleRightSideBar = true;
+        this.FormShowing = false;
+        this.SearchFormShowing = false;
+        this.thanks = false;
+        this.SearchOrgShowing = true;
+        this.AddOrgShowing = false;
+        this.AddCallShowing = false;
+    }
 
-  chooseOrg(orgId: string) {
-    this.contactOrg = orgId;
-    this.contactsService.getOrganizationById(orgId).subscribe((res: any) => {
-        this.contactOrgName = res[0].orgName;
-        this.contactProductType = res[0].prodName;
-    });
-}
+    chooseOrg(orgId: string) {
+        this.contactOrg = orgId;
+        this.contactsService.getOrganizationById(orgId).subscribe((res: any) => {
+            this.contactOrgName = res[0].orgName;
+            this.contactProductType = res[0].prodName;
+        });
+    }
 
     async getFormOrg(pageOrg: number, pageSizeOrg: number) {
-      await this.contactsService
-          .getOrgByPage(pageOrg, pageSizeOrg, `${this.sortIdOrg},${this.sortOrderOrg}`, this.valueSearchOrg, this.selectedFilter)
-          .subscribe((res: any) => {
-              this.organizations = res;
-              // this.spareorganizations = res;
-          });
-  }
+        await this.contactsService
+            .getOrgByPage(pageOrg, pageSizeOrg, `${this.sortIdOrg},${this.sortOrderOrg}`, this.valueSearchOrg, this.selectedFilter)
+            .subscribe((res: any) => {
+                this.organizations = res;
+                // this.spareorganizations = res;
+            });
+    }
 
     searchOrg() {
         if (this.selectedFilter !== 'all') {
@@ -284,67 +308,67 @@ export class PhoneContactsComponent {
     }
 
     sortOrg(value: string) {
-      if (this.sortIdOrg == value) {
-          if (this.sortIcon == 'fa-solid fa-sort-down') {
-              this.sortIcon = 'fa-solid fa-sort-up';
-              this.sortOrderOrg = 'DESC';
-          } else {
-              this.sortIcon = 'fa-solid fa-sort-down';
-              this.sortOrderOrg = 'ASC';
-          }
-      } else {
-          this.sortIdOrg = value;
-      }
-      this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
-  }
+        if (this.sortIdOrg == value) {
+            if (this.sortIcon == 'fa-solid fa-sort-down') {
+                this.sortIcon = 'fa-solid fa-sort-up';
+                this.sortOrderOrg = 'DESC';
+            } else {
+                this.sortIcon = 'fa-solid fa-sort-down';
+                this.sortOrderOrg = 'ASC';
+            }
+        } else {
+            this.sortIdOrg = value;
+        }
+        this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
+    }
 
     async pageChangeOrg(pageOrg: number) {
-      if (pageOrg != this.currentPageOrg) {
-          if (pageOrg >= 1 && pageOrg <= this.totalPageOrgs) {
-              this.currentPageOrg = pageOrg;
-              await this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
-              this.checkedValueOrgs = [];
-          }
-      }
-  }
-
-  get pageOrgs(): number[] {
-    var pageOrg: number[] = [];
-    this.totalPageOrgs = Math.ceil(this.totalItemOrgs / this.pageSizeOrg);
-    for (var i = -this.pagesToShowOrg; i <= this.pagesToShowOrg; i++) {
-        if (this.currentPageOrg + i > 0 && this.currentPageOrg + i <= this.totalPageOrgs) {
-            pageOrg.push(this.currentPageOrg + i);
+        if (pageOrg != this.currentPageOrg) {
+            if (pageOrg >= 1 && pageOrg <= this.totalPageOrgs) {
+                this.currentPageOrg = pageOrg;
+                await this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
+                this.checkedValueOrgs = [];
+            }
         }
     }
-    return pageOrg;
-}
+
+    get pageOrgs(): number[] {
+        var pageOrg: number[] = [];
+        this.totalPageOrgs = Math.ceil(this.totalItemOrgs / this.pageSizeOrg);
+        for (var i = -this.pagesToShowOrg; i <= this.pagesToShowOrg; i++) {
+            if (this.currentPageOrg + i > 0 && this.currentPageOrg + i <= this.totalPageOrgs) {
+                pageOrg.push(this.currentPageOrg + i);
+            }
+        }
+        return pageOrg;
+    }
 
     pageSizeChangeOrg() {
-      this.currentPage = 1;
-      this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
-  }
+        this.currentPage = 1;
+        this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
+    }
 
     async getPageOrg() {
-      await this.contactsService.countOrg(this.valueSearchOrg, this.userId).subscribe((res: any) => {
-          this.totalItemOrgs = res.count;
-      });
-  }
+        await this.contactsService.countOrg(this.valueSearchOrg, this.userId).subscribe((res: any) => {
+            this.totalItemOrgs = res.count;
+        });
+    }
 
-  showAddOrg() {
-    this.AddOrgShowing = true;
-    this.FormShowing = false;
-    this.SearchFormShowing = false;
-    this.thanks = false;
-    this.SearchOrgShowing = false;
-    this.AddCallShowing = false;
-    this.contactsService.getAllIndustryType().subscribe((res: any) => {
-        this.industryType = res;
-    });
+    showAddOrg() {
+        this.AddOrgShowing = true;
+        this.FormShowing = false;
+        this.SearchFormShowing = false;
+        this.thanks = false;
+        this.SearchOrgShowing = false;
+        this.AddCallShowing = false;
+        this.contactsService.getAllIndustryType().subscribe((res: any) => {
+            this.industryType = res;
+        });
 
-    this.contactsService.getAllProductTypes().subscribe((res: any) => {
-        this.productTypes = res;
-    });
-}
+        this.contactsService.getAllProductTypes().subscribe((res: any) => {
+            this.productTypes = res;
+        });
+    }
 
     submitOrg() {
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
@@ -373,5 +397,4 @@ export class PhoneContactsComponent {
             this.sweetalertServices.getSwal('error', 'organization name cannot be empty.', '', false, '');
         }
     }
-
 }
