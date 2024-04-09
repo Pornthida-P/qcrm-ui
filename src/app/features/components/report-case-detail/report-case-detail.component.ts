@@ -109,7 +109,7 @@ export class ReportCaseDetailComponent {
             });
         }
 
-        const totalsRow: Record<string, number | string> = { caseId: 'Totals :' + this.reportTable.length };
+        const totalsRow: Record<string, number | string> = { channel: 'Totals :' + this.reportTable.length };
         Object.keys(totals).forEach((column: string) => {
             totalsRow[column] = totals[column];
         });
