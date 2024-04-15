@@ -123,10 +123,10 @@ export class CallComponent implements OnInit {
             .subscribe((res: any) => {
                 this.calls = res;
                 this.calls.forEach((call) => {
-                    if (call.CallType === 'I') {
-                        call.CallType = this.inbound;
-                    } else if (call.CallType === 'O') {
-                        call.CallType = this.outbound;
+                    if (call.type === 'I') {
+                        call.type = this.inbound;
+                    } else if (call.type === 'O') {
+                        call.type = this.outbound;
                     }
                 });
             });
