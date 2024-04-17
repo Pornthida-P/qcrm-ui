@@ -102,13 +102,13 @@
                                     aria-controls="offcanvasRight"
                                 >
                                     <div class="" ngbTooltip="คลิกดูรายละเอียด" placement="bottom">
-                                        {{ calls.CallerID }}
+                                        {{ calls.caller }}
                                     </div>
                                 </td>
-                                <td>{{ calls.CallType }}</td>
+                                <td>{{ calls.type }}</td>
                                 <td class="w-max-ellipsis">
                                     <div [ngbTooltip]="calls.caseTopicNames" placement="bottom" class="text-ellipsis">
-                                        {{ calls.caseTopicNames }}
+                                        {{ calls.casesub }}
                                     </div>
                                 </td>
                                 <td class="w-max-ellipsis">
@@ -121,7 +121,7 @@
                                         {{ calls.solution }}
                                     </div>
                                 </td>
-                                <td>{{ calls.username }}</td>
+                                <td>{{ calls.agent }}</td>
                                 <!-- <td class="text-center" scope="row">
                                     <div class="d-flex flex-row flex-nowrap">
                                         <div class="me-3 color-primary cursor-pointer" placement="top" ngbTooltip="แก้ไข" (click)="editPage()">
@@ -208,7 +208,7 @@
 
                         <div>
                             <h4>เบอร์โทร</h4>
-                            <h5 class="font-b">{{ detailItem?.CallerID || emptyItem }}</h5>
+                            <h5 class="font-b">{{ detailItem?.caller || emptyItem }}</h5>
                         </div>
                         <div class="row row-side">
                             <div class="col">
@@ -217,18 +217,18 @@
                             </div>
                             <div class="col">
                                 <h5>ประเภทสาย</h5>
-                                <div class="font-b">{{ detailItem?.CallType || emptyItem }}</div>
+                                <div class="font-b">{{ detailItem?.type || emptyItem }}</div>
                             </div>
                         </div>
                         <div class="grid pt-2">
                             <div class="col row-side">
                                 <h5>ผู้ที่รับผิดชอบ</h5>
-                                <div class="font-b">{{ detailItem?.username || emptyItem }}</div>
+                                <div class="font-b">{{ detailItem?.agent || emptyItem }}</div>
                             </div>
                             <div class="col row-side">
                               <h5>เรื่องที่ติดต่อ</h5>
-                              <div *ngIf="detailItem && detailItem.caseTopicNames" class="font-b">
-                                  <div *ngFor="let topic of detailItem.caseTopicNames.split(',');" class="font-b">{{ topic }}</div>
+                              <div *ngIf="detailItem && detailItem.casesub" class="font-b">
+                                  <div *ngFor="let topic of detailItem.casesub.split(',');" class="font-b">{{ topic }}</div>
                               </div>
                           </div>
                         </div>
@@ -247,7 +247,7 @@
                         <div class="row row-side">
                             <div class="col">
                                 <h5>สร้างโดยผู้ใช้</h5>
-                                <div class="font-b">{{ detailItem?.username || emptyItem }}</div>
+                                <div class="font-b">{{ detailItem?.agent || emptyItem }}</div>
                             </div>
                             <div class="col">
                               <h5>แก้ไขล่าสุดโดยผู้ใช้</h5>
