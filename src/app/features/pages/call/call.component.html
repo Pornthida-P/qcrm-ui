@@ -87,8 +87,8 @@
                                         type="checkbox"
                                         [(ngModel)]="calls.state"
                                         name="calls"
-                                        value="{{ calls.id }}"
-                                        (change)="selectCheckbox(calls.call_id)"
+                                        value="calls.callId"
+                                        (change)="selectCheckbox(calls.callId)"
                                     />
                                 </td>
                                 <td>
