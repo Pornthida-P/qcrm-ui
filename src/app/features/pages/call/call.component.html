@@ -95,7 +95,7 @@
                                     {{ calls.createdAt | date : 'dd/MM/yyyy HH:mm' }}
                                 </td>
                                 <td
-                                    (click)="showSideBar(i)"
+                                    (click)="showSideBar(i, calls.callId)"
                                     class="sidebar cursor-pointer"
                                     data-bs-toggle="offcanvas"
                                     data-bs-target="#offcanvasRight"

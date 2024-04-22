@@ -52,6 +52,7 @@ export class CallComponent implements OnInit {
     emptyItem: String = 'ว่าง';
     itemIdex: number = 0;
     isAction: boolean = false;
+    sideBarItemIndex: number = 0;
 
     pageSizeOptions = [10, 20];
     pageSize = 10;
@@ -133,21 +134,28 @@ export class CallComponent implements OnInit {
     }
 
     async getCallsSide(page: number, pageSize: number, value: string) {
-        await this.callService.getCalls(page, pageSize).subscribe((res: any) => {
-            this.calls = Object.values(res);
-            if (value == 'right') this.showSideBar(0);
-            else if (value == 'left') this.showSideBar(this.pageSize - 1);
-        });
+        await this.callService
+            .getContactByPage(page, pageSize, `${this.sortId},${this.sortOrder}`, this.valueSearch, this.selectedFilter)
+            .subscribe((res: any) => {
+                this.calls = res;
+            })
+            .add(() => {
+                if (value == 'right') this.showSideBar(0, this.calls[0].callId);
+                else if (value == 'left') this.showSideBar(this.pageSize - 1, this.calls[this.pageSize - 1].callId);
+            });
     }
 
-    showSideBar(value: number) {
+    showSideBar(value: number, itemId: string) {
         console.log('SideBar');
         this.itemIdex = value;
         this.detailItem = this.calls[this.itemIdex];
+        this.detailItem = this.calls.find((calls: any) => calls.callId == itemId);
+        this.sideBarItemIndex = this.calls.findIndex((calls: any) => calls.callId == itemId);
         this.visibleLeftSideBar = true;
         this.visibleRightSideBar = true;
 
         if (this.itemIdex == 0 && this.currentPage == 1) this.visibleLeftSideBar = false;
+        if (this.itemIdex == this.calls.length - 1) this.visibleRightSideBar = false;
         if (this.itemIdex == this.calls.length - 1 && this.currentPage == this.totalPages) this.visibleRightSideBar = false;
     }
 
@@ -186,13 +194,15 @@ export class CallComponent implements OnInit {
             if (this.itemIdex >= this.pageSize - 1) {
                 await this.pageChangeSideBar(this.currentPage + 1, value);
             } else {
-                this.showSideBar(this.itemIdex + 1);
+                if (this.itemIdex != this.calls.length - 1) {
+                    this.showSideBar(this.itemIdex + 1, this.calls[this.sideBarItemIndex + 1].callId);
+                }
             }
         } else if (value == 'left') {
             if (this.itemIdex == 0) {
                 await this.pageChangeSideBar(this.currentPage - 1, value);
             } else {
-                this.showSideBar(this.itemIdex - 1);
+                this.showSideBar(this.itemIdex - 1, this.calls[this.sideBarItemIndex - 1].callId);
             }
         }
     }
@@ -252,7 +262,7 @@ export class CallComponent implements OnInit {
         if (this.selectValue.length != 0) {
             this.selectedCalls = this.calls.filter((calls: any) => this.selectValue.includes(calls.callId));
         } else {
-          this.selectedCalls = [];
+            this.selectedCalls = [];
         }
 
         if (this.selectedCalls.length != 0) {
