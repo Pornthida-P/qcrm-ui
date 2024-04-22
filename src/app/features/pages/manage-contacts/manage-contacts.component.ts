@@ -839,6 +839,7 @@ export class ManageContactsComponent implements OnInit {
                 solution: this.solutions,
                 createdById: userData.userId,
                 attachment: this.attachmentsId,
+                call_id: this.phoneCall,
             };
             console.log('Data: ', data);
             this.callServive
