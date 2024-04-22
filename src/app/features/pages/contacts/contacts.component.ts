@@ -125,8 +125,8 @@ export class ContactsComponent implements OnInit {
     }
 
     checkRole(): boolean {
-        return this.roleCanAccessCUDForm.includes(this.userRole);
-    }
+        return true;
+    }    
 
     updateCheckedValues(contactId: string,Email: string): void {
         if (Email){

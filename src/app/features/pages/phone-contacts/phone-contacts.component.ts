@@ -140,8 +140,8 @@ export class PhoneContactsComponent {
     }
 
     checkRole(): boolean {
-        return this.roleCanAccessCUDForm.includes(this.userRole);
-    }
+        return true;
+    }    
 
     async getContactByPhoneId(contactId: string) {
         try {
