@@ -250,7 +250,9 @@ export class CallComponent implements OnInit {
 
     exportExcel() {
         if (this.selectValue.length != 0) {
-            this.selectedCalls = this.calls.filter((calls: any) => this.selectValue.includes(calls.call_id));
+            this.selectedCalls = this.calls.filter((calls: any) => this.selectValue.includes(calls.callId));
+        } else {
+          this.selectedCalls = [];
         }
 
         if (this.selectedCalls.length != 0) {
@@ -259,12 +261,12 @@ export class CallComponent implements OnInit {
                     ...acc,
                     {
                         createdAt: cur.createdAt,
-                        name: cur.CallerID,
-                        direction: cur.CallType,
-                        caseTopicName: cur.caseTopicName,
+                        name: cur.caller,
+                        direction: cur.type,
+                        caseTopicName: cur.casesub,
                         description: cur.description,
                         solution: cur.solution,
-                        username: cur.username,
+                        username: cur.agent,
                     },
                 ],
                 [],
@@ -295,7 +297,7 @@ export class CallComponent implements OnInit {
         this.calls.forEach((x: any) => {
             x.state = ev.target.checked;
             if (ev.target.checked) {
-                this.selectValue.push(x.call_id);
+                this.selectValue.push(x.callId);
             } else {
                 this.selectValue = [];
             }
