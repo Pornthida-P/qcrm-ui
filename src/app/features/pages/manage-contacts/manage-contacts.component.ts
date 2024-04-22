@@ -244,8 +244,8 @@ export class ManageContactsComponent implements OnInit {
     }
 
     checkRole(): boolean {
-        return this.roleCanAccessCUDForm.includes(this.userRole);
-    }
+        return true;
+    }    
 
     async getContactById(contactId: string) {
         await this.contactsService.getContactsById(contactId).subscribe((res: any) => {
