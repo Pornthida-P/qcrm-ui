@@ -13,29 +13,6 @@
                 </button>
                 <img src="./assets/nea-qcrm-ui/image/logo/nea-logo.png" class="nav-img cursor-pointer" [routerLink]="'home'" />
             </div>
-            <div class="d-none d-md-flex flex-md-grow-1 ms-md-5 me-md-5">
-                <div class="input-group">
-                    <span class="input-group-text bg-white border border-end-0 color-primary" id="basic-addon1">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </span>
-                    <input
-                        type="text"
-                        class="form-control border border-start-0 shadow-none"
-                        [(ngModel)]="value"
-                        [placeholder]="'component.navbar.search' | translate"
-                        aria-describedby="basic-addon1"
-                        [ngbPopover]="popContentSearch"
-                        popoverClass="border rounded popover-search"
-                    />
-                    <ng-template #popContentSearch>
-                        <div class="d-flex flex-column">
-                            <p>Result 1</p>
-                            <p>Result 2</p>
-                            <p>Result 3</p>
-                        </div>
-                    </ng-template>
-                </div>
-            </div>
             <div class="flex-lg-none d-flex flex-row align-items-center gap-4">
                 <div
                     class="position-relative"
