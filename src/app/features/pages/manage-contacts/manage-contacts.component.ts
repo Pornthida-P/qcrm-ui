@@ -245,7 +245,7 @@ export class ManageContactsComponent implements OnInit {
 
     checkRole(): boolean {
         return true;
-    }    
+    }
 
     async getContactById(contactId: string) {
         await this.contactsService.getContactsById(contactId).subscribe((res: any) => {
@@ -920,7 +920,7 @@ export class ManageContactsComponent implements OnInit {
     sendMessage(): void {
         console.log('send');
         const cleanedPhoneCall = this.phoneCall.trim().replace(/"/g, '');
-        const messageToSend = `dial|20${cleanedPhoneCall}`;
+        const messageToSend = `dial|9${cleanedPhoneCall}`;
 
         if (this.socket$) {
             if (this.socket$.closed) {
