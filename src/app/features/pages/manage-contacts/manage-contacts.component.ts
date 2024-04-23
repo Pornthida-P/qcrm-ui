@@ -155,6 +155,13 @@ export class ManageContactsComponent implements OnInit {
     calls: string | null | undefined;
     userId: string = '';
 
+    selectedCallTypeId: string = '';
+    inbound: string = 'Inbound';
+    outbound: string = 'Outbound';
+    operationType: any;
+    callTypes: any;
+    caller_id: string = '';
+
     private socket$!: WebSocketSubject<any>;
     urlSocket: string = '';
     message: string = '';
@@ -245,6 +252,20 @@ export class ManageContactsComponent implements OnInit {
 
         const now = new Date();
         this.timepickStart = { hour: now.getHours(), minute: now.getMinutes(), second: now.getSeconds() };
+
+        this.callTypes = [
+            { id: '1', name: this.inbound },
+            { id: '2', name: this.outbound },
+        ];
+
+        this.route.queryParams.subscribe((params: any) => {
+            if (!params['caller_id']) {
+                this.selectedCallTypeId = this.outbound;
+            } else {
+                this.selectedCallTypeId = this.inbound;
+            }
+            this.caller_id = params['caller_id'];
+        });
     }
 
     checkRole(): boolean {
@@ -851,6 +872,9 @@ export class ManageContactsComponent implements OnInit {
         const selectedDate = this.startTime ? this.formatDate(new Date(this.startTime)) : this.formatDate(new Date());
         const selectedTime = this.timepickStart ? this.formatTime(this.timepickStart) : this.formatTime(new Date());
 
+        const isChannelOne = this.selectedChannels === '1';
+        const selectedCallTypeId = isChannelOne ? this.selectedCallTypeId : null;
+
         if (this.selectedCaseTopics.length > 0) {
             const data = {
                 contactId: this.contactId,
@@ -867,6 +891,7 @@ export class ManageContactsComponent implements OnInit {
                 createdById: userData.userId,
                 attachment: this.attachmentsId,
                 call_id: this.phoneCall,
+                operationType: selectedCallTypeId,
             };
             console.log('Data: ', data);
             this.callServive
