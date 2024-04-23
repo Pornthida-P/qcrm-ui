@@ -81,7 +81,7 @@ export class ManageContactsComponent implements OnInit {
     description: string = '';
     combinedDateTimeStart: string = '';
     combinedDateTimeEnd: string = '';
-    timepickStart: any;
+    timepickStart: { hour: number; minute: number; second: number } = { hour: 0, minute: 0, second: 0 };
     activityTypeId: any;
     newDateTime: any;
     startTime: string = '';
@@ -180,6 +180,7 @@ export class ManageContactsComponent implements OnInit {
         private callServive: CallService,
     ) {
         this.contact = { components: [] };
+        this.startTime = this.formatDate(new Date());
     }
 
     ngOnInit(): void {
@@ -241,6 +242,9 @@ export class ManageContactsComponent implements OnInit {
         this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
         this.getPageOrg();
         this.connect();
+
+        const now = new Date();
+        this.timepickStart = { hour: now.getHours(), minute: now.getMinutes(), second: now.getSeconds() };
     }
 
     checkRole(): boolean {
@@ -727,16 +731,36 @@ export class ManageContactsComponent implements OnInit {
     }
 
     formatTimepickStart() {
-        const startTimepick = new Date(this.timepickStart);
+        const startTimepick = new Date();
+        startTimepick.setHours(this.timepickStart.hour);
+        startTimepick.setMinutes(this.timepickStart.minute);
+        startTimepick.setSeconds(this.timepickStart.second);
         const formatTimepickStart = startTimepick.toISOString();
         this.combinedDateTimeStart = formatTimepickStart;
+
+        const hour = startTimepick.getHours();
+        const minute = startTimepick.getMinutes();
+        const second = startTimepick.getSeconds();
+
+        const formattedTimeStartPick = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:${second
+            .toString()
+            .padStart(2, '0')}`;
+
+        this.newDateTime = `${this.formatDate(new Date())} ${formattedTimeStartPick}`;
     }
 
     formatDate(date: Date): string {
-        const year = date.getFullYear();
-        const month = (date.getMonth() + 1).toString().padStart(2, '0');
         const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
         return `${year}-${month}-${day}`;
+    }
+
+    formatTime(time: any): string {
+        const hour = time.hour;
+        const minute = time.minute;
+        const second = time.second;
+        return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:${second.toString().padStart(2, '0')}`;
     }
 
     onTimepickStartChange(event: any) {
@@ -749,8 +773,9 @@ export class ManageContactsComponent implements OnInit {
                 .toString()
                 .padStart(2, '0')}`;
 
-            this.newDateTime = `${this.formatDate(new Date(this.startTime))} ${formattedTimeStartPick}`;
-            console.log('New combined date and time: ', this.newDateTime);
+            this.newDateTime = `${this.formatDate(new Date())} ${formattedTimeStartPick}`;
+        } else {
+            this.newDateTime = this.formatDate(new Date());
         }
     }
 
@@ -823,7 +848,9 @@ export class ManageContactsComponent implements OnInit {
     submitCall() {
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
         this.attachmentsId = this.attachments.map((attachment) => attachment.attachmentId.toString());
-        console.log('Id File: ', this.attachmentsId);
+        const selectedDate = this.startTime ? this.formatDate(new Date(this.startTime)) : this.formatDate(new Date());
+        const selectedTime = this.timepickStart ? this.formatTime(this.timepickStart) : this.formatTime(new Date());
+
         if (this.selectedCaseTopics.length > 0) {
             const data = {
                 contactId: this.contactId,
@@ -835,7 +862,7 @@ export class ManageContactsComponent implements OnInit {
                 emailInfo: this.isEmailSubscribed ? 1 : null,
                 activityType: this.activityTypeId,
                 description: this.description,
-                startTime: this.newDateTime,
+                startTime: `${selectedDate} ${selectedTime}`,
                 solution: this.solutions,
                 createdById: userData.userId,
                 attachment: this.attachmentsId,
