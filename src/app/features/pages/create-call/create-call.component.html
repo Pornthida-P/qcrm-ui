@@ -58,6 +58,15 @@
                         <option *ngFor="let channel of channels" [value]="channel.channelId">{{ channel.name }}</option>
                     </select>
                 </div>
+
+                <div class="col-6" *ngIf="selectedChannels === '1'">
+                    <label for="inputCallType" class="form-label">ประเภทสาย</label>
+                    <select id="inputCallType" class="form-select" name="selectedCallTypeId" [(ngModel)]="selectedCallTypeId">
+                        <option disabled value="">กรุณาเลือกข้อมูล</option>
+                        <option *ngFor="let callType of callTypes" [value]="callType.name">{{ callType.name }}</option>
+                    </select>
+                </div>
+
                 <div class="col-6">
                     <label for="inputAddress" class="form-label">กรุณาเลือกวันที่</label>
                     <div class="date-pik">

@@ -132,6 +132,12 @@ export class CreateCallComponent {
     fileNames: any;
     attachments: Attachment[] = [];
     attachmentsId: string[] | undefined;
+    callTypes: any;
+    selectedCallTypeId: string = '';
+
+    inbound: string = 'Inbound';
+    outbound: string = 'Outbound';
+    operationType: any;
 
     constructor(
         private location: Location,
@@ -214,6 +220,11 @@ export class CreateCallComponent {
 
     ngOnInit(): void {
         this.route.queryParams.subscribe((params: any) => {
+            if (!params['caller_id']) {
+                this.selectedCallTypeId = this.outbound;
+            } else {
+                this.selectedCallTypeId = this.inbound;
+            }
             this.contactId = params['contactId'];
             this.call_id = params['call_id'];
             this.caller_id = params['caller_id'];
@@ -253,6 +264,11 @@ export class CreateCallComponent {
 
         const now = new Date();
         this.timepickStart = { hour: now.getHours(), minute: now.getMinutes(), second: now.getSeconds() };
+
+        this.callTypes = [
+            { id: '1', name: this.inbound },
+            { id: '2', name: this.outbound },
+        ];
     }
 
     submit() {
@@ -260,6 +276,10 @@ export class CreateCallComponent {
         this.attachmentsId = this.attachments.map((attachment) => attachment.attachmentId.toString());
         const selectedDate = this.startTime ? this.formatDate(new Date(this.startTime)) : this.formatDate(new Date());
         const selectedTime = this.timepickStart ? this.formatTime(this.timepickStart) : this.formatTime(new Date());
+
+        const isChannelOne = this.selectedChannels === '1';
+
+        const selectedCallTypeId = isChannelOne ? this.selectedCallTypeId : null;
 
         const data = {
             contactId: this.contactId,
@@ -277,6 +297,7 @@ export class CreateCallComponent {
             attachment: this.attachmentsId,
             caller_id: this.caller_id,
             call_id: this.call_id,
+            operationType: selectedCallTypeId,
         };
         this.callServive
             .createCalls(data)
