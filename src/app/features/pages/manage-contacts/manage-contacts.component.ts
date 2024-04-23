@@ -920,7 +920,7 @@ export class ManageContactsComponent implements OnInit {
     sendMessage(): void {
         console.log('send');
         const cleanedPhoneCall = this.phoneCall.trim().replace(/"/g, '');
-        const messageToSend = `dial|9${cleanedPhoneCall}`;
+        const messageToSend = `dial|7${cleanedPhoneCall}`;
 
         if (this.socket$) {
             if (this.socket$.closed) {
