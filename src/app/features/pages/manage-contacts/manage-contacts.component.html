@@ -551,6 +551,13 @@
                                     <option disabled value="">กรุณาเลือกข้อมูล</option>
                                     <option *ngFor="let channel of channels" [value]="channel.channelId">{{ channel.name }}</option>
                                 </select>
+                                <div class="col-6 w-100 pd-t-20" *ngIf="selectedChannels === '1'">
+                                  <label for="inputCallType" class="form-label">ประเภทสาย</label>
+                                  <select id="inputCallType" class="form-select" name="selectedCallTypeId" [(ngModel)]="selectedCallTypeId">
+                                      <option disabled value="">กรุณาเลือกข้อมูล</option>
+                                      <option *ngFor="let callType of callTypes" [value]="callType.name">{{ callType.name }}</option>
+                                  </select>
+                              </div>
                                 <div class="form-check" style="margin-top: 17px;">
                                     <input
                                         class="form-check-input"
