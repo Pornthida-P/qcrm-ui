@@ -15,24 +15,22 @@ export class CallService {
         return this.http.get(`${this.baseUrl}${config.api.path.call.url}/${page}/${limit}`);
     }
 
-  getCallsPage(page: number, limit: number, sortId: string, searchText: string, createdBy: string) {
-    if (searchText == '' || searchText == null) {
-      searchText = 'undefined';
-  }
+    getCallsPage(page: number, limit: number, sortId: string, searchText: string, createdBy: string) {
+        if (searchText == '' || searchText == null) {
+            searchText = 'undefined';
+        }
         return this.http.get(`${this.baseUrl}${config.api.path.call.url}/${page}/${limit}/${sortId}/${searchText}/${createdBy}`);
     }
 
     getCallsCount(searchText: string, createdById: string) {
-      if (searchText == '' || searchText == null) {
-          searchText = 'undefined';
-      }
-      if (createdById == '' || createdById == null) {
-          createdById = 'undefined';
-      }
-      return this.http.get(
-          `${this.baseUrl}${config.api.path.call.url}${config.api.path.call.count}/${searchText}/${createdById}`,
-      );
-  }
+        if (searchText == '' || searchText == null) {
+            searchText = 'undefined';
+        }
+        if (createdById == '' || createdById == null) {
+            createdById = 'undefined';
+        }
+        return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.count}/${searchText}/${createdById}`);
+    }
 
     getCaseTopic() {
         return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.caseTopic}`);
@@ -85,4 +83,28 @@ export class CallService {
         return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.countcontact}${searchText}/${createdById}`);
     }
 
+    getActivityById(id: string) {
+        return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.activitybyid}/${id}`);
+    }
+
+    countActivityById(searchText: string, createdById: string) {
+        if (searchText == '' || searchText == null) {
+            searchText = 'undefined';
+        }
+        if (createdById == '' || createdById == null) {
+            createdById = 'undefined';
+        }
+        return this.http.get(
+            `${this.baseUrl}${config.api.path.call.url}${config.api.path.call.activitybyidCount}${searchText}/${createdById}`,
+        );
+    }
+
+    getActivityIdByPage(page: number, limit: number, sortId: string, searchText: string, createdBy: string, id: string ) {
+        if (searchText == '' || searchText == null) {
+            searchText = 'undefined';
+        }
+        return this.http.get(
+            `${this.baseUrl}${config.api.path.call.url}${config.api.path.call.activitybyidBypage}/${page}/${limit}/${sortId}/${searchText}/${createdBy}/${id}`,
+        );
+    }
 }
