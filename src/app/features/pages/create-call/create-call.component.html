@@ -40,15 +40,17 @@
                 <div class="col-md-6">
                     <label for="inputTopic" class="form-label">หัวข้อที่ติดต่อ<span class="color-red">*</span></label>
                     <ng-select id="inputTopic" [(ngModel)]="selectedCaseTopics" name="selectedCaseTopics" [multiple]="true">
-                      <ng-option *ngFor="let casetopic of casetopics" [value]="casetopic.caseTopicId">{{casetopic.name}}</ng-option>
-                   </ng-select>
+                        <ng-option *ngFor="let casetopic of casetopics" [value]="casetopic.caseTopicId">{{ casetopic.name }}</ng-option>
+                    </ng-select>
                 </div>
 
                 <div class="col-md-6">
                     <label for="inputCaseSubject" class="form-label">เรื่องที่ติดต่อ</label>
                     <ng-select id="inputCaseSubject" [(ngModel)]="selectedCasesubject" name="selectedCasesubject" [multiple]="true">
-                      <ng-option *ngFor="let casesubject of casesubjects" [value]="casesubject.caseSubjectId">{{casesubject.name}}</ng-option>
-                   </ng-select>
+                        <ng-option *ngFor="let casesubject of casesubjects" [value]="casesubject.caseSubjectId">{{
+                            casesubject.name
+                        }}</ng-option>
+                    </ng-select>
                 </div>
 
                 <div class="col-6">
@@ -109,22 +111,60 @@
                             />
                             <label class="form-check-label" [for]="activityType.activityTypeId">{{ activityType.name }}</label>
                         </div>
+                        <div *ngIf="isCheckboxSelected[1]" class="input-group">
+                            <input
+                                type="text"
+                                class="form-control"
+                                placeholder="โครงการอบรม/สัมมนา"
+                                aria-label="Recipient's username with two button addons"
+                                [(ngModel)]="inputActivity"
+                                [ngModelOptions]="{ standalone: true }"
+                            />
+                            <button
+                                class="btn btn-outline-secondary"
+                                type="button"
+                                (click)="showSideBarActivitySeminar()"
+                                data-bs-toggle="offcanvas"
+                                data-bs-target="#offcanvasRight"
+                            >
+                                <i class="fa-solid fa-caret-down"></i>
+                            </button>
+                        </div>
+                        <div *ngIf="isCheckboxSelected[43]" class="input-group">
+                            <input
+                                type="text"
+                                class="form-control"
+                                placeholder="E-Learning"
+                                aria-label="Recipient's username with two button addons"
+                                [(ngModel)]="inputActivity_2"
+                                [ngModelOptions]="{ standalone: true }"
+                            />
+                            <button
+                                class="btn btn-outline-secondary"
+                                type="button"
+                                (click)="showSideBarActivityElearning('43')"
+                                data-bs-toggle="offcanvas"
+                                data-bs-target="#offcanvasRight"
+                            >
+                                <i class="fa-solid fa-caret-down"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div class="col-6">
                     <p class="mg-b">ช่องทางการรับข้อมูลข่าวสาร</p>
                     <div class="div-form-check pd-l-50">
-                      <div class="form-check">
-                        <input
-                            class="form-check-input"
-                            type="checkbox"
-                            value="1"
-                            id="flexCheckChecked"
-                            [checked]="isEmailSubscribed === 1"
-                            (change)="toggleEmailSubscription($event)"
-                        />
-                        <label class="form-check-label" for="flexCheckChecked"> รับข้อมูลทางอีเมล </label>
-                    </div>
+                        <div class="form-check">
+                            <input
+                                class="form-check-input"
+                                type="checkbox"
+                                value="1"
+                                id="flexCheckChecked"
+                                [checked]="isEmailSubscribed === 1"
+                                (change)="toggleEmailSubscription($event)"
+                            />
+                            <label class="form-check-label" for="flexCheckChecked"> รับข้อมูลทางอีเมล </label>
+                        </div>
                     </div>
                 </div>
 
@@ -153,12 +193,12 @@
                     <div class="mb-3">
                         <div class="form-input-file">
                             <input
-                             class="form-control form-control-sm"
-                             id="formFileSm"
-                             type="file"
-                             multiple
-                             (change)="onFileSelected($event)"
-                             />
+                                class="form-control form-control-sm"
+                                id="formFileSm"
+                                type="file"
+                                multiple
+                                (change)="onFileSelected($event)"
+                            />
                         </div>
                     </div>
                 </div>
@@ -192,7 +232,9 @@
                                             (change)="searchContact()"
                                         />
                                     </div>
-                                    <button type="button" class="btn btn-primary btn-search-contact" (click)="searchContact()">ค้นหา</button>
+                                    <button type="button" class="btn btn-primary btn-search-contact" (click)="searchContact()">
+                                        ค้นหา
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -267,7 +309,11 @@
                                     </a>
                                 </li>
                                 <li class="page-item" [class.disabled]="currentPageContact == totalpageContacts">
-                                    <a class="page-link custom-link nextBtn" (click)="pageChangeContact(totalpageContacts)" aria-label="Next">
+                                    <a
+                                        class="page-link custom-link nextBtn"
+                                        (click)="pageChangeContact(totalpageContacts)"
+                                        aria-label="Next"
+                                    >
                                         <i class="fa-solid fa-angles-right"></i>
                                     </a>
                                 </li>
@@ -315,84 +361,304 @@
                         </div>
 
                         <div class="p-5 shadow call-side-change-by w-100 h-100 overflow-auto p-4">
-                          <div class="table-responsive" *ngIf="SearchOrgShowing"></div>
-                          <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th style="width: 70%" scope="col">
-                                            <a (click)="sortOrg('name')">ชื่อ </a><i *ngIf="sortIdOrg == 'name'" class="{{ sortIcon }}"></i>
-                                        </th>
-                                        <th style="width: 15%" scope="col">
-                                            <a (click)="sortOrg('createdAt')">วันที่บันทึก</a
-                                            ><i *ngIf="sortIdOrg == 'createdAt'" class="{{ sortIcon }}"></i>
-                                        </th>
-                                        <th style="width: 15%" scope="col">
-                                            <a>เลือก</a>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <ng-container>
-                                        <tr *ngFor="let org of organizations; let i = index">
-                                            <td scope="row">{{ org.name }}</td>
-                                            <td scope="row">{{ org.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
-                                            <td scope="row">
-                                                <button
-                                                    type="button"
-                                                    class="btn btn-link rounded-circle"
-                                                    (click)="chooseOrg(org.organizationId)"
-                                                >
-                                                    <i class="fa-solid fa-check"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </ng-container>
-                                    <ng-template #noDataTemplate>
+                            <div class="table-responsive" *ngIf="SearchOrgShowing"></div>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
                                         <tr>
-                                            <td colspan="4" class="text-center">ไม่มีข้อมูล</td>
+                                            <th style="width: 70%" scope="col">
+                                                <a (click)="sortOrg('name')">ชื่อ </a
+                                                ><i *ngIf="sortIdOrg == 'name'" class="{{ sortIcon }}"></i>
+                                            </th>
+                                            <th style="width: 15%" scope="col">
+                                                <a (click)="sortOrg('createdAt')">วันที่บันทึก</a
+                                                ><i *ngIf="sortIdOrg == 'createdAt'" class="{{ sortIcon }}"></i>
+                                            </th>
+                                            <th style="width: 15%" scope="col">
+                                                <a>เลือก</a>
+                                            </th>
                                         </tr>
-                                    </ng-template>
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        <ng-container>
+                                            <tr *ngFor="let org of organizations; let i = index">
+                                                <td scope="row">{{ org.name }}</td>
+                                                <td scope="row">{{ org.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
+                                                <td scope="row">
+                                                    <button
+                                                        type="button"
+                                                        class="btn btn-link rounded-circle"
+                                                        (click)="chooseOrg(org.organizationId)"
+                                                    >
+                                                        <i class="fa-solid fa-check"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </ng-container>
+                                        <ng-template #noDataTemplate>
+                                            <tr>
+                                                <td colspan="4" class="text-center">ไม่มีข้อมูล</td>
+                                            </tr>
+                                        </ng-template>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <ul class="pagination cursor-pointer justify-content-center" *ngIf="SearchOrgShowing">
+                                <li class="page-item" [class.disabled]="currentPageOrg == 1">
+                                    <a class="page-link custom-link preBtn" (click)="pageChangeOrg(1)" aria-label="Previous">
+                                        <i class="fa-solid fa-angles-left"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item" [class.disabled]="currentPageOrg == 1">
+                                    <a class="page-link custom-link" (click)="pageChangeOrg(currentPageOrg - 1)" aria-label="Previous">
+                                        <i class="fa-solid fa-angle-left"></i>
+                                    </a>
+                                </li>
+                                <li *ngFor="let pageOrg of pageOrgs" class="page-item" [class.active]="currentPageOrg == pageOrg">
+                                    <a class="page-link custom-link" (click)="pageChangeOrg(pageOrg)">{{ pageOrg }}</a>
+                                </li>
+                                <li class="page-item" [class.disabled]="currentPageOrg == totalPages">
+                                    <a class="page-link custom-link" (click)="pageChangeOrg(currentPageOrg + 1)" aria-label="Next">
+                                        <i class="fa-solid fa-angle-right"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item" [class.disabled]="currentPageOrg == totalPageOrgs">
+                                    <a class="page-link custom-link nextBtn" (click)="pageChangeOrg(totalPageOrgs)" aria-label="Next">
+                                        <i class="fa-solid fa-angles-right"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item ms-3">
+                                    <select
+                                        class="form-select"
+                                        aria-label="Default select example"
+                                        [(ngModel)]="pageSizeOrg"
+                                        (change)="pageSizeChangeOrg()"
+                                    >
+                                        <option class="dropdown-item" *ngFor="let optionOrg of pageSizeOptionOrgs" [value]="optionOrg">
+                                            {{ optionOrg }}
+                                        </option>
+                                    </select>
+                                </li>
+                            </ul>
                         </div>
-                        <ul class="pagination cursor-pointer justify-content-center" *ngIf="SearchOrgShowing">
-                            <li class="page-item" [class.disabled]="currentPageOrg == 1">
-                                <a class="page-link custom-link preBtn" (click)="pageChangeOrg(1)" aria-label="Previous">
-                                    <i class="fa-solid fa-angles-left"></i>
-                                </a>
-                            </li>
-                            <li class="page-item" [class.disabled]="currentPageOrg == 1">
-                                <a class="page-link custom-link" (click)="pageChangeOrg(currentPageOrg - 1)" aria-label="Previous">
-                                    <i class="fa-solid fa-angle-left"></i>
-                                </a>
-                            </li>
-                            <li *ngFor="let pageOrg of pageOrgs" class="page-item" [class.active]="currentPageOrg == pageOrg">
-                                <a class="page-link custom-link" (click)="pageChangeOrg(pageOrg)">{{ pageOrg }}</a>
-                            </li>
-                            <li class="page-item" [class.disabled]="currentPageOrg == totalPages">
-                                <a class="page-link custom-link" (click)="pageChangeOrg(currentPageOrg + 1)" aria-label="Next">
-                                    <i class="fa-solid fa-angle-right"></i>
-                                </a>
-                            </li>
-                            <li class="page-item" [class.disabled]="currentPageOrg == totalPageOrgs">
-                                <a class="page-link custom-link nextBtn" (click)="pageChangeOrg(totalPageOrgs)" aria-label="Next">
-                                    <i class="fa-solid fa-angles-right"></i>
-                                </a>
-                            </li>
-                            <li class="page-item ms-3">
-                                <select
-                                    class="form-select"
-                                    aria-label="Default select example"
-                                    [(ngModel)]="pageSizeOrg"
-                                    (change)="pageSizeChangeOrg()"
-                                >
-                                    <option class="dropdown-item" *ngFor="let optionOrg of pageSizeOptionOrgs" [value]="optionOrg">
-                                        {{ optionOrg }}
-                                    </option>
-                                </select>
-                            </li>
-                        </ul>
+                    </div>
+
+                    <div *ngIf="showActivitySeminarSideBar">
+                        <div class="p-5 shadow call-side-detail" *ngIf="SearchOrgShowing">
+                            <div>
+                                <h4>โครงการอบรม/สัมนา</h4>
+                                <div class="row search-contact">
+                                    <div class="col-md-9">
+                                        <input
+                                            id="table-complete-search"
+                                            type="text"
+                                            class="form-control border shadow-none"
+                                            name="searchOrg"
+                                            [(ngModel)]="valueSearchOrg"
+                                            placeholder="ค้นหา..."
+                                            aria-describedby="basic-addon1"
+                                            style="width: 100%"
+                                            (change)="searchOrg()"
+                                        />
+                                    </div>
+                                    <button type="button" class="btn btn-primary btn-search-contact" (click)="searchOrg()">ค้นหา</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-5 shadow call-side-change-by w-100 h-100 overflow-auto p-4">
+                            <div class="table-responsive" *ngIf="SearchOrgShowing"></div>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 70%" scope="col">
+                                                <a (click)="sortOrg('name')">ชื่อ </a
+                                                ><i *ngIf="sortIdOrg == 'name'" class="{{ sortIcon }}"></i>
+                                            </th>
+                                            <th style="width: 15%" scope="col">
+                                                <a (click)="sortOrg('createdAt')">วันที่บันทึก</a
+                                                ><i *ngIf="sortIdOrg == 'createdAt'" class="{{ sortIcon }}"></i>
+                                            </th>
+                                            <th style="width: 15%" scope="col">
+                                                <a>เลือก</a>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <ng-container>
+                                            <tr *ngFor="let org of organizations; let i = index">
+                                                <td scope="row">{{ org.name }}</td>
+                                                <td scope="row">{{ org.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
+                                                <td scope="row">
+                                                    <button
+                                                        type="button"
+                                                        class="btn btn-link rounded-circle"
+                                                        (click)="chooseOrg(org.organizationId)"
+                                                    >
+                                                        <i class="fa-solid fa-check"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </ng-container>
+                                        <ng-template #noDataTemplate>
+                                            <tr>
+                                                <td colspan="4" class="text-center">ไม่มีข้อมูล</td>
+                                            </tr>
+                                        </ng-template>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <ul class="pagination cursor-pointer justify-content-center" *ngIf="SearchOrgShowing">
+                                <li class="page-item" [class.disabled]="currentPageOrg == 1">
+                                    <a class="page-link custom-link preBtn" (click)="pageChangeOrg(1)" aria-label="Previous">
+                                        <i class="fa-solid fa-angles-left"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item" [class.disabled]="currentPageOrg == 1">
+                                    <a class="page-link custom-link" (click)="pageChangeOrg(currentPageOrg - 1)" aria-label="Previous">
+                                        <i class="fa-solid fa-angle-left"></i>
+                                    </a>
+                                </li>
+                                <li *ngFor="let pageOrg of pageOrgs" class="page-item" [class.active]="currentPageOrg == pageOrg">
+                                    <a class="page-link custom-link" (click)="pageChangeOrg(pageOrg)">{{ pageOrg }}</a>
+                                </li>
+                                <li class="page-item" [class.disabled]="currentPageOrg == totalPages">
+                                    <a class="page-link custom-link" (click)="pageChangeOrg(currentPageOrg + 1)" aria-label="Next">
+                                        <i class="fa-solid fa-angle-right"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item" [class.disabled]="currentPageOrg == totalPageOrgs">
+                                    <a class="page-link custom-link nextBtn" (click)="pageChangeOrg(totalPageOrgs)" aria-label="Next">
+                                        <i class="fa-solid fa-angles-right"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item ms-3">
+                                    <select
+                                        class="form-select"
+                                        aria-label="Default select example"
+                                        [(ngModel)]="pageSizeOrg"
+                                        (change)="pageSizeChangeOrg()"
+                                    >
+                                        <option class="dropdown-item" *ngFor="let optionOrg of pageSizeOptionOrgs" [value]="optionOrg">
+                                            {{ optionOrg }}
+                                        </option>
+                                    </select>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div *ngIf="showActivityElearningSideBar">
+                        <div class="p-5 shadow call-side-detail" *ngIf="SearchElearningShowing">
+                            <div>
+                                <h4>E-Learning</h4>
+                                <div class="row search-contact">
+                                    <div class="col-md-9">
+                                        <input
+                                            id="table-complete-search"
+                                            type="text"
+                                            class="form-control border shadow-none"
+                                            name="searchElearning"
+                                            [(ngModel)]="valueSearchEln"
+                                            placeholder="ค้นหา..."
+                                            aria-describedby="basic-addon1"
+                                            style="width: 100%"
+                                            (change)="searchEln()"
+                                        />
+                                    </div>
+                                    <button type="button" class="btn btn-primary btn-search-contact" (click)="searchEln()">ค้นหา</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-5 shadow call-side-change-by w-100 h-100 overflow-auto p-4">
+                            <div class="table-responsive" *ngIf="SearchElearningShowing"></div>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 70%" scope="col">
+                                                <a (click)="sortEln('name')">ชื่อ </a
+                                                ><i *ngIf="sortIdEln == 'name'" class="{{ sortIcon }}"></i>
+                                            </th>
+                                            <th style="width: 15%" scope="col">
+                                                <a (click)="sortEln('createdAt')">วันที่บันทึก</a
+                                                ><i *ngIf="sortIdEln == 'createdAt'" class="{{ sortIcon }}"></i>
+                                            </th>
+                                            <th style="width: 15%" scope="col">
+                                                <a>เลือก</a>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <ng-container>
+                                            <tr *ngFor="let eln of activityTypeById; let i = index">
+                                                <td scope="row">{{ eln.name }}</td>
+                                                <td scope="row">{{ eln.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
+                                                <td scope="row">
+                                                    <input
+                                                        type="checkbox"
+                                                        class="form-check-input"
+                                                        [checked]="selectedActivityTopicId.includes(eln.activityTopicId)"
+                                                        (change)="toggleActivityTopicId(eln.activityTopicId)"
+                                                    />
+                                                    <!-- <button
+                                                        type="button"
+                                                        class="btn btn-link rounded-circle"
+                                                        (click)="chooseOrg(eln.organizationId)"
+                                                    >
+                                                        <i class="fa-solid fa-check"></i>
+                                                    </button> -->
+                                                </td>
+                                            </tr>
+                                        </ng-container>
+                                        <ng-template #noDataTemplate>
+                                            <tr>
+                                                <td colspan="4" class="text-center">ไม่มีข้อมูล</td>
+                                            </tr>
+                                        </ng-template>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- <ul class="pagination cursor-pointer justify-content-center" *ngIf="SearchElearningShowing">
+                                <li class="page-item" [class.disabled]="currentPageEln == 1">
+                                    <a class="page-link custom-link preBtn" (click)="pageChangeEln(1)" aria-label="Previous">
+                                        <i class="fa-solid fa-angles-left"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item" [class.disabled]="currentPageEln == 1">
+                                    <a class="page-link custom-link" (click)="pageChangeEln(currentPageEln - 1)" aria-label="Previous">
+                                        <i class="fa-solid fa-angle-left"></i>
+                                    </a>
+                                </li>
+                                <li *ngFor="let pageEln of pageElns" class="page-item" [class.active]="currentPageEln == pageEln">
+                                  <a class="page-link custom-link" (click)="pageChangeEln(pageEln)">{{ pageEln }}</a>
+                              </li>
+                                <li class="page-item" [class.disabled]="currentPageEln == totalPages">
+                                    <a class="page-link custom-link" (click)="pageChangeEln(currentPageEln + 1)" aria-label="Next">
+                                        <i class="fa-solid fa-angle-right"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item" [class.disabled]="currentPageEln == totalPageElns">
+                                    <a class="page-link custom-link nextBtn" (click)="pageChangeEln(totalPageElns)" aria-label="Next">
+                                        <i class="fa-solid fa-angles-right"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item ms-3">
+                                    <select
+                                        class="form-select"
+                                        aria-label="Default select example"
+                                        [(ngModel)]="pageSizeEln"
+                                        (change)="pageSizeChangeEln()"
+                                    >
+                                        <option class="dropdown-item" *ngFor="let optionEln of pageSizeOptionElns" [value]="optionEln">
+                                            {{ optionEln }}
+                                        </option>
+                                    </select>
+                                </li>
+                            </ul> -->
+                        </div>
                     </div>
                 </div>
             </div>

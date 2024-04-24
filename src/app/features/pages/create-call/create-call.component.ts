@@ -91,8 +91,24 @@ export class CreateCallComponent {
     pagesToShowOrg = 3;
     pageSizeOrg = 5;
 
+    pageSizeOptionElns = [5, 10, 20];
+    currentPageActivityById = 1;
+    currentPageEln = 1;
+    totalItemElns = 0;
+    totalPageElns = 0;
+    pagesToShowEln = 3;
+    pageSizeEln = 5;
+
     SearchOrgShowing: boolean = false;
     valueSearchOrg!: string;
+
+    SearchElearningShowing: boolean = false;
+    valueSearchEln!: string;
+
+    sortIdEln: string = 'createdAt';
+    sortOrderEln: string = 'DESC';
+    checkedValueEln: string[] = [];
+    AddElnShowing: boolean = false;
 
     sortIdOrg: string = 'createdAt';
     sortOrderOrg: string = 'DESC';
@@ -127,6 +143,8 @@ export class CreateCallComponent {
 
     showOrgSidebar: boolean = false;
     showContactSidebar: boolean = false;
+    showActivitySeminarSideBar: boolean = false;
+    showActivityElearningSideBar: boolean = false;
 
     files: File[] = [];
     fileNames: any;
@@ -138,6 +156,21 @@ export class CreateCallComponent {
     inbound: string = 'Inbound';
     outbound: string = 'Outbound';
     operationType: any;
+
+    inputActivity: string = '';
+    inputActivity_2: string = '';
+
+    isCheckboxSelected: { [key: number]: boolean } = {};
+
+    activityId: string = '';
+    activityTypeById: any;
+    activitiesTopic: any;
+
+    checkedValueElns: string[] = [];
+
+    selectedOrganizations: string[] = [];
+    selectedActivityTopicId: string[] = [];
+    // pageEln: number | undefined = 0;
 
     constructor(
         private location: Location,
@@ -260,7 +293,9 @@ export class CreateCallComponent {
         this.getFormContact((this.currentPageContact - 1) * this.pageSizeContact, this.pageSizeContact);
         this.getPageContact();
         this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
+        // this.getFormEln((this.currentPageEln - 1) * this.pageSizeEln, this.pageSizeEln, this.activityTypeId);
         this.getPageOrg();
+        this.getPageEln();
 
         const now = new Date();
         this.timepickStart = { hour: now.getHours(), minute: now.getMinutes(), second: now.getSeconds() };
@@ -331,6 +366,8 @@ export class CreateCallComponent {
         this.AddContactShowing = false;
         this.showOrgSidebar = false;
         this.showContactSidebar = true;
+        this.showActivitySeminarSideBar = false;
+        this.showActivityElearningSideBar = false;
     }
 
     pageSizeChangeContact() {
@@ -415,10 +452,14 @@ export class CreateCallComponent {
         });
     }
 
+    // onCheckboxChange(event: any, activityTypeId: number) {
+    //     if (event.target.checked) {
+    //         this.activityTypeId = activityTypeId;
+    //     }
+    // }
+
     onCheckboxChange(event: any, activityTypeId: number) {
-        if (event.target.checked) {
-            this.activityTypeId = activityTypeId;
-        }
+        this.isCheckboxSelected[activityTypeId] = event.target.checked;
     }
 
     toggleEmailSubscription(event: any) {
@@ -443,11 +484,18 @@ export class CreateCallComponent {
         this.AddOrgShowing = false;
         this.showOrgSidebar = true;
         this.showContactSidebar = false;
+        this.showActivitySeminarSideBar = false;
+        this.showActivityElearningSideBar = false;
     }
 
     pageSizeChangeOrg() {
         this.currentPageOganization = 1;
         this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
+    }
+
+    pageSizeChangeEln() {
+        this.currentPageActivityById = 1;
+        this.getFormEln((this.currentPageEln - 1) * this.pageSizeEln, this.pageSizeEln, this.activityTypeId);
     }
 
     sortOrg(value: string) {
@@ -465,12 +513,37 @@ export class CreateCallComponent {
         this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
     }
 
+    sortEln(value: string) {
+        if (this.sortIdOrg == value) {
+            if (this.sortIcon == 'fa-solid fa-sort-down') {
+                this.sortIcon = 'fa-solid fa-sort-up';
+                this.sortOrderOrg = 'DESC';
+            } else {
+                this.sortIcon = 'fa-solid fa-sort-down';
+                this.sortOrderOrg = 'ASC';
+            }
+        } else {
+            this.sortIdOrg = value;
+        }
+        this.getFormEln((this.currentPageEln - 1) * this.pageSizeEln, this.pageSizeEln, this.activityTypeId);
+    }
+
     async pageChangeOrg(pageOrg: number) {
         if (pageOrg != this.currentPageOrg) {
             if (pageOrg >= 1 && pageOrg <= this.totalPageOrgs) {
                 this.currentPageOrg = pageOrg;
                 await this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
                 this.checkedValueOrgs = [];
+            }
+        }
+    }
+
+    async pageChangeEln(pageEln: number) {
+        if (pageEln != this.currentPageEln) {
+            if (pageEln >= 1 && pageEln <= this.totalPageElns) {
+                this.currentPageEln = pageEln;
+                await this.getFormEln((this.currentPageEln - 1) * this.pageSizeEln, this.pageSizeEln, this.activityTypeId);
+                this.checkedValueElns = [];
             }
         }
     }
@@ -486,6 +559,17 @@ export class CreateCallComponent {
         return pageOrg;
     }
 
+    get pageElns(): number[] {
+        var pageEln: number[] = [];
+        this.totalPageElns = Math.ceil(this.totalItemElns / this.pageSizeEln);
+        for (var i = -this.pagesToShowEln; i <= this.pagesToShowEln; i++) {
+            if (this.currentPageEln + i > 0 && this.currentPageEln + i <= this.totalPageElns) {
+                pageEln.push(this.currentPageEln + i);
+            }
+        }
+        return pageEln;
+    }
+
     async getFormOrg(pageOrg: number, pageSizeOrg: number) {
         await this.contactService
             .getOrgByPage(pageOrg, pageSizeOrg, `${this.sortIdOrg},${this.sortOrderOrg}`, this.valueSearchOrg, this.selectedFilter)
@@ -499,6 +583,14 @@ export class CreateCallComponent {
         await this.contactService.countOrg(this.valueSearchOrg, this.userId).subscribe((res: any) => {
             this.totalItemOrgs = res.count;
         });
+        console.log('Conut Org:', this.totalItemOrgs);
+    }
+
+    async getPageEln() {
+        await this.callServive.countActivityById(this.valueSearchEln, this.userId).subscribe((res: any) => {
+            this.totalItemElns = res.count;
+        });
+        console.log('Conut Ac:', this.totalItemElns);
     }
 
     searchOrg() {
@@ -509,6 +601,16 @@ export class CreateCallComponent {
         }
         this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
         this.getPageOrg();
+    }
+
+    searchEln() {
+        if (this.selectedFilter !== 'all') {
+            this.userId = this.userData.userId;
+        } else {
+            this.userId = '';
+        }
+        this.getFormEln((this.currentPageEln - 1) * this.pageSizeEln, this.pageSizeEln, this.activityTypeId);
+        this.getPageEln();
     }
 
     onFileSelected(event: any) {
@@ -539,5 +641,94 @@ export class CreateCallComponent {
                 )
                 .subscribe(() => {});
         }
+    }
+
+    showSideBarActivitySeminar() {
+        this.visibleLeftSideBar = true;
+        this.visibleRightSideBar = true;
+        this.FormShowing = false;
+        this.SearchFormShowing = false;
+        this.searchContactShowing = true;
+        this.thanks = false;
+        this.AddContactShowing = false;
+        this.showOrgSidebar = false;
+        this.showContactSidebar = false;
+        this.showActivitySeminarSideBar = true;
+    }
+
+    async showSideBarActivityElearning(activityTypeId: string) {
+        this.visibleLeftSideBar = true;
+        this.visibleRightSideBar = true;
+        this.FormShowing = false;
+        this.SearchFormShowing = false;
+        this.SearchElearningShowing = true;
+        this.thanks = false;
+        this.AddContactShowing = false;
+        this.showOrgSidebar = false;
+        this.showContactSidebar = false;
+        this.showActivitySeminarSideBar = false;
+        this.showActivityElearningSideBar = true;
+
+        try {
+            const activityData = await this.getActivityById(activityTypeId);
+            console.log('activity: ', activityData);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    async getActivityById(activityTypeId: string) {
+        try {
+            const res = await this.callServive.getActivityById(activityTypeId).toPromise();
+            this.activityTypeById = res;
+            console.log('activity: ', this.activityTypeById);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    async getFormEln(pageEln: number, pageSizeEln: number, activityTypeId: string) {
+        await this.callServive
+            .getActivityIdByPage(
+                pageEln,
+                pageSizeEln,
+                `${this.sortIdEln},${this.sortOrderEln}`,
+                this.valueSearchEln,
+                this.selectedFilter,
+                activityTypeId,
+            )
+            .subscribe((res: any) => {
+                console.log('API response:', res);
+                this.activityTypeById = res;
+                // this.spareActivityTypeById = res;
+            });
+        console.log('ActivityIdByPage:', this.activityTypeById);
+    }
+
+    async getFormContac(pageContact: number, pageSizeContact: number) {
+        await this.callServive
+            .getContactByPage(
+                pageContact,
+                pageSizeContact,
+                `${this.sortIdContact},${this.sortOrderContact}`,
+                this.valuesearchContact,
+                this.selectedFilter,
+            )
+            .subscribe((res: any) => {
+                console.log('API response:', res);
+                this.contacts = res;
+                this.sparecontacts = res;
+                console.log('contact:', this.contacts);
+            });
+    }
+
+    toggleActivityTopicId(activityTopicId: string) {
+        const index = this.selectedOrganizations.indexOf(activityTopicId);
+        if (index === -1) {
+            this.selectedOrganizations.push(activityTopicId);
+        } else {
+            this.selectedOrganizations.splice(index, 1);
+        }
+        console.log('select id activity:', this.selectedOrganizations);
     }
 }
