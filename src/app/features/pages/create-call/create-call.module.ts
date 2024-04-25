@@ -12,6 +12,7 @@ import { NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 @NgModule({
   declarations: [CreateCallComponent],
   imports: [
@@ -32,7 +33,8 @@ import { NgSelectModule } from '@ng-select/ng-select';
     ReactiveFormsModule,
     NgbTypeaheadModule,
     FontAwesomeModule,
-    NgSelectModule
+    NgSelectModule,
+    NgbTooltipModule
   ]
 })
 export class CreateCallModule { }

@@ -76,6 +76,11 @@ export const config = {
                 contactid: '/contacts',
                 activitiesType: '/activitiestype',
                 uploadFile: '/upload',
+                activitybyid: '/activitybyid',
+                activitybyidCount: '/activitybyid-count/count/',
+                activitybyidBypage: '/activitybyidbypage',
+                activitySmn: '/activity-smn',
+                createActivityTopic: '/activityTopic',
             },
             survey: {
                 baseUrl: '/survey',
@@ -107,8 +112,8 @@ export const config = {
         maxSize: 2 * 1024 * 1024,
         type: '.xlsx',
     },
-  roleCanAccessCUDForm: ['admin', 'system', 'super admin'],
-  urlWebSocket: {
-      urlQAgent: `ws://127.0.0.1:8748/QAgent`
-    }
+    roleCanAccessCUDForm: ['admin', 'system', 'super admin'],
+    urlWebSocket: {
+        urlQAgent: `ws://127.0.0.1:8748/QAgent`,
+    },
 };
