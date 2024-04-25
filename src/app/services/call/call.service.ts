@@ -69,6 +69,10 @@ export class CallService {
         return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.activitiesType}`);
     }
 
+    getActivitiesTypeSmn() {
+        return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.activitySmn}`);
+    }
+
     createCalls(data: any) {
         return this.http.post(`${this.baseUrl}${config.api.path.call.url}`, data);
     }

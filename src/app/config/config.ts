@@ -79,6 +79,7 @@ export const config = {
                 activitybyid: '/activitybyid',
                 activitybyidCount: '/activitybyid-count/count/',
                 activitybyidBypage: '/activitybyidbypage',
+                activitySmn: '/activity-smn',
             },
             survey: {
                 baseUrl: '/survey',
