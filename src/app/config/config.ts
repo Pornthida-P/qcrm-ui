@@ -80,6 +80,7 @@ export const config = {
                 activitybyidCount: '/activitybyid-count/count/',
                 activitybyidBypage: '/activitybyidbypage',
                 activitySmn: '/activity-smn',
+                createActivityTopic: '/activityTopic',
             },
             survey: {
                 baseUrl: '/survey',
