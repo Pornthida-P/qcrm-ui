@@ -77,6 +77,10 @@ export class CallService {
         return this.http.post(`${this.baseUrl}${config.api.path.call.url}`, data);
     }
 
+    createActivityTopic(data: any) {
+        return this.http.post(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.createActivityTopic}`, data);
+    }
+
     countContact(searchText: string, createdById: string) {
         if (searchText == '' || searchText == null) {
             searchText = 'undefined';

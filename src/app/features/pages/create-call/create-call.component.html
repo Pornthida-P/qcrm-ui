@@ -147,6 +147,7 @@
                                 aria-label="Recipient's username with two button addons"
                                 [(ngModel)]="inputActivity_2"
                                 [ngModelOptions]="{ standalone: true }"
+                                (change)="inputActivityElearning($event)"
                             />
                             <button
                                 class="btn btn-outline-secondary"
@@ -486,6 +487,22 @@
                         <div class="p-5 shadow call-side-change-by w-100 h-100 overflow-auto p-4">
                             <div class="table-responsive" *ngIf="SearchSmnShowing"></div>
                             <div class="table-responsive">
+                              <form class="row g-3">
+                                <div class="col-auto">
+                                  <label for="staticEmail2" class="visually">ชื่อโครงการอบรม</label>
+                                  <input type="text" class="form-control" id="activityTopicnName" placeholder="ชื่อโครงการอบรม" [(ngModel)]="nameActivityTopic" [ngModelOptions]="{ standalone: true }">
+                                </div>
+                                <div class="col-auto">
+                                  <label for="inputActivityTopicIdType" class="visually">หัวข้อโครงการอบรม</label>
+                                  <select id="inputActivityTopicIdType" class="form-select" name="selectedActivityTopicName" [(ngModel)]="selectedActivityTopicName">
+                                      <option disabled value="0">กรุณาเลือกข้อมูล</option>
+                                      <option *ngFor="let topic of activitiestypeTopic" [value]="topic.activityTypeId">{{ topic.name }}</option>
+                                  </select>
+                              </div>
+                                <div class="col-auto">
+                                  <button type="submit" (click)="submitActivityTopic()" class="btn btn-primary mb-3">บันทึก</button>
+                                </div>
+                              </form>
                                 <table class="table">
                                     <thead>
                                         <tr>
@@ -558,6 +575,22 @@
                         <div class="p-5 shadow call-side-change-by w-100 h-100 overflow-auto p-4">
                             <div class="table-responsive" *ngIf="SearchElearningShowing"></div>
                             <div class="table-responsive">
+                              <form class="row g-3">
+                                <div class="col-auto">
+                                  <label for="staticEmail2" class="visually">ชื่อโครงการอบรม</label>
+                                  <input type="text" class="form-control" id="activityTopicnName" placeholder="ชื่อโครงการอบรม" [(ngModel)]="nameActivityTopic" [ngModelOptions]="{ standalone: true }">
+                                </div>
+                                <div class="col-auto">
+                                  <label for="inputActivityTopicIdType" class="visually">หัวข้อโครงการอบรม</label>
+                                  <select id="inputActivityTopicIdType" class="form-select" name="selectedActivityTopicName" [(ngModel)]="selectedActivityTopicName">
+                                      <option disabled value="0">กรุณาเลือกข้อมูล</option>
+                                      <option *ngFor="let topicEln of activitiestypeEln" [value]="topicEln.activityTypeId">{{ topicEln.name }}</option>
+                                  </select>
+                              </div>
+                                <div class="col-auto">
+                                  <button type="submit" (click)="submitActivityTopic()" class="btn btn-primary mb-3">บันทึก</button>
+                                </div>
+                              </form>
                                 <table class="table">
                                     <thead>
                                         <tr>

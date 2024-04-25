@@ -52,6 +52,8 @@ export class CreateCallComponent {
     selectedCasesubject: any;
     selectedCaseTopics: any[] = [];
     selectedChannels: any;
+    nameActivityTopic: string = '';
+    selectedActivityTopicName: any;
 
     parent: any = null;
 
@@ -192,7 +194,9 @@ export class CreateCallComponent {
     selectedActivitiesElearning: any;
     activityElearning: any;
     activitySmn: any;
-  selectedActivitiesSmnIds: any;
+    selectedActivitiesSmnIds: any;
+    activitiestypeTopic: any;
+  activitiestypeEln: any;
     // pageEln: number | undefined = 0;
 
     // selectedActivityTopicId: string[] = [];
@@ -293,7 +297,19 @@ export class CreateCallComponent {
         });
 
         this.callServive.getActivitiesType().subscribe((activitiestype: any) => {
-            this.activitiestype = activitiestype;
+            this.activitiestype = activitiestype.filter((activityType: any) => [1, 43].includes(parseInt(activityType.activityTypeId)));
+        });
+
+        this.callServive.getActivitiesType().subscribe((activitiestype: any) => {
+            this.activitiestypeTopic = activitiestype.filter((activityType: any) =>
+                [21, 27, 28].includes(parseInt(activityType.activityTypeId)),
+            );
+        });
+
+        this.callServive.getActivitiesType().subscribe((activitiestype: any) => {
+            this.activitiestypeEln = activitiestype.filter((activityType: any) =>
+                [43].includes(parseInt(activityType.activityTypeId)),
+            );
         });
 
         this.callServive.getAllCaseSubjects().subscribe((casesubjects: any) => {
@@ -345,8 +361,8 @@ export class CreateCallComponent {
 
         const selectedCallTypeId = isChannelOne ? this.selectedCallTypeId : null;
 
-        const selectedActivitiesSmnIds = this.selectedActivitiesSmn.map((activity: { activityTopicId: any; }) => activity.activityTopicId);
-        const selectedActivitiesElnIds = this.selectedActivities.map((activity: { activityTopicId: any; }) => activity.activityTopicId);
+        const selectedActivitiesSmnIds = this.selectedActivitiesSmn ? this.selectedActivitiesSmn.map((activity: { activityTopicId: any }) => activity.activityTopicId) : null;
+        const selectedActivitiesElnIds = this.selectedActivities ? this.selectedActivities.map((activity: { activityTopicId: any }) => activity.activityTopicId) : null;
 
         const data = {
             contactId: this.contactId,
@@ -356,7 +372,7 @@ export class CreateCallComponent {
             caseSubject: this.selectedCasesubject,
             channel: this.selectedChannels,
             emailInfo: this.isEmailSubscribed ? 1 : null,
-            activityType: this.activityTypeId,
+            // activityType: this.activityTypeId,
             description: this.description,
             startTime: `${selectedDate} ${selectedTime}`,
             solution: this.solutions,
@@ -384,6 +400,31 @@ export class CreateCallComponent {
                         `ContactID : ${data.contactId}`,
                         `Failed, Error : ${error}`,
                     );
+                    throw error;
+                }),
+            )
+            .subscribe();
+    }
+
+    submitActivityTopic() {
+        const data = {
+            activityId: this.selectedActivityTopicName,
+            activityTopicName: this.nameActivityTopic,
+        };
+        console.log(data);
+
+        this.callServive
+            .createActivityTopic(data)
+            .pipe(
+                tap((res) => {
+                    this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
+                  this.auditLogService.log('', 'Create Call', 'Create Case Call', `ContactID :}`, `Success`);
+                  window.location.reload();
+
+                }),
+                catchError((error) => {
+                    this.sweetalertServices.handleError(error);
+                    this.auditLogService.log('', 'Create Call', 'Create ActivityTopic', `ContactID :`, `Failed, Error : ${error}`);
                     throw error;
                 }),
             )
@@ -859,5 +900,13 @@ export class CreateCallComponent {
         this.selectedActivitiesSmn = this.activitySmn.filter((activity: { activityTopicId: string }) => {
             return this.selectedActivityTopicIdSmn.includes(activity.activityTopicId);
         });
+    }
+
+    inputActivityElearning(event: any) {
+        console.log(event.target.value);
+    }
+
+    filterActivities(): any[] {
+        return this.activitiestype.filter((activityType: { activityTypeId: number }) => [21, 27, 28].includes(activityType.activityTypeId));
     }
 }
