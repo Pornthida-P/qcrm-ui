@@ -99,11 +99,22 @@ export class CreateCallComponent {
     pagesToShowEln = 3;
     pageSizeEln = 5;
 
+    pageSizeOptionSmns = [5, 10, 20];
+    currentPageSeminar = 1;
+    currentPageSmn = 1;
+    totalItemSmns = 0;
+    totalPageSmns = 0;
+    pagesToShowSmn = 3;
+    pageSizeSmn = 5;
+
     SearchOrgShowing: boolean = false;
     valueSearchOrg!: string;
 
     SearchElearningShowing: boolean = false;
     valueSearchEln!: string;
+
+    SearchSmnShowing: boolean = false;
+    valueSearchSmn!: string;
 
     sortIdEln: string = 'createdAt';
     sortOrderEln: string = 'DESC';
@@ -114,6 +125,11 @@ export class CreateCallComponent {
     sortOrderOrg: string = 'DESC';
     checkedValueOrgs: string[] = [];
     AddOrgShowing: boolean = false;
+
+    sortIdSmn: string = 'createdAt';
+    sortOrderSmn: string = 'DESC';
+    checkedValueSmns: string[] = [];
+    AddSmnShowing: boolean = false;
 
     sortIdContact: string = 'createdAt';
     sortOrderContact: string = 'DESC';
@@ -170,7 +186,16 @@ export class CreateCallComponent {
 
     selectedOrganizations: string[] = [];
     selectedActivityTopicId: string[] = [];
+    selectedActivityTopicIdSmn: string[] = [];
+    selectedActivities: any;
+    selectedActivitiesSmn: any;
+    selectedActivitiesElearning: any;
+    activityElearning: any;
+    activitySmn: any;
+  selectedActivitiesSmnIds: any;
     // pageEln: number | undefined = 0;
+
+    // selectedActivityTopicId: string[] = [];
 
     constructor(
         private location: Location,
@@ -279,6 +304,10 @@ export class CreateCallComponent {
             this.channels = channels;
         });
 
+        this.callServive.getActivitiesTypeSmn().subscribe((activitySmn: any) => {
+            this.activitySmn = activitySmn;
+        });
+
         this.myForm = new FormGroup({
             contactId: new FormControl(''),
         });
@@ -316,6 +345,9 @@ export class CreateCallComponent {
 
         const selectedCallTypeId = isChannelOne ? this.selectedCallTypeId : null;
 
+        const selectedActivitiesSmnIds = this.selectedActivitiesSmn.map((activity: { activityTopicId: any; }) => activity.activityTopicId);
+        const selectedActivitiesElnIds = this.selectedActivities.map((activity: { activityTopicId: any; }) => activity.activityTopicId);
+
         const data = {
             contactId: this.contactId,
             name: this.contactIdSelect,
@@ -333,6 +365,8 @@ export class CreateCallComponent {
             caller_id: this.caller_id,
             call_id: this.call_id,
             operationType: selectedCallTypeId,
+            activitySmn: selectedActivitiesSmnIds,
+            activityEln: selectedActivitiesElnIds,
         };
         this.callServive
             .createCalls(data)
@@ -528,6 +562,21 @@ export class CreateCallComponent {
         this.getFormEln((this.currentPageEln - 1) * this.pageSizeEln, this.pageSizeEln, this.activityTypeId);
     }
 
+    sortSmn(value: string) {
+        if (this.sortIdSmn == value) {
+            if (this.sortIcon == 'fa-solid fa-sort-down') {
+                this.sortIcon = 'fa-solid fa-sort-up';
+                this.sortOrderSmn = 'DESC';
+            } else {
+                this.sortIcon = 'fa-solid fa-sort-down';
+                this.sortOrderSmn = 'ASC';
+            }
+        } else {
+            this.sortIdSmn = value;
+        }
+        this.getFormEln((this.currentPageEln - 1) * this.pageSizeEln, this.pageSizeEln, this.activityTypeId);
+    }
+
     async pageChangeOrg(pageOrg: number) {
         if (pageOrg != this.currentPageOrg) {
             if (pageOrg >= 1 && pageOrg <= this.totalPageOrgs) {
@@ -544,6 +593,16 @@ export class CreateCallComponent {
                 this.currentPageEln = pageEln;
                 await this.getFormEln((this.currentPageEln - 1) * this.pageSizeEln, this.pageSizeEln, this.activityTypeId);
                 this.checkedValueElns = [];
+            }
+        }
+    }
+
+    async pageChangeSmn(pageSmn: number) {
+        if (pageSmn != this.currentPageEln) {
+            if (pageSmn >= 1 && pageSmn <= this.totalPageSmns) {
+                this.currentPageSmn = pageSmn;
+                await this.getFormEln((this.currentPageEln - 1) * this.pageSizeEln, this.pageSizeEln, this.activityTypeId);
+                this.checkedValueSmns = [];
             }
         }
     }
@@ -565,6 +624,17 @@ export class CreateCallComponent {
         for (var i = -this.pagesToShowEln; i <= this.pagesToShowEln; i++) {
             if (this.currentPageEln + i > 0 && this.currentPageEln + i <= this.totalPageElns) {
                 pageEln.push(this.currentPageEln + i);
+            }
+        }
+        return pageEln;
+    }
+
+    get pageSmns(): number[] {
+        var pageEln: number[] = [];
+        this.totalPageSmns = Math.ceil(this.totalItemSmns / this.pageSizeSmn);
+        for (var i = -this.pagesToShowSmn; i <= this.pagesToShowSmn; i++) {
+            if (this.currentPageSmn + i > 0 && this.currentPageSmn + i <= this.totalPageSmns) {
+                pageEln.push(this.currentPageSmn + i);
             }
         }
         return pageEln;
@@ -613,6 +683,16 @@ export class CreateCallComponent {
         this.getPageEln();
     }
 
+    searchSmn() {
+        if (this.selectedFilter !== 'all') {
+            this.userId = this.userData.userId;
+        } else {
+            this.userId = '';
+        }
+        this.getFormEln((this.currentPageEln - 1) * this.pageSizeEln, this.pageSizeEln, this.activityTypeId);
+        this.getPageEln();
+    }
+
     onFileSelected(event: any) {
         const files = event.target.files;
         const createdAt = moment().format('YYYY-MM-DD HH:mm:ss');
@@ -643,17 +723,20 @@ export class CreateCallComponent {
         }
     }
 
-    showSideBarActivitySeminar() {
+    async showSideBarActivitySeminar() {
         this.visibleLeftSideBar = true;
         this.visibleRightSideBar = true;
         this.FormShowing = false;
         this.SearchFormShowing = false;
-        this.searchContactShowing = true;
+        this.searchContactShowing = false;
+        this.SearchOrgShowing = false;
+        this.SearchSmnShowing = true;
         this.thanks = false;
         this.AddContactShowing = false;
         this.showOrgSidebar = false;
         this.showContactSidebar = false;
         this.showActivitySeminarSideBar = true;
+        this.showActivityElearningSideBar = false;
     }
 
     async showSideBarActivityElearning(activityTypeId: string) {
@@ -723,12 +806,58 @@ export class CreateCallComponent {
     }
 
     toggleActivityTopicId(activityTopicId: string) {
-        const index = this.selectedOrganizations.indexOf(activityTopicId);
+        const index = this.selectedActivityTopicId.indexOf(activityTopicId);
         if (index === -1) {
-            this.selectedOrganizations.push(activityTopicId);
+            this.selectedActivityTopicId.push(activityTopicId);
         } else {
-            this.selectedOrganizations.splice(index, 1);
+            this.selectedActivityTopicId.splice(index, 1);
         }
-        console.log('select id activity:', this.selectedOrganizations);
+        console.log('select id activity:', this.selectedActivityTopicId);
+    }
+
+    toggleActivityTopicIdSmn(activityTopicId: string) {
+        const index = this.selectedActivityTopicIdSmn.indexOf(activityTopicId);
+        if (index === -1) {
+            this.selectedActivityTopicIdSmn.push(activityTopicId);
+        } else {
+            this.selectedActivityTopicIdSmn.splice(index, 1);
+        }
+        console.log('select id activity:', this.selectedActivityTopicIdSmn);
+    }
+
+    selectedCheckboxIds: number[] = [];
+
+    toggleCheckbox(activityTopicId: number) {
+        const index = this.selectedCheckboxIds.indexOf(activityTopicId);
+        if (index === -1) {
+            this.selectedCheckboxIds.push(activityTopicId);
+        } else {
+            this.selectedCheckboxIds.splice(index, 1);
+        }
+    }
+
+    // อัปเดตรายการทั้งหมดสำหรับโครงการอบรม/สัมมนา
+    updateSelectedActivitiesListSmn() {
+        this.selectedActivitiesSmn = this.activityTypeById.filter((smn: { activityTopicId: string }) =>
+            this.selectedActivityTopicIdSmn.includes(smn.activityTopicId),
+        );
+    }
+
+    // อัปเดตรายการทั้งหมดสำหรับ E-Learning
+    updateSelectedActivitiesListElearning() {
+        this.selectedActivitiesElearning = this.activityTypeById.filter((elearning: { activityTopicId: string }) =>
+            this.selectedActivityTopicId.includes(elearning.activityTopicId),
+        );
+    }
+    saveSelectedActivities() {
+        this.selectedActivities = this.activityTypeById.filter((activity: { activityTopicId: string }) => {
+            return this.selectedActivityTopicId.includes(activity.activityTopicId);
+        });
+    }
+
+    saveSelectedActivitiesSmn() {
+        this.selectedActivitiesSmn = this.activitySmn.filter((activity: { activityTopicId: string }) => {
+            return this.selectedActivityTopicIdSmn.includes(activity.activityTopicId);
+        });
     }
 }
