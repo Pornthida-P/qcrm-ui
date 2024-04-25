@@ -152,7 +152,7 @@
                             <button
                                 class="btn btn-outline-secondary"
                                 type="button"
-                                (click)="showSideBarActivityElearning('43')"
+                                (click)="showSideBarActivityElearning()"
                                 data-bs-toggle="offcanvas"
                                 data-bs-target="#offcanvasRight"
                             >
@@ -471,7 +471,7 @@
                                             id="table-complete-search"
                                             type="text"
                                             class="form-control border shadow-none"
-                                            name="searchOrg"
+                                            name="searchSmn"
                                             [(ngModel)]="valueSearchSmn"
                                             placeholder="ค้นหา..."
                                             aria-describedby="basic-addon1"
@@ -487,22 +487,43 @@
                         <div class="p-5 shadow call-side-change-by w-100 h-100 overflow-auto p-4">
                             <div class="table-responsive" *ngIf="SearchSmnShowing"></div>
                             <div class="table-responsive">
-                              <form class="row g-3">
-                                <div class="col-auto">
-                                  <label for="staticEmail2" class="visually">ชื่อโครงการอบรม</label>
-                                  <input type="text" class="form-control" id="activityTopicnName" placeholder="ชื่อโครงการอบรม" [(ngModel)]="nameActivityTopic" [ngModelOptions]="{ standalone: true }">
-                                </div>
-                                <div class="col-auto">
-                                  <label for="inputActivityTopicIdType" class="visually">หัวข้อโครงการอบรม</label>
-                                  <select id="inputActivityTopicIdType" class="form-select" name="selectedActivityTopicName" [(ngModel)]="selectedActivityTopicName">
-                                      <option disabled value="0">กรุณาเลือกข้อมูล</option>
-                                      <option *ngFor="let topic of activitiestypeTopic" [value]="topic.activityTypeId">{{ topic.name }}</option>
-                                  </select>
-                              </div>
-                                <div class="col-auto">
-                                  <button type="submit" (click)="submitActivityTopic()" class="btn btn-primary mb-3">บันทึก</button>
-                                </div>
-                              </form>
+                                <form class="row g-3" (ngSubmit)="submitActivityTopic()">
+                                    <div class="col-auto">
+                                        <label for="staticEmail2" class="visually">ชื่อโครงการอบรม</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="activityTopicnName"
+                                            placeholder="ชื่อโครงการอบรม"
+                                            [(ngModel)]="nameActivityTopic"
+                                            [ngModelOptions]="{ standalone: true }"
+                                        />
+                                    </div>
+                                    <div class="col-auto">
+                                        <label for="inputActivityTopicIdType" class="visually">หัวข้อโครงการอบรม</label>
+                                        <select
+                                            id="inputActivityTopicIdType"
+                                            class="form-select"
+                                            name="selectedActivityTopicName"
+                                            [(ngModel)]="selectedActivityTopicName"
+                                        >
+                                            <option disabled value="0">กรุณาเลือกข้อมูล</option>
+                                            <option *ngFor="let topic of activitiestypeTopic" [value]="topic.activityTypeId">
+                                                {{ topic.name }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-auto">
+                                        <button
+                                            type="submit"
+                                            class="btn btn-primary mb-3"
+                                            [disabled]="!nameActivityTopic || selectedActivityTopicName == 0"
+                                        >
+                                            บันทึก
+                                        </button>
+                                    </div>
+                                </form>
+
                                 <table class="table">
                                     <thead>
                                         <tr>
@@ -542,7 +563,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div *ngIf="selectedActivityTopicIdSmn.length > 0">
+                            <div *ngIf="selectedActivityTopicIdSmn.length > 0" class="button-save-activity">
                                 <button type="button" class="btn btn-primary" (click)="saveSelectedActivitiesSmn()">บันทึก</button>
                             </div>
                         </div>
@@ -575,22 +596,36 @@
                         <div class="p-5 shadow call-side-change-by w-100 h-100 overflow-auto p-4">
                             <div class="table-responsive" *ngIf="SearchElearningShowing"></div>
                             <div class="table-responsive">
-                              <form class="row g-3">
-                                <div class="col-auto">
-                                  <label for="staticEmail2" class="visually">ชื่อโครงการอบรม</label>
-                                  <input type="text" class="form-control" id="activityTopicnName" placeholder="ชื่อโครงการอบรม" [(ngModel)]="nameActivityTopic" [ngModelOptions]="{ standalone: true }">
-                                </div>
-                                <div class="col-auto">
-                                  <label for="inputActivityTopicIdType" class="visually">หัวข้อโครงการอบรม</label>
-                                  <select id="inputActivityTopicIdType" class="form-select" name="selectedActivityTopicName" [(ngModel)]="selectedActivityTopicName">
-                                      <option disabled value="0">กรุณาเลือกข้อมูล</option>
-                                      <option *ngFor="let topicEln of activitiestypeEln" [value]="topicEln.activityTypeId">{{ topicEln.name }}</option>
-                                  </select>
-                              </div>
-                                <div class="col-auto">
-                                  <button type="submit" (click)="submitActivityTopic()" class="btn btn-primary mb-3">บันทึก</button>
-                                </div>
-                              </form>
+                                <form class="row g-3">
+                                    <div class="col-auto">
+                                        <label for="staticEmail2" class="visually">ชื่อโครงการอบรม</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="activityTopicnName"
+                                            placeholder="ชื่อโครงการอบรม"
+                                            [(ngModel)]="nameActivityTopic"
+                                            [ngModelOptions]="{ standalone: true }"
+                                        />
+                                    </div>
+                                    <div class="col-auto">
+                                        <label for="inputActivityTopicIdType" class="visually">หัวข้อโครงการอบรม</label>
+                                        <select
+                                            id="inputActivityTopicIdType"
+                                            class="form-select"
+                                            name="selectedActivityTopicName"
+                                            [(ngModel)]="selectedActivityTopicName"
+                                        >
+                                            <option disabled value="0">กรุณาเลือกข้อมูล</option>
+                                            <option *ngFor="let topicEln of activitiestypeEln" [value]="topicEln.activityTypeId">
+                                                {{ topicEln.name }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-auto">
+                                        <button type="submit" (click)="submitActivityTopic()" class="btn btn-primary mb-3">บันทึก</button>
+                                    </div>
+                                </form>
                                 <table class="table">
                                     <thead>
                                         <tr>
@@ -609,7 +644,7 @@
                                     </thead>
                                     <tbody>
                                         <ng-container>
-                                            <tr *ngFor="let eln of activityTypeById; let i = index">
+                                            <tr *ngFor="let eln of activityEln; let i = index">
                                                 <td scope="row">
                                                     <input
                                                         type="checkbox"

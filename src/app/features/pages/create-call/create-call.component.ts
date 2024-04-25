@@ -194,9 +194,10 @@ export class CreateCallComponent {
     selectedActivitiesElearning: any;
     activityElearning: any;
     activitySmn: any;
+    activityEln: any;
     selectedActivitiesSmnIds: any;
     activitiestypeTopic: any;
-  activitiestypeEln: any;
+    activitiestypeEln: any;
     // pageEln: number | undefined = 0;
 
     // selectedActivityTopicId: string[] = [];
@@ -307,9 +308,7 @@ export class CreateCallComponent {
         });
 
         this.callServive.getActivitiesType().subscribe((activitiestype: any) => {
-            this.activitiestypeEln = activitiestype.filter((activityType: any) =>
-                [43].includes(parseInt(activityType.activityTypeId)),
-            );
+            this.activitiestypeEln = activitiestype.filter((activityType: any) => [43].includes(parseInt(activityType.activityTypeId)));
         });
 
         this.callServive.getAllCaseSubjects().subscribe((casesubjects: any) => {
@@ -320,8 +319,12 @@ export class CreateCallComponent {
             this.channels = channels;
         });
 
-        this.callServive.getActivitiesTypeSmn().subscribe((activitySmn: any) => {
+        this.callServive.getActivitiesTypeSmn(this.valueSearchSmn).subscribe((activitySmn: any) => {
             this.activitySmn = activitySmn;
+        });
+
+        this.callServive.getActivityById(this.valueSearchEln).subscribe((activityEln: any) => {
+            this.activityEln = activityEln;
         });
 
         this.myForm = new FormGroup({
@@ -361,8 +364,12 @@ export class CreateCallComponent {
 
         const selectedCallTypeId = isChannelOne ? this.selectedCallTypeId : null;
 
-        const selectedActivitiesSmnIds = this.selectedActivitiesSmn ? this.selectedActivitiesSmn.map((activity: { activityTopicId: any }) => activity.activityTopicId) : null;
-        const selectedActivitiesElnIds = this.selectedActivities ? this.selectedActivities.map((activity: { activityTopicId: any }) => activity.activityTopicId) : null;
+        const selectedActivitiesSmnIds = this.selectedActivitiesSmn
+            ? this.selectedActivitiesSmn.map((activity: { activityTopicId: any }) => activity.activityTopicId)
+            : null;
+        const selectedActivitiesElnIds = this.selectedActivities
+            ? this.selectedActivities.map((activity: { activityTopicId: any }) => activity.activityTopicId)
+            : null;
 
         const data = {
             contactId: this.contactId,
@@ -407,30 +414,40 @@ export class CreateCallComponent {
     }
 
     submitActivityTopic() {
-        const data = {
-            activityId: this.selectedActivityTopicName,
-            activityTopicName: this.nameActivityTopic,
-        };
-        console.log(data);
+        if (this.selectedActivityTopicName && this.nameActivityTopic) {
+            const isDuplicate = this.activitySmn.some((smn: any) => {
+                return smn.activityTopicName === this.nameActivityTopic && smn.activityId === this.selectedActivityTopicName;
+            });
 
-        this.callServive
-            .createActivityTopic(data)
-            .pipe(
-                tap((res) => {
-                    this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
-                  this.auditLogService.log('', 'Create Call', 'Create Case Call', `ContactID :}`, `Success`);
-                  window.location.reload();
+            if (!isDuplicate) {
+                const data = {
+                    activityId: this.selectedActivityTopicName,
+                    activityTopicName: this.nameActivityTopic,
+                };
+                console.log(data);
 
-                }),
-                catchError((error) => {
-                    this.sweetalertServices.handleError(error);
-                    this.auditLogService.log('', 'Create Call', 'Create ActivityTopic', `ContactID :`, `Failed, Error : ${error}`);
-                    throw error;
-                }),
-            )
-            .subscribe();
+                this.callServive
+                    .createActivityTopic(data)
+                    .pipe(
+                        tap((res) => {
+                            this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
+                            this.auditLogService.log('', 'Create Call', 'Create Case Call', `ContactID :}`, `Success`);
+                            window.location.reload();
+                        }),
+                        catchError((error) => {
+                            this.sweetalertServices.handleError(error);
+                            this.auditLogService.log('', 'Create Call', 'Create ActivityTopic', `ContactID :`, `Failed, Error : ${error}`);
+                            throw error;
+                        }),
+                    )
+                    .subscribe();
+            } else {
+                this.sweetalertServices.getSwal('warning', 'ข้อมูลซ้ำกับข้อมูลที่มีอยู่แล้ว', '', false, '');
+            }
+        } else {
+            this.sweetalertServices.getSwal('warning', 'กรุณาใส่ข้อมูลให้ครบถ้วน', '', false, '');
+        }
     }
-
     showSideBarContact() {
         this.visibleLeftSideBar = true;
         this.visibleRightSideBar = true;
@@ -568,10 +585,10 @@ export class CreateCallComponent {
         this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
     }
 
-    pageSizeChangeEln() {
-        this.currentPageActivityById = 1;
-        this.getFormEln((this.currentPageEln - 1) * this.pageSizeEln, this.pageSizeEln, this.activityTypeId);
-    }
+    // pageSizeChangeEln() {
+    //     this.currentPageActivityById = 1;
+    //     this.getFormEln((this.currentPageEln - 1) * this.pageSizeEln, this.pageSizeEln, this.activityTypeId);
+    // }
 
     sortOrg(value: string) {
         if (this.sortIdOrg == value) {
@@ -600,7 +617,7 @@ export class CreateCallComponent {
         } else {
             this.sortIdOrg = value;
         }
-        this.getFormEln((this.currentPageEln - 1) * this.pageSizeEln, this.pageSizeEln, this.activityTypeId);
+        this.getFormEln();
     }
 
     sortSmn(value: string) {
@@ -615,7 +632,7 @@ export class CreateCallComponent {
         } else {
             this.sortIdSmn = value;
         }
-        this.getFormEln((this.currentPageEln - 1) * this.pageSizeEln, this.pageSizeEln, this.activityTypeId);
+        this.getFormEln();
     }
 
     async pageChangeOrg(pageOrg: number) {
@@ -632,7 +649,7 @@ export class CreateCallComponent {
         if (pageEln != this.currentPageEln) {
             if (pageEln >= 1 && pageEln <= this.totalPageElns) {
                 this.currentPageEln = pageEln;
-                await this.getFormEln((this.currentPageEln - 1) * this.pageSizeEln, this.pageSizeEln, this.activityTypeId);
+                await this.getFormEln();
                 this.checkedValueElns = [];
             }
         }
@@ -642,7 +659,7 @@ export class CreateCallComponent {
         if (pageSmn != this.currentPageEln) {
             if (pageSmn >= 1 && pageSmn <= this.totalPageSmns) {
                 this.currentPageSmn = pageSmn;
-                await this.getFormEln((this.currentPageEln - 1) * this.pageSizeEln, this.pageSizeEln, this.activityTypeId);
+                await this.getFormEln();
                 this.checkedValueSmns = [];
             }
         }
@@ -714,24 +731,16 @@ export class CreateCallComponent {
         this.getPageOrg();
     }
 
-    searchEln() {
-        if (this.selectedFilter !== 'all') {
-            this.userId = this.userData.userId;
-        } else {
-            this.userId = '';
-        }
-        this.getFormEln((this.currentPageEln - 1) * this.pageSizeEln, this.pageSizeEln, this.activityTypeId);
-        this.getPageEln();
+    searchEln(): void {
+      this.callServive.getActivityById(this.valueSearchEln).subscribe((activityEln: any) => {
+        this.activityEln = activityEln;
+    });
     }
 
-    searchSmn() {
-        if (this.selectedFilter !== 'all') {
-            this.userId = this.userData.userId;
-        } else {
-            this.userId = '';
-        }
-        this.getFormEln((this.currentPageEln - 1) * this.pageSizeEln, this.pageSizeEln, this.activityTypeId);
-        this.getPageEln();
+    searchSmn(): void {
+        this.callServive.getActivitiesTypeSmn(this.valueSearchSmn).subscribe((activitySmn: any) => {
+            this.activitySmn = activitySmn;
+        });
     }
 
     onFileSelected(event: any) {
@@ -780,7 +789,7 @@ export class CreateCallComponent {
         this.showActivityElearningSideBar = false;
     }
 
-    async showSideBarActivityElearning(activityTypeId: string) {
+    async showSideBarActivityElearning() {
         this.visibleLeftSideBar = true;
         this.visibleRightSideBar = true;
         this.FormShowing = false;
@@ -792,34 +801,22 @@ export class CreateCallComponent {
         this.showContactSidebar = false;
         this.showActivitySeminarSideBar = false;
         this.showActivityElearningSideBar = true;
-
-        try {
-            const activityData = await this.getActivityById(activityTypeId);
-            console.log('activity: ', activityData);
-        } catch (error) {
-            console.error('Error:', error);
-        }
     }
 
-    async getActivityById(activityTypeId: string) {
-        try {
-            const res = await this.callServive.getActivityById(activityTypeId).toPromise();
-            this.activityTypeById = res;
-            console.log('activity: ', this.activityTypeById);
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    }
+    // async getActivityById() {
+    //     try {
+    //         const res = await this.callServive.getActivityById().toPromise();
+    //         this.activityTypeById = res;
+    //         console.log('activity: ', this.activityTypeById);
+    //     } catch (error) {
+    //         console.error('Error:', error);
+    //     }
+    // }
 
-    async getFormEln(pageEln: number, pageSizeEln: number, activityTypeId: string) {
+    async getFormEln() {
         await this.callServive
             .getActivityIdByPage(
-                pageEln,
-                pageSizeEln,
-                `${this.sortIdEln},${this.sortOrderEln}`,
                 this.valueSearchEln,
-                this.selectedFilter,
-                activityTypeId,
             )
             .subscribe((res: any) => {
                 console.log('API response:', res);
@@ -886,12 +883,12 @@ export class CreateCallComponent {
 
     // อัปเดตรายการทั้งหมดสำหรับ E-Learning
     updateSelectedActivitiesListElearning() {
-        this.selectedActivitiesElearning = this.activityTypeById.filter((elearning: { activityTopicId: string }) =>
+        this.selectedActivitiesElearning = this.activityEln.filter((elearning: { activityTopicId: string }) =>
             this.selectedActivityTopicId.includes(elearning.activityTopicId),
         );
     }
     saveSelectedActivities() {
-        this.selectedActivities = this.activityTypeById.filter((activity: { activityTopicId: string }) => {
+        this.selectedActivities = this.activityEln.filter((activity: { activityTopicId: string }) => {
             return this.selectedActivityTopicId.includes(activity.activityTopicId);
         });
     }
@@ -909,4 +906,5 @@ export class CreateCallComponent {
     filterActivities(): any[] {
         return this.activitiestype.filter((activityType: { activityTypeId: number }) => [21, 27, 28].includes(activityType.activityTypeId));
     }
+
 }

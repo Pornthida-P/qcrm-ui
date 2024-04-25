@@ -69,9 +69,12 @@ export class CallService {
         return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.activitiesType}`);
     }
 
-    getActivitiesTypeSmn() {
-        return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.activitySmn}`);
-    }
+    getActivitiesTypeSmn(searchText: string) {
+      if (searchText == '' || searchText == null) {
+          searchText = 'undefined';
+      }
+      return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.activitySmn}/${searchText}`);
+  }
 
     createCalls(data: any) {
         return this.http.post(`${this.baseUrl}${config.api.path.call.url}`, data);
@@ -91,8 +94,8 @@ export class CallService {
         return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.countcontact}${searchText}/${createdById}`);
     }
 
-    getActivityById(id: string) {
-        return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.activitybyid}/${id}`);
+    getActivityById(searchText: string) {
+        return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.activitybyid}/${searchText}`);
     }
 
     countActivityById(searchText: string, createdById: string) {
@@ -107,12 +110,12 @@ export class CallService {
         );
     }
 
-    getActivityIdByPage(page: number, limit: number, sortId: string, searchText: string, createdBy: string, id: string ) {
+    getActivityIdByPage(searchText: string) {
         if (searchText == '' || searchText == null) {
             searchText = 'undefined';
         }
         return this.http.get(
-            `${this.baseUrl}${config.api.path.call.url}${config.api.path.call.activitybyidBypage}/${page}/${limit}/${sortId}/${searchText}/${createdBy}/${id}`,
+            `${this.baseUrl}${config.api.path.call.url}${config.api.path.call.activitybyidBypage}/${searchText}`,
         );
     }
 }
