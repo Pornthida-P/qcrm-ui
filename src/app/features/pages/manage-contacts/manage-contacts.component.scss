@@ -134,3 +134,30 @@ label:has(+ input:required):after {
 .pd-t-20 {
   padding-top: 20px;
 }
+
+.table-smn {
+  // width: 400px;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.table-smn tbody {
+  display:block;
+  overflow: auto;
+  height: 450px;
+}
+
+.table-smn thead tr {
+  display: block;
+}
+
+.table-smn th {
+  text-align: left;
+  width: 700px;
+}
+
+.submitTopic {
+  display: flex;
+  align-items: flex-end
+}
+

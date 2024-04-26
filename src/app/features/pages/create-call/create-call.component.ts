@@ -544,12 +544,6 @@ export class CreateCallComponent {
         });
     }
 
-    // onCheckboxChange(event: any, activityTypeId: number) {
-    //     if (event.target.checked) {
-    //         this.activityTypeId = activityTypeId;
-    //     }
-    // }
-
     onCheckboxChange(event: any, activityTypeId: number) {
         this.isCheckboxSelected[activityTypeId] = event.target.checked;
     }
@@ -732,9 +726,9 @@ export class CreateCallComponent {
     }
 
     searchEln(): void {
-      this.callServive.getActivityById(this.valueSearchEln).subscribe((activityEln: any) => {
-        this.activityEln = activityEln;
-    });
+        this.callServive.getActivityById(this.valueSearchEln).subscribe((activityEln: any) => {
+            this.activityEln = activityEln;
+        });
     }
 
     searchSmn(): void {
@@ -814,15 +808,11 @@ export class CreateCallComponent {
     // }
 
     async getFormEln() {
-        await this.callServive
-            .getActivityIdByPage(
-                this.valueSearchEln,
-            )
-            .subscribe((res: any) => {
-                console.log('API response:', res);
-                this.activityTypeById = res;
-                // this.spareActivityTypeById = res;
-            });
+        await this.callServive.getActivityIdByPage(this.valueSearchEln).subscribe((res: any) => {
+            console.log('API response:', res);
+            this.activityTypeById = res;
+            // this.spareActivityTypeById = res;
+        });
         console.log('ActivityIdByPage:', this.activityTypeById);
     }
 
@@ -906,5 +896,4 @@ export class CreateCallComponent {
     filterActivities(): any[] {
         return this.activitiestype.filter((activityType: { activityTypeId: number }) => [21, 27, 28].includes(activityType.activityTypeId));
     }
-
 }

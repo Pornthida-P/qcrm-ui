@@ -173,6 +173,59 @@ export class ManageContactsComponent implements OnInit {
     selectedContactNumber: string = '';
     contactNumbers: any;
 
+    isCheckboxSelected: { [key: number]: boolean } = {};
+
+    inputActivity: string = '';
+    inputActivity_2: string = '';
+
+    selectedActivityTopicIdSmn: string[] = [];
+    selectedActivitiesSmn: any;
+
+    selectedActivities: any;
+
+    showActivitySeminarSideBar: boolean = false;
+    showActivityElearningSideBar: boolean = false;
+
+    SearchSmnShowing: boolean = false;
+    valueSearchSmn!: string;
+
+    nameActivityTopic: string = '';
+
+    selectedActivityTopicName: any;
+
+    activitiestypeTopic: any;
+
+    sortIdSmn: string = 'createdAt';
+    sortOrderSmn: string = 'DESC';
+    checkedValueSmns: string[] = [];
+    AddSmnShowing: boolean = false;
+
+    activitySmn: any;
+    activityEln: any;
+
+    SearchElearningShowing: boolean = false;
+    valueSearchEln!: string;
+    activitiestypeEln: any;
+
+    sortIdEln: string = 'createdAt';
+    sortOrderEln: string = 'DESC';
+    checkedValueEln: string[] = [];
+    AddElnShowing: boolean = false;
+
+    selectedActivityTopicId: string[] = [];
+    searchContactShowing: boolean = false;
+
+    AddContactShowing: boolean = false;
+
+    showOrgSidebar: boolean = false;
+
+    showContactSidebar: boolean = false;
+
+    activityTypeById: any;
+    activitiesTopic: any;
+    selectedActivitiesElearning: any;
+    selectedCheckboxIds: any;
+
     constructor(
         private _location: Location,
         private surveyFormService: SurveyFormService,
@@ -633,16 +686,6 @@ export class ManageContactsComponent implements OnInit {
         this.AddCallShowing = false;
     }
 
-    searchOrg() {
-        if (this.selectedFilter !== 'all') {
-            this.userId = this.userData.userId;
-        } else {
-            this.userId = '';
-        }
-        this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
-        this.getPageOrg();
-    }
-
     async getPageOrg() {
         await this.contactsService.countOrg(this.valueSearchOrg, this.userId).subscribe((res: any) => {
             this.totalItemOrgs = res.count;
@@ -806,9 +849,7 @@ export class ManageContactsComponent implements OnInit {
     }
 
     onCheckboxChange(event: any, activityTypeId: number) {
-        if (event.target.checked) {
-            this.activityTypeId = activityTypeId;
-        }
+        this.isCheckboxSelected[activityTypeId] = event.target.checked;
     }
 
     showAddCall() {
@@ -818,13 +859,11 @@ export class ManageContactsComponent implements OnInit {
         this.thanks = false;
         this.SearchOrgShowing = false;
         this.AddCallShowing = true;
+        this.showActivitySeminarSideBar = false;
+        this.showActivityElearningSideBar = false;
 
         this.callServive.getCaseTopic().subscribe((casetopics: any) => {
             this.casetopics = casetopics;
-        });
-
-        this.callServive.getActivitiesType().subscribe((activitiestype: any) => {
-            this.activitiestype = activitiestype;
         });
 
         this.callServive.getAllCaseSubjects().subscribe((casesubjects: any) => {
@@ -833,6 +872,10 @@ export class ManageContactsComponent implements OnInit {
 
         this.callServive.getAllChannels().subscribe((channels: any) => {
             this.channels = channels;
+        });
+
+        this.callServive.getActivitiesType().subscribe((activitiestype: any) => {
+            this.activitiestype = activitiestype.filter((activityType: any) => [1, 43].includes(parseInt(activityType.activityTypeId)));
         });
     }
 
@@ -875,6 +918,13 @@ export class ManageContactsComponent implements OnInit {
         const isChannelOne = this.selectedChannels === '1';
         const selectedCallTypeId = isChannelOne ? this.selectedCallTypeId : null;
 
+        const selectedActivitiesSmnIds = this.selectedActivitiesSmn
+            ? this.selectedActivitiesSmn.map((activity: { activityTopicId: any }) => activity.activityTopicId)
+            : null;
+        const selectedActivitiesElnIds = this.selectedActivities
+            ? this.selectedActivities.map((activity: { activityTopicId: any }) => activity.activityTopicId)
+            : null;
+
         if (this.selectedCaseTopics.length > 0) {
             const data = {
                 contactId: this.contactId,
@@ -892,6 +942,8 @@ export class ManageContactsComponent implements OnInit {
                 attachment: this.attachmentsId,
                 call_id: this.phoneCall,
                 operationType: selectedCallTypeId,
+                activitySmn: selectedActivitiesSmnIds,
+                activityEln: selectedActivitiesElnIds,
             };
             console.log('Data: ', data);
             this.callServive
@@ -1003,5 +1055,217 @@ export class ManageContactsComponent implements OnInit {
             this.socket$.unsubscribe();
             this.connected = false;
         }
+    }
+
+    async showSideBarActivitySeminar() {
+        this.visibleLeftSideBar = true;
+        this.visibleRightSideBar = true;
+        this.FormShowing = false;
+        this.SearchFormShowing = false;
+        this.searchContactShowing = false;
+        this.SearchOrgShowing = false;
+        this.SearchSmnShowing = true;
+        this.thanks = false;
+        this.AddContactShowing = false;
+        this.showOrgSidebar = false;
+        this.showContactSidebar = false;
+        this.showActivitySeminarSideBar = true;
+        this.showActivityElearningSideBar = false;
+        this.AddCallShowing = false;
+
+        this.callServive.getActivitiesType().subscribe((activitiestype: any) => {
+            this.activitiestypeTopic = activitiestype.filter((activityType: any) =>
+                [21, 27, 28].includes(parseInt(activityType.activityTypeId)),
+            );
+        });
+
+        this.callServive.getActivitiesTypeSmn(this.valueSearchSmn).subscribe((activitySmn: any) => {
+            this.activitySmn = activitySmn;
+        });
+    }
+
+    inputActivityElearning(event: any) {
+        console.log(event.target.value);
+    }
+
+    async showSideBarActivityElearning() {
+        this.visibleLeftSideBar = true;
+        this.visibleRightSideBar = true;
+        this.FormShowing = false;
+        this.SearchFormShowing = false;
+        this.SearchElearningShowing = true;
+        this.thanks = false;
+        this.AddContactShowing = false;
+        this.showOrgSidebar = false;
+        this.showContactSidebar = false;
+        this.showActivitySeminarSideBar = false;
+        this.showActivityElearningSideBar = true;
+        this.AddCallShowing = false;
+
+        this.callServive.getActivitiesType().subscribe((activitiestype: any) => {
+            this.activitiestypeEln = activitiestype.filter((activityType: any) => [43].includes(parseInt(activityType.activityTypeId)));
+        });
+
+        this.callServive.getActivityById(this.valueSearchEln).subscribe((activityEln: any) => {
+            this.activityEln = activityEln;
+        });
+    }
+
+    searchSmn(): void {
+        this.callServive.getActivitiesTypeSmn(this.valueSearchSmn).subscribe((activitySmn: any) => {
+            this.activitySmn = activitySmn;
+        });
+    }
+
+    submitActivityTopic() {
+        if (this.selectedActivityTopicName && this.nameActivityTopic) {
+            const isDuplicate = this.activitySmn.some((smn: any) => {
+                return smn.activityTopicName === this.nameActivityTopic && smn.activityId === this.selectedActivityTopicName;
+            });
+
+            if (!isDuplicate) {
+                const data = {
+                    activityId: this.selectedActivityTopicName,
+                    activityTopicName: this.nameActivityTopic,
+                };
+                console.log(data);
+
+                this.callServive
+                    .createActivityTopic(data)
+                    .pipe(
+                        tap((res) => {
+                            this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
+                            this.auditLogService.log('', 'Create Call', 'Create Case Call', `ContactID :}`, `Success`);
+                            window.location.reload();
+                        }),
+                        catchError((error) => {
+                            this.sweetalertServices.handleError(error);
+                            this.auditLogService.log('', 'Create Call', 'Create ActivityTopic', `ContactID :`, `Failed, Error : ${error}`);
+                            throw error;
+                        }),
+                    )
+                    .subscribe();
+            } else {
+                this.sweetalertServices.getSwal('warning', 'ข้อมูลซ้ำกับข้อมูลที่มีอยู่แล้ว', '', false, '');
+            }
+        } else {
+            this.sweetalertServices.getSwal('warning', 'กรุณาใส่ข้อมูลให้ครบถ้วน', '', false, '');
+        }
+    }
+
+    sortSmn(value: string) {
+        if (this.sortIdSmn == value) {
+            if (this.sortIcon == 'fa-solid fa-sort-down') {
+                this.sortIcon = 'fa-solid fa-sort-up';
+                this.sortOrderSmn = 'DESC';
+            } else {
+                this.sortIcon = 'fa-solid fa-sort-down';
+                this.sortOrderSmn = 'ASC';
+            }
+        } else {
+            this.sortIdSmn = value;
+        }
+        this.getFormEln();
+    }
+
+    toggleActivityTopicIdSmn(activityTopicId: string) {
+        const index = this.selectedActivityTopicIdSmn.indexOf(activityTopicId);
+        if (index === -1) {
+            this.selectedActivityTopicIdSmn.push(activityTopicId);
+        } else {
+            this.selectedActivityTopicIdSmn.splice(index, 1);
+        }
+        console.log('select id activity:', this.selectedActivityTopicIdSmn);
+    }
+
+    toggleCheckbox(activityTopicId: number) {
+        const index = this.selectedCheckboxIds.indexOf(activityTopicId);
+        if (index === -1) {
+            this.selectedCheckboxIds.push(activityTopicId);
+        } else {
+            this.selectedCheckboxIds.splice(index, 1);
+        }
+    }
+
+    toggleActivityTopicId(activityTopicId: string) {
+        const index = this.selectedActivityTopicId.indexOf(activityTopicId);
+        if (index === -1) {
+            this.selectedActivityTopicId.push(activityTopicId);
+        } else {
+            this.selectedActivityTopicId.splice(index, 1);
+        }
+        console.log('select id activity:', this.selectedActivityTopicId);
+    }
+
+    saveSelectedActivities() {
+        this.selectedActivities = this.activityEln.filter((activity: { activityTopicId: string }) => {
+            return this.selectedActivityTopicId.includes(activity.activityTopicId);
+        });
+        this.showAddCall();
+    }
+
+    saveSelectedActivitiesSmn() {
+        this.selectedActivitiesSmn = this.activitySmn.filter((activity: { activityTopicId: string }) => {
+            return this.selectedActivityTopicIdSmn.includes(activity.activityTopicId);
+        });
+        this.showAddCall();
+    }
+
+    searchOrg() {
+        if (this.selectedFilter !== 'all') {
+            this.userId = this.userData.userId;
+        } else {
+            this.userId = '';
+        }
+        this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
+        this.getPageOrg();
+    }
+
+    searchEln(): void {
+        this.callServive.getActivityById(this.valueSearchEln).subscribe((activityEln: any) => {
+            this.activityEln = activityEln;
+        });
+    }
+
+    sortEln(value: string) {
+        if (this.sortIdOrg == value) {
+            if (this.sortIcon == 'fa-solid fa-sort-down') {
+                this.sortIcon = 'fa-solid fa-sort-up';
+                this.sortOrderOrg = 'DESC';
+            } else {
+                this.sortIcon = 'fa-solid fa-sort-down';
+                this.sortOrderOrg = 'ASC';
+            }
+        } else {
+            this.sortIdOrg = value;
+        }
+        this.getFormEln();
+    }
+
+    async getFormEln() {
+        await this.callServive.getActivityIdByPage(this.valueSearchEln).subscribe((res: any) => {
+            console.log('API response:', res);
+            this.activityTypeById = res;
+            // this.spareActivityTypeById = res;
+        });
+        console.log('ActivityIdByPage:', this.activityTypeById);
+    }
+
+    // อัปเดตรายการทั้งหมดสำหรับโครงการอบรม/สัมมนา
+    updateSelectedActivitiesListSmn() {
+        this.selectedActivitiesSmn = this.activityTypeById.filter((smn: { activityTopicId: string }) =>
+            this.selectedActivityTopicIdSmn.includes(smn.activityTopicId),
+        );
+    }
+
+    // อัปเดตรายการทั้งหมดสำหรับ E-Learning
+    updateSelectedActivitiesListElearning() {
+        this.selectedActivitiesElearning = this.activityEln.filter((elearning: { activityTopicId: string }) =>
+            this.selectedActivityTopicId.includes(elearning.activityTopicId),
+        );
+    }
+
+    filterActivities(): any[] {
+        return this.activitiestype.filter((activityType: { activityTypeId: number }) => [21, 27, 28].includes(activityType.activityTypeId));
     }
 }
