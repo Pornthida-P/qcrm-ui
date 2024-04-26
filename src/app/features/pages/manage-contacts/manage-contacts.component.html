@@ -188,11 +188,14 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th style="width: 20%">เวลา</th>
-                                    <th style="width: 20%">เบอร์โทร</th>
-                                    <th style="width: 20%">ช่องทางการติดต่อ</th>
-                                    <th style="width: 20%">เรื่องที่ติดต่อ</th>
-                                    <th style="width: 20%">ผู้ติดต่อ</th>
+                                    <th style="width: 12.5%">เวลา</th>
+                                    <th style="width: 12.5%">เบอร์โทร</th>
+                                    <th style="width: 12.5%">ประเภทสาย</th>
+                                    <th style="width: 12.5%">ช่องทางการติดต่อ</th>
+                                    <th style="width: 12.5%">เรื่องที่ติดต่อ</th>
+                                    <th style="width: 12.5%">รายละเอียด</th>
+                                    <th style="width: 12.5%">แนวทางการแก้ไข</th>
+                                    <th style="width: 12.5%">ผู้ติดต่อ</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -200,8 +203,11 @@
                                     <tr *ngFor="let call of contactCall">
                                         <td>{{ (call.startTime | date : 'dd/MM/yyyy  HH:mm')}}</td>
                                         <td>{{ call.contactNumber }}</td>
+                                        <td>{{ call.operationType }}</td>
                                         <td>{{ call.channelName }}</td>
                                         <td>{{ call.caseTopicName }}</td>
+                                        <td>{{ call.description }}</td>
+                                        <td>{{ call.solution }}</td>
                                         <td>{{ call.fullname }}</td>
                                     </tr>
                                 </ng-container>
