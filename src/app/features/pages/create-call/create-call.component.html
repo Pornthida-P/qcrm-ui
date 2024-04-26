@@ -129,14 +129,13 @@
                             >
                                 <i class="fa-solid fa-caret-down"></i>
                             </button>
-
-                            <div *ngIf="selectedActivityTopicIdSmn.length > 0" class="selectElearning">
-                                <ul>
-                                    <li *ngFor="let activity of selectedActivitiesSmn">
-                                        {{ activity.name }}
-                                    </li>
-                                </ul>
-                            </div>
+                        </div>
+                        <div *ngIf="selectedActivityTopicIdSmn.length > 0" class="selectElearning">
+                          <ul>
+                            <li *ngFor="let activity of selectedActivitiesSmn">
+                              {{ activity.name }}
+                            </li>
+                          </ul>
                         </div>
 
                         <div *ngIf="isCheckboxSelected[43]" class="input-group">
@@ -158,13 +157,13 @@
                             >
                                 <i class="fa-solid fa-caret-down"></i>
                             </button>
-                            <div *ngIf="selectedActivities && selectedActivities.length > 0" class="selectElearning">
-                                <ul>
-                                    <li *ngFor="let activity of selectedActivities">
-                                        {{ activity.name }}
-                                    </li>
-                                </ul>
-                            </div>
+                        </div>
+                        <div *ngIf="selectedActivities && selectedActivities.length > 0" class="selectElearning">
+                            <ul>
+                                <li *ngFor="let activity of selectedActivities">
+                                    {{ activity.name }}
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -487,8 +486,8 @@
                         <div class="p-5 shadow call-side-change-by w-100 h-100 overflow-auto p-4">
                             <div class="table-responsive" *ngIf="SearchSmnShowing"></div>
                             <div class="table-responsive">
-                                <form class="row g-3" (ngSubmit)="submitActivityTopic()">
-                                    <div class="col-auto">
+                                <div class="row" style="padding-bottom: 15px" (ngSubmit)="submitActivityTopic()">
+                                    <div class="col-sm">
                                         <label for="staticEmail2" class="visually">ชื่อโครงการอบรม</label>
                                         <input
                                             type="text"
@@ -499,7 +498,7 @@
                                             [ngModelOptions]="{ standalone: true }"
                                         />
                                     </div>
-                                    <div class="col-auto">
+                                    <div class="col-sm">
                                         <label for="inputActivityTopicIdType" class="visually">หัวข้อโครงการอบรม</label>
                                         <select
                                             id="inputActivityTopicIdType"
@@ -513,28 +512,28 @@
                                             </option>
                                         </select>
                                     </div>
-                                    <div class="col-auto">
+                                    <div class="col-sm submitTopic">
                                         <button
                                             type="submit"
-                                            class="btn btn-primary mb-3"
-                                            [disabled]="!nameActivityTopic || selectedActivityTopicName == 0"
+                                            class="btn btn-primary"
+                                            [disabled]="!selectedActivityTopicName || selectedActivityTopicName == 0"
                                         >
                                             บันทึก
                                         </button>
                                     </div>
-                                </form>
+                                </div>
 
-                                <table class="table">
+                                <table class="table table-smn">
                                     <thead>
                                         <tr>
-                                            <th style="width: 15%" scope="col">
+                                            <th style="width: 10%" scope="col">
                                                 <a>เลือก</a>
                                             </th>
-                                            <th style="width: 70%" scope="col">
+                                            <th style="width: 72%" scope="col">
                                                 <a (click)="sortSmn('name')">ชื่อ </a
                                                 ><i *ngIf="sortIdSmn == 'name'" class="{{ sortIcon }}"></i>
                                             </th>
-                                            <th style="width: 15%" scope="col">
+                                            <th style="width: 20%" scope="col">
                                                 <a (click)="sortSmn('createdAt')">วันที่บันทึก</a
                                                 ><i *ngIf="sortIdSmn == 'createdAt'" class="{{ sortIcon }}"></i>
                                             </th>
@@ -543,7 +542,7 @@
                                     <tbody>
                                         <ng-container>
                                             <tr *ngFor="let smn of activitySmn; let i = index">
-                                                <td scope="row">
+                                                <td style="width: 10%" scope="row">
                                                     <input
                                                         type="checkbox"
                                                         class="form-check-input"
@@ -551,8 +550,8 @@
                                                         (change)="toggleActivityTopicIdSmn(smn.activityTopicId)"
                                                     />
                                                 </td>
-                                                <td scope="row">{{ smn.name }}</td>
-                                                <td scope="row">{{ smn.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
+                                                <td style="width: 70%" scope="row">{{ smn.name }}</td>
+                                                <td style="width: 20%" scope="row">{{ smn.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
                                             </tr>
                                         </ng-container>
                                         <ng-template #noDataTemplate>
@@ -596,7 +595,7 @@
                         <div class="p-5 shadow call-side-change-by w-100 h-100 overflow-auto p-4">
                             <div class="table-responsive" *ngIf="SearchElearningShowing"></div>
                             <div class="table-responsive">
-                                <form class="row g-3">
+                                <div class="row g-3" style="padding-bottom: 15px">
                                     <div class="col-auto">
                                         <label for="staticEmail2" class="visually">ชื่อโครงการอบรม</label>
                                         <input
@@ -622,21 +621,28 @@
                                             </option>
                                         </select>
                                     </div>
-                                    <div class="col-auto">
-                                        <button type="submit" (click)="submitActivityTopic()" class="btn btn-primary mb-3">บันทึก</button>
+                                    <div class="col-auto submitTopic">
+                                        <button
+                                            type="submit"
+                                            (click)="submitActivityTopic()"
+                                            class="btn btn-primary"
+                                            [disabled]="!nameActivityTopic || selectedActivityTopicName == 0"
+                                        >
+                                            บันทึก
+                                        </button>
                                     </div>
-                                </form>
-                                <table class="table">
+                                </div>
+                                <table class="table table-smn">
                                     <thead>
                                         <tr>
-                                            <th style="width: 15%" scope="col">
+                                            <th style="width: 10%" scope="col">
                                                 <a>เลือก</a>
                                             </th>
                                             <th style="width: 70%" scope="col">
                                                 <a (click)="sortEln('name')">ชื่อ </a
                                                 ><i *ngIf="sortIdEln == 'name'" class="{{ sortIcon }}"></i>
                                             </th>
-                                            <th style="width: 15%" scope="col">
+                                            <th style="width: 20%" scope="col">
                                                 <a (click)="sortEln('createdAt')">วันที่บันทึก</a
                                                 ><i *ngIf="sortIdEln == 'createdAt'" class="{{ sortIcon }}"></i>
                                             </th>
@@ -645,7 +651,7 @@
                                     <tbody>
                                         <ng-container>
                                             <tr *ngFor="let eln of activityEln; let i = index">
-                                                <td scope="row">
+                                                <td style="width: 10%" scope="row">
                                                     <input
                                                         type="checkbox"
                                                         class="form-check-input"
@@ -653,8 +659,8 @@
                                                         (change)="toggleActivityTopicId(eln.activityTopicId)"
                                                     />
                                                 </td>
-                                                <td scope="row">{{ eln.name }}</td>
-                                                <td scope="row">{{ eln.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
+                                                <td style="width: 72%" scope="row">{{ eln.name }}</td>
+                                                <td style="width: 20%" scope="row">{{ eln.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
                                             </tr>
                                         </ng-container>
                                         <ng-template #noDataTemplate>
