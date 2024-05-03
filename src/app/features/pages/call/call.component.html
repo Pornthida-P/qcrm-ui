@@ -71,6 +71,7 @@
                             </th>
                             <th scope="col" style="width: 11%">เวลา</th>
                             <th scope="col" style="width: 12%">เบอร์โทร</th>
+                            <th scope="col" style="width: 12%">ชื่อ</th>
                             <th scope="col" style="width: 7%">ประเภทสาย</th>
                             <th scope="col" style="width: 21%">เรื่องที่ติดต่อ</th>
                             <th scope="col" style="width: 21%">รายละเอียด</th>
@@ -105,6 +106,7 @@
                                         {{ calls.caller }}
                                     </div>
                                 </td>
+                                <td>{{ calls.contact }}</td>
                                 <td>{{ calls.type }}</td>
                                 <td class="w-max-ellipsis">
                                     <div [ngbTooltip]="calls.casesub" placement="bottom" class="text-ellipsis">
