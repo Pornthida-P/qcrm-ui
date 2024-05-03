@@ -47,9 +47,11 @@
                 <div class="col-md-6">
                     <label for="inputCaseSubject" class="form-label">เรื่องที่ติดต่อ</label>
                     <ng-select id="inputCaseSubject" [(ngModel)]="selectedCasesubject" name="selectedCasesubject" [multiple]="true">
-                        <ng-option *ngFor="let casesubject of casesubjects" [value]="casesubject.caseSubjectId">{{
-                            casesubject.name
-                        }}</ng-option>
+                        <ng-container *ngFor="let casesubject of casesubjects">
+                            <ng-option [value]="casesubject.caseSubjectId" *ngIf="selectedCaseTopics.includes(casesubject.caseTopicId)">
+                                {{ casesubject.name }}
+                            </ng-option>
+                        </ng-container>
                     </ng-select>
                 </div>
 
@@ -131,11 +133,11 @@
                             </button>
                         </div>
                         <div *ngIf="selectedActivityTopicIdSmn.length > 0" class="selectElearning">
-                          <ul>
-                            <li *ngFor="let activity of selectedActivitiesSmn">
-                              {{ activity.name }}
-                            </li>
-                          </ul>
+                            <ul>
+                                <li *ngFor="let activity of selectedActivitiesSmn">
+                                    {{ activity.name }}
+                                </li>
+                            </ul>
                         </div>
 
                         <div *ngIf="isCheckboxSelected[43]" class="input-group">
@@ -486,8 +488,8 @@
                         <div class="p-5 shadow call-side-change-by w-100 h-100 overflow-auto p-4">
                             <div class="table-responsive" *ngIf="SearchSmnShowing"></div>
                             <div class="table-responsive">
-                              <div class="row" style="padding-bottom: 15px" (ngSubmit)="submitActivityTopic()">
-                                <h5 style="margin-bottom: 7px;">เพิ่มโครงการอบรม</h5>
+                                <div class="row" style="padding-bottom: 15px" (ngSubmit)="submitActivityTopic()">
+                                    <h5 style="margin-bottom: 7px">เพิ่มโครงการอบรม</h5>
                                     <div class="col-sm">
                                         <label for="staticEmail2" class="visually">ชื่อโครงการอบรม</label>
                                         <input
@@ -597,7 +599,7 @@
                         <div class="p-5 shadow call-side-change-by w-100 h-100 overflow-auto p-4">
                             <div class="table-responsive" *ngIf="SearchElearningShowing"></div>
                             <div class="table-responsive">
-                              <h5 style="margin-bottom: 7px;">เพิ่มโครงการอบรม</h5>
+                                <h5 style="margin-bottom: 7px">เพิ่มโครงการอบรม</h5>
                                 <div class="row g-3" style="padding-bottom: 15px">
                                     <div class="col-auto">
                                         <label for="staticEmail2" class="visually">ชื่อโครงการอบรม</label>
