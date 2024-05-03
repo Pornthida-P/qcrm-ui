@@ -950,11 +950,13 @@ export class ManageContactsComponent implements OnInit {
                 .createCalls(data)
                 .pipe(
                     tap((res) => {
-                        this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
+                      this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
+                      this.auditLogService.log('', 'Contact Create Call', 'Contact Create Case Call', `ContactID :}`, `Success`);
                         window.location.reload();
                     }),
                     catchError((error) => {
-                        this.sweetalertServices.handleError(error);
+                      this.sweetalertServices.handleError(error);
+                      this.auditLogService.log('', 'Contact Create Call', 'Contact Create Case Call', `ContactID :`, `Failed, Error : ${error}`);
                         throw error;
                     }),
                 )
@@ -1135,12 +1137,18 @@ export class ManageContactsComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
-                            this.auditLogService.log('', 'Create Call', 'Create Case Call', `ContactID :}`, `Success`);
+                            this.auditLogService.log('', 'Contact Create Call ActivityTopic', 'Contact Create Case Call ActivityTopic', `ContactID :}`, `Success`);
                             window.location.reload();
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
-                            this.auditLogService.log('', 'Create Call', 'Create ActivityTopic', `ContactID :`, `Failed, Error : ${error}`);
+                            this.auditLogService.log(
+                                '',
+                                'Contact Create Call ActivityTopic',
+                                'Contact Create ActivityTopic',
+                                `ContactID :`,
+                                `Failed, Error : ${error}`,
+                            );
                             throw error;
                         }),
                     )
