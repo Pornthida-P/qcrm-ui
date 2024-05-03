@@ -431,12 +431,12 @@ export class CreateCallComponent {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
-                            this.auditLogService.log('', 'Create Call', 'Create Case Call', `ContactID :}`, `Success`);
+                            this.auditLogService.log('', 'Create Call ActivityTopic', 'Create Case Call ActivityTopic', `ContactID :}`, `Success`);
                             window.location.reload();
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
-                            this.auditLogService.log('', 'Create Call', 'Create ActivityTopic', `ContactID :`, `Failed, Error : ${error}`);
+                            this.auditLogService.log('', 'Create Call ActivityTopic', 'Create ActivityTopic', `ContactID :`, `Failed, Error : ${error}`);
                             throw error;
                         }),
                     )
