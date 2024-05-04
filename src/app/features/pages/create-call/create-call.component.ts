@@ -372,8 +372,8 @@ export class CreateCallComponent {
             : null;
 
         const data = {
-            contactId: this.contactId,
-            name: this.contactIdSelect,
+            contactId: this.contactIdSelect,
+            name: this.contactId,
             organization: this.contactOrg,
             caseTopicId: this.selectedCaseTopics,
             caseSubject: this.selectedCasesubject,
