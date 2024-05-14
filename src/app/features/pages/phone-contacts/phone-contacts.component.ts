@@ -117,9 +117,12 @@ export class PhoneContactsComponent {
                 this.call_id = dataCallArray[0];
                 this.caller_id = dataCallArray[1];
 
+                this.contactNumber = this.call_id;
+
                 this.contactsService.getContactsByParamPhone(this.call_id).subscribe((data: any) => {
                     if (data && data.length > 0) {
                         this.contact = data[0].contactNumber;
+                        this.contactNumber = this.call_id;
                         this.getContactByPhoneId(this.contact);
                     } else {
                         console.log('Data does not exist');
@@ -141,7 +144,7 @@ export class PhoneContactsComponent {
 
     checkRole(): boolean {
         return true;
-    }    
+    }
 
     async getContactByPhoneId(contactId: string) {
         try {
