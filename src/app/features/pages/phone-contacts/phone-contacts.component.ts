@@ -216,7 +216,13 @@ export class PhoneContactsComponent {
                                 queryParams: { contactId: this.contactId, caller_id: this.caller_id, call_id: this.call_id },
                             });
                         });
-                        this.auditLogService.log('', 'Phone Contact', 'Edit Phone Contact', `Detail Phone Contact : ContactID : ${data.contactId}, call_id : ${data.call_id}, caller_id : ${data.caller_id}, Email : ${data.email}, Contact Number : ${data.contactNumber}, FirstName : ${data.firstName}, LastName : ${data.lastName}, Identification : ${data.identification} `, `Success`);
+                        this.auditLogService.log(
+                            '',
+                            'Phone Contact',
+                            'Edit Phone Contact',
+                            `Detail Phone Contact : ContactID : ${data.contactId}, call_id : ${data.call_id}, caller_id : ${data.caller_id}, Email : ${data.email}, Contact Number : ${data.contactNumber}, FirstName : ${data.firstName}, LastName : ${data.lastName}, Identification : ${data.identification} `,
+                            `Success`,
+                        );
                     }),
                     catchError((error) => {
                         this.sweetalertServices.handleError(error);
@@ -251,7 +257,13 @@ export class PhoneContactsComponent {
                 .pipe(
                     tap((res) => {
                         this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '/call/create-call');
-                        this.auditLogService.log('', 'Phone Contact', 'Create Phone Contact', `Detail Phone Contact : Email : ${data.email}, Contact Number : ${data.contactNumber}, FirstName : ${data.firstName}, LastName : ${data.lastName}, Identification : ${data.identification}, Create By : ${data.createdById}`, `Success`);
+                        this.auditLogService.log(
+                            '',
+                            'Phone Contact',
+                            'Create Phone Contact',
+                            `Detail Phone Contact : Email : ${data.email},Contact Number : ${data.contactNumber},FirstName : ${data.firstName},LastName : ${data.lastName},Identification : ${data.identification},Create By : ${data.createdById}`,
+                            `Success`,
+                        );
                     }),
                     catchError((error) => {
                         this.sweetalertServices.handleError(error);
@@ -259,7 +271,7 @@ export class PhoneContactsComponent {
                             '',
                             'Phone Contact',
                             'Create Phone Contact',
-                            `Detail Phone Contact : Email : ${data.email}, Contact Number : ${data.contactNumber}, FirstName : ${data.firstName}, LastName : ${data.lastName}, Identification : ${data.identification}, Create By : ${data.createdById}`,
+                            `Detail Phone Contact : Email : ${data.email},Contact Number : ${data.contactNumber},FirstName : ${data.firstName},LastName : ${data.lastName},Identification : ${data.identification},Create By : ${data.createdById}`,
                             `Failed, Error : ${error}`,
                         );
                         throw error;
