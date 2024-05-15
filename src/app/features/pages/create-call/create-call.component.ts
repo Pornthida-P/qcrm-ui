@@ -400,7 +400,12 @@ export class CreateCallComponent {
                         '',
                         'Create Call',
                         'Create Case Call',
-                        `Detail Create call : ContactID : ${data.contactId}`,
+                        `Detail Create call : ContactID : ${data.contactId}
+                        ,Name : ${data.name}
+                        ,StartTime : ${data.startTime}
+                        ,Caller_id : ${data.caller_id}
+                        ,Call_id : ${data.call_id}
+                        ,Type : ${data.operationType}`,
                         `Success`,
                     );
                 }),
@@ -410,7 +415,12 @@ export class CreateCallComponent {
                         '',
                         'Create Call',
                         'Create Case Call',
-                        `Detail Create call : ContactID : ${data.contactId}`,
+                        `Detail Create call : ContactID : ${data.contactId}
+                        ,Name : ${data.name}
+                        ,StartTime : ${data.startTime}
+                        ,Caller_id : ${data.caller_id}
+                        ,Call_id : ${data.call_id}
+                        ,Type : ${data.operationType}`,
                         `Failed, Error : ${error}`,
                     );
                     throw error;
@@ -441,7 +451,7 @@ export class CreateCallComponent {
                                 '',
                                 'Create Call ActivityTopic',
                                 'Create Case Call ActivityTopic',
-                                `ContactID :}`,
+                                `Details ActivityTopic : ActivityTopicId : ${data.activityId},ActivityTopicId : ${data.activityTopicName}`,
                                 `Success`,
                             );
                             window.location.reload();
@@ -452,7 +462,7 @@ export class CreateCallComponent {
                                 '',
                                 'Create Call ActivityTopic',
                                 'Create ActivityTopic',
-                                `ContactID :`,
+                                `Details ActivityTopic : ActivityTopicId : ${data.activityId}, ActivityTopicId : ${data.activityTopicName}`,
                                 `Failed, Error : ${error}`,
                             );
                             throw error;
