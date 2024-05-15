@@ -396,7 +396,13 @@ export class CreateCallComponent {
             .pipe(
                 tap((res) => {
                     this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '/contacts');
-                    this.auditLogService.log('', 'Create Call', 'Create Case Call', `ContactID : ${data.contactId}`, `Success`);
+                    this.auditLogService.log(
+                        '',
+                        'Create Call',
+                        'Create Case Call',
+                        `Detail Create call : ContactID : ${data.contactId}`,
+                        `Success`,
+                    );
                 }),
                 catchError((error) => {
                     this.sweetalertServices.handleError(error);
@@ -404,7 +410,7 @@ export class CreateCallComponent {
                         '',
                         'Create Call',
                         'Create Case Call',
-                        `ContactID : ${data.contactId}`,
+                        `Detail Create call : ContactID : ${data.contactId}`,
                         `Failed, Error : ${error}`,
                     );
                     throw error;
@@ -431,12 +437,24 @@ export class CreateCallComponent {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
-                            this.auditLogService.log('', 'Create Call ActivityTopic', 'Create Case Call ActivityTopic', `ContactID :}`, `Success`);
+                            this.auditLogService.log(
+                                '',
+                                'Create Call ActivityTopic',
+                                'Create Case Call ActivityTopic',
+                                `ContactID :}`,
+                                `Success`,
+                            );
                             window.location.reload();
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
-                            this.auditLogService.log('', 'Create Call ActivityTopic', 'Create ActivityTopic', `ContactID :`, `Failed, Error : ${error}`);
+                            this.auditLogService.log(
+                                '',
+                                'Create Call ActivityTopic',
+                                'Create ActivityTopic',
+                                `ContactID :`,
+                                `Failed, Error : ${error}`,
+                            );
                             throw error;
                         }),
                     )
