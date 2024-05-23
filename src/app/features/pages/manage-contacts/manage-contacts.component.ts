@@ -386,13 +386,13 @@ export class ManageContactsComponent implements OnInit {
                 province: this.contactProvince,
                 modifiedById: userData.userId,
             };
-
+            
             this.contactsService
                 .editContacts(data)
                 .pipe(
                     tap((res) => {
                         this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/contacts');
-                        this.auditLogService.log('', 'Contact', 'Edit Contact', `ContactID : ${data.contactId}`, `Success`);
+                        this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), 'Success');
                     }),
                     catchError((error) => {
                         this.sweetalertServices.handleError(error);
@@ -400,13 +400,13 @@ export class ManageContactsComponent implements OnInit {
                             '',
                             'Contact',
                             'Edit Contact',
-                            `ContactID : ${data.contactId}`,
+                            JSON.stringify(data),
                             `Failed, Error : ${error}`,
                         );
                         throw error;
                     }),
                 )
-                .subscribe();
+                .subscribe();            
         } else {
             const data = {
                 firstName: this.contactFirstName,
@@ -429,7 +429,7 @@ export class ManageContactsComponent implements OnInit {
                             '',
                             'Contact',
                             'Create Contact',
-                            `Contact : ${data.firstName}, Email : ${data.email}`,
+                            JSON.stringify(data),
                             `Success`,
                         );
                     }),
@@ -439,7 +439,7 @@ export class ManageContactsComponent implements OnInit {
                             '',
                             'Contact',
                             'Create Contact',
-                            `Contact : ${data.firstName}, Email : ${data.email}`,
+                            JSON.stringify(data),
                             `Failed, Error : ${error}`,
                         );
                         throw error;
@@ -481,12 +481,12 @@ export class ManageContactsComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.getSwal('success', 'Unassigned success.', '', false, '');
-                            this.auditLogService.log('', 'Contact', 'Delete Survey', `Survey ID : ${surveyId}`, `Success`);
+                            this.auditLogService.log('', 'Contact', `Delete Survey From ContactID : ${this.contactId}`, `Survey ID : ${surveyId}`, `Success`);
                             window.location.reload();
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
-                            this.auditLogService.log('', 'Contact', 'Delete Survey', `Survey ID : ${surveyId}`, `Failed, Error : ${error}`);
+                            this.auditLogService.log('', 'Contact', `Delete Survey From ContactID : ${this.contactId}`, `Survey ID : ${surveyId}`, `Failed, Error : ${error}`);
                             throw error;
                         }),
                     )
@@ -609,7 +609,7 @@ export class ManageContactsComponent implements OnInit {
                 this.surveyFormService.saveSurveyData(surveyData).subscribe((res: any) => {
                     if (res.success) {
                         this.sweetalertServices.getSwal('success', 'Success', 'Survey submitted successfully.', false, '');
-                        this.auditLogService.log('', 'Contact', 'Save Survey', `Contact ID : ${contactId}, Form ID : ${formId}`, `Success`);
+                        this.auditLogService.log('', 'Contact', 'Save Survey', JSON.stringify(surveyData), `Success`);
                         this.thanks = true;
                         location.reload();
                     } else {
@@ -618,7 +618,7 @@ export class ManageContactsComponent implements OnInit {
                             '',
                             'Contact',
                             'Save Survey',
-                            `Contact ID : ${contactId}, Form ID : ${formId}`,
+                            JSON.stringify(surveyData),
                             `Failed, Error : ${res.message}`,
                         );
                     }
@@ -782,9 +782,23 @@ export class ManageContactsComponent implements OnInit {
                 .pipe(
                     tap((res) => {
                         this.showSideBarOrg();
+                        this.auditLogService.log(
+                            '',
+                            'Contact',
+                            'Contact Create Organization',
+                            JSON.stringify(data),
+                            `Success`,
+                        );
                     }),
                     catchError((error) => {
                         this.sweetalertServices.handleError(error);
+                        this.auditLogService.log(
+                            '',
+                            'Contact',
+                            'Contact Create Organization',
+                            JSON.stringify(data),
+                            `Failed, Error : ${error}`,
+                        );
                         throw error;
                     }),
                 )
@@ -951,12 +965,12 @@ export class ManageContactsComponent implements OnInit {
                 .pipe(
                     tap((res) => {
                       this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
-                      this.auditLogService.log('', 'Contact Create Call', 'Contact Create Case Call', `ContactID :}`, `Success`);
+                      this.auditLogService.log('', 'Contact Create Call', 'Contact Create Case Call', JSON.stringify(data), `Success`);
                         window.location.reload();
                     }),
                     catchError((error) => {
                       this.sweetalertServices.handleError(error);
-                      this.auditLogService.log('', 'Contact Create Call', 'Contact Create Case Call', `ContactID :`, `Failed, Error : ${error}`);
+                      this.auditLogService.log('', 'Contact Create Call', 'Contact Create Case Call', JSON.stringify(data), `Failed, Error : ${error}`);
                         throw error;
                     }),
                 )
@@ -1137,7 +1151,7 @@ export class ManageContactsComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
-                            this.auditLogService.log('', 'Contact Create Call ActivityTopic', 'Contact Create Case Call ActivityTopic', `ContactID :}`, `Success`);
+                            this.auditLogService.log('', 'Contact Create Call ActivityTopic', 'Contact Create Case Call ActivityTopic', `ContactID : ${this.contactId}`, `Success`);
                             window.location.reload();
                         }),
                         catchError((error) => {
@@ -1146,7 +1160,7 @@ export class ManageContactsComponent implements OnInit {
                                 '',
                                 'Contact Create Call ActivityTopic',
                                 'Contact Create ActivityTopic',
-                                `ContactID :`,
+                                `ContactID : ${this.contactId}`,
                                 `Failed, Error : ${error}`,
                             );
                             throw error;
