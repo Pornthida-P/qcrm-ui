@@ -286,8 +286,7 @@ export class ContactsComponent implements OnInit {
     }
 
     edit(item: any) {
-        const cb = `${this.pageSize},${this.currentPage},${this.totalItems},${this.totalPages}`;
-        this.router.navigate(['/contacts/edit'], { queryParams: { key: item.contactId, cb: cb } });
+        this.router.navigate(['/contacts/edit'], { queryParams: { key: item.contactId} });
     }
 
     deletecontacts(contactId: string) {

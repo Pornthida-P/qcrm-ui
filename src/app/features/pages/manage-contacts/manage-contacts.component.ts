@@ -42,6 +42,10 @@ export class ManageContactsComponent implements OnInit {
     contactProvince: string = '';
     contactProductType: string = '';
     contactSource: string = '';
+    contactCreatedByID: string = '';
+    contactCreatedAt: string = '';
+    contactModifiedByID: string = '';
+    contactModifiedAt: string = '';
     activityName: string = '';
     isContactSelected: boolean = false;
     typeContact: string[] = ['addComponent', 'saveComponent'];
@@ -248,11 +252,9 @@ export class ManageContactsComponent implements OnInit {
         if (state.itemId) {
             this.contactId = state.itemId;
             this.state = state.state;
-            this.cb = state.cb;
         } else {
             this.route.queryParams.subscribe((params) => {
                 this.contactId = params['key'];
-                this.cb = params['cb'];
             });
         }
 
@@ -284,15 +286,6 @@ export class ManageContactsComponent implements OnInit {
             this.SearchButton = true;
         }
 
-        // this.activeRoute.queryParams.subscribe((params) => {
-        //     if (params['cb'] != undefined && params['cb'] != '') {
-        //         const cbArray = params['cb'].split(',').map(Number);
-        //         this.pageSize = cbArray[0];
-        //         this.currentPage = cbArray[1];
-        //         this.totalItems = cbArray[2];
-        //         this.totalPages = cbArray[3];
-        //     }
-        // });
         this.selectedFilter = 'all';
         if (this.selectedFilter !== 'all') {
             this.userId = this.userData.userId;
@@ -338,6 +331,10 @@ export class ManageContactsComponent implements OnInit {
             this.contactProvince = this.detailItem.province;
             this.contactProductType = this.detailItem.product_type;
             this.contactSource = this.detailItem.sourced;
+            this.contactCreatedByID = this.detailItem.create_by;
+            this.contactCreatedAt = this.detailItem.created_at;
+            this.contactModifiedByID = this.detailItem.modified_by;
+            this.contactModifiedAt = this.detailItem.modified_at;
             if (this.contactIden != '' && this.contactIden != null && this.contactIden != undefined) {
                 this.contactsService.getContactActivities(this.contactIden).subscribe((res: any) => {
                     this.contactActivities = res;
@@ -366,7 +363,7 @@ export class ManageContactsComponent implements OnInit {
     }
 
     prev() {
-        this._location.back();
+        this.router.navigate(['/contacts']);
         this.state = '';
     }
 
@@ -423,8 +420,9 @@ export class ManageContactsComponent implements OnInit {
             this.contactsService
                 .createContacts(data)
                 .pipe(
-                    tap((res) => {
-                        this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/contacts');
+                    tap((res: any) => {
+                        const contactId = res.contactId;
+                        this.router.navigate(['/contacts/edit'], { queryParams: { key: contactId } });
                         this.auditLogService.log(
                             '',
                             'Contact',
