@@ -36,6 +36,23 @@ export class SweetAlertService {
         });
     }
 
+    contactSwal(icon: any, title: string, contacts: any,): any {
+        let contactList = '';
+        contacts.forEach((contact: any) => {
+            contactList += `<a href="contacts/edit?key=${contact.contactId}">${contact.fullname}</a><br>`;
+        });
+        return Swal.fire({
+            icon: icon,
+            title: title,
+            html: `หรือคุณหมายถึง<br>${contactList}`,
+            showCloseButton: true,
+            showCancelButton: false,
+            showConfirmButton: false,
+            allowOutsideClick: false, // Optionally prevent closing on outside click
+            allowEscapeKey: false, // Optionally prevent closing on ESC key
+        });
+    }
+
     handleError(error: any) {
         let icon: string;
         let errorMessage: string;

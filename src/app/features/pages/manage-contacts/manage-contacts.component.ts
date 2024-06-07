@@ -421,15 +421,34 @@ export class ManageContactsComponent implements OnInit {
                 .createContacts(data)
                 .pipe(
                     tap((res: any) => {
-                        const contactId = res.contactId;
-                        this.router.navigate(['/contacts/edit'], { queryParams: { key: contactId } });
-                        this.auditLogService.log(
-                            '',
-                            'Contact',
-                            'Create Contact',
-                            JSON.stringify(data),
-                            `Success`,
-                        );
+                        if (res.success === true) {
+                            const contactId = res.contactId;
+                            this.router.navigate(['/contacts/edit'], { queryParams: { key: contactId } });
+                            this.auditLogService.log(
+                                '',
+                                'Contact',
+                                'Create Contact',
+                                JSON.stringify(data),
+                                `Success`,
+                            );
+                        } else if (res.success === false && res.message === 'Duplicate') {
+                            if (res.duplicates.length > 0) {
+                                const duplicatedFields = res.duplicates.map((dup: any) => dup.duplicateOn).join(' และ ');
+                                this.sweetalertServices.contactSwal(
+                                    'error',
+                                    `${duplicatedFields}นี้ได้มีการลงทะเบียนแล้ว`,
+                                    res.duplicates,
+                                );
+                                return;
+                            }
+                            this.auditLogService.log(
+                                '',
+                                'Contact',
+                                'Create Contact',
+                                JSON.stringify(data),
+                                `Failed, Error Duplicate: ${res.duplicates}`,
+                            );
+                        }    
                     }),
                     catchError((error) => {
                         this.sweetalertServices.handleError(error);
