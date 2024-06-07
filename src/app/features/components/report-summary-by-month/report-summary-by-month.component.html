@@ -3,25 +3,33 @@
         <div class="col-auto" [formGroup]="datePick">
             <div class="input-group start-date">
                 <input
-                    type="number"
+                    matInput
+                    [matDatepicker]="startDatePicker"
                     formControlName="startDate"
                     name="datetime"
                     class="input-date form-control"
                     (dateChange)="onStartDateChange($event)"
-                    ngbTooltip="From Year"
                 />
+                <span class="input-group-text" ngbTooltip="From Date">
+                    <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+                    <mat-datepicker #startDatePicker></mat-datepicker>
+                </span>
             </div>
         </div>
         <div class="col-auto" [formGroup]="datePick">
             <div class="input-group end-date">
                 <input
-                    type="number"
+                    matInput
+                    [matDatepicker]="endDatePicker"
                     formControlName="endDate"
                     name="datetime"
                     class="input-date form-control"
                     (dateChange)="onEndDateChange($event)"
-                    ngbTooltip="To Year"
                 />
+                <span class="input-group-text" ngbTooltip="To Date">
+                    <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+                    <mat-datepicker #endDatePicker></mat-datepicker>
+                </span>
             </div>
         </div>
         <div class="col-auto" [formGroup]="datePick">

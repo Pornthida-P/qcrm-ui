@@ -1,17 +1,19 @@
 <div class="sidebar d-none d-xl-flex">
     <div class="nav mainnav">
         <div class="nav-box">
-            <div
-                *ngFor="let item of items"
-                class="navbutton cursor-pointer"
-                [routerLink]="[item.routerLink]"
-                [routerLinkActive]="'selected'"
-            >
-                <div class="navicon">
+            <ng-container *ngFor="let item of items">
+                <div
+                  *ngIf="hasRole(item.roles)"
+                  class="navbutton cursor-pointer"
+                  [routerLink]="[item.routerLink]"
+                  [routerLinkActive]="'selected'"
+                >
+                  <div class="navicon">
                     <fa-icon [icon]="item.icon"></fa-icon>
+                  </div>
+                  <div class="navlabel">{{ 'menuSidebar.' + item.label | translate }}</div>
                 </div>
-                <div class="navlabel">{{ 'menuSidebar.' + item.label | translate }}</div>
-            </div>
+              </ng-container>
         </div>
     </div>
 </div>
