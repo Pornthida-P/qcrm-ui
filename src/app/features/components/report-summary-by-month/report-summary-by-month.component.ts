@@ -31,8 +31,9 @@ export class ReportSummaryByMonthComponent implements OnInit {
 
     ngOnInit(): void {
         const currentDate = new Date();
-        const firstDayOfYearFormat = moment(currentDate).format('YYYY');
-        const currentDateFormat = moment(currentDate).format('YYYY');
+        const firstDayOfYear = new Date(currentDate.getFullYear(), 0, 1);
+        const firstDayOfYearFormat = moment(firstDayOfYear).format('YYYY-MM-DD');
+        const currentDateFormat = moment(new Date()).format('YYYY-MM-DD');
         this.datePick = this.fb.group({
             startDate: [firstDayOfYearFormat],
             endDate: [currentDateFormat],
@@ -75,8 +76,8 @@ export class ReportSummaryByMonthComponent implements OnInit {
     }
 
     clickGetReport() {
-        const startDate = this.datePick.get('startDate')!.value;
-        const endDate = this.datePick.get('endDate')!.value;
+        const startDate = moment(this.datePick.get('startDate')!.value).format('YYYY-MM-DD');
+        const endDate = moment(this.datePick.get('endDate')!.value).format('YYYY-MM-DD');
         this.getReport(startDate, endDate);
     }
 
