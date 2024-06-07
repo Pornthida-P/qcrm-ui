@@ -421,8 +421,6 @@ export class ManageContactsComponent implements OnInit {
                 .createContacts(data)
                 .pipe(
                     tap((res: any) => {
-                        console.log('res:', res);
-                        console.log('contactId:', res.duplicates);
                         if (res.success === true) {
                             const contactId = res.contactId;
                             this.router.navigate(['/contacts/edit'], { queryParams: { key: contactId } });

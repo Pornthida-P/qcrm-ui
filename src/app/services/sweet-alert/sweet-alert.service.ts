@@ -37,7 +37,6 @@ export class SweetAlertService {
     }
 
     contactSwal(icon: any, title: string, contacts: any,): any {
-        console.log(contacts);
         let contactList = '';
         contacts.forEach((contact: any) => {
             contactList += `<a href="contacts/edit?key=${contact.contactId}">${contact.fullname}</a><br>`;
