@@ -81,6 +81,8 @@ export const config = {
                 activitybyidBypage: '/activitybyidbypage',
                 activitySmn: '/activity-smn',
                 createActivityTopic: '/activityTopic',
+                callById: '/call-id',
+                caseById: '/case-id',
             },
             survey: {
                 baseUrl: '/survey',
