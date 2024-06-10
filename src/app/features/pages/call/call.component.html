@@ -25,7 +25,7 @@
                     </select>
                 </div>
             </div>
-            <!-- <button
+            <button
                 class="d-flex align-items-center gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white"
                 (click)="createCall()"
             >
@@ -34,7 +34,7 @@
             </button>
             <div class="d-none d-md-flex d-lg-none p-2 btn-primary-color rounded text-white" (click)="createCall()">
                 <i class="fa-solid fa-plus"></i>
-            </div> -->
+            </div>
         </div>
         <div *ngIf="selectValue && selectValue.length != 0">
             <div class="d-flex p-3 bg-body-tertiary">
@@ -70,14 +70,14 @@
                                 />
                             </th>
                             <th scope="col" style="width: 12%">เวลา</th>
-                            <th scope="col" style="width: 10%">เบอร์โทร</th>
+                            <th scope="col" style="width: 8%">เบอร์โทร</th>
                             <th scope="col" style="width: 14%">ผู้ติดต่อ</th>
                             <th scope="col" style="width: 8%">ประเภทสาย</th>
-                            <th scope="col" style="width: 20%">เรื่องที่ติดต่อ</th>
-                            <th scope="col" style="width: 20%">รายละเอียด</th>
-                            <th scope="col" style="width: 20%">แนวทางการแก้ไข</th>
-                            <th scope="col" style="width: 12%">ผู้ที่รับผิดชอบ</th>
-                            <!-- <th scope="col">จัดการ</th> -->
+                            <th scope="col" style="width: 16%">เรื่องที่ติดต่อ</th>
+                            <th scope="col" style="width: 16%">รายละเอียด</th>
+                            <th scope="col" style="width: 16%">แนวทางการแก้ไข</th>
+                            <th scope="col" style="width: 20%">ผู้ที่รับผิดชอบ</th>
+                            <th scope="col">จัดการ</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -95,7 +95,12 @@
                                 <td>
                                     {{ calls.createdAt | date : 'dd/MM/yyyy HH:mm' }}
                                 </td>
-                                <td
+                                <td class="sidebar cursor-pointer" (click)="createCallFideId(calls)" >
+                                    <div class="" ngbTooltip="คลิกดูรายละเอียด" placement="bottom">
+                                        {{ calls.caller }}
+                                    </div>
+                                </td>
+                                <!-- <td
                                     (click)="showSideBar(i, calls.callId)"
                                     class="sidebar cursor-pointer"
                                     data-bs-toggle="offcanvas"
@@ -105,7 +110,7 @@
                                     <div class="" ngbTooltip="คลิกดูรายละเอียด" placement="bottom">
                                         {{ calls.caller }}
                                     </div>
-                                </td>
+                                </td> -->
                                 <td>{{ calls.contact }}</td>
                                 <td>{{ calls.type }}</td>
                                 <td class="w-max-ellipsis">
@@ -124,16 +129,21 @@
                                     </div>
                                 </td>
                                 <td>{{ calls.agent }}</td>
-                                <!-- <td class="text-center" scope="row">
+                                <td class="text-center" scope="row">
                                     <div class="d-flex flex-row flex-nowrap">
-                                        <div class="me-3 color-primary cursor-pointer" placement="top" ngbTooltip="แก้ไข" (click)="editPage()">
-                                          <i class="fa-solid fa-pen-to-square"></i>
-                                      </div>
-                                        <div class="color-red cursor-pointer" placement="top" ngbTooltip="ลบ" (click)="deleteCall(calls.call_id)">
-                                            <i class="fa-solid fa-trash"></i>
+                                        <div
+                                            class="me-3 color-primary cursor-pointer"
+                                            placement="top"
+                                            ngbTooltip="แก้ไข"
+                                            (click)="createCallFideId(calls)"
+                                        >
+                                            <i class="fa-solid fa-pen-to-square"></i>
                                         </div>
+                                        <!-- <div class="color-red cursor-pointer" placement="top" ngbTooltip="ลบ" (click)="deleteCall(calls.call_id)">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </div> -->
                                     </div>
-                                </td> -->
+                                </td>
                             </tr>
                         </ng-container>
                         <ng-template #noDataTemplate>
@@ -202,9 +212,9 @@
                     <div class="p-5 shadow call-side-detail">
                         <div class="d-flex justify-content-end">
                             <div class="d-flex flex-wrap">
-                                <!-- <div class="flex-grow-1" type="button" (click)="editPage()" placement="bottom" ngbTooltip="แก้ไข">
+                                <div class="flex-grow-1" type="button" placement="bottom" ngbTooltip="แก้ไข">
                                     <fa-icon class="color-primary cursor-pointer" [icon]="faPenToSquare" size="lg"></fa-icon>
-                                </div> -->
+                                </div>
                             </div>
                         </div>
 
@@ -228,11 +238,11 @@
                                 <div class="font-b">{{ detailItem?.agent || emptyItem }}</div>
                             </div>
                             <div class="col row-side">
-                              <h5>เรื่องที่ติดต่อ</h5>
-                              <div *ngIf="detailItem && detailItem.casesub" class="font-b">
-                                  <div *ngFor="let topic of detailItem.casesub.split(',');" class="font-b">{{ topic }}</div>
-                              </div>
-                          </div>
+                                <h5>เรื่องที่ติดต่อ</h5>
+                                <div *ngIf="detailItem && detailItem.casesub" class="font-b">
+                                    <div *ngFor="let topic of detailItem.casesub.split(',')" class="font-b">{{ topic }}</div>
+                                </div>
+                            </div>
                         </div>
                         <div class="grid pt-2 row-side">
                             <div class="col row-side">
@@ -252,9 +262,9 @@
                                 <div class="font-b">{{ detailItem?.agent || emptyItem }}</div>
                             </div>
                             <div class="col">
-                              <h5>แก้ไขล่าสุดโดยผู้ใช้</h5>
-                              <div class="font-b">{{ detailItem?.modifiedByUsername || emptyItem }}</div>
-                          </div>
+                                <h5>แก้ไขล่าสุดโดยผู้ใช้</h5>
+                                <div class="font-b">{{ detailItem?.modifiedByUsername || emptyItem }}</div>
+                            </div>
                         </div>
                         <div class="row row-side">
                             <div class="col">
