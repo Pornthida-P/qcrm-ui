@@ -198,6 +198,9 @@ export class CreateCallComponent {
     selectedActivitiesSmnIds: any;
     activitiestypeTopic: any;
     activitiestypeEln: any;
+    callIdEdit: any;
+    callId: any;
+    callFideId: any;
     // pageEln: number | undefined = 0;
 
     // selectedActivityTopicId: string[] = [];
@@ -291,6 +294,12 @@ export class CreateCallComponent {
             this.contactId = params['contactId'];
             this.call_id = params['call_id'];
             this.caller_id = params['caller_id'];
+            this.callIdEdit = params['key'];
+            if (this.callIdEdit) {
+                this.getCallFideId();
+            }
+
+          console.log('key: ', this.callIdEdit)
         });
 
         this.callServive.getCaseTopic().subscribe((casetopics: any) => {
@@ -924,4 +933,17 @@ export class CreateCallComponent {
     filterActivities(): any[] {
         return this.activitiestype.filter((activityType: { activityTypeId: number }) => [21, 27, 28].includes(activityType.activityTypeId));
     }
+
+    getCallFideId() {
+      this.callServive.getCallById(this.callIdEdit).subscribe((res: any) => {
+        this.callFideId = res;
+
+        // this.
+
+        console.log('get call: ', this.callFideId);
+      }, (error: any) => {
+        console.error('Error fetching call data:', error);
+      });
+    }
+
 }
