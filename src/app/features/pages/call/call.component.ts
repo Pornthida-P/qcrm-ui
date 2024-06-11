@@ -10,7 +10,8 @@ import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.serv
 import { catchError, tap } from 'rxjs';
 import * as XLSX from 'xlsx';
 import { config } from 'src/app/config/config';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormBuilder, FormGroup } from '@angular/forms';
+import * as moment from 'moment';
 
 @Pipe({
     name: 'searchFilter',
@@ -88,10 +89,11 @@ export class CallComponent implements OnInit {
 
     filterDate!: any[];
 
-    startDate: string = '';
-    endDate: string = '';
-    dateFilterType: any | undefined;
+    startDate: any | undefined;
+    endDate: any | undefined;
     filterDateType: any | undefined;
+    dateFilterType: string = '';
+    dateRangeForm!: FormGroup;
 
     constructor(
         private callService: CallService,
@@ -99,6 +101,7 @@ export class CallComponent implements OnInit {
         private activeRoute: ActivatedRoute,
         private userService: UserService,
         private sweetAlertService: SweetAlertService,
+        private fb: FormBuilder,
     ) {}
 
     ngOnInit() {
@@ -110,10 +113,11 @@ export class CallComponent implements OnInit {
         ];
 
         this.filterDate = [
-            { name: 'ทั้งหมด', type: '' },
+            { name: 'กรุณาเลือกวันที่', type: '' },
             { name: 'วันนี้', type: 'toDay' },
             { name: 'อาทิตย์นี้', type: 'thisWeek' },
             { name: 'เดือนนี้', type: 'thisMonth' },
+            { name: 'เลือกวันที่', type: 'custom' },
         ];
 
         this.activeRoute.queryParams.subscribe((params) => {
@@ -135,6 +139,24 @@ export class CallComponent implements OnInit {
 
         this.getCallsData(this.currentPage, this.pageSize);
         this.getPage();
+
+        this.dateRangeForm = this.fb.group({
+            startDate: [''],
+            endDate: [''],
+        });
+        this.dateRangeForm.get('startDate')!.valueChanges.subscribe((value) => {
+            this.startDate = moment(value).format('YYYY-MM-DD');
+            console.log('Formatted Start Date:', this.startDate);
+            this.getCallsData(this.currentPage, this.pageSize);
+            this.getPage();
+        });
+
+        this.dateRangeForm.get('endDate')!.valueChanges.subscribe((value) => {
+            this.endDate = moment(value).format('YYYY-MM-DD');
+            console.log('Formatted End Date:', this.endDate);
+            this.getCallsData(this.currentPage, this.pageSize);
+            this.getPage();
+        });
     }
 
     onUserSelectDateFilter(newDateFilterType: string) {
@@ -143,8 +165,8 @@ export class CallComponent implements OnInit {
 
     onDateFilterChange(newDateFilterType: string) {
         this.filterDateType = newDateFilterType;
-      this.getCallsData((this.currentPage - 1) * this.pageSize, this.pageSize);
-      this.getPage()
+        this.getCallsData((this.currentPage - 1) * this.pageSize, this.pageSize);
+        this.getPage();
     }
 
     updateDateFilterAndRefreshData(newDateFilterType: string, page: number, pageSize: number) {
@@ -152,7 +174,7 @@ export class CallComponent implements OnInit {
     }
 
     async getCallsData(page: number, pageSize: number) {
-        console.log('dateFilterType:', this.filterDateType);
+
         await this.callService
             .getCallsPage(
                 page,
@@ -176,7 +198,7 @@ export class CallComponent implements OnInit {
             });
     }
 
-  async getPage() {
+    async getPage() {
         await this.callService
             .getCallsCount(this.valueSearch, this.userId, this.filterDateType, this.startDate, this.endDate)
             .subscribe((res: any) => {
