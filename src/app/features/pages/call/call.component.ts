@@ -10,6 +10,8 @@ import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.serv
 import { catchError, tap } from 'rxjs';
 import * as XLSX from 'xlsx';
 import { config } from 'src/app/config/config';
+import { FormControl } from '@angular/forms';
+
 @Pipe({
     name: 'searchFilter',
 })
@@ -39,6 +41,7 @@ export class CallComponent implements OnInit {
 
     calls: any[] = [];
     selectedCalls: any = [];
+    newDateFilterType: any | undefined;
 
     faPenToSquare = faPenToSquare;
     faTrashCan = faTrashCan;
@@ -83,6 +86,13 @@ export class CallComponent implements OnInit {
     inbound = 'Inbound';
     outbound = 'Outbound';
 
+    filterDate!: any[];
+
+    startDate: string = '';
+    endDate: string = '';
+    dateFilterType: any | undefined;
+    filterDateType: any | undefined;
+
     constructor(
         private callService: CallService,
         private router: Router,
@@ -97,6 +107,13 @@ export class CallComponent implements OnInit {
         this.filterOption = [
             { name: 'ทั้งหมด', code: 'all' },
             { name: 'เฉพาะฉัน', code: this.userData.username },
+        ];
+
+        this.filterDate = [
+            { name: 'ทั้งหมด', type: '' },
+            { name: 'วันนี้', type: 'toDay' },
+            { name: 'อาทิตย์นี้', type: 'thisWeek' },
+            { name: 'เดือนนี้', type: 'thisMonth' },
         ];
 
         this.activeRoute.queryParams.subscribe((params) => {
@@ -114,13 +131,34 @@ export class CallComponent implements OnInit {
             this.userId = this.userData.userId;
         }
 
+        this.filterDateType = this.filterDate[0].type;
+        // if (this.filterDateType === 'toDay') {
+        //   this
+        // }
+
         this.getCallsData((this.currentPage - 1) * this.pageSize, this.pageSize);
         this.getPage();
     }
 
+    onDateFilterChange(newDateFilterType: string) {
+        this.filterDateType = newDateFilterType;
+        console.log('select type: ', this.filterDateType);
+    }
+
     async getCallsData(page: number, pageSize: number) {
+      this.onDateFilterChange(this.filterDateType);
+      console.log('dateFilterType:', this.filterDateType);
         await this.callService
-            .getCallsPage(page, pageSize, `${this.sortId},${this.sortOrder}`, this.valueSearch, this.selectedFilter)
+            .getCallsPage(
+                page,
+                pageSize,
+                `${this.sortId},${this.sortOrder}`,
+                this.valueSearch,
+                this.selectedFilter,
+                this.filterDateType,
+                this.startDate,
+                this.endDate,
+            )
             .subscribe((res: any) => {
                 this.calls = res;
                 this.calls.forEach((call) => {
@@ -217,9 +255,11 @@ export class CallComponent implements OnInit {
     }
 
     async getPage() {
-        await this.callService.getCallsCount(this.valueSearch, this.userId).subscribe((res: any) => {
-            this.totalItems = res.count;
-        });
+        await this.callService
+            .getCallsCount(this.valueSearch, this.userId, this.filterDateType, this.startDate, this.endDate)
+            .subscribe((res: any) => {
+                this.totalItems = res.count;
+            });
     }
 
     search() {
@@ -322,4 +362,12 @@ export class CallComponent implements OnInit {
     isAllChecked() {
         return this.calls && this.calls.every((_: any) => _.state);
     }
+
+    time = true;
+    time1 = true;
+    meridian = true;
+    seconds = true;
+    seconds1 = true;
+
+    date = new FormControl(new Date());
 }
