@@ -132,22 +132,27 @@ export class CallComponent implements OnInit {
         }
 
         this.filterDateType = this.filterDate[0].type;
-        // if (this.filterDateType === 'toDay') {
-        //   this
-        // }
 
-        this.getCallsData((this.currentPage - 1) * this.pageSize, this.pageSize);
+        this.getCallsData(this.currentPage, this.pageSize);
         this.getPage();
+    }
+
+    onUserSelectDateFilter(newDateFilterType: string) {
+        this.updateDateFilterAndRefreshData(newDateFilterType, (this.currentPage - 1) * this.pageSize, this.pageSize);
     }
 
     onDateFilterChange(newDateFilterType: string) {
         this.filterDateType = newDateFilterType;
-        console.log('select type: ', this.filterDateType);
+      this.getCallsData((this.currentPage - 1) * this.pageSize, this.pageSize);
+      this.getPage()
+    }
+
+    updateDateFilterAndRefreshData(newDateFilterType: string, page: number, pageSize: number) {
+        this.onDateFilterChange(newDateFilterType);
     }
 
     async getCallsData(page: number, pageSize: number) {
-      this.onDateFilterChange(this.filterDateType);
-      console.log('dateFilterType:', this.filterDateType);
+        console.log('dateFilterType:', this.filterDateType);
         await this.callService
             .getCallsPage(
                 page,
@@ -168,6 +173,14 @@ export class CallComponent implements OnInit {
                         call.type = this.outbound;
                     }
                 });
+            });
+    }
+
+  async getPage() {
+        await this.callService
+            .getCallsCount(this.valueSearch, this.userId, this.filterDateType, this.startDate, this.endDate)
+            .subscribe((res: any) => {
+                this.totalItems = res.count;
             });
     }
 
@@ -252,14 +265,6 @@ export class CallComponent implements OnInit {
                 this.getCallsSide((this.currentPage - 1) * this.pageSize, this.pageSize, value);
             }
         }
-    }
-
-    async getPage() {
-        await this.callService
-            .getCallsCount(this.valueSearch, this.userId, this.filterDateType, this.startDate, this.endDate)
-            .subscribe((res: any) => {
-                this.totalItems = res.count;
-            });
     }
 
     search() {
