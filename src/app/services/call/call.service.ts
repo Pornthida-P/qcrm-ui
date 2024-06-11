@@ -118,4 +118,12 @@ export class CallService {
             `${this.baseUrl}${config.api.path.call.url}${config.api.path.call.activitybyidBypage}/${searchText}`,
         );
     }
+
+    getCallById(id: string) {
+      return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.callById}/${id}`);
+  }
+
+    getCaseById(id: string) {
+      return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.caseById}/${id}`);
+  }
 }

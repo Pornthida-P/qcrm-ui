@@ -96,7 +96,7 @@ export class CallComponent implements OnInit {
         this.userRole = this.userData.role.roleTitle.toLocaleLowerCase();
         this.filterOption = [
             { name: 'ทั้งหมด', code: 'all' },
-            { name: 'Only My', code: this.userData.username },
+            { name: 'เฉพาะฉัน', code: this.userData.username },
         ];
 
         this.activeRoute.queryParams.subscribe((params) => {
@@ -247,8 +247,13 @@ export class CallComponent implements OnInit {
         this.getCallsData((this.currentPage - 1) * this.pageSize, this.pageSize);
     }
 
+    createCallFideId(item: any) {
+        console.log('Call ID:', item.callId);
+        this.router.navigate(['/call/create-call'], { queryParams: { key: item.callId } });
+    }
+
     createCall() {
-        this.router.navigate(['/call/create']);
+        this.router.navigate(['/call/create-call']);
     }
 
     getUserData() {
