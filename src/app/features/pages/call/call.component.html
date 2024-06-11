@@ -15,15 +15,49 @@
                         [(ngModel)]="valueSearch"
                         placeholder="ค้นหา..."
                         aria-describedby="basic-addon1"
-                        style="width: 70%"
+                        style="width: 30%"
                         (input)="search()"
                     />
-                    <select class="form-select shadow-none" aria-label="Default select example" [(ngModel)]="selectedFilter">
+                    <select
+                        class="form-select shadow-none"
+                        aria-label="Default select example"
+                        [(ngModel)]="selectedFilter"
+                        style="width: 10px"
+                    >
                         <option *ngFor="let op of filterOption" [value]="op.code">
                             {{ op.name }}
                         </option>
                     </select>
                 </div>
+            </div>
+            <div class="d-none d-md-flex d-lg-none p-2 btn-primary-color rounded text-white" (click)="createCall()">
+                <i class="fa-solid fa-plus"></i>
+            </div>
+            <select class="form-select shadow-none w-15" aria-label="Default select example" [(ngModel)]="dateFilterType" (ngModelChange)="onDateFilterChange($event)">
+                <option *ngFor="let ftd of filterDate" [value]="ftd.type">
+                    {{ ftd.name }}
+                </option>
+            </select>
+            <div class="input-group start-date" style="width: 10%">
+                <input
+                    matInput
+                    [matDatepicker]="pickerStartDate"
+                    name="startDate"
+                    [(ngModel)]="startDate"
+                    required
+                    class="input-date form-control"
+                />
+                <span class="input-group-text" style="height: 37px; width: 10%">
+                    <mat-datepicker-toggle matSuffix [for]="pickerStartDate"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerStartDate></mat-datepicker>
+                </span>
+            </div>
+            <div class="input-group start-date" style="width: 10%">
+                <input matInput [matDatepicker]="pickerEndDate" name="endDate" [(ngModel)]="endDate" required class="input-date form-control" />
+                <span class="input-group-text" style="height: 37px; width: 10%">
+                    <mat-datepicker-toggle matSuffix [for]="pickerEndDate"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerEndDate></mat-datepicker>
+                </span>
             </div>
             <button
                 class="d-flex align-items-center gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white"
@@ -32,9 +66,6 @@
                 <i class="fa-solid fa-plus"></i>
                 สร้างการโทร
             </button>
-            <div class="d-none d-md-flex d-lg-none p-2 btn-primary-color rounded text-white" (click)="createCall()">
-                <i class="fa-solid fa-plus"></i>
-            </div>
         </div>
         <div *ngIf="selectValue && selectValue.length != 0">
             <div class="d-flex p-3 bg-body-tertiary">
@@ -95,7 +126,7 @@
                                 <td>
                                     {{ calls.createdAt | date : 'dd/MM/yyyy HH:mm' }}
                                 </td>
-                                <td class="sidebar cursor-pointer" (click)="createCallFideId(calls)" >
+                                <td class="sidebar cursor-pointer" (click)="createCallFideId(calls)">
                                     <div class="" ngbTooltip="คลิกดูรายละเอียด" placement="bottom">
                                         {{ calls.caller }}
                                     </div>
