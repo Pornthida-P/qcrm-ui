@@ -6,6 +6,11 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { SearchPipe } from './call.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
+import { MAT_DATE_LOCALE } from '@angular/material/core'
 @NgModule({
     declarations: [CallComponent, SearchPipe],
     imports: [
@@ -20,6 +25,13 @@ import { SearchPipe } from './call.component';
       FormsModule,
       ReactiveFormsModule,
       NgbTooltipModule,
-    ],
+      MatDatepickerModule,
+      MatInputModule,
+      MatFormFieldModule,
+      NgbTimepickerModule,
+  ],
+  providers: [
+    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' }
+  ]
 })
 export class CallModule {}
