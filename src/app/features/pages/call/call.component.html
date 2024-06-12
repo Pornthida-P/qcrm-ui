@@ -18,11 +18,7 @@
                         style="width: 70%"
                         (input)="search()"
                     />
-                    <select
-                        class="form-select shadow-none"
-                        aria-label="Default select example"
-                        [(ngModel)]="selectedFilter"
-                    >
+                    <select class="form-select shadow-none" aria-label="Default select example" [(ngModel)]="selectedFilter">
                         <option *ngFor="let op of filterOption" [value]="op.code">
                             {{ op.name }}
                         </option>
@@ -33,11 +29,58 @@
                 <i class="fa-solid fa-plus"></i>
             </div>
 
-            <select class="form-select shadow-none w-15" aria-label="Default select example" [(ngModel)]="dateFilterType" (ngModelChange)="onDateFilterChange($event)">
-              <option *ngFor="let ftd of filterDate" [value]="ftd.type">
-                {{ ftd.name }}
-              </option>
+            <select
+                class="form-select shadow-none w-15"
+                aria-label="Default select example"
+                [(ngModel)]="dateFilterType"
+                (ngModelChange)="onDateFilterChange($event)"
+            >
+                <option *ngFor="let ftd of filterDate" [value]="ftd.type">
+                    {{ ftd.name }}
+                </option>
             </select>
+            <div class="" style="">
+            <!-- <div class="p-3" style="display: flex; justify-content: flex-end"> -->
+              <div
+                  class="col-auto"
+                  *ngIf="dateFilterType === 'custom'"
+                  [formGroup]="dateRangeForm"
+                  style="display: flex;
+                  justify-content: space-around;
+                  flex-wrap: nowrap;
+                  flex-direction: row;
+                  align-items: stretch;"
+              >
+                  <div class="input-group start-date" style="width: 45%;">
+                      <input
+                          matInput
+                          [matDatepicker]="pickerStartDate"
+                          formControlName="startDate"
+                          required
+                          class="input-date form-control"
+                          style="height: 36px"
+                      />
+                      <span class="input-group-text" style="height: 36px">
+                          <mat-datepicker-toggle matSuffix [for]="pickerStartDate"></mat-datepicker-toggle>
+                          <mat-datepicker #pickerStartDate></mat-datepicker>
+                      </span>
+                  </div>
+                  <div class="input-group" style="width: 45%;">
+                      <input
+                          matInput
+                          [matDatepicker]="pickerEndDate"
+                          formControlName="endDate"
+                          required
+                          class="input-date form-control"
+                          style="height: 36px"
+                      />
+                      <span class="input-group-text" style="height: 36px">
+                          <mat-datepicker-toggle matSuffix [for]="pickerEndDate"></mat-datepicker-toggle>
+                          <mat-datepicker #pickerEndDate></mat-datepicker>
+                      </span>
+                  </div>
+              </div>
+          </div>
 
             <button
                 class="d-flex align-items-center gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white"
@@ -47,25 +90,7 @@
                 สร้างการโทร
             </button>
         </div>
-        <div>
-        <div class="col-auto" *ngIf="dateFilterType === 'custom'" [formGroup]="dateRangeForm">
-          <div class="input-group" >
-            <input matInput [matDatepicker]="pickerStartDate" formControlName="startDate" required class="input-date form-control" />
-            <span class="input-group-text">
-              <mat-datepicker-toggle matSuffix [for]="pickerStartDate"></mat-datepicker-toggle>
-              <mat-datepicker #pickerStartDate></mat-datepicker>
-            </span>
-          </div>
-          <div class="input-group" >
-            <input matInput [matDatepicker]="pickerEndDate" formControlName="endDate" required class="input-date form-control" />
-            <span class="input-group-text" >
-              <mat-datepicker-toggle matSuffix [for]="pickerEndDate"></mat-datepicker-toggle>
-              <mat-datepicker #pickerEndDate></mat-datepicker>
-            </span>
-          </div>
-        </div>
 
-      </div>
         <div *ngIf="selectValue && selectValue.length != 0">
             <div class="d-flex p-3 bg-body-tertiary">
                 <button
