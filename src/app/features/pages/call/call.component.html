@@ -39,19 +39,18 @@
                     {{ ftd.name }}
                 </option>
             </select>
-            <div class="" style="">
-            <!-- <div class="p-3" style="display: flex; justify-content: flex-end"> -->
+            <div>
               <div
                   class="col-auto"
                   *ngIf="dateFilterType === 'custom'"
                   [formGroup]="dateRangeForm"
                   style="display: flex;
-                  justify-content: space-around;
                   flex-wrap: nowrap;
                   flex-direction: row;
-                  align-items: stretch;"
+                  align-items: stretch;
+                  justify-content: space-between;"
               >
-                  <div class="input-group start-date" style="width: 45%;">
+                  <div class="input-group start-date" style="width: 48%;">
                       <input
                           matInput
                           [matDatepicker]="pickerStartDate"
@@ -59,13 +58,14 @@
                           required
                           class="input-date form-control"
                           style="height: 36px"
+                          placeholder="กรุณาเลือกข้อมูล"
                       />
                       <span class="input-group-text" style="height: 36px">
                           <mat-datepicker-toggle matSuffix [for]="pickerStartDate"></mat-datepicker-toggle>
                           <mat-datepicker #pickerStartDate></mat-datepicker>
                       </span>
                   </div>
-                  <div class="input-group" style="width: 45%;">
+                  <div class="input-group" style="width: 48%;">
                       <input
                           matInput
                           [matDatepicker]="pickerEndDate"
