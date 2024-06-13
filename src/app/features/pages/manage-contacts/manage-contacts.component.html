@@ -165,7 +165,7 @@
                 <button
                     class="btn btn-primary ms-2"
                     style="margin-top: -14px"
-                    (click)="showAddCall()"
+                    (click)="createCall()"
                     data-bs-toggle="offcanvas"
                     data-bs-target="#offcanvasRight"
                     aria-controls="offcanvasRight"
@@ -178,14 +178,15 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th style="width: 12.5%">เวลา</th>
-                                <th style="width: 12.5%">เบอร์โทร</th>
-                                <th style="width: 12.5%">ประเภทสาย</th>
-                                <th style="width: 12.5%">ช่องทางการติดต่อ</th>
-                                <th style="width: 12.5%">เรื่องที่ติดต่อ</th>
-                                <th style="width: 12.5%">รายละเอียด</th>
-                                <th style="width: 12.5%">แนวทางการแก้ไข</th>
-                                <th style="width: 12.5%">ผู้ติดต่อ</th>
+                                <th style="width: 11.1%">เวลา</th>
+                                <th style="width: 11.1%">เบอร์โทร</th>
+                                <th style="width: 11.1%">ประเภทสาย</th>
+                                <th style="width: 11.1%">ช่องทางการติดต่อ</th>
+                                <th style="width: 11.1%">เรื่องที่ติดต่อ</th>
+                                <th style="width: 11.1%">รายละเอียด</th>
+                                <th style="width: 11.1%">แนวทางการแก้ไข</th>
+                                <th style="width: 11.1%">ผู้ติดต่อ</th>
+                                <th style="width: 11.1%">จัดการ</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -199,6 +200,31 @@
                                     <td>{{ call.description }}</td>
                                     <td>{{ call.solution }}</td>
                                     <td>{{ call.fullname }}</td>
+                                    <td class="text-center" scope="row">
+                                        <div class="d-flex flex-row flex-nowrap">
+                                            <div
+                                                class="me-3 color-primary"
+                                                placement="top"
+                                                style="cursor: pointer"
+                                                data-bs-toggle="offcanvas"
+                                                data-bs-target="#offcanvasRight"
+                                                aria-controls="offcanvasRight"
+                                                ngbTooltip="แก้ไข"
+                                                (click)="editCall(call.callId, call.table_type)"
+                                            >
+                                                <i class="fa-solid fa-pen-to-square"></i>
+                                            </div>
+                                            <!-- <div
+                                                class="color-red"
+                                                placement="top"
+                                                style="cursor: pointer"
+                                                ngbTooltip="ลบ"
+                                                (click)="deleteCall(call.callId, call.table_type)"
+                                            >
+                                                <i class="fa-solid fa-trash"></i>
+                                            </div> -->
+                                        </div>
+                                    </td>
                                 </tr>
                             </ng-container>
                             <ng-template #noDataTemplate>
@@ -254,6 +280,7 @@
                                             <div
                                                 class="color-red"
                                                 placement="top"
+                                                style="cursor: pointer"
                                                 ngbTooltip="ลบ"
                                                 (click)="deleteSurvey(surveyForm.surveyId)"
                                             >
@@ -620,14 +647,15 @@
                         </div>
                     </div>
                     <div class="flex flex-column" *ngIf="AddCallShowing">
-                        <h4>เพิ่มข้อมูลการติดต่อ</h4>
+                        <h4 *ngIf="attachmentShowing == true">เพิ่มข้อมูลการติดต่อ</h4>
+                        <h4 *ngIf="attachmentShowing == false">แก้ไขข้อมูลการติดต่อ</h4>
                         <form class="row g-3 mg-3">
                             <div class="col-md-6">
                                 <label for="inputTopic" class="form-label">หัวข้อที่ติดต่อ<span class="color-red">*</span></label>
                                 <ng-select id="inputTopic" [(ngModel)]="selectedCaseTopics" name="selectedCaseTopics" [multiple]="true">
-                                    <ng-option *ngFor="let casetopic of casetopics" [value]="casetopic.caseTopicId">{{
-                                        casetopic.name
-                                    }}</ng-option>
+                                    <ng-option *ngFor="let casetopic of casetopics" [value]="casetopic.caseTopicId">
+                                        {{ casetopic.name }}
+                                    </ng-option>
                                 </ng-select>
                             </div>
 
@@ -793,7 +821,7 @@
                                     [(ngModel)]="solutions"
                                 ></textarea>
                             </div>
-                            <div class="col-6">
+                            <div class="col-6" *ngIf="attachmentShowing">
                                 <label for="formFileSm" class="form-label">ไฟล์แนบ</label>
                                 <div class="mb-3">
                                     <div class="form-input-file">
@@ -915,7 +943,7 @@
                                                         class="form-check-input"
                                                         [checked]="selectedActivityTopicIdSmn.includes(smn.activityTopicId)"
                                                         (change)="toggleActivityTopicIdSmn(smn.activityTopicId); saveSelectedActivitiesSmn()"
-                                                        />
+                                                    />
                                                 </td>
                                                 <td style="width: 70%" scope="row">{{ smn.name }}</td>
                                                 <td style="width: 20%" scope="row">{{ smn.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>

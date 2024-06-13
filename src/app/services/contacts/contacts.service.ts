@@ -140,4 +140,12 @@ export class ContactsService {
     sendEmail(data: any) {
         return this.http.post(`${this.baseUrl}/email/survey`, data);
     }
+
+    updateCalls(data: any) {
+        return this.http.post(`${this.baseUrl}${config.api.path.contacts.baseUrl}/update-call`, data);
+    }
+
+    updateCase(data: any) {
+        return this.http.post(`${this.baseUrl}${config.api.path.contacts.baseUrl}/update-case`, data);
+    }
 }
