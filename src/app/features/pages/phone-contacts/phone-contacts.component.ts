@@ -3,7 +3,7 @@ import { Location } from '@angular/common';
 import { ContactsService } from 'src/app/services/contacts/contacts.service';
 import { catchError, tap } from 'rxjs';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { config } from 'src/app/config/config';
 import { v4 as uuidv4 } from 'uuid';
 import Swal from 'sweetalert2';
@@ -92,6 +92,7 @@ export class PhoneContactsComponent {
     userRole: string = '';
 
     roleCanAccessCUDForm: string[] = config.roleCanAccessCUDForm;
+    contactIdParams: any;
 
     constructor(
         private _location: Location,
@@ -110,8 +111,8 @@ export class PhoneContactsComponent {
 
             if (this.contactId) {
                 this.getContactByPhoneId(this.contactId);
-            }
-            if (this.calls) {
+                this.processParams();
+            } else if (this.calls) {
                 const dataCallArray = this.calls.split(',');
 
                 this.call_id = dataCallArray[0];
@@ -123,7 +124,9 @@ export class PhoneContactsComponent {
                     if (data && data.length > 0) {
                         this.contact = data[0].contactNumber;
                         this.contactNumber = this.call_id;
+                        this.contactIdParams = data[0].contactId;
                         this.getContactByPhoneId(this.contact);
+                        this.processParams();
                     } else {
                         console.log('Data does not exist');
                     }
@@ -144,6 +147,17 @@ export class PhoneContactsComponent {
 
     checkRole(): boolean {
         return true;
+    }
+
+    processParams(): void {
+        const navigationExtras: NavigationExtras = {
+            queryParams: {
+                key: this.contactIdParams,
+                call_id: this.call_id,
+                caller_id: this.caller_id,
+            },
+        };
+        this.router.navigate(['/contacts/edit'], navigationExtras);
     }
 
     async getContactByPhoneId(contactId: string) {
