@@ -914,8 +914,8 @@
                                                         type="checkbox"
                                                         class="form-check-input"
                                                         [checked]="selectedActivityTopicIdSmn.includes(smn.activityTopicId)"
-                                                        (change)="toggleActivityTopicIdSmn(smn.activityTopicId)"
-                                                    />
+                                                        (change)="toggleActivityTopicIdSmn(smn.activityTopicId); saveSelectedActivitiesSmn()"
+                                                        />
                                                 </td>
                                                 <td style="width: 70%" scope="row">{{ smn.name }}</td>
                                                 <td style="width: 20%" scope="row">{{ smn.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
@@ -929,9 +929,9 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div *ngIf="selectedActivityTopicIdSmn.length > 0" class="button-save-activity">
+                            <!-- <div *ngIf="selectedActivityTopicIdSmn.length > 0" class="button-save-activity">
                                 <button type="button" class="btn btn-primary" (click)="saveSelectedActivitiesSmn()">บันทึก</button>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
 
@@ -1033,7 +1033,7 @@
                                                         type="checkbox"
                                                         class="form-check-input"
                                                         [checked]="selectedActivityTopicId.includes(eln.activityTopicId)"
-                                                        (change)="toggleActivityTopicId(eln.activityTopicId)"
+                                                        (change)="toggleActivityTopicId(eln.activityTopicId); saveSelectedActivities()"
                                                     />
                                                 </td>
                                                 <td style="width: 72%" scope="row">{{ eln.name }}</td>
@@ -1048,9 +1048,9 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div *ngIf="selectedActivityTopicId.length > 0">
+                            <!-- <div *ngIf="selectedActivityTopicId.length > 0">
                                 <button type="button" class="btn btn-primary" (click)="saveSelectedActivities()">บันทึก</button>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>

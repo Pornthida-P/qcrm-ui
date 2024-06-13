@@ -383,7 +383,7 @@ export class ManageContactsComponent implements OnInit {
                 province: this.contactProvince,
                 modifiedById: userData.userId,
             };
-            
+
             this.contactsService
                 .editContacts(data)
                 .pipe(
@@ -403,7 +403,7 @@ export class ManageContactsComponent implements OnInit {
                         throw error;
                     }),
                 )
-                .subscribe();            
+                .subscribe();
         } else {
             const data = {
                 firstName: this.contactFirstName,
@@ -448,7 +448,7 @@ export class ManageContactsComponent implements OnInit {
                                 JSON.stringify(data),
                                 `Failed, Error Duplicate: ${res.duplicates}`,
                             );
-                        }    
+                        }
                     }),
                     catchError((error) => {
                         this.sweetalertServices.handleError(error);
@@ -1214,6 +1214,7 @@ export class ManageContactsComponent implements OnInit {
         } else {
             this.selectedActivityTopicIdSmn.splice(index, 1);
         }
+        this.saveSelectedActivitiesSmn();
         console.log('select id activity:', this.selectedActivityTopicIdSmn);
     }
 
@@ -1233,6 +1234,7 @@ export class ManageContactsComponent implements OnInit {
         } else {
             this.selectedActivityTopicId.splice(index, 1);
         }
+        this.saveSelectedActivities()
         console.log('select id activity:', this.selectedActivityTopicId);
     }
 
@@ -1240,14 +1242,14 @@ export class ManageContactsComponent implements OnInit {
         this.selectedActivities = this.activityEln.filter((activity: { activityTopicId: string }) => {
             return this.selectedActivityTopicId.includes(activity.activityTopicId);
         });
-        this.showAddCall();
+        // this.showAddCall();
     }
 
     saveSelectedActivitiesSmn() {
         this.selectedActivitiesSmn = this.activitySmn.filter((activity: { activityTopicId: string }) => {
             return this.selectedActivityTopicIdSmn.includes(activity.activityTopicId);
         });
-        this.showAddCall();
+        // this.showAddCall();
     }
 
     searchOrg() {
