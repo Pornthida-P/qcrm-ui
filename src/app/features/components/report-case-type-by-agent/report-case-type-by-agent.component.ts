@@ -96,7 +96,7 @@ export class ReportCaseTypeByAgentComponent implements OnInit {
     setDisplayAllFields(): void {
         if (this.reportTable !== null && this.reportTable !== undefined) {
             Object.keys(this.reportTable[0])!.forEach((column, index) => {
-                if (column != 'month' && column != 'year' && index < 10) this.columnVisibility[column] = true;
+                if (column != 'month' && column != 'year' && index < 9) this.columnVisibility[column] = true;
                 else this.columnVisibility[column] = false;
             });
         }
@@ -105,6 +105,7 @@ export class ReportCaseTypeByAgentComponent implements OnInit {
     rowTotal() {
         const totalsTopic: Record<string, number> = {};
         const totalsSub: Record<string, number> = {};
+        const totalsChannel: Record<string, number> = {};
 
         for (const row of this.reportTable) {
             if (!totalsTopic[row.username]) {
@@ -113,6 +114,18 @@ export class ReportCaseTypeByAgentComponent implements OnInit {
             if (!totalsSub[row.username]) {
                 totalsSub[row.username] = 0;
             }
+            if (!totalsChannel[row.username]) {
+                totalsChannel[row.username] = 0;
+            }
+
+            totalsChannel[row.username] +=
+                Number(row.HotIn) +
+                Number(row.HotOut) +
+                Number(row.MailIn) +
+                Number(row.MailOut) +
+                Number(row.Mobile) +
+                Number(row.LiveChat) +
+                Number(row.Other);
 
             totalsTopic[row.username] +=
                 Number(row.Topic1) +
@@ -158,12 +171,16 @@ export class ReportCaseTypeByAgentComponent implements OnInit {
             // row['Total'] = totals[row.username];
             row['TotalTopic'] = totalsTopic[row.username];
             row['TotalSub'] = totalsSub[row.username];
+            row['TotalChannel'] = totalsChannel[row.username];
+
         }
     }
 
     filterTotal() {
         const totalsTopic: Record<string, number> = {};
         const totalsSub: Record<string, number> = {};
+        const totalsChannel: Record<string, number> = {};
+
         for (const row of this.reportTable) {
             if (!totalsTopic[row.username]) {
                 totalsTopic[row.username] = 0;
@@ -171,6 +188,18 @@ export class ReportCaseTypeByAgentComponent implements OnInit {
             if (!totalsSub[row.username]) {
                 totalsSub[row.username] = 0;
             }
+            if (!totalsChannel[row.username]) {
+                totalsChannel[row.username] = 0;
+            }
+            totalsChannel[row.username] +=
+                (this.columnVisibility['HotIn'] ? Number(row.HotIn) : 0) +
+                (this.columnVisibility['HotOut'] ? Number(row.HotOut) : 0) +
+                (this.columnVisibility['MailIn'] ? Number(row.MailIn) : 0) +
+                (this.columnVisibility['MailOut'] ? Number(row.MailOut) : 0) +
+                (this.columnVisibility['Mobile'] ? Number(row.Mobile) : 0) +
+                (this.columnVisibility['LiveChat'] ? Number(row.LiveChat) : 0) +
+                (this.columnVisibility['Other'] ? Number(row.Other) : 0);
+                
             totalsTopic[row.username] +=
                 (this.columnVisibility['Topic1'] ? Number(row.Topic1) : 0) +
                 (this.columnVisibility['Topic2'] ? Number(row.Topic2) : 0) +
@@ -214,6 +243,7 @@ export class ReportCaseTypeByAgentComponent implements OnInit {
         for (const row of this.reportTable) {
             row['TotalTopic'] = totalsTopic[row.username];
             row['TotalSub'] = totalsSub[row.username];
+            row['TotalChannel'] = totalsChannel[row.username]
         }
     }
 
