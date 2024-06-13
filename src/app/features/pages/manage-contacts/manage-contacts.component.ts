@@ -72,6 +72,8 @@ export class ManageContactsComponent implements OnInit {
     checkedValueOrgs: string[] = [];
     formData: any = {};
 
+    cType: string = '';
+    callId: string = '';
     selectedTopics: any;
     casetopics: any[] = [];
     casesubjects: any[] = [];
@@ -191,6 +193,7 @@ export class ManageContactsComponent implements OnInit {
     showActivityElearningSideBar: boolean = false;
 
     SearchSmnShowing: boolean = false;
+    attachmentShowing: boolean = false;
     valueSearchSmn!: string;
 
     nameActivityTopic: string = '';
@@ -383,7 +386,7 @@ export class ManageContactsComponent implements OnInit {
                 province: this.contactProvince,
                 modifiedById: userData.userId,
             };
-
+            
             this.contactsService
                 .editContacts(data)
                 .pipe(
@@ -403,7 +406,7 @@ export class ManageContactsComponent implements OnInit {
                         throw error;
                     }),
                 )
-                .subscribe();
+                .subscribe();            
         } else {
             const data = {
                 firstName: this.contactFirstName,
@@ -448,7 +451,7 @@ export class ManageContactsComponent implements OnInit {
                                 JSON.stringify(data),
                                 `Failed, Error Duplicate: ${res.duplicates}`,
                             );
-                        }
+                        }    
                     }),
                     catchError((error) => {
                         this.sweetalertServices.handleError(error);
@@ -940,6 +943,220 @@ export class ManageContactsComponent implements OnInit {
         }
     }
 
+    createCall(){
+        this.attachmentShowing = true;
+        this.cType = '';
+        this.callId = '';
+        this.selectedCasesubject = '';
+        this.selectedChannels = '';
+        this.isEmailSubscribed = 0;
+        this.activityTypeId = '';
+        this.startTime = '';
+        this.description = '';
+        this.solutions = '';
+        this.selectedCallTypeId = '';
+        const date = new Date('');
+        this.timepickStart = {
+            hour: date.getHours(),
+            minute: date.getMinutes(),
+            second: date.getSeconds()
+        };
+        this.selectedCaseTopics = [];
+        this.selectedCasesubject = [];
+        this.selectedActivityTopicIdSmn = [];
+        this.selectedActivitiesSmn = [];
+        this.selectedActivityTopicId = [];
+        this.callServive.getActivitiesTypeSmn(this.valueSearchSmn).subscribe((activitySmn: any) => {
+            this.activitySmn = activitySmn;
+            this.saveSelectedActivitiesSmn();
+        });
+        this.callServive.getActivityById(this.valueSearchEln).subscribe((activityEln: any) => {
+            this.activityEln = activityEln;
+            this.saveSelectedActivities();
+        });
+        this.showAddCall();
+    }
+
+    editCall(callId: string, type: string) {
+        this.attachmentShowing = false;
+        console.log('Edit Call:', callId);
+        console.log('Type:', type);
+        this.cType = '';
+        this.callId = '';
+        this.selectedCasesubject = '';
+        this.selectedChannels = '';
+        this.isEmailSubscribed = 0;
+        this.activityTypeId = '';
+        this.startTime = '';
+        this.description = '';
+        this.solutions = '';
+        this.selectedCallTypeId = '';
+        const date = new Date('');
+        this.timepickStart = {
+            hour: date.getHours(),
+            minute: date.getMinutes(),
+            second: date.getSeconds()
+        };
+        this.selectedCaseTopics = [];
+        this.selectedCasesubject = [];
+        this.selectedActivityTopicIdSmn = [];
+        this.selectedActivitiesSmn = [];
+        this.selectedActivityTopicId = [];
+        this.callServive.getActivitiesTypeSmn(this.valueSearchSmn).subscribe((activitySmn: any) => {
+            this.activitySmn = activitySmn;
+            this.saveSelectedActivitiesSmn();
+        });
+        this.callServive.getActivityById(this.valueSearchEln).subscribe((activityEln: any) => {
+            this.activityEln = activityEln;
+            this.saveSelectedActivities();
+        });
+
+        if (type === 'call') {
+            this.callServive.getCallById(callId).subscribe((call: any) => {
+                console.log('Call:', call);
+                this.cType = 'call';
+                this.callId = call[0].callId;
+                this.selectedCasesubject = call[0].caseSubject;
+                this.selectedChannels = call[0].channel;
+                this.isEmailSubscribed = call[0].emailInfo;
+                this.activityTypeId = call[0].activityType;
+                this.startTime = call[0].startTime;
+                this.description = call[0].description;
+                this.solutions = call[0].solution;
+                this.selectedCallTypeId = call[0].operationType;
+                const date = new Date(call[0].startTime);
+                this.timepickStart = {
+                    hour: date.getHours(),
+                    minute: date.getMinutes(),
+                    second: date.getSeconds()
+                };
+    
+                // Handle caseTopicIds
+                if (call[0].caseTopicId && call[0].caseTopicId !== 'null'){
+                    let caseTopicIds = call[0].caseTopicId;
+                    if (!Array.isArray(caseTopicIds)) {
+                        caseTopicIds = JSON.parse(caseTopicIds);
+                    }
+                    this.selectedCaseTopics = caseTopicIds.map(String);
+                }
+    
+                // Handle caseSubjects
+                if (call[0].caseSubject && call[0].caseSubject !== 'null') {
+                    let caseSubjects = call[0].caseSubject;
+                    if (!Array.isArray(caseSubjects)) {
+                        caseSubjects = JSON.parse(caseSubjects);
+                    }
+                    this.selectedCasesubject = caseSubjects.map(String);
+                }
+    
+                // Handle selectedActivityTopicIdSmnr
+                if (call[0].activitySmn && call[0].activitySmn !== 'null') {
+                    let selectedActivityTopicIdSmnr = call[0].activitySmn;
+                    if (!Array.isArray(selectedActivityTopicIdSmnr)) {
+                        selectedActivityTopicIdSmnr = JSON.parse(selectedActivityTopicIdSmnr);
+                    }
+                    this.selectedActivityTopicIdSmn = selectedActivityTopicIdSmnr.map(String);
+
+                    this.callServive.getActivitiesTypeSmn(this.valueSearchSmn).subscribe((activitySmn: any) => {
+                        this.activitySmn = activitySmn;
+                        this.saveSelectedActivitiesSmn();
+                    });
+                }
+    
+                // Handle selectedActivitiesEl
+                if (call[0].activityEln && call[0].activityEln !== 'null') {
+                    let selectedActivityTopicIds = call[0].activityEln;
+                    if (!Array.isArray(selectedActivityTopicIds)) {
+                        selectedActivityTopicIds = JSON.parse(selectedActivityTopicIds);
+                    }
+                    this.selectedActivityTopicId = selectedActivityTopicIds.map(String);    
+                    // Fetch and filter activitiestypeTopic
+                    this.callServive.getActivityById(this.valueSearchEln).subscribe((activityEln: any) => {
+                        this.activityEln = activityEln;
+                        this.saveSelectedActivities();
+                    });
+                }
+            });
+        } else if (type === 'case') {
+            this.callServive.getCaseById(callId).subscribe((call: any) => {
+                console.log('Case:', call);
+                this.cType = 'case';
+                this.callId = call.caseId;
+                this.description = call.description;
+                this.startTime = call.requestDateTime;
+                const date = new Date(call.requestDateTime);
+                this.timepickStart = {
+                    hour: date.getHours(),
+                    minute: date.getMinutes(),
+                    second: date.getSeconds()
+                };
+                this.selectedChannels = call.channelId;
+                this.selectedCallTypeId = call.operationType;
+
+                if (call.caseTopicIds && call.caseTopicIds !== 'null'){
+                    let caseTopicIds = call.caseTopicIds;
+                    if (!Array.isArray(caseTopicIds)) {
+                        caseTopicIds = JSON.parse(caseTopicIds);
+                    }
+                    this.selectedCaseTopics = caseTopicIds.map(String);
+                }
+
+                if (call.caseSubjectIds && call.caseSubjectIds !== 'null') {
+                    let caseSubjects = call.caseSubjectIds;
+                    if (!Array.isArray(caseSubjects)) {
+                        caseSubjects = JSON.parse(caseSubjects);
+                    }
+                    this.selectedCasesubject = caseSubjects.map(String);
+                }
+
+                if (call.activitySmn && call.activitySmn !== 'null') {
+                    let selectedActivityTopicIdSmnr = call.activitySmn;
+                    if (!Array.isArray(selectedActivityTopicIdSmnr)) {
+                        selectedActivityTopicIdSmnr = JSON.parse(selectedActivityTopicIdSmnr);
+                    }
+                    this.selectedActivityTopicIdSmn = selectedActivityTopicIdSmnr.map(String);
+
+                    this.callServive.getActivitiesTypeSmn(this.valueSearchSmn).subscribe((activitySmn: any) => {
+                        this.activitySmn = activitySmn;
+                        this.saveSelectedActivitiesSmn();
+                    });
+                }
+    
+                // Handle selectedActivitiesEl
+                if (call.activityEln && call.activityEln !== 'null') {
+                    let selectedActivityTopicIds = call.activityEln;
+                    if (!Array.isArray(selectedActivityTopicIds)) {
+                        selectedActivityTopicIds = JSON.parse(selectedActivityTopicIds);
+                    }
+                    this.selectedActivityTopicId = selectedActivityTopicIds.map(String);    
+                    // Fetch and filter activitiestypeTopic
+                    this.callServive.getActivityById(this.valueSearchEln).subscribe((activityEln: any) => {
+                        this.activityEln = activityEln;
+                        this.saveSelectedActivities();
+                    });
+                }
+
+            });
+        }
+    
+        // Fetch activitySmn
+        this.callServive.getActivitiesTypeSmn(this.valueSearchSmn).subscribe((activitySmn: any) => {
+            this.activitySmn = activitySmn;
+        });
+
+        this.callServive.getActivityById(this.valueSearchEln).subscribe((activityEln: any) => {
+                this.activityEln = activityEln;
+        });
+
+        this.showAddCall();
+    }
+    
+
+    deleteCall(callId: string, type: string) {
+        console.log('Delete Call:', callId);
+        console.log('Type:', type);
+    }
+
     submitCall() {
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
         this.attachmentsId = this.attachments.map((attachment) => attachment.attachmentId.toString());
@@ -956,45 +1173,118 @@ export class ManageContactsComponent implements OnInit {
             ? this.selectedActivities.map((activity: { activityTopicId: any }) => activity.activityTopicId)
             : null;
 
-        if (this.selectedCaseTopics.length > 0) {
-            const data = {
-                contactId: this.contactId,
-                name: userData.userId,
-                organization: this.contactOrg,
-                caseTopicId: this.selectedCaseTopics,
-                caseSubject: this.selectedCasesubject,
-                channel: this.selectedChannels,
-                emailInfo: this.isEmailSubscribed ? 1 : null,
-                activityType: this.activityTypeId,
-                description: this.description,
-                startTime: `${selectedDate} ${selectedTime}`,
-                solution: this.solutions,
-                createdById: userData.userId,
-                attachment: this.attachmentsId,
-                call_id: this.phoneCall,
-                operationType: selectedCallTypeId,
-                activitySmn: selectedActivitiesSmnIds,
-                activityEln: selectedActivitiesElnIds,
-            };
-            console.log('Data: ', data);
-            this.callServive
-                .createCalls(data)
-                .pipe(
-                    tap((res) => {
-                      this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
-                      this.auditLogService.log('', 'Contact Create Call', 'Contact Create Case Call', JSON.stringify(data), `Success`);
-                        window.location.reload();
-                    }),
-                    catchError((error) => {
-                      this.sweetalertServices.handleError(error);
-                      this.auditLogService.log('', 'Contact Create Call', 'Contact Create Case Call', JSON.stringify(data), `Failed, Error : ${error}`);
-                        throw error;
-                    }),
-                )
-                .subscribe();
-        } else {
-            this.sweetalertServices.getSwal('error', 'โปรดกรอกหัวข้อที่ติดต่อ', '', false, '');
-        }
+        if(!this.callId){   
+            if (this.selectedCaseTopics.length > 0) {
+                const data = {
+                    contactId: this.contactId,
+                    name: userData.userId,
+                    organization: this.contactOrg,
+                    caseTopicId: this.selectedCaseTopics,
+                    caseSubject: this.selectedCasesubject,
+                    channel: this.selectedChannels,
+                    emailInfo: this.isEmailSubscribed ? 1 : null,
+                    activityType: this.activityTypeId,
+                    description: this.description,
+                    startTime: `${selectedDate} ${selectedTime}`,
+                    solution: this.solutions,
+                    createdById: userData.userId,
+                    attachment: this.attachmentsId,
+                    call_id: this.phoneCall,
+                    operationType: selectedCallTypeId,
+                    activitySmn: selectedActivitiesSmnIds,
+                    activityEln: selectedActivitiesElnIds,
+                };
+                console.log('Data: ', data);
+                this.callServive
+                    .createCalls(data)
+                    .pipe(
+                        tap((res) => {
+                        this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
+                        this.auditLogService.log('', 'Contact Create Call', 'Contact Create Case Call', JSON.stringify(data), `Success`);
+                            window.location.reload();
+                        }),
+                        catchError((error) => {
+                        this.sweetalertServices.handleError(error);
+                        this.auditLogService.log('', 'Contact Create Call', 'Contact Create Case Call', JSON.stringify(data), `Failed, Error : ${error}`);
+                            throw error;
+                        }),
+                    )
+                    .subscribe();
+            } else {
+                this.sweetalertServices.getSwal('error', 'โปรดกรอกหัวข้อที่ติดต่อ', '', false, '');
+            }
+        } else if (this.callId && this.cType === 'call') {
+            console.log('Edit Call:', this.callId);
+            if (this.selectedCaseTopics.length > 0) {
+                const data = {
+                    callId: this.callId,
+                    caseTopicId: this.selectedCaseTopics,
+                    caseSubject: this.selectedCasesubject,
+                    channel: this.selectedChannels,
+                    emailInfo: this.isEmailSubscribed ? 1 : null,
+                    activityType: this.activityTypeId,
+                    description: this.description,
+                    startTime: `${selectedDate} ${selectedTime}`,
+                    solution: this.solutions,
+                    modifiedById: userData.userId,
+                    operationType: selectedCallTypeId,
+                    activitySmn: selectedActivitiesSmnIds,
+                    activityEln: selectedActivitiesElnIds,
+                };
+                console.log('Data: ', data);
+                this.contactsService
+                    .updateCalls(data)
+                    .pipe(
+                        tap((res) => {
+                        this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
+                        this.auditLogService.log('', 'Contact Update Call', 'Contact Update Case Call', JSON.stringify(data), `Success`);
+                            window.location.reload();
+                        }),
+                        catchError((error) => {
+                        this.sweetalertServices.handleError(error);
+                        this.auditLogService.log('', 'Contact Update Call', 'Contact Update Case Call', JSON.stringify(data), `Failed, Error : ${error}`);
+                            throw error;
+                        }),
+                    )
+                    .subscribe();
+            } else {
+                this.sweetalertServices.getSwal('error', 'โปรดกรอกหัวข้อที่ติดต่อ', '', false, '');
+            }    
+        } else if (this.callId && this.cType === 'case') {
+            console.log('Edit Case:', this.callId);
+            if (this.selectedCaseTopics.length > 0) {
+                const data = {
+                    callId: this.callId,
+                    caseTopicId: this.selectedCaseTopics,
+                    caseSubject: this.selectedCasesubject,
+                    channel: this.selectedChannels,
+                    description: this.description,
+                    startTime: `${selectedDate} ${selectedTime}`,
+                    modifiedById: userData.userId,
+                    operationType: selectedCallTypeId,
+                    activitySmn: selectedActivitiesSmnIds,
+                    activityEln: selectedActivitiesElnIds,
+                };
+                console.log('Data: ', data);
+                this.contactsService
+                    .updateCase(data)
+                    .pipe(
+                        tap((res) => {
+                        this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
+                        this.auditLogService.log('', 'Contact Update Case', 'Contact Update Case ', JSON.stringify(data), `Success`);
+                            window.location.reload();
+                        }),
+                        catchError((error) => {
+                        this.sweetalertServices.handleError(error);
+                        this.auditLogService.log('', 'Contact Update Case', 'Contact Update Case', JSON.stringify(data), `Failed, Error : ${error}`);
+                            throw error;
+                        }),
+                    )
+                    .subscribe();
+            } else {
+                this.sweetalertServices.getSwal('error', 'โปรดกรอกหัวข้อที่ติดต่อ', '', false, '');
+            } 
+        }   
     }
 
     connect(): void {
@@ -1214,7 +1504,7 @@ export class ManageContactsComponent implements OnInit {
         } else {
             this.selectedActivityTopicIdSmn.splice(index, 1);
         }
-        this.saveSelectedActivitiesSmn();
+this.saveSelectedActivitiesSmn();
         console.log('select id activity:', this.selectedActivityTopicIdSmn);
     }
 
@@ -1234,7 +1524,7 @@ export class ManageContactsComponent implements OnInit {
         } else {
             this.selectedActivityTopicId.splice(index, 1);
         }
-        this.saveSelectedActivities()
+this.saveSelectedActivities()
         console.log('select id activity:', this.selectedActivityTopicId);
     }
 
