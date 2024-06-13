@@ -299,7 +299,7 @@ export class CreateCallComponent {
                 this.getCallFideId();
             }
 
-          console.log('key: ', this.callIdEdit)
+            console.log('key: ', this.callIdEdit);
         });
 
         this.callServive.getCaseTopic().subscribe((casetopics: any) => {
@@ -877,7 +877,8 @@ export class CreateCallComponent {
         } else {
             this.selectedActivityTopicId.splice(index, 1);
         }
-        console.log('select id activity:', this.selectedActivityTopicId);
+      console.log('select id activity:', this.selectedActivityTopicId);
+      this.saveSelectedActivities()
     }
 
     toggleActivityTopicIdSmn(activityTopicId: string) {
@@ -888,6 +889,7 @@ export class CreateCallComponent {
             this.selectedActivityTopicIdSmn.splice(index, 1);
         }
         console.log('select id activity:', this.selectedActivityTopicIdSmn);
+        this.saveSelectedActivitiesSmn();
     }
 
     selectedCheckboxIds: number[] = [];
@@ -935,15 +937,17 @@ export class CreateCallComponent {
     }
 
     getCallFideId() {
-      this.callServive.getCallById(this.callIdEdit).subscribe((res: any) => {
-        this.callFideId = res;
+        this.callServive.getCallById(this.callIdEdit).subscribe(
+            (res: any) => {
+                this.callFideId = res;
 
-        // this.
+                // this.
 
-        console.log('get call: ', this.callFideId);
-      }, (error: any) => {
-        console.error('Error fetching call data:', error);
-      });
+                console.log('get call: ', this.callFideId);
+            },
+            (error: any) => {
+                console.error('Error fetching call data:', error);
+            },
+        );
     }
-
 }
