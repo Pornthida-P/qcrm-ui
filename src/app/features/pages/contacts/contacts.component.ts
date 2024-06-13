@@ -121,12 +121,13 @@ export class ContactsComponent implements OnInit {
         this.getPage();
 
         this.getForm((this.currentPageForm - 1) * this.pageSizeForm, this.pageSizeForm);
-        this.getFormPage();
+      this.getFormPage();
+      
     }
 
     checkRole(): boolean {
         return true;
-    }    
+    }
 
     updateCheckedValues(contactId: string,Email: string): void {
         if (Email){
@@ -320,7 +321,7 @@ export class ContactsComponent implements OnInit {
             }
         });
     }
-    
+
 
     deleteSelectcontacts() {
         Swal.fire({
@@ -365,7 +366,7 @@ export class ContactsComponent implements OnInit {
                 this.contactShowing = false;
                 this.FormShowing = true;
             }
-        });    
+        });
     }
 
     async sendEmail(formID: string) {
@@ -380,7 +381,7 @@ export class ContactsComponent implements OnInit {
             this.availableEmail = [];
             if (result.isConfirmed) {
                 const res: any = await this.contactsService.getEmail(this.checkedValues).toPromise();
-                this.AllEmail = res; 
+                this.AllEmail = res;
                 for (const value of this.AllEmail) {
                     const data = { email: value.email, contactId: value.contactId, formId: formID };
                     const result: any = await this.contactsService.checkEmailSend(data).toPromise();
@@ -393,13 +394,13 @@ export class ContactsComponent implements OnInit {
                         const data = { email: value.email, id: value.contactId, form: formID };
                         const res: any = await this.contactsService.sendEmail(data).toPromise();
                         console.log('res', res);
-                    } 
+                    }
                 }
-                this.sweetalertServices.getSwal('success', 'Send Survey success.', '', false, '');   
-            }    
+                this.sweetalertServices.getSwal('success', 'Send Survey success.', '', false, '');
+            }
         });
     }
-    
+
 
     contactsManage() {
         this.router.navigate(['/contacts/new']);

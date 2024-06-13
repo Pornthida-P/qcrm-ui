@@ -40,48 +40,44 @@
                 </option>
             </select>
             <div>
-              <div
-                  class="col-auto"
-                  *ngIf="dateFilterType === 'custom'"
-                  [formGroup]="dateRangeForm"
-                  style="display: flex;
-                  flex-wrap: nowrap;
-                  flex-direction: row;
-                  align-items: stretch;
-                  justify-content: space-between;"
-              >
-                  <div class="input-group start-date" style="width: 48%;">
-                      <input
-                          matInput
-                          [matDatepicker]="pickerStartDate"
-                          formControlName="startDate"
-                          required
-                          class="input-date form-control"
-                          style="height: 36px"
-                          placeholder="เริ่มตั้งแต่วันที่"
-                      />
-                      <span class="input-group-text" style="height: 36px">
-                          <mat-datepicker-toggle matSuffix [for]="pickerStartDate"></mat-datepicker-toggle>
-                          <mat-datepicker #pickerStartDate></mat-datepicker>
-                      </span>
-                  </div>
-                  <div class="input-group" style="width: 48%;">
-                      <input
-                          matInput
-                          [matDatepicker]="pickerEndDate"
-                          formControlName="endDate"
-                          required
-                          class="input-date form-control"
-                          style="height: 36px"
-                          placeholder="จนถึงวันที่"
-                      />
-                      <span class="input-group-text" style="height: 36px">
-                          <mat-datepicker-toggle matSuffix [for]="pickerEndDate"></mat-datepicker-toggle>
-                          <mat-datepicker #pickerEndDate></mat-datepicker>
-                      </span>
-                  </div>
-              </div>
-          </div>
+                <div
+                    class="col-auto"
+                    *ngIf="dateFilterType === 'custom'"
+                    [formGroup]="dateRangeForm"
+                    style="display: flex; flex-wrap: nowrap; flex-direction: row; align-items: stretch; justify-content: space-between"
+                >
+                    <div class="input-group start-date" style="width: 48%">
+                        <input
+                            matInput
+                            [matDatepicker]="pickerStartDate"
+                            formControlName="startDate"
+                            required
+                            class="input-date form-control"
+                            style="height: 36px"
+                            placeholder="เริ่มตั้งแต่วันที่"
+                        />
+                        <span class="input-group-text" style="height: 36px">
+                            <mat-datepicker-toggle matSuffix [for]="pickerStartDate"></mat-datepicker-toggle>
+                            <mat-datepicker #pickerStartDate></mat-datepicker>
+                        </span>
+                    </div>
+                    <div class="input-group" style="width: 48%">
+                        <input
+                            matInput
+                            [matDatepicker]="pickerEndDate"
+                            formControlName="endDate"
+                            required
+                            class="input-date form-control"
+                            style="height: 36px"
+                            placeholder="จนถึงวันที่"
+                        />
+                        <span class="input-group-text" style="height: 36px">
+                            <mat-datepicker-toggle matSuffix [for]="pickerEndDate"></mat-datepicker-toggle>
+                            <mat-datepicker #pickerEndDate></mat-datepicker>
+                        </span>
+                    </div>
+                </div>
+            </div>
 
             <button
                 class="d-flex align-items-center gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white"
@@ -151,8 +147,8 @@
                                 <td>
                                     {{ calls.createdAt | date : 'dd/MM/yyyy HH:mm' }}
                                 </td>
-                                <td class="sidebar cursor-pointer" (click)="createCallFideId(calls)">
-                                    <div class="" ngbTooltip="คลิกดูรายละเอียด" placement="bottom">
+                                <td class="sidebar cursor-pointer" (click)="createCallFideId(calls, calls.contactId)">
+                                    <div class="" ngbTooltip="คลิกเพื่อไปที่หน้าการโทร" placement="bottom">
                                         {{ calls.caller }}
                                     </div>
                                 </td>
@@ -188,16 +184,17 @@
                                 <td class="text-center" scope="row">
                                     <div class="d-flex flex-row flex-nowrap">
                                         <div
-                                            class="me-3 color-primary cursor-pointer"
+                                            class="me-3 color-primary"
                                             placement="top"
+                                            style="cursor: pointer"
+                                            data-bs-toggle="offcanvas"
+                                            data-bs-target="#offcanvasRight"
+                                            aria-controls="offcanvasRight"
                                             ngbTooltip="แก้ไข"
-                                            (click)="createCallFideId(calls)"
+                                            (click)="editCall(calls.callId, 'call')"
                                         >
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </div>
-                                        <!-- <div class="color-red cursor-pointer" placement="top" ngbTooltip="ลบ" (click)="deleteCall(calls.call_id)">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </div> -->
                                     </div>
                                 </td>
                             </tr>
@@ -242,6 +239,576 @@
             </ul>
 
             <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+              <div class="offcanvas-body">
+                  <div class="d-flex flex-wrap justify-content-between">
+                      <div class="d-flex">
+                          <div class="p-2 flex-grow-1" type="button" placement="bottom" ngbTooltip="ปิด">
+                              <fa-icon class="" [icon]="faCircleXmark" size="lg" data-bs-dismiss="offcanvas"></fa-icon>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="p-5 shadow call-side-detail" *ngIf="SearchOrgShowing">
+                      <div>
+                          <h4>เลือกร้านค้า/บริษัท</h4>
+                          <div class="row">
+                              <div class="col-md-9">
+                                  <input
+                                      id="table-complete-search"
+                                      type="text"
+                                      class="form-control border border-start-0 shadow-none"
+                                      name="searchOrg"
+                                      [(ngModel)]="valueSearchOrg"
+                                      placeholder="ค้นหา..."
+                                      aria-describedby="basic-addon1"
+                                      style="width: 100%"
+                                      (change)="searchOrg()"
+                                  />
+                              </div>
+                              <div class="col-md-3">
+                                  <button class="btn btn-primary" type="button" (click)="showAddOrg()" style="height: 38px; width: auto">
+                                      เพิ่ม
+                                  </button>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="p-5 shadow call-side-change-by w-100 h-100 overflow-auto p-4">
+                      <div class="table-responsive" *ngIf="SearchFormShowing">
+                          <table class="table">
+                              <tbody>
+                              </tbody>
+                          </table>
+                      </div>
+                      <div class="table-responsive" *ngIf="SearchOrgShowing">
+                          <table class="table">
+                              <thead>
+                                  <tr>
+                                      <th style="width: 70%" scope="col">
+                                          <a (click)="sortOrg('name')">ชื่อ </a><i *ngIf="sortIdOrg == 'name'" class="{{ sortIcon }}"></i>
+                                      </th>
+                                      <th style="width: 15%" scope="col">
+                                          <a (click)="sortOrg('createdAt')">วันที่บันทึก</a
+                                          ><i *ngIf="sortIdOrg == 'createdAt'" class="{{ sortIcon }}"></i>
+                                      </th>
+                                      <th style="width: 15%" scope="col">
+                                          <a>เลือก</a>
+                                      </th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  <ng-container *ngIf="organizations?.length > 0; else noDataTemplate">
+                                      <tr *ngFor="let org of organizations; let i = index">
+                                          <td scope="row">{{ org.name }}</td>
+                                          <td scope="row">{{ org.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
+                                          <td scope="row">
+                                              <button
+                                                  type="button"
+                                                  class="btn btn-link rounded-circle"
+                                                  (click)="chooseOrg(org.organizationId)"
+                                              >
+                                                  <i class="fa-solid fa-check"></i>
+                                              </button>
+                                          </td>
+                                      </tr>
+                                  </ng-container>
+                                  <ng-template #noDataTemplate>
+                                      <tr>
+                                          <td colspan="4" class="text-center">ไม่มีข้อมูล</td>
+                                      </tr>
+                                  </ng-template>
+                              </tbody>
+                          </table>
+                      </div>
+                      <ul class="pagination cursor-pointer justify-content-center" *ngIf="SearchOrgShowing">
+                          <li class="page-item" [class.disabled]="currentPageOrg == 1">
+                              <a class="page-link custom-link preBtn" (click)="pageChangeOrg(1)" aria-label="Previous">
+                                  <i class="fa-solid fa-angles-left"></i>
+                              </a>
+                          </li>
+                          <li class="page-item" [class.disabled]="currentPageOrg == 1">
+                              <a class="page-link custom-link" (click)="pageChangeOrg(currentPageOrg - 1)" aria-label="Previous">
+                                  <i class="fa-solid fa-angle-left"></i>
+                              </a>
+                          </li>
+                          <li *ngFor="let pageOrg of pageOrgs" class="page-item" [class.active]="currentPageOrg == pageOrg">
+                              <a class="page-link custom-link" (click)="pageChangeOrg(pageOrg)">{{ pageOrg }}</a>
+                          </li>
+                          <li class="page-item" [class.disabled]="currentPageOrg == totalPages">
+                              <a class="page-link custom-link" (click)="pageChangeOrg(currentPageOrg + 1)" aria-label="Next">
+                                  <i class="fa-solid fa-angle-right"></i>
+                              </a>
+                          </li>
+                          <li class="page-item" [class.disabled]="currentPageOrg == totalPageOrgs">
+                              <a class="page-link custom-link nextBtn" (click)="pageChangeOrg(totalPageOrgs)" aria-label="Next">
+                                  <i class="fa-solid fa-angles-right"></i>
+                              </a>
+                          </li>
+                          <li class="page-item ms-3">
+                              <select
+                                  class="form-select"
+                                  aria-label="Default select example"
+                                  [(ngModel)]="pageSizeOrg"
+                                  (change)="pageSizeChangeOrg()"
+                              >
+                                  <option class="dropdown-item" *ngFor="let optionOrg of pageSizeOptionOrgs" [value]="optionOrg">
+                                      {{ optionOrg }}
+                                  </option>
+                              </select>
+                          </li>
+                      </ul>
+                      <button
+                          type="button"
+                          (click)="showSideBarOrg()"
+                          class="btn btn-outline-danger"
+                          style="margin-bottom: 5%"
+                          *ngIf="AddOrgShowing"
+                      >
+                          ย้อนกลับ
+                      </button>
+
+                      <div class="flex flex-column" *ngIf="AddCallShowing">
+                          <h4 *ngIf="attachmentShowing == true">เพิ่มข้อมูลการติดต่อ</h4>
+                          <h4 *ngIf="attachmentShowing == false">แก้ไขข้อมูลการติดต่อ</h4>
+                          <form class="row g-3 mg-3">
+                              <div class="col-md-6">
+                                  <label for="inputTopic" class="form-label">หัวข้อที่ติดต่อ<span class="color-red">*</span></label>
+                                  <ng-select id="inputTopic" [(ngModel)]="selectedCaseTopics" name="selectedCaseTopics" [multiple]="true">
+                                      <ng-option *ngFor="let casetopic of casetopics" [value]="casetopic.caseTopicId">
+                                          {{ casetopic.name }}
+                                      </ng-option>
+                                  </ng-select>
+                              </div>
+
+                              <div class="col-md-6">
+                                  <label for="inputCaseSubject" class="form-label">เรื่องที่ติดต่อ</label>
+                                  <ng-select
+                                      id="inputCaseSubject"
+                                      [(ngModel)]="selectedCasesubject"
+                                      name="selectedCasesubject"
+                                      [multiple]="true"
+                                  >
+                                      <ng-container *ngFor="let casesubject of casesubjects">
+                                          <ng-option
+                                              [value]="casesubject.caseSubjectId"
+                                              *ngIf="selectedCaseTopics.includes(casesubject.caseTopicId)"
+                                          >
+                                              {{ casesubject.name }}
+                                          </ng-option>
+                                      </ng-container>
+                                  </ng-select>
+                              </div>
+
+                              <div class="col-6">
+                                  <label for="inputChannel" class="form-label">ช่องทางติดต่อ</label>
+                                  <select id="inputChannel" class="form-select" name="selectedChannels" [(ngModel)]="selectedChannels">
+                                      <option disabled value="">กรุณาเลือกข้อมูล</option>
+                                      <option *ngFor="let channel of channels" [value]="channel.channelId">{{ channel.name }}</option>
+                                  </select>
+                                  <div class="col-6 w-100 pd-t-20" *ngIf="selectedChannels === '1'">
+                                      <label for="inputCallType" class="form-label">ประเภทสาย</label>
+                                      <select
+                                          id="inputCallType"
+                                          class="form-select"
+                                          name="selectedCallTypeId"
+                                          [(ngModel)]="selectedCallTypeId"
+                                      >
+                                          <option disabled value="">กรุณาเลือกข้อมูล</option>
+                                          <option *ngFor="let callType of callTypes" [value]="callType.name">{{ callType.name }}</option>
+                                      </select>
+                                  </div>
+                                  <div class="form-check" style="margin-top: 17px">
+                                      <input
+                                          class="form-check-input"
+                                          type="checkbox"
+                                          value="1"
+                                          id="flexCheckChecked"
+                                          [checked]="isEmailSubscribed === 1"
+                                          (change)="toggleEmailSubscription($event)"
+                                      />
+                                      <label class="form-check-label" for="flexCheckChecked"> รับข้อมูลทางอีเมล </label>
+                                  </div>
+                              </div>
+
+                              <div class="col-md-6">
+                                  <label for="inputAddress" class="form-label">กรุณาเลือกวันที่</label>
+                                  <div class="date-pik">
+                                      <div class="col-auto">
+                                          <div class="input-group start-date">
+                                              <input
+                                                  matInput
+                                                  [matDatepicker]="picker1"
+                                                  name="startTime"
+                                                  [(ngModel)]="startTime"
+                                                  required
+                                                  class="input-date form-control"
+                                              />
+                                              <span class="input-group-text">
+                                                  <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                                                  <mat-datepicker #picker1></mat-datepicker>
+                                              </span>
+                                          </div>
+                                      </div>
+                                      <ngb-timepicker
+                                          name="timepickStart"
+                                          [(ngModel)]="timepickStart"
+                                          [seconds]="seconds"
+                                          [ngModelOptions]="{ standalone: true }"
+                                          (dateInput)="(formatTimepickStart)"
+                                          class="tpk"
+                                          (ngModelChange)="onTimepickStartChange($event)"
+                                      ></ngb-timepicker>
+                                  </div>
+                              </div>
+
+                              <div class="col-12">
+                                  <p class="mg-b">ประเภทกิจกรรม</p>
+                                  <div class="pd-l-30">
+                                      <div *ngFor="let activityType of activitiestype" class="form-check">
+                                          <input
+                                              class="form-check-input"
+                                              type="checkbox"
+                                              [value]="activityType.activityTypeId"
+                                              id="{{ activityType.activityTypeId }}"
+                                              (change)="onCheckboxChange($event, activityType.activityTypeId)"
+                                          />
+                                          <label class="form-check-label" [for]="activityType.activityTypeId">{{ activityType.name }}</label>
+                                      </div>
+
+                                      <!-- Checkbox โครงการอบรม/สัมนา -->
+                                      <div *ngIf="isCheckboxSelected[1]" class="input-group">
+                                          <input
+                                              type="text"
+                                              class="form-control"
+                                              placeholder="โครงการอบรม/สัมมนา"
+                                              aria-label="Recipient's username with two button addons"
+                                              [(ngModel)]="inputActivity"
+                                              [ngModelOptions]="{ standalone: true }"
+                                          />
+                                          <button class="btn btn-outline-secondary" type="button" (click)="showSideBarActivitySeminar()">
+                                              <i class="fa-solid fa-caret-down"></i>
+                                          </button>
+                                      </div>
+                                      <div *ngIf="selectedActivityTopicIdSmn.length > 0" class="selectElearning">
+                                          <ul>
+                                              <li *ngFor="let activity of selectedActivitiesSmn">
+                                                  {{ activity.name }}
+                                              </li>
+                                          </ul>
+                                      </div>
+
+                                      <!-- Checkbox E-learning -->
+                                      <div *ngIf="isCheckboxSelected[43]" class="input-group">
+                                          <input
+                                              type="text"
+                                              class="form-control"
+                                              placeholder="E-Learning"
+                                              aria-label="Recipient's username with two button addons"
+                                              [(ngModel)]="inputActivity_2"
+                                              [ngModelOptions]="{ standalone: true }"
+                                              (change)="inputActivityElearning($event)"
+                                          />
+                                          <button class="btn btn-outline-secondary" type="button" (click)="showSideBarActivityElearning()">
+                                              <i class="fa-solid fa-caret-down"></i>
+                                          </button>
+                                      </div>
+                                      <div *ngIf="selectedActivities && selectedActivities.length > 0" class="selectElearning">
+                                          <ul>
+                                              <li *ngFor="let activity of selectedActivities">
+                                                  {{ activity.name }}
+                                              </li>
+                                          </ul>
+                                      </div>
+                                  </div>
+                              </div>
+
+                              <div class="col-12">
+                                  <label class="form-check-label" for="gridCheck"> รายละเอียด </label>
+                                  <textarea
+                                      class="form-control"
+                                      placeholder="กรุณากรอกข้อมูล"
+                                      id="floatingTextarea"
+                                      name="description"
+                                      [(ngModel)]="description"
+                                  ></textarea>
+                              </div>
+                              <div class="col-12">
+                                  <label class="form-check-label" for="gridCheck"> แนวทางการแก้ไข </label>
+                                  <textarea
+                                      class="form-control"
+                                      placeholder="กรุณากรอกข้อมูล"
+                                      id="floatingTextarea"
+                                      name="solutions"
+                                      [(ngModel)]="solutions"
+                                  ></textarea>
+                              </div>
+                              <div class="col-6" *ngIf="attachmentShowing">
+                                  <label for="formFileSm" class="form-label">ไฟล์แนบ</label>
+                                  <div class="mb-3">
+                                      <div class="form-input-file">
+                                          <input
+                                              class="form-control form-control-sm"
+                                              id="formFileSm"
+                                              type="file"
+                                              multiple
+                                              (change)="onFileSelected($event)"
+                                          />
+                                      </div>
+                                  </div>
+                              </div>
+                          </form>
+                          <div class="col-md-3">
+                              <button class="btn btn-primary" type="button" (click)="submitCall()" style="height: 38px; margin-top: 20%">
+                                  บันทึก
+                              </button>
+                          </div>
+                      </div>
+
+                      <!-- ส่วนของ "โครงการอบรม/สัมมนา" -->
+                      <div *ngIf="showActivitySeminarSideBar">
+                          <button
+                              type="button"
+                              (click)="showAddCall()"
+                              class="btn btn-outline-danger"
+                              style="margin-bottom: 5%"
+                              *ngIf="showActivitySeminarSideBar"
+                          >
+                              ย้อนกลับ
+                          </button>
+                          <div class="p-5 shadow call-side-detail" *ngIf="SearchSmnShowing">
+                              <div>
+                                  <h4>โครงการอบรม/สัมนา</h4>
+                                  <div class="row search-contact">
+                                      <div class="col-md-9">
+                                          <input
+                                              id="table-complete-search"
+                                              type="text"
+                                              class="form-control border shadow-none"
+                                              name="searchSmn"
+                                              [(ngModel)]="valueSearchSmn"
+                                              placeholder="ค้นหา..."
+                                              aria-describedby="basic-addon1"
+                                              style="width: 100%"
+                                              (change)="searchSmn()"
+                                          />
+                                      </div>
+                                      <button type="button" class="btn btn-primary btn-search-contact" (click)="searchSmn()">ค้นหา</button>
+                                  </div>
+                              </div>
+                          </div>
+
+                          <div class="p-5 shadow call-side-change-by w-100 h-100 overflow-auto p-4">
+                              <div class="table-responsive" *ngIf="SearchSmnShowing"></div>
+                              <div class="table-responsive">
+                                  <h5 style="margin-bottom: 7px">เพิ่มโครงการอบรม</h5>
+                                  <div class="row" style="padding-bottom: 15px" (ngSubmit)="submitActivityTopic()">
+                                      <div class="col-sm">
+                                          <label for="staticEmail2" class="visually">ชื่อโครงการอบรม</label>
+                                          <input
+                                              type="text"
+                                              class="form-control"
+                                              id="activityTopicnName"
+                                              placeholder="ชื่อโครงการอบรม"
+                                              [(ngModel)]="nameActivityTopic"
+                                              [ngModelOptions]="{ standalone: true }"
+                                          />
+                                      </div>
+                                      <div class="col-sm">
+                                          <label for="inputActivityTopicIdType" class="visually">หัวข้อโครงการอบรม</label>
+                                          <select
+                                              id="inputActivityTopicIdType"
+                                              class="form-select"
+                                              name="selectedActivityTopicName"
+                                              [(ngModel)]="selectedActivityTopicName"
+                                          >
+                                              <option disabled value="0">กรุณาเลือกข้อมูล</option>
+                                              <option *ngFor="let topic of activitiestypeTopic" [value]="topic.activityTypeId">
+                                                  {{ topic.name }}
+                                              </option>
+                                          </select>
+                                      </div>
+                                      <div class="col-sm submitTopic">
+                                          <button
+                                              type="submit"
+                                              class="btn btn-primary"
+                                              (click)="submitActivityTopic()"
+                                              [disabled]="!selectedActivityTopicName || selectedActivityTopicName == 0"
+                                          >
+                                              บันทึก
+                                          </button>
+                                      </div>
+                                  </div>
+
+                                  <table class="table table-smn">
+                                      <thead>
+                                          <tr>
+                                              <th style="width: 10%" scope="col">
+                                                  <a>เลือก</a>
+                                              </th>
+                                              <th style="width: 72%" scope="col">
+                                                  <a (click)="sortSmn('name')">ชื่อ </a
+                                                  ><i *ngIf="sortIdSmn == 'name'" class="{{ sortIcon }}"></i>
+                                              </th>
+                                              <th style="width: 20%" scope="col">
+                                                  <a (click)="sortSmn('createdAt')">วันที่บันทึก</a
+                                                  ><i *ngIf="sortIdSmn == 'createdAt'" class="{{ sortIcon }}"></i>
+                                              </th>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                          <ng-container>
+                                              <tr *ngFor="let smn of activitySmn; let i = index">
+                                                  <td style="width: 10%" scope="row">
+                                                      <input
+                                                          type="checkbox"
+                                                          class="form-check-input"
+                                                          [checked]="selectedActivityTopicIdSmn.includes(smn.activityTopicId)"
+                                                          (change)="
+                                                              toggleActivityTopicIdSmn(smn.activityTopicId); saveSelectedActivitiesSmn()
+                                                          "
+                                                      />
+                                                  </td>
+                                                  <td style="width: 70%" scope="row">{{ smn.name }}</td>
+                                                  <td style="width: 20%" scope="row">{{ smn.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
+                                              </tr>
+                                          </ng-container>
+                                          <ng-template #noDataTemplate>
+                                              <tr>
+                                                  <td colspan="3" class="text-center">ไม่มีข้อมูล</td>
+                                              </tr>
+                                          </ng-template>
+                                      </tbody>
+                                  </table>
+                              </div>
+                              <!-- <div *ngIf="selectedActivityTopicIdSmn.length > 0" class="button-save-activity">
+                                <button type="button" class="btn btn-primary" (click)="saveSelectedActivitiesSmn()">บันทึก</button>
+                            </div> -->
+                          </div>
+                      </div>
+
+                      <!-- ส่วนของ "E-Learning" -->
+                      <div *ngIf="showActivityElearningSideBar">
+                          <button
+                              type="button"
+                              (click)="showAddCall()"
+                              class="btn btn-outline-danger"
+                              style="margin-bottom: 5%"
+                              *ngIf="showSideBarActivityElearning"
+                          >
+                              ย้อนกลับ
+                          </button>
+                          <div class="p-5 shadow call-side-detail" *ngIf="SearchElearningShowing">
+                              <div>
+                                  <h4>E-Learning</h4>
+                                  <div class="row search-contact">
+                                      <div class="col-md-9">
+                                          <input
+                                              id="table-complete-search"
+                                              type="text"
+                                              class="form-control border shadow-none"
+                                              name="searchElearning"
+                                              [(ngModel)]="valueSearchEln"
+                                              placeholder="ค้นหา..."
+                                              aria-describedby="basic-addon1"
+                                              style="width: 100%"
+                                              (change)="searchEln()"
+                                          />
+                                      </div>
+                                      <button type="button" class="btn btn-primary btn-search-contact" (click)="searchEln()">ค้นหา</button>
+                                  </div>
+                              </div>
+                          </div>
+
+                          <div class="p-5 shadow call-side-change-by w-100 h-100 overflow-auto p-4">
+                              <div class="table-responsive" *ngIf="SearchElearningShowing"></div>
+                              <div class="table-responsive">
+                                  <h5 style="margin-bottom: 7px">เพิ่มโครงการอบรม</h5>
+                                  <div class="row g-3" style="padding-bottom: 15px">
+                                      <div class="col-auto">
+                                          <label for="staticEmail2" class="visually">ชื่อโครงการอบรม</label>
+                                          <input
+                                              type="text"
+                                              class="form-control"
+                                              id="activityTopicnName"
+                                              placeholder="ชื่อโครงการอบรม"
+                                              [(ngModel)]="nameActivityTopic"
+                                              [ngModelOptions]="{ standalone: true }"
+                                          />
+                                      </div>
+                                      <div class="col-auto">
+                                          <label for="inputActivityTopicIdType" class="visually">หัวข้อโครงการอบรม</label>
+                                          <select
+                                              id="inputActivityTopicIdType"
+                                              class="form-select"
+                                              name="selectedActivityTopicName"
+                                              [(ngModel)]="selectedActivityTopicName"
+                                          >
+                                              <option disabled value="0">กรุณาเลือกข้อมูล</option>
+                                              <option *ngFor="let topicEln of activitiestypeEln" [value]="topicEln.activityTypeId">
+                                                  {{ topicEln.name }}
+                                              </option>
+                                          </select>
+                                      </div>
+                                      <div class="col-auto submitTopic">
+                                          <button
+                                              type="submit"
+                                              (click)="submitActivityTopic()"
+                                              class="btn btn-primary"
+                                              [disabled]="!nameActivityTopic || selectedActivityTopicName == 0"
+                                          >
+                                              บันทึก
+                                          </button>
+                                      </div>
+                                  </div>
+                                  <table class="table table-smn">
+                                      <thead>
+                                          <tr>
+                                              <th style="width: 10%" scope="col">
+                                                  <a>เลือก</a>
+                                              </th>
+                                              <th style="width: 70%" scope="col">
+                                                  <a (click)="sortEln('name')">ชื่อ </a
+                                                  ><i *ngIf="sortIdEln == 'name'" class="{{ sortIcon }}"></i>
+                                              </th>
+                                              <th style="width: 20%" scope="col">
+                                                  <a (click)="sortEln('createdAt')">วันที่บันทึก</a
+                                                  ><i *ngIf="sortIdEln == 'createdAt'" class="{{ sortIcon }}"></i>
+                                              </th>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                          <ng-container>
+                                              <tr *ngFor="let eln of activityEln; let i = index">
+                                                  <td style="width: 10%" scope="row">
+                                                      <input
+                                                          type="checkbox"
+                                                          class="form-check-input"
+                                                          [checked]="selectedActivityTopicId.includes(eln.activityTopicId)"
+                                                          (change)="toggleActivityTopicId(eln.activityTopicId); saveSelectedActivities()"
+                                                      />
+                                                  </td>
+                                                  <td style="width: 72%" scope="row">{{ eln.name }}</td>
+                                                  <td style="width: 20%" scope="row">{{ eln.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
+                                              </tr>
+                                          </ng-container>
+                                          <ng-template #noDataTemplate>
+                                              <tr>
+                                                  <td colspan="3" class="text-center">ไม่มีข้อมูล</td>
+                                              </tr>
+                                          </ng-template>
+                                      </tbody>
+                                  </table>
+                              </div>
+                              <!-- <div *ngIf="selectedActivityTopicId.length > 0">
+                                <button type="button" class="btn btn-primary" (click)="saveSelectedActivities()">บันทึก</button>
+                            </div> -->
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+            <!-- <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
                 <div class="offcanvas-body">
                     <div class="d-flex flex-wrap justify-content-between">
                         <div class="d-flex">
@@ -330,7 +897,9 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
+
+
     </div>
 </div>
