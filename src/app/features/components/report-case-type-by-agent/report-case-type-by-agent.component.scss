@@ -24,6 +24,10 @@
 .table-container tfoot {
     position: sticky;
     bottom: 0;
-    background-color: #f8f9fa; 
+    background-color: #f8f9fa;
     z-index: 1;
+}
+
+.total-background {
+    background-color: #d6d6d6;
 }
