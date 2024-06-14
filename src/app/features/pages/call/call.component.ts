@@ -434,11 +434,8 @@ export class CallComponent implements OnInit {
         this.getCallsData((this.currentPage - 1) * this.pageSize, this.pageSize);
     }
 
-    createCallFideId(item: any, contactId: any) {
-        console.log('Call ID:', item.callId);
-        console.log('Call :', item);
-        console.log('Contact :', contactId);
-        this.router.navigate(['/contacts/edit'], { queryParams: { callId: item.callId, key: item.contactId } });
+    createCallFideId(item: any, contactId: any, caller: any) {
+        this.router.navigate(['/contacts/edit'], { queryParams: { callId: item.callId, key: item.contactId, caller: item.caller } });
     }
 
     createCall() {

@@ -295,9 +295,6 @@ export class CreateCallComponent {
             this.call_id = params['call_id'];
             this.caller_id = params['caller_id'];
             this.callIdEdit = params['key'];
-            if (this.callIdEdit) {
-                this.getCallFideId();
-            }
 
             console.log('key: ', this.callIdEdit);
         });
@@ -936,18 +933,5 @@ export class CreateCallComponent {
         return this.activitiestype.filter((activityType: { activityTypeId: number }) => [21, 27, 28].includes(activityType.activityTypeId));
     }
 
-    getCallFideId() {
-        this.callServive.getCallById(this.callIdEdit).subscribe(
-            (res: any) => {
-                this.callFideId = res;
 
-                // this.
-
-                console.log('get call: ', this.callFideId);
-            },
-            (error: any) => {
-                console.error('Error fetching call data:', error);
-            },
-        );
-    }
 }

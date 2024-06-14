@@ -147,7 +147,7 @@
                                 <td>
                                     {{ calls.createdAt | date : 'dd/MM/yyyy HH:mm' }}
                                 </td>
-                                <td class="sidebar cursor-pointer" (click)="createCallFideId(calls, calls.contactId)">
+                                <td class="sidebar cursor-pointer" (click)="createCallFideId(calls, calls.contactId, calls.caller)">
                                     <div class="" ngbTooltip="คลิกเพื่อไปที่หน้าการโทร" placement="bottom">
                                         {{ calls.caller }}
                                     </div>
@@ -191,7 +191,7 @@
                                             data-bs-target="#offcanvasRight"
                                             aria-controls="offcanvasRight"
                                             ngbTooltip="แก้ไข"
-                                            (click)="editCall(calls.callId, 'call')"
+                                            (click)="editCall(calls.callId, calls.table)"
                                         >
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </div>
