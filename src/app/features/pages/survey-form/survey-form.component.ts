@@ -73,7 +73,7 @@ export class SurveyFormComponent implements OnInit {
         this.userRole = this.userData.role.roleTitle.toLocaleLowerCase();
         this.filterOption = [
             { name: 'ทั้งหมด', code: 'all' },
-            { name: 'Only My', code: this.userData.username },
+            { name: 'เฉพาะฉัน', code: this.userData.username },
         ];
         this.activeRoute.queryParams.subscribe((params) => {
             if (params['cb'] != undefined && params['cb'] != '') {
