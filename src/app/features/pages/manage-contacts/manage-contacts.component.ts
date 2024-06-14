@@ -93,6 +93,9 @@ export class ManageContactsComponent implements OnInit {
     startTime: string = '';
     myForm: FormGroup | any;
 
+    numberArray = [1, 2, 3, 4, 5];
+    selectSubject = 1;
+
     timepickEnd = true;
     meridian = true;
     seconds = true;
@@ -931,7 +934,7 @@ export class ManageContactsComponent implements OnInit {
         this.attachmentShowing = true;
         this.cType = '';
         this.callId = '';
-        this.selectedCasesubject = '';
+        // this.selectedCasesubject = [];
         this.selectedChannels = '';
         this.isEmailSubscribed = 0;
         this.activityTypeId = '';
@@ -967,7 +970,7 @@ export class ManageContactsComponent implements OnInit {
         console.log('Type:', type);
         this.cType = '';
         this.callId = '';
-        this.selectedCasesubject = '';
+        // this.selectedCasesubject = [];
         this.selectedChannels = '';
         this.isEmailSubscribed = 0;
         this.activityTypeId = '';
@@ -1000,7 +1003,7 @@ export class ManageContactsComponent implements OnInit {
                 console.log('Call:', call);
                 this.cType = 'call';
                 this.callId = call[0].callId;
-                this.selectedCasesubject = call[0].caseSubject;
+                // this.selectedCasesubject = call[0].caseSubject;
                 this.selectedChannels = call[0].channel;
                 this.isEmailSubscribed = call[0].emailInfo;
                 this.activityTypeId = call[0].activityType;
@@ -1021,7 +1024,14 @@ export class ManageContactsComponent implements OnInit {
                     if (!Array.isArray(caseTopicIds)) {
                         caseTopicIds = JSON.parse(caseTopicIds);
                     }
-                    this.selectedCaseTopics = caseTopicIds.map(String);
+                    this.selectSubject = caseTopicIds.length;
+                    for (let i = 0; i < this.selectSubject; i++) {
+                        if (caseTopicIds[i].length != 0) {
+                            this.selectedCaseTopics[i] = caseTopicIds[i].map(String);
+                        } else {
+                            this.selectedCaseTopics[i] = [];
+                        }
+                    }
                 }
 
                 // Handle caseSubjects
@@ -1030,7 +1040,13 @@ export class ManageContactsComponent implements OnInit {
                     if (!Array.isArray(caseSubjects)) {
                         caseSubjects = JSON.parse(caseSubjects);
                     }
-                    this.selectedCasesubject = caseSubjects.map(String);
+                    for (let i = 0; i < this.selectSubject; i++) {
+                        if (this.selectedCaseTopics[i].length != 0) {
+                            this.selectedCasesubject[i] = caseSubjects[i].map(String);
+                        } else {
+                            this.selectedCaseTopics[i] = [];
+                        }
+                    }
                 }
 
                 // Handle selectedActivityTopicIdSmnr
@@ -1082,7 +1098,10 @@ export class ManageContactsComponent implements OnInit {
                     if (!Array.isArray(caseTopicIds)) {
                         caseTopicIds = JSON.parse(caseTopicIds);
                     }
-                    this.selectedCaseTopics = caseTopicIds.map(String);
+                    for (let i = 0; i < caseTopicIds.length; i++) {
+                        this.selectedCaseTopics[i] = caseTopicIds[i].map(String);
+                    }
+                    this.selectSubject = caseTopicIds.length;
                 }
 
                 if (call.caseSubjectIds && call.caseSubjectIds !== 'null') {
@@ -1090,7 +1109,9 @@ export class ManageContactsComponent implements OnInit {
                     if (!Array.isArray(caseSubjects)) {
                         caseSubjects = JSON.parse(caseSubjects);
                     }
-                    this.selectedCasesubject = caseSubjects.map(String);
+                    for (let i = 0; i < caseSubjects.length; i++) {
+                        this.selectedCasesubject[i] = caseSubjects[i].map(String);
+                    }
                 }
 
                 if (call.activitySmn && call.activitySmn !== 'null') {
@@ -1155,6 +1176,21 @@ export class ManageContactsComponent implements OnInit {
             ? this.selectedActivities.map((activity: { activityTopicId: any }) => activity.activityTopicId)
             : null;
 
+        for (let i = 0; i < this.selectSubject; i++) {
+            if (this.selectedCaseTopics[i] == null) {
+                this.selectedCaseTopics[i] = [];
+                this.selectedCasesubject[i] = [];
+            } else {
+                if (this.selectedCasesubject[i] == null) {
+                    this.selectedCasesubject[i] = [];
+                }
+            }
+        }
+        if (this.selectedCaseTopics.length > this.selectSubject) {
+            this.selectedCasesubject = this.selectedCasesubject.slice(0, this.selectSubject);
+            this.selectedCaseTopics = this.selectedCaseTopics.slice(0, this.selectSubject);
+        }
+        
         if (!this.callId) {
             if (this.selectedCaseTopics.length > 0) {
                 const data = {
@@ -1616,5 +1652,14 @@ export class ManageContactsComponent implements OnInit {
 
     filterActivities(): any[] {
         return this.activitiestype.filter((activityType: { activityTypeId: number }) => [21, 27, 28].includes(activityType.activityTypeId));
+    }
+
+    addTopicAndSubject() {
+        if (this.selectSubject < 5) this.selectSubject++;
+        console.log(this.selectSubject)
+    }
+    removeTopicAndSubject() {
+        if (this.selectSubject > 0) this.selectSubject--;
+        console.log(this.selectSubject)
     }
 }
