@@ -386,7 +386,7 @@ export class ManageContactsComponent implements OnInit {
                 province: this.contactProvince,
                 modifiedById: userData.userId,
             };
-            
+
             this.contactsService
                 .editContacts(data)
                 .pipe(
@@ -396,17 +396,11 @@ export class ManageContactsComponent implements OnInit {
                     }),
                     catchError((error) => {
                         this.sweetalertServices.handleError(error);
-                        this.auditLogService.log(
-                            '',
-                            'Contact',
-                            'Edit Contact',
-                            JSON.stringify(data),
-                            `Failed, Error : ${error}`,
-                        );
+                        this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), `Failed, Error : ${error}`);
                         throw error;
                     }),
                 )
-                .subscribe();            
+                .subscribe();
         } else {
             const data = {
                 firstName: this.contactFirstName,
@@ -427,21 +421,11 @@ export class ManageContactsComponent implements OnInit {
                         if (res.success === true) {
                             const contactId = res.contactId;
                             this.router.navigate(['/contacts/edit'], { queryParams: { key: contactId } });
-                            this.auditLogService.log(
-                                '',
-                                'Contact',
-                                'Create Contact',
-                                JSON.stringify(data),
-                                `Success`,
-                            );
+                            this.auditLogService.log('', 'Contact', 'Create Contact', JSON.stringify(data), `Success`);
                         } else if (res.success === false && res.message === 'Duplicate') {
                             if (res.duplicates.length > 0) {
                                 const duplicatedFields = res.duplicates.map((dup: any) => dup.duplicateOn).join(' และ ');
-                                this.sweetalertServices.contactSwal(
-                                    'error',
-                                    `${duplicatedFields}นี้ได้มีการลงทะเบียนแล้ว`,
-                                    res.duplicates,
-                                );
+                                this.sweetalertServices.contactSwal('error', `${duplicatedFields}นี้ได้มีการลงทะเบียนแล้ว`, res.duplicates);
                                 return;
                             }
                             this.auditLogService.log(
@@ -451,17 +435,11 @@ export class ManageContactsComponent implements OnInit {
                                 JSON.stringify(data),
                                 `Failed, Error Duplicate: ${res.duplicates}`,
                             );
-                        }    
+                        }
                     }),
                     catchError((error) => {
                         this.sweetalertServices.handleError(error);
-                        this.auditLogService.log(
-                            '',
-                            'Contact',
-                            'Create Contact',
-                            JSON.stringify(data),
-                            `Failed, Error : ${error}`,
-                        );
+                        this.auditLogService.log('', 'Contact', 'Create Contact', JSON.stringify(data), `Failed, Error : ${error}`);
                         throw error;
                     }),
                 )
@@ -501,12 +479,24 @@ export class ManageContactsComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.getSwal('success', 'Unassigned success.', '', false, '');
-                            this.auditLogService.log('', 'Contact', `Delete Survey From ContactID : ${this.contactId}`, `Survey ID : ${surveyId}`, `Success`);
+                            this.auditLogService.log(
+                                '',
+                                'Contact',
+                                `Delete Survey From ContactID : ${this.contactId}`,
+                                `Survey ID : ${surveyId}`,
+                                `Success`,
+                            );
                             window.location.reload();
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
-                            this.auditLogService.log('', 'Contact', `Delete Survey From ContactID : ${this.contactId}`, `Survey ID : ${surveyId}`, `Failed, Error : ${error}`);
+                            this.auditLogService.log(
+                                '',
+                                'Contact',
+                                `Delete Survey From ContactID : ${this.contactId}`,
+                                `Survey ID : ${surveyId}`,
+                                `Failed, Error : ${error}`,
+                            );
                             throw error;
                         }),
                     )
@@ -802,13 +792,7 @@ export class ManageContactsComponent implements OnInit {
                 .pipe(
                     tap((res) => {
                         this.showSideBarOrg();
-                        this.auditLogService.log(
-                            '',
-                            'Contact',
-                            'Contact Create Organization',
-                            JSON.stringify(data),
-                            `Success`,
-                        );
+                        this.auditLogService.log('', 'Contact', 'Contact Create Organization', JSON.stringify(data), `Success`);
                     }),
                     catchError((error) => {
                         this.sweetalertServices.handleError(error);
@@ -943,7 +927,7 @@ export class ManageContactsComponent implements OnInit {
         }
     }
 
-    createCall(){
+    createCall() {
         this.attachmentShowing = true;
         this.cType = '';
         this.callId = '';
@@ -951,15 +935,15 @@ export class ManageContactsComponent implements OnInit {
         this.selectedChannels = '';
         this.isEmailSubscribed = 0;
         this.activityTypeId = '';
-        this.startTime = '';
+        const date = new Date();
+        this.startTime =  date.toISOString().split('T')[0];
         this.description = '';
         this.solutions = '';
         this.selectedCallTypeId = '';
-        const date = new Date('');
         this.timepickStart = {
             hour: date.getHours(),
             minute: date.getMinutes(),
-            second: date.getSeconds()
+            second: date.getSeconds(),
         };
         this.selectedCaseTopics = [];
         this.selectedCasesubject = [];
@@ -995,7 +979,7 @@ export class ManageContactsComponent implements OnInit {
         this.timepickStart = {
             hour: date.getHours(),
             minute: date.getMinutes(),
-            second: date.getSeconds()
+            second: date.getSeconds(),
         };
         this.selectedCaseTopics = [];
         this.selectedCasesubject = [];
@@ -1028,18 +1012,18 @@ export class ManageContactsComponent implements OnInit {
                 this.timepickStart = {
                     hour: date.getHours(),
                     minute: date.getMinutes(),
-                    second: date.getSeconds()
+                    second: date.getSeconds(),
                 };
-    
+
                 // Handle caseTopicIds
-                if (call[0].caseTopicId && call[0].caseTopicId !== 'null'){
+                if (call[0].caseTopicId && call[0].caseTopicId !== 'null') {
                     let caseTopicIds = call[0].caseTopicId;
                     if (!Array.isArray(caseTopicIds)) {
                         caseTopicIds = JSON.parse(caseTopicIds);
                     }
                     this.selectedCaseTopics = caseTopicIds.map(String);
                 }
-    
+
                 // Handle caseSubjects
                 if (call[0].caseSubject && call[0].caseSubject !== 'null') {
                     let caseSubjects = call[0].caseSubject;
@@ -1048,7 +1032,7 @@ export class ManageContactsComponent implements OnInit {
                     }
                     this.selectedCasesubject = caseSubjects.map(String);
                 }
-    
+
                 // Handle selectedActivityTopicIdSmnr
                 if (call[0].activitySmn && call[0].activitySmn !== 'null') {
                     let selectedActivityTopicIdSmnr = call[0].activitySmn;
@@ -1062,14 +1046,14 @@ export class ManageContactsComponent implements OnInit {
                         this.saveSelectedActivitiesSmn();
                     });
                 }
-    
+
                 // Handle selectedActivitiesEl
                 if (call[0].activityEln && call[0].activityEln !== 'null') {
                     let selectedActivityTopicIds = call[0].activityEln;
                     if (!Array.isArray(selectedActivityTopicIds)) {
                         selectedActivityTopicIds = JSON.parse(selectedActivityTopicIds);
                     }
-                    this.selectedActivityTopicId = selectedActivityTopicIds.map(String);    
+                    this.selectedActivityTopicId = selectedActivityTopicIds.map(String);
                     // Fetch and filter activitiestypeTopic
                     this.callServive.getActivityById(this.valueSearchEln).subscribe((activityEln: any) => {
                         this.activityEln = activityEln;
@@ -1088,12 +1072,12 @@ export class ManageContactsComponent implements OnInit {
                 this.timepickStart = {
                     hour: date.getHours(),
                     minute: date.getMinutes(),
-                    second: date.getSeconds()
+                    second: date.getSeconds(),
                 };
                 this.selectedChannels = call.channelId;
                 this.selectedCallTypeId = call.operationType;
 
-                if (call.caseTopicIds && call.caseTopicIds !== 'null'){
+                if (call.caseTopicIds && call.caseTopicIds !== 'null') {
                     let caseTopicIds = call.caseTopicIds;
                     if (!Array.isArray(caseTopicIds)) {
                         caseTopicIds = JSON.parse(caseTopicIds);
@@ -1121,36 +1105,34 @@ export class ManageContactsComponent implements OnInit {
                         this.saveSelectedActivitiesSmn();
                     });
                 }
-    
+
                 // Handle selectedActivitiesEl
                 if (call.activityEln && call.activityEln !== 'null') {
                     let selectedActivityTopicIds = call.activityEln;
                     if (!Array.isArray(selectedActivityTopicIds)) {
                         selectedActivityTopicIds = JSON.parse(selectedActivityTopicIds);
                     }
-                    this.selectedActivityTopicId = selectedActivityTopicIds.map(String);    
+                    this.selectedActivityTopicId = selectedActivityTopicIds.map(String);
                     // Fetch and filter activitiestypeTopic
                     this.callServive.getActivityById(this.valueSearchEln).subscribe((activityEln: any) => {
                         this.activityEln = activityEln;
                         this.saveSelectedActivities();
                     });
                 }
-
             });
         }
-    
+
         // Fetch activitySmn
         this.callServive.getActivitiesTypeSmn(this.valueSearchSmn).subscribe((activitySmn: any) => {
             this.activitySmn = activitySmn;
         });
 
         this.callServive.getActivityById(this.valueSearchEln).subscribe((activityEln: any) => {
-                this.activityEln = activityEln;
+            this.activityEln = activityEln;
         });
 
         this.showAddCall();
     }
-    
 
     deleteCall(callId: string, type: string) {
         console.log('Delete Call:', callId);
@@ -1173,7 +1155,7 @@ export class ManageContactsComponent implements OnInit {
             ? this.selectedActivities.map((activity: { activityTopicId: any }) => activity.activityTopicId)
             : null;
 
-        if(!this.callId){   
+        if (!this.callId) {
             if (this.selectedCaseTopics.length > 0) {
                 const data = {
                     contactId: this.contactId,
@@ -1199,13 +1181,25 @@ export class ManageContactsComponent implements OnInit {
                     .createCalls(data)
                     .pipe(
                         tap((res) => {
-                        this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
-                        this.auditLogService.log('', 'Contact Create Call', 'Contact Create Case Call', JSON.stringify(data), `Success`);
+                            this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
+                            this.auditLogService.log(
+                                '',
+                                'Contact Create Call',
+                                'Contact Create Case Call',
+                                JSON.stringify(data),
+                                `Success`,
+                            );
                             window.location.reload();
                         }),
                         catchError((error) => {
-                        this.sweetalertServices.handleError(error);
-                        this.auditLogService.log('', 'Contact Create Call', 'Contact Create Case Call', JSON.stringify(data), `Failed, Error : ${error}`);
+                            this.sweetalertServices.handleError(error);
+                            this.auditLogService.log(
+                                '',
+                                'Contact Create Call',
+                                'Contact Create Case Call',
+                                JSON.stringify(data),
+                                `Failed, Error : ${error}`,
+                            );
                             throw error;
                         }),
                     )
@@ -1236,20 +1230,32 @@ export class ManageContactsComponent implements OnInit {
                     .updateCalls(data)
                     .pipe(
                         tap((res) => {
-                        this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
-                        this.auditLogService.log('', 'Contact Update Call', 'Contact Update Case Call', JSON.stringify(data), `Success`);
+                            this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
+                            this.auditLogService.log(
+                                '',
+                                'Contact Update Call',
+                                'Contact Update Case Call',
+                                JSON.stringify(data),
+                                `Success`,
+                            );
                             window.location.reload();
                         }),
                         catchError((error) => {
-                        this.sweetalertServices.handleError(error);
-                        this.auditLogService.log('', 'Contact Update Call', 'Contact Update Case Call', JSON.stringify(data), `Failed, Error : ${error}`);
+                            this.sweetalertServices.handleError(error);
+                            this.auditLogService.log(
+                                '',
+                                'Contact Update Call',
+                                'Contact Update Case Call',
+                                JSON.stringify(data),
+                                `Failed, Error : ${error}`,
+                            );
                             throw error;
                         }),
                     )
                     .subscribe();
             } else {
                 this.sweetalertServices.getSwal('error', 'โปรดกรอกหัวข้อที่ติดต่อ', '', false, '');
-            }    
+            }
         } else if (this.callId && this.cType === 'case') {
             console.log('Edit Case:', this.callId);
             if (this.selectedCaseTopics.length > 0) {
@@ -1270,21 +1276,27 @@ export class ManageContactsComponent implements OnInit {
                     .updateCase(data)
                     .pipe(
                         tap((res) => {
-                        this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
-                        this.auditLogService.log('', 'Contact Update Case', 'Contact Update Case ', JSON.stringify(data), `Success`);
+                            this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
+                            this.auditLogService.log('', 'Contact Update Case', 'Contact Update Case ', JSON.stringify(data), `Success`);
                             window.location.reload();
                         }),
                         catchError((error) => {
-                        this.sweetalertServices.handleError(error);
-                        this.auditLogService.log('', 'Contact Update Case', 'Contact Update Case', JSON.stringify(data), `Failed, Error : ${error}`);
+                            this.sweetalertServices.handleError(error);
+                            this.auditLogService.log(
+                                '',
+                                'Contact Update Case',
+                                'Contact Update Case',
+                                JSON.stringify(data),
+                                `Failed, Error : ${error}`,
+                            );
                             throw error;
                         }),
                     )
                     .subscribe();
             } else {
                 this.sweetalertServices.getSwal('error', 'โปรดกรอกหัวข้อที่ติดต่อ', '', false, '');
-            } 
-        }   
+            }
+        }
     }
 
     connect(): void {
@@ -1458,7 +1470,13 @@ export class ManageContactsComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
-                            this.auditLogService.log('', 'Contact Create Call ActivityTopic', 'Contact Create Case Call ActivityTopic', `ContactID : ${this.contactId}`, `Success`);
+                            this.auditLogService.log(
+                                '',
+                                'Contact Create Call ActivityTopic',
+                                'Contact Create Case Call ActivityTopic',
+                                `ContactID : ${this.contactId}`,
+                                `Success`,
+                            );
                             window.location.reload();
                         }),
                         catchError((error) => {
@@ -1504,7 +1522,7 @@ export class ManageContactsComponent implements OnInit {
         } else {
             this.selectedActivityTopicIdSmn.splice(index, 1);
         }
-this.saveSelectedActivitiesSmn();
+        this.saveSelectedActivitiesSmn();
         console.log('select id activity:', this.selectedActivityTopicIdSmn);
     }
 
@@ -1524,7 +1542,7 @@ this.saveSelectedActivitiesSmn();
         } else {
             this.selectedActivityTopicId.splice(index, 1);
         }
-this.saveSelectedActivities()
+        this.saveSelectedActivities();
         console.log('select id activity:', this.selectedActivityTopicId);
     }
 
