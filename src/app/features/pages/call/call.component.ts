@@ -12,6 +12,10 @@ import * as XLSX from 'xlsx';
 import { config } from 'src/app/config/config';
 import { FormControl, FormBuilder, FormGroup } from '@angular/forms';
 import * as moment from 'moment';
+import { ContactsService } from 'src/app/services/contacts/contacts.service';
+import { AttachmentService } from 'src/app/services/attachment/attachment.service';
+import { Attachment } from 'src/app/shared/interface/attachment.interface';
+import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
 
 @Pipe({
     name: 'searchFilter',
@@ -95,14 +99,126 @@ export class CallComponent implements OnInit {
     dateFilterType: string = '';
     dateRangeForm!: FormGroup;
 
+    attachmentShowing: boolean = false;
+    cType: string = '';
+    callId: string = '';
+    selectedCasesubject: any;
+    selectedCaseTopics: any[] = [];
+    selectedChannels: any;
+    channels: any;
+    isEmailSubscribed: number = 0;
+    activitiestype: any;
+    timepickStart: { hour: number; minute: number; second: number } = { hour: 0, minute: 0, second: 0 };
+    activityTypeId: any;
+    newDateTime: any;
+    startTime: string = '';
+    solutions: string = '';
+    description: string = '';
+    combinedDateTimeStart: string = '';
+    combinedDateTimeEnd: string = '';
+
+    selectedActivityTopicIdSmn: string[] = [];
+    selectedActivitiesSmn: any;
+    selectedActivities: any;
+
+    selectedActivityTopicId: string[] = [];
+    searchContactShowing: boolean = false;
+
+    selectedCallTypeId: string = '';
+    activityTypeById: any;
+    activitiesTopic: any;
+    selectedActivitiesElearning: any;
+    selectedCheckboxIds: any;
+    valueSearchSmn!: string;
+
+    activitySmn: any;
+    activityEln: any;
+
+    SearchElearningShowing: boolean = false;
+    valueSearchEln!: string;
+    activitiestypeEln: any;
+
+    pageSizeOptionOrgs = [5, 10, 20];
+    pageSizeOrg = 5;
+    currentPageOrg = 1;
+    totalItemOrgs = 0;
+    totalPageOrgs = 0;
+    pagesToShowOrg = 3;
+
+    sortIdOrg: string = 'createdAt';
+    sortOrderOrg: string = 'DESC';
+
+    SearchFormShowing: boolean = true;
+    SearchOrgShowing: boolean = false;
+
+    organizations!: any;
+    spareorganizations!: any;
+    valueSearchOrg!: string;
+
+    AddOrgShowing: boolean = false;
+    AddCallShowing: boolean = false;
+
+    casetopics: any[] = [];
+    casesubjects: any[] = [];
+    callTypes: any;
+
+    isCheckboxSelected: { [key: number]: boolean } = {};
+
+    inputActivity: string = '';
+    inputActivity_2: string = '';
+
+    showActivitySeminarSideBar: boolean = false;
+    showActivityElearningSideBar: boolean = false;
+
+    nameActivityTopic: string = '';
+    selectedActivityTopicName: any;
+    activitiestypeTopic: any;
+    SearchSmnShowing: boolean = false;
+    sortIdSmn: string = 'createdAt';
+    sortOrderSmn: string = 'DESC';
+    checkedValueSmns: string[] = [];
+    AddSmnShowing: boolean = false;
+
+    sortIdEln: string = 'createdAt';
+    sortOrderEln: string = 'DESC';
+    checkedValueEln: string[] = [];
+    AddElnShowing: boolean = false;
+    FormShowing: boolean = false;
+
+    thanks: boolean = false;
+
+    industryType: any[] = [];
+    productTypes: any[] = [];
+
+    contactOrg: string = '';
+    contactOrgName: string = '';
+
+    contactProductType: string = '';
+    checkedValueOrgs: string[] = [];
+    AddContactShowing: boolean = false;
+
+    showOrgSidebar: boolean = false;
+    showContactSidebar: boolean = false;
+
+    attachments: Attachment[] = [];
+    attachmentsId: string[] | undefined;
+
+    contactId: string = '';
+    phoneCall: string = '';
+
     constructor(
         private callService: CallService,
         private router: Router,
         private activeRoute: ActivatedRoute,
         private userService: UserService,
-        private sweetAlertService: SweetAlertService,
+        private sweetalertServices: SweetAlertService,
         private fb: FormBuilder,
-    ) {}
+        private contactsService: ContactsService,
+        private attachmentService: AttachmentService,
+        private auditLogService: AuditLogService,
+    ) {
+        this.startTime = this.formatDate(new Date());
+    }
 
     ngOnInit() {
         this.getUserData();
@@ -157,6 +273,11 @@ export class CallComponent implements OnInit {
             this.getCallsData(this.currentPage, this.pageSize);
             this.getPage();
         });
+
+        this.callTypes = [
+            { id: '1', name: this.inbound },
+            { id: '2', name: this.outbound },
+        ];
     }
 
     onUserSelectDateFilter(newDateFilterType: string) {
@@ -174,7 +295,6 @@ export class CallComponent implements OnInit {
     }
 
     async getCallsData(page: number, pageSize: number) {
-
         await this.callService
             .getCallsPage(
                 page,
@@ -314,9 +434,8 @@ export class CallComponent implements OnInit {
         this.getCallsData((this.currentPage - 1) * this.pageSize, this.pageSize);
     }
 
-    createCallFideId(item: any) {
-        console.log('Call ID:', item.callId);
-        this.router.navigate(['/call/create-call'], { queryParams: { key: item.callId } });
+    createCallFideId(item: any, contactId: any, caller: any) {
+        this.router.navigate(['/contacts/edit'], { queryParams: { callId: item.callId, key: item.contactId, caller: item.caller } });
     }
 
     createCall() {
@@ -397,4 +516,770 @@ export class CallComponent implements OnInit {
     seconds1 = true;
 
     date = new FormControl(new Date());
+
+    showAddCall() {
+        this.AddOrgShowing = false;
+        this.FormShowing = false;
+        this.SearchFormShowing = false;
+        this.thanks = false;
+        this.SearchOrgShowing = false;
+        this.AddCallShowing = true;
+        this.showActivitySeminarSideBar = false;
+        this.showActivityElearningSideBar = false;
+
+        this.callService.getCaseTopic().subscribe((casetopics: any) => {
+            this.casetopics = casetopics;
+        });
+
+        this.callService.getAllCaseSubjects().subscribe((casesubjects: any) => {
+            this.casesubjects = casesubjects;
+        });
+
+        this.callService.getAllChannels().subscribe((channels: any) => {
+            this.channels = channels;
+        });
+
+        this.callService.getActivitiesType().subscribe((activitiestype: any) => {
+            this.activitiestype = activitiestype.filter((activityType: any) => [1, 43].includes(parseInt(activityType.activityTypeId)));
+        });
+    }
+
+    editCall(callId: string, type: string) {
+        this.attachmentShowing = false;
+        console.log('Edit Call:', callId);
+        console.log('Type:', type);
+        this.cType = '';
+        this.callId = '';
+        this.selectedCasesubject = '';
+        this.selectedChannels = '';
+        this.isEmailSubscribed = 0;
+        this.activityTypeId = '';
+        this.startTime = '';
+        this.description = '';
+        this.solutions = '';
+        this.selectedCallTypeId = '';
+        const date = new Date('');
+        this.timepickStart = {
+            hour: date.getHours(),
+            minute: date.getMinutes(),
+            second: date.getSeconds(),
+        };
+        this.selectedCaseTopics = [];
+        this.selectedCasesubject = [];
+        this.selectedActivityTopicIdSmn = [];
+        this.selectedActivitiesSmn = [];
+        this.selectedActivityTopicId = [];
+        this.callService.getActivitiesTypeSmn(this.valueSearchSmn).subscribe((activitySmn: any) => {
+            this.activitySmn = activitySmn;
+            this.saveSelectedActivitiesSmn();
+        });
+        this.callService.getActivityById(this.valueSearchEln).subscribe((activityEln: any) => {
+            this.activityEln = activityEln;
+            this.saveSelectedActivities();
+        });
+
+        if (type === 'call') {
+            this.callService.getCallById(callId).subscribe((call: any) => {
+                console.log('Call:', call);
+                this.cType = 'call';
+                this.callId = call[0].callId;
+                this.selectedCasesubject = call[0].caseSubject;
+                this.selectedChannels = call[0].channel;
+                this.isEmailSubscribed = call[0].emailInfo;
+                this.activityTypeId = call[0].activityType;
+                this.selectedCallTypeId = call[0].operationType;
+                this.startTime = call[0].startTime;
+                this.description = call[0].description;
+                this.solutions = call[0].solution;
+                this.selectedCallTypeId = call[0].operationType;
+                const date = new Date(call[0].startTime);
+                this.timepickStart = {
+                    hour: date.getHours(),
+                    minute: date.getMinutes(),
+                    second: date.getSeconds(),
+                };
+
+                // Handle caseTopicIds
+                if (call[0].caseTopicId && call[0].caseTopicId !== 'null') {
+                    let caseTopicIds = call[0].caseTopicId;
+                    if (!Array.isArray(caseTopicIds)) {
+                        caseTopicIds = JSON.parse(caseTopicIds);
+                    }
+                    this.selectedCaseTopics = caseTopicIds.map(String);
+                }
+
+                // Handle caseSubjects
+                if (call[0].caseSubject && call[0].caseSubject !== 'null') {
+                    let caseSubjects = call[0].caseSubject;
+                    if (!Array.isArray(caseSubjects)) {
+                        caseSubjects = JSON.parse(caseSubjects);
+                    }
+                    this.selectedCasesubject = caseSubjects.map(String);
+                }
+
+                // Handle selectedActivityTopicIdSmnr
+                if (call[0].activitySmn && call[0].activitySmn !== 'null') {
+                    let selectedActivityTopicIdSmnr = call[0].activitySmn;
+                    if (!Array.isArray(selectedActivityTopicIdSmnr)) {
+                        selectedActivityTopicIdSmnr = JSON.parse(selectedActivityTopicIdSmnr);
+                    }
+                    this.selectedActivityTopicIdSmn = selectedActivityTopicIdSmnr.map(String);
+
+                    this.callService.getActivitiesTypeSmn(this.valueSearchSmn).subscribe((activitySmn: any) => {
+                        this.activitySmn = activitySmn;
+                        this.saveSelectedActivitiesSmn();
+                    });
+                }
+
+                // Handle selectedActivitiesEl
+                if (call[0].activityEln && call[0].activityEln !== 'null') {
+                    let selectedActivityTopicIds = call[0].activityEln;
+                    if (!Array.isArray(selectedActivityTopicIds)) {
+                        selectedActivityTopicIds = JSON.parse(selectedActivityTopicIds);
+                    }
+                    this.selectedActivityTopicId = selectedActivityTopicIds.map(String);
+                    // Fetch and filter activitiestypeTopic
+                    this.callService.getActivityById(this.valueSearchEln).subscribe((activityEln: any) => {
+                        this.activityEln = activityEln;
+                        this.saveSelectedActivities();
+                    });
+                }
+            });
+        } else if (type === 'case') {
+            this.callService.getCaseById(callId).subscribe((call: any) => {
+                console.log('Case:', call);
+                this.cType = 'case';
+                this.callId = call.caseId;
+                this.description = call.description;
+                this.startTime = call.requestDateTime;
+                const date = new Date(call.requestDateTime);
+                this.timepickStart = {
+                    hour: date.getHours(),
+                    minute: date.getMinutes(),
+                    second: date.getSeconds(),
+                };
+                this.selectedChannels = call.channelId;
+                this.selectedCallTypeId = call.operationType;
+
+                if (call.caseTopicIds && call.caseTopicIds !== 'null') {
+                    let caseTopicIds = call.caseTopicIds;
+                    if (!Array.isArray(caseTopicIds)) {
+                        caseTopicIds = JSON.parse(caseTopicIds);
+                    }
+                    this.selectedCaseTopics = caseTopicIds.map(String);
+                }
+
+                if (call.caseSubjectIds && call.caseSubjectIds !== 'null') {
+                    let caseSubjects = call.caseSubjectIds;
+                    if (!Array.isArray(caseSubjects)) {
+                        caseSubjects = JSON.parse(caseSubjects);
+                    }
+                    this.selectedCasesubject = caseSubjects.map(String);
+                }
+
+                if (call.activitySmn && call.activitySmn !== 'null') {
+                    let selectedActivityTopicIdSmnr = call.activitySmn;
+                    if (!Array.isArray(selectedActivityTopicIdSmnr)) {
+                        selectedActivityTopicIdSmnr = JSON.parse(selectedActivityTopicIdSmnr);
+                    }
+                    this.selectedActivityTopicIdSmn = selectedActivityTopicIdSmnr.map(String);
+
+                    this.callService.getActivitiesTypeSmn(this.valueSearchSmn).subscribe((activitySmn: any) => {
+                        this.activitySmn = activitySmn;
+                        this.saveSelectedActivitiesSmn();
+                    });
+                }
+
+                // Handle selectedActivitiesEl
+                if (call.activityEln && call.activityEln !== 'null') {
+                    let selectedActivityTopicIds = call.activityEln;
+                    if (!Array.isArray(selectedActivityTopicIds)) {
+                        selectedActivityTopicIds = JSON.parse(selectedActivityTopicIds);
+                    }
+                    this.selectedActivityTopicId = selectedActivityTopicIds.map(String);
+                    // Fetch and filter activitiestypeTopic
+                    this.callService.getActivityById(this.valueSearchEln).subscribe((activityEln: any) => {
+                        this.activityEln = activityEln;
+                        this.saveSelectedActivities();
+                    });
+                }
+            });
+        }
+
+        // Fetch activitySmn
+        this.callService.getActivitiesTypeSmn(this.valueSearchSmn).subscribe((activitySmn: any) => {
+            this.activitySmn = activitySmn;
+        });
+
+        this.callService.getActivityById(this.valueSearchEln).subscribe((activityEln: any) => {
+            this.activityEln = activityEln;
+        });
+
+        this.showAddCall();
+    }
+
+    saveSelectedActivitiesSmn() {
+        this.selectedActivitiesSmn = this.activitySmn.filter((activity: { activityTopicId: string }) => {
+            return this.selectedActivityTopicIdSmn.includes(activity.activityTopicId);
+        });
+        // this.showAddCall();
+    }
+
+    toggleActivityTopicIdSmn(activityTopicId: string) {
+        const index = this.selectedActivityTopicIdSmn.indexOf(activityTopicId);
+        if (index === -1) {
+            this.selectedActivityTopicIdSmn.push(activityTopicId);
+        } else {
+            this.selectedActivityTopicIdSmn.splice(index, 1);
+        }
+        this.saveSelectedActivitiesSmn();
+        console.log('select id activity:', this.selectedActivityTopicIdSmn);
+    }
+
+    toggleCheckbox(activityTopicId: number) {
+        const index = this.selectedCheckboxIds.indexOf(activityTopicId);
+        if (index === -1) {
+            this.selectedCheckboxIds.push(activityTopicId);
+        } else {
+            this.selectedCheckboxIds.splice(index, 1);
+        }
+    }
+
+    toggleActivityTopicId(activityTopicId: string) {
+        const index = this.selectedActivityTopicId.indexOf(activityTopicId);
+        if (index === -1) {
+            this.selectedActivityTopicId.push(activityTopicId);
+        } else {
+            this.selectedActivityTopicId.splice(index, 1);
+        }
+        this.saveSelectedActivities();
+        console.log('select id activity:', this.selectedActivityTopicId);
+    }
+
+    saveSelectedActivities() {
+        this.selectedActivities = this.activityEln.filter((activity: { activityTopicId: string }) => {
+            return this.selectedActivityTopicId.includes(activity.activityTopicId);
+        });
+        // this.showAddCall();
+    }
+
+    searchOrg() {
+        if (this.selectedFilter !== 'all') {
+            this.userId = this.userData.userId;
+        } else {
+            this.userId = '';
+        }
+        this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
+        this.getPageOrg();
+    }
+
+    searchEln(): void {
+        this.callService.getActivityById(this.valueSearchEln).subscribe((activityEln: any) => {
+            this.activityEln = activityEln;
+        });
+    }
+
+    sortEln(value: string) {
+        if (this.sortIdOrg == value) {
+            if (this.sortIcon == 'fa-solid fa-sort-down') {
+                this.sortIcon = 'fa-solid fa-sort-up';
+                this.sortOrderOrg = 'DESC';
+            } else {
+                this.sortIcon = 'fa-solid fa-sort-down';
+                this.sortOrderOrg = 'ASC';
+            }
+        } else {
+            this.sortIdOrg = value;
+        }
+        this.getFormEln();
+    }
+
+    async getFormEln() {
+        await this.callService.getActivityIdByPage(this.valueSearchEln).subscribe((res: any) => {
+            console.log('API response:', res);
+            this.activityTypeById = res;
+            // this.spareActivityTypeById = res;
+        });
+        console.log('ActivityIdByPage:', this.activityTypeById);
+    }
+
+    // อัปเดตรายการทั้งหมดสำหรับโครงการอบรม/สัมมนา
+    updateSelectedActivitiesListSmn() {
+        this.selectedActivitiesSmn = this.activityTypeById.filter((smn: { activityTopicId: string }) =>
+            this.selectedActivityTopicIdSmn.includes(smn.activityTopicId),
+        );
+    }
+
+    // อัปเดตรายการทั้งหมดสำหรับ E-Learning
+    updateSelectedActivitiesListElearning() {
+        this.selectedActivitiesElearning = this.activityEln.filter((elearning: { activityTopicId: string }) =>
+            this.selectedActivityTopicId.includes(elearning.activityTopicId),
+        );
+    }
+
+    filterActivities(): any[] {
+        return this.activitiestype.filter((activityType: { activityTypeId: number }) => [21, 27, 28].includes(activityType.activityTypeId));
+    }
+
+    async getFormOrg(pageOrg: number, pageSizeOrg: number) {
+        await this.contactsService
+            .getOrgByPage(pageOrg, pageSizeOrg, `${this.sortIdOrg},${this.sortOrderOrg}`, this.valueSearchOrg, this.selectedFilter)
+            .subscribe((res: any) => {
+                this.organizations = res;
+                this.spareorganizations = res;
+            });
+    }
+
+    async getPageOrg() {
+        await this.contactsService.countOrg(this.valueSearchOrg, this.userId).subscribe((res: any) => {
+            this.totalItemOrgs = res.count;
+        });
+    }
+
+    showAddOrg() {
+        this.AddOrgShowing = true;
+        this.FormShowing = false;
+        this.SearchFormShowing = false;
+        this.thanks = false;
+        this.SearchOrgShowing = false;
+        this.AddCallShowing = false;
+        this.contactsService.getAllIndustryType().subscribe((res: any) => {
+            this.industryType = res;
+        });
+
+        this.contactsService.getAllProductTypes().subscribe((res: any) => {
+            this.productTypes = res;
+        });
+    }
+
+    sortOrg(value: string) {
+        if (this.sortIdOrg == value) {
+            if (this.sortIcon == 'fa-solid fa-sort-down') {
+                this.sortIcon = 'fa-solid fa-sort-up';
+                this.sortOrderOrg = 'DESC';
+            } else {
+                this.sortIcon = 'fa-solid fa-sort-down';
+                this.sortOrderOrg = 'ASC';
+            }
+        } else {
+            this.sortIdOrg = value;
+        }
+        this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
+    }
+
+    chooseOrg(orgId: string) {
+        this.contactOrg = orgId;
+        this.contactsService.getOrganizationById(orgId).subscribe((res: any) => {
+            this.contactOrgName = res[0].orgName;
+            this.contactProductType = res[0].prodName;
+        });
+    }
+
+    async pageChangeOrg(pageOrg: number) {
+        if (pageOrg != this.currentPageOrg) {
+            if (pageOrg >= 1 && pageOrg <= this.totalPageOrgs) {
+                this.currentPageOrg = pageOrg;
+                await this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
+                this.checkedValueOrgs = [];
+            }
+        }
+    }
+
+    get pageOrgs(): number[] {
+        var pageOrg: number[] = [];
+        this.totalPageOrgs = Math.ceil(this.totalItemOrgs / this.pageSizeOrg);
+        for (var i = -this.pagesToShowOrg; i <= this.pagesToShowOrg; i++) {
+            if (this.currentPageOrg + i > 0 && this.currentPageOrg + i <= this.totalPageOrgs) {
+                pageOrg.push(this.currentPageOrg + i);
+            }
+        }
+        return pageOrg;
+    }
+
+    pageSizeChangeOrg() {
+        this.currentPage = 1;
+        this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
+    }
+
+    showSideBarOrg() {
+        this.visibleLeftSideBar = true;
+        this.visibleRightSideBar = true;
+        this.FormShowing = false;
+        this.SearchFormShowing = false;
+        this.thanks = false;
+        this.SearchOrgShowing = true;
+        this.AddOrgShowing = false;
+        this.AddCallShowing = false;
+    }
+
+    toggleEmailSubscription(event: any) {
+        this.isEmailSubscribed = event.target.checked ? 1 : 0;
+        console.log('email:', this.isEmailSubscribed);
+    }
+
+    formatTimepickStart() {
+        const startTimepick = new Date();
+        startTimepick.setHours(this.timepickStart.hour);
+        startTimepick.setMinutes(this.timepickStart.minute);
+        startTimepick.setSeconds(this.timepickStart.second);
+        const formatTimepickStart = startTimepick.toISOString();
+        this.combinedDateTimeStart = formatTimepickStart;
+
+        const hour = startTimepick.getHours();
+        const minute = startTimepick.getMinutes();
+        const second = startTimepick.getSeconds();
+
+        const formattedTimeStartPick = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:${second
+            .toString()
+            .padStart(2, '0')}`;
+
+        this.newDateTime = `${this.formatDate(new Date())} ${formattedTimeStartPick}`;
+    }
+
+    onTimepickStartChange(event: any) {
+        if (event) {
+            const hour = event.hour;
+            const minute = event.minute;
+            const second = event.second;
+
+            const formattedTimeStartPick = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:${second
+                .toString()
+                .padStart(2, '0')}`;
+
+            this.newDateTime = `${this.formatDate(new Date())} ${formattedTimeStartPick}`;
+        } else {
+            this.newDateTime = this.formatDate(new Date());
+        }
+    }
+
+    onCheckboxChange(event: any, activityTypeId: number) {
+        this.isCheckboxSelected[activityTypeId] = event.target.checked;
+    }
+
+    async showSideBarActivitySeminar() {
+        this.visibleLeftSideBar = true;
+        this.visibleRightSideBar = true;
+        this.FormShowing = false;
+        this.SearchFormShowing = false;
+        this.searchContactShowing = false;
+        this.SearchOrgShowing = false;
+        this.SearchSmnShowing = true;
+        this.thanks = false;
+        this.AddContactShowing = false;
+        this.showOrgSidebar = false;
+        this.showContactSidebar = false;
+        this.showActivitySeminarSideBar = true;
+        this.showActivityElearningSideBar = false;
+        this.AddCallShowing = false;
+
+        this.callService.getActivitiesType().subscribe((activitiestype: any) => {
+            this.activitiestypeTopic = activitiestype.filter((activityType: any) =>
+                [21, 27, 28].includes(parseInt(activityType.activityTypeId)),
+            );
+        });
+
+        this.callService.getActivitiesTypeSmn(this.valueSearchSmn).subscribe((activitySmn: any) => {
+            this.activitySmn = activitySmn;
+        });
+    }
+
+    inputActivityElearning(event: any) {
+        console.log(event.target.value);
+    }
+
+    async showSideBarActivityElearning() {
+        this.visibleLeftSideBar = true;
+        this.visibleRightSideBar = true;
+        this.FormShowing = false;
+        this.SearchFormShowing = false;
+        this.SearchElearningShowing = true;
+        this.thanks = false;
+        this.AddContactShowing = false;
+        this.showOrgSidebar = false;
+        this.showContactSidebar = false;
+        this.showActivitySeminarSideBar = false;
+        this.showActivityElearningSideBar = true;
+        this.AddCallShowing = false;
+
+        this.callService.getActivitiesType().subscribe((activitiestype: any) => {
+            this.activitiestypeEln = activitiestype.filter((activityType: any) => [43].includes(parseInt(activityType.activityTypeId)));
+        });
+
+        this.callService.getActivityById(this.valueSearchEln).subscribe((activityEln: any) => {
+            this.activityEln = activityEln;
+        });
+    }
+
+    onFileSelected(event: any) {
+        const files = event.target.files;
+        const createdAt = moment().format('YYYY-MM-DD HH:mm:ss');
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const filename = file.name;
+
+            this.attachmentService
+                .upload(file, filename, createdAt, this.userData?.userId || '')
+                .pipe(
+                    tap((response: any) => {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'อัพโหลดข้อมูลเรียบร้อยแล้ว',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            timerProgressBar: true,
+                        }).then(() => {});
+                        this.attachments.push(response);
+                    }),
+                    catchError((error) => {
+                        this.sweetalertServices.handleError(error);
+                        throw error;
+                    }),
+                )
+                .subscribe(() => {});
+        }
+    }
+
+    submitCall() {
+        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        this.attachmentsId = this.attachments.map((attachment) => attachment.attachmentId.toString());
+        const selectedDate = this.startTime ? this.formatDate(new Date(this.startTime)) : this.formatDate(new Date());
+        const selectedTime = this.timepickStart ? this.formatTime(this.timepickStart) : this.formatTime(new Date());
+
+        const isChannelOne = this.selectedChannels === '1';
+        const selectedCallTypeId = isChannelOne ? this.selectedCallTypeId : null;
+
+        const selectedActivitiesSmnIds = this.selectedActivitiesSmn
+            ? this.selectedActivitiesSmn.map((activity: { activityTopicId: any }) => activity.activityTopicId)
+            : null;
+        const selectedActivitiesElnIds = this.selectedActivities
+            ? this.selectedActivities.map((activity: { activityTopicId: any }) => activity.activityTopicId)
+            : null;
+
+        if (!this.callId) {
+            if (this.selectedCaseTopics.length > 0) {
+                const data = {
+                    contactId: this.contactId,
+                    name: userData.userId,
+                    organization: this.contactOrg,
+                    caseTopicId: this.selectedCaseTopics,
+                    caseSubject: this.selectedCasesubject,
+                    channel: this.selectedChannels,
+                    emailInfo: this.isEmailSubscribed ? 1 : null,
+                    activityType: this.activityTypeId,
+                    description: this.description,
+                    startTime: `${selectedDate} ${selectedTime}`,
+                    solution: this.solutions,
+                    createdById: userData.userId,
+                    attachment: this.attachmentsId,
+                    call_id: this.phoneCall,
+                    operationType: selectedCallTypeId,
+                    activitySmn: selectedActivitiesSmnIds,
+                    activityEln: selectedActivitiesElnIds,
+                };
+                console.log('Data: ', data);
+                this.callService
+                    .createCalls(data)
+                    .pipe(
+                        tap((res) => {
+                            this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
+                            this.auditLogService.log(
+                                '',
+                                'Contact Create Call',
+                                'Contact Create Case Call',
+                                JSON.stringify(data),
+                                `Success`,
+                            );
+                            window.location.reload();
+                        }),
+                        catchError((error) => {
+                            this.sweetalertServices.handleError(error);
+                            this.auditLogService.log(
+                                '',
+                                'Contact Create Call',
+                                'Contact Create Case Call',
+                                JSON.stringify(data),
+                                `Failed, Error : ${error}`,
+                            );
+                            throw error;
+                        }),
+                    )
+                    .subscribe();
+            } else {
+                this.sweetalertServices.getSwal('error', 'โปรดกรอกหัวข้อที่ติดต่อ', '', false, '');
+            }
+        } else if (this.callId && this.cType === 'call') {
+            console.log('Edit Call:', this.callId);
+            if (this.selectedCaseTopics.length > 0) {
+                const data = {
+                    callId: this.callId,
+                    caseTopicId: this.selectedCaseTopics,
+                    caseSubject: this.selectedCasesubject,
+                    channel: this.selectedChannels,
+                    emailInfo: this.isEmailSubscribed ? 1 : null,
+                    activityType: this.activityTypeId,
+                    description: this.description,
+                    startTime: `${selectedDate} ${selectedTime}`,
+                    solution: this.solutions,
+                    modifiedById: userData.userId,
+                    operationType: selectedCallTypeId,
+                    activitySmn: selectedActivitiesSmnIds,
+                    activityEln: selectedActivitiesElnIds,
+                };
+                console.log('Data: ', data);
+                this.contactsService
+                    .updateCalls(data)
+                    .pipe(
+                        tap((res) => {
+                            this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
+                            this.auditLogService.log(
+                                '',
+                                'Contact Update Call',
+                                'Contact Update Case Call',
+                                JSON.stringify(data),
+                                `Success`,
+                            );
+                            window.location.reload();
+                        }),
+                        catchError((error) => {
+                            this.sweetalertServices.handleError(error);
+                            this.auditLogService.log(
+                                '',
+                                'Contact Update Call',
+                                'Contact Update Case Call',
+                                JSON.stringify(data),
+                                `Failed, Error : ${error}`,
+                            );
+                            throw error;
+                        }),
+                    )
+                    .subscribe();
+            } else {
+                this.sweetalertServices.getSwal('error', 'โปรดกรอกหัวข้อที่ติดต่อ', '', false, '');
+            }
+        } else if (this.callId && this.cType === 'case') {
+            console.log('Edit Case:', this.callId);
+            if (this.selectedCaseTopics.length > 0) {
+                const data = {
+                    callId: this.callId,
+                    caseTopicId: this.selectedCaseTopics,
+                    caseSubject: this.selectedCasesubject,
+                    channel: this.selectedChannels,
+                    description: this.description,
+                    startTime: `${selectedDate} ${selectedTime}`,
+                    modifiedById: userData.userId,
+                    operationType: selectedCallTypeId,
+                    activitySmn: selectedActivitiesSmnIds,
+                    activityEln: selectedActivitiesElnIds,
+                };
+                console.log('Data: ', data);
+                this.contactsService
+                    .updateCase(data)
+                    .pipe(
+                        tap((res) => {
+                            this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
+                            this.auditLogService.log('', 'Contact Update Case', 'Contact Update Case ', JSON.stringify(data), `Success`);
+                            window.location.reload();
+                        }),
+                        catchError((error) => {
+                            this.sweetalertServices.handleError(error);
+                            this.auditLogService.log(
+                                '',
+                                'Contact Update Case',
+                                'Contact Update Case',
+                                JSON.stringify(data),
+                                `Failed, Error : ${error}`,
+                            );
+                            throw error;
+                        }),
+                    )
+                    .subscribe();
+            } else {
+                this.sweetalertServices.getSwal('error', 'โปรดกรอกหัวข้อที่ติดต่อ', '', false, '');
+            }
+        }
+    }
+
+    searchSmn(): void {
+        this.callService.getActivitiesTypeSmn(this.valueSearchSmn).subscribe((activitySmn: any) => {
+            this.activitySmn = activitySmn;
+        });
+    }
+
+    submitActivityTopic() {
+        if (this.selectedActivityTopicName && this.nameActivityTopic) {
+            const isDuplicate = this.activitySmn.some((smn: any) => {
+                return smn.activityTopicName === this.nameActivityTopic && smn.activityId === this.selectedActivityTopicName;
+            });
+
+            if (!isDuplicate) {
+                const data = {
+                    activityId: this.selectedActivityTopicName,
+                    activityTopicName: this.nameActivityTopic,
+                };
+                console.log(data);
+
+                this.callService
+                    .createActivityTopic(data)
+                    .pipe(
+                        tap((res) => {
+                            this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
+                            this.auditLogService.log(
+                                '',
+                                'Contact Create Call ActivityTopic',
+                                'Contact Create Case Call ActivityTopic',
+                                `ContactID : ${this.contactId}`,
+                                `Success`,
+                            );
+                            window.location.reload();
+                        }),
+                        catchError((error) => {
+                            this.sweetalertServices.handleError(error);
+                            this.auditLogService.log(
+                                '',
+                                'Contact Create Call ActivityTopic',
+                                'Contact Create ActivityTopic',
+                                `ContactID : ${this.contactId}`,
+                                `Failed, Error : ${error}`,
+                            );
+                            throw error;
+                        }),
+                    )
+                    .subscribe();
+            } else {
+                this.sweetalertServices.getSwal('warning', 'ข้อมูลซ้ำกับข้อมูลที่มีอยู่แล้ว', '', false, '');
+            }
+        } else {
+            this.sweetalertServices.getSwal('warning', 'กรุณาใส่ข้อมูลให้ครบถ้วน', '', false, '');
+        }
+    }
+
+    sortSmn(value: string) {
+        if (this.sortIdSmn == value) {
+            if (this.sortIcon == 'fa-solid fa-sort-down') {
+                this.sortIcon = 'fa-solid fa-sort-up';
+                this.sortOrderSmn = 'DESC';
+            } else {
+                this.sortIcon = 'fa-solid fa-sort-down';
+                this.sortOrderSmn = 'ASC';
+            }
+        } else {
+            this.sortIdSmn = value;
+        }
+        this.getFormEln();
+    }
+
+    formatDate(date: Date): string {
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${year}-${month}-${day}`;
+    }
+
+    formatTime(time: any): string {
+        const hour = time.hour;
+        const minute = time.minute;
+        const second = time.second;
+        return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:${second.toString().padStart(2, '0')}`;
+    }
 }

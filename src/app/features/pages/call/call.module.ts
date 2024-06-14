@@ -11,6 +11,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { MAT_DATE_LOCALE } from '@angular/material/core'
+import { NgSelectModule } from '@ng-select/ng-select';
+
 @NgModule({
     declarations: [CallComponent, SearchPipe],
     imports: [
@@ -29,6 +31,8 @@ import { MAT_DATE_LOCALE } from '@angular/material/core'
       MatInputModule,
       MatFormFieldModule,
       NgbTimepickerModule,
+      NgSelectModule
+
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'en-GB' }
