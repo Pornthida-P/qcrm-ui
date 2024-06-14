@@ -102,7 +102,7 @@
             <thead>
                 <tr>
                     <ng-container *ngFor="let column of columnNames">
-                        <th scope="row" *ngIf="columnVisibility[column]">
+                        <th scope="row" *ngIf="columnVisibility[column]" style="white-space: nowrap;">
                             <a>{{ columnName[column] }}</a>
                         </th>
                     </ng-container>
