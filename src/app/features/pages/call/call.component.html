@@ -18,7 +18,7 @@
                         style="width: 70%"
                         (input)="search()"
                     />
-                    <select class="form-select shadow-none" aria-label="Default select example" [(ngModel)]="selectedFilter">
+                    <select class="form-select shadow-none" aria-label="Default select example" [(ngModel)]="selectedFilter" (ngModelChange)="onUserFilterChange($event)">
                         <option *ngFor="let op of filterOption" [value]="op.code">
                             {{ op.name }}
                         </option>

@@ -290,18 +290,30 @@ export class CallComponent implements OnInit {
         this.getPage();
     }
 
+    onUserFilterChange(newUserFilterType: string) {
+        this.selectedFilter = newUserFilterType;
+        this.getCallsData((this.currentPage - 1) * this.pageSize, this.pageSize);
+        this.getPage();
+    }
+
     updateDateFilterAndRefreshData(newDateFilterType: string, page: number, pageSize: number) {
         this.onDateFilterChange(newDateFilterType);
     }
 
     async getCallsData(page: number, pageSize: number) {
+        let userFilter = '';
+        if (this.selectedFilter === 'all') {
+            userFilter = this.selectedFilter;
+        } else {
+            userFilter = this.userData.userId;
+        }
         await this.callService
             .getCallsPage(
                 page,
                 pageSize,
                 `${this.sortId},${this.sortOrder}`,
                 this.valueSearch,
-                this.selectedFilter,
+                userFilter,
                 this.filterDateType,
                 this.startDate,
                 this.endDate,
