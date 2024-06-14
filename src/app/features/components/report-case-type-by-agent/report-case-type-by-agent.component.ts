@@ -96,7 +96,7 @@ export class ReportCaseTypeByAgentComponent implements OnInit {
     setDisplayAllFields(): void {
         if (this.reportTable !== null && this.reportTable !== undefined) {
             Object.keys(this.reportTable[0])!.forEach((column, index) => {
-                if (column != 'month' && column != 'year' && index < 9) this.columnVisibility[column] = true;
+                if (column != 'month' && column != 'year' && index < 47) this.columnVisibility[column] = true;
                 else this.columnVisibility[column] = false;
             });
         }
