@@ -1098,10 +1098,10 @@ export class ManageContactsComponent implements OnInit {
                     if (!Array.isArray(caseTopicIds)) {
                         caseTopicIds = JSON.parse(caseTopicIds);
                     }
+                    this.selectSubject = caseTopicIds.length;
                     for (let i = 0; i < caseTopicIds.length; i++) {
                         this.selectedCaseTopics[i] = caseTopicIds[i].map(String);
                     }
-                    this.selectSubject = caseTopicIds.length;
                 }
 
                 if (call.caseSubjectIds && call.caseSubjectIds !== 'null') {
