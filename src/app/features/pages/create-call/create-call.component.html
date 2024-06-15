@@ -37,22 +37,65 @@
                     </div>
                 </div>
 
-                <div class="col-md-6">
-                    <label for="inputTopic" class="form-label">หัวข้อที่ติดต่อ<span class="color-red">*</span></label>
-                    <ng-select id="inputTopic" [(ngModel)]="selectedCaseTopics" name="selectedCaseTopics" [multiple]="true">
-                        <ng-option *ngFor="let casetopic of casetopics" [value]="casetopic.caseTopicId">{{ casetopic.name }}</ng-option>
-                    </ng-select>
-                </div>
+                <div *ngFor="let i of numberArray">
+                    <div class="row" [ngClass]="{ 'display-none': selectSubject < i }">
+                        <div class="col-md-6">
+                            <label [ngClass]="{ 'display-none': i != 1 }" for="inputTopic" class="form-label"
+                                >หัวข้อที่ติดต่อ<span class="color-red">*</span></label
+                            >
+                            <ng-select
+                                id="inputTopic"
+                                [(ngModel)]="selectedCaseTopics[i - 1]"
+                                name="selectedCaseTopics{{ i }}"
+                                [multiple]="true"
+                            >
+                                <ng-option *ngFor="let casetopic of casetopics" [value]="casetopic.caseTopicId">
+                                    {{ casetopic.name }}
+                                </ng-option>
+                            </ng-select>
+                        </div>
 
-                <div class="col-md-6">
-                    <label for="inputCaseSubject" class="form-label">เรื่องที่ติดต่อ</label>
-                    <ng-select id="inputCaseSubject" [(ngModel)]="selectedCasesubject" name="selectedCasesubject" [multiple]="true">
-                        <ng-container *ngFor="let casesubject of casesubjects">
-                            <ng-option [value]="casesubject.caseSubjectId" *ngIf="selectedCaseTopics.includes(casesubject.caseTopicId)">
-                                {{ casesubject.name }}
-                            </ng-option>
-                        </ng-container>
-                    </ng-select>
+                        <div class="col-md-5">
+                            <label [ngClass]="{ 'display-none': i != 1 }" for="inputCaseSubject" class="form-label">เรื่องที่ติดต่อ</label>
+                            <ng-select
+                                id="inputCaseSubject"
+                                [(ngModel)]="selectedCasesubject[i - 1]"
+                                name="selectedCasesubject{{ i }}"
+                                [multiple]="true"
+                            >
+                                <ng-container *ngFor="let casesubject of casesubjects">
+                                    <ng-option
+                                        [value]="casesubject.caseSubjectId"
+                                        *ngIf="selectedCaseTopics[i - 1]?.includes(casesubject.caseTopicId)"
+                                    >
+                                        {{ casesubject.name }}
+                                    </ng-option>
+                                </ng-container>
+                            </ng-select>
+                        </div>
+                        <div class="col-md-1">
+                            <span *ngIf="selectSubject == i && selectSubject != 5">
+                                <button
+                                    (click)="addTopicAndSubject()"
+                                    type="button"
+                                    class="btn btn-outline-primary btn-block"
+                                    style="width: 80%; margin-bottom: 10px"
+                                >
+                                    +
+                                </button>
+                            </span>
+                            <span *ngIf="selectSubject == i && selectSubject != 1">
+                                <button
+                                    (click)="removeTopicAndSubject()"
+                                    type="button"
+                                    class="btn btn-outline-danger btn-block"
+                                    style="width: 80%"
+                                >
+                                    -
+                                </button>
+                            </span>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="col-6">

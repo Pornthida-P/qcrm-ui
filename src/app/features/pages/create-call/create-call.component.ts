@@ -49,11 +49,14 @@ export class CreateCallComponent {
     combinedDateTimeEnd: string = '';
     contactOrg: any;
     selectedTopics: any;
-    selectedCasesubject: any;
+    selectedCasesubject: any[] = [];
     selectedCaseTopics: any[] = [];
     selectedChannels: any;
     nameActivityTopic: string = '';
     selectedActivityTopicName: any;
+
+    numberArray = [1, 2, 3, 4, 5];
+    selectSubject = 1;
 
     parent: any = null;
 
@@ -376,6 +379,21 @@ export class CreateCallComponent {
         const selectedActivitiesElnIds = this.selectedActivities
             ? this.selectedActivities.map((activity: { activityTopicId: any }) => activity.activityTopicId)
             : null;
+
+        for (let i = 0; i < this.selectSubject; i++) {
+            if (this.selectedCaseTopics[i] == null) {
+                this.selectedCaseTopics[i] = [];
+                this.selectedCasesubject[i] = [];
+            } else {
+                if (this.selectedCasesubject[i] == null) {
+                    this.selectedCasesubject[i] = [];
+                }
+            }
+        }
+        if (this.selectedCaseTopics.length > this.selectSubject) {
+            this.selectedCasesubject = this.selectedCasesubject.slice(0, this.selectSubject);
+            this.selectedCaseTopics = this.selectedCaseTopics.slice(0, this.selectSubject);
+        }
 
         const data = {
             contactId: this.contactIdSelect,
@@ -874,8 +892,8 @@ export class CreateCallComponent {
         } else {
             this.selectedActivityTopicId.splice(index, 1);
         }
-      console.log('select id activity:', this.selectedActivityTopicId);
-      this.saveSelectedActivities()
+        console.log('select id activity:', this.selectedActivityTopicId);
+        this.saveSelectedActivities();
     }
 
     toggleActivityTopicIdSmn(activityTopicId: string) {
@@ -933,5 +951,12 @@ export class CreateCallComponent {
         return this.activitiestype.filter((activityType: { activityTypeId: number }) => [21, 27, 28].includes(activityType.activityTypeId));
     }
 
-
+    addTopicAndSubject() {
+        if (this.selectSubject < 5) this.selectSubject++;
+        console.log(this.selectSubject);
+    }
+    removeTopicAndSubject() {
+        if (this.selectSubject > 0) this.selectSubject--;
+        console.log(this.selectSubject);
+    }
 }
