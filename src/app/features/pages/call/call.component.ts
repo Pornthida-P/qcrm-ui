@@ -675,6 +675,7 @@ export class CallComponent implements OnInit {
             });
         } else if (type === 'case') {
             this.callService.getCaseById(callId).subscribe((call: any) => {
+                this.selectSubject = 1;
                 console.log('Case:', call);
                 this.cType = 'case';
                 this.callId = call.caseId;
@@ -694,10 +695,7 @@ export class CallComponent implements OnInit {
                     if (!Array.isArray(caseTopicIds)) {
                         caseTopicIds = JSON.parse(caseTopicIds);
                     }
-                    this.selectSubject = caseTopicIds.length;
-                    for (let i = 0; i < caseTopicIds.length; i++) {
-                        this.selectedCaseTopics[i] = caseTopicIds[i].map(String);
-                    }
+                    this.selectedCaseTopics[0] = caseTopicIds.map(String);
                 }
 
                 if (call.caseSubjectIds && call.caseSubjectIds !== 'null') {
@@ -705,9 +703,7 @@ export class CallComponent implements OnInit {
                     if (!Array.isArray(caseSubjects)) {
                         caseSubjects = JSON.parse(caseSubjects);
                     }
-                    for (let i = 0; i < caseSubjects.length; i++) {
-                        this.selectedCasesubject[i] = caseSubjects[i].map(String);
-                    }
+                    this.selectedCasesubject[0] = caseSubjects.map(String);
                 }
 
                 if (call.activitySmn && call.activitySmn !== 'null') {
@@ -1089,22 +1085,22 @@ export class CallComponent implements OnInit {
             ? this.selectedActivities.map((activity: { activityTopicId: any }) => activity.activityTopicId)
             : null;
 
-        for (let i = 0; i < this.selectSubject; i++) {
-            if (this.selectedCaseTopics[i] == null) {
-                this.selectedCaseTopics[i] = [];
-                this.selectedCasesubject[i] = [];
-            } else {
-                if (this.selectedCasesubject[i] == null) {
+        if (this.cType === 'call') {
+            for (let i = 0; i < this.selectSubject; i++) {
+                if (this.selectedCaseTopics[i] == null) {
+                    this.selectedCaseTopics[i] = [];
                     this.selectedCasesubject[i] = [];
+                } else {
+                    if (this.selectedCasesubject[i] == null) {
+                        this.selectedCasesubject[i] = [];
+                    }
                 }
             }
+            if (this.selectedCaseTopics.length > this.selectSubject) {
+                this.selectedCasesubject = this.selectedCasesubject.slice(0, this.selectSubject);
+                this.selectedCaseTopics = this.selectedCaseTopics.slice(0, this.selectSubject);
+            }
         }
-        if (this.selectedCaseTopics.length > this.selectSubject) {
-            this.selectedCasesubject = this.selectedCasesubject.slice(0, this.selectSubject);
-            this.selectedCaseTopics = this.selectedCaseTopics.slice(0, this.selectSubject);
-        }
-        console.log(this.selectedCasesubject )
-        console.log(this.selectedCaseTopics )
 
         if (!this.callId) {
             if (this.selectedCaseTopics.length > 0) {
@@ -1212,8 +1208,8 @@ export class CallComponent implements OnInit {
             if (this.selectedCaseTopics.length > 0) {
                 const data = {
                     callId: this.callId,
-                    caseTopicId: this.selectedCaseTopics,
-                    caseSubject: this.selectedCasesubject,
+                    caseTopicId: this.selectedCaseTopics[0],
+                    caseSubject: this.selectedCasesubject[0],
                     channel: this.selectedChannels,
                     description: this.description,
                     startTime: `${selectedDate} ${selectedTime}`,
