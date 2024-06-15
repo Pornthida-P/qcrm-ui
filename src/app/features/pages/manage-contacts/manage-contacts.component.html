@@ -690,14 +690,14 @@
                                             <button
                                                 (click)="addTopicAndSubject()"
                                                 type="button"
-                                                class="btn btn-outline-primary btn-block"
+                                                class="btn btn-outline-primary btn-block d-flex justify-content-center align-items-center"
                                                 style="width: 90%; margin-bottom: 10px;"
                                                 >
                                                 +
                                             </button>
                                         </span>
                                         <span *ngIf="selectSubject == i && selectSubject != 1">
-                                            <button (click)="removeTopicAndSubject()" type="button" class="btn btn-outline-danger btn-block" style="width: 90%;">
+                                            <button (click)="removeTopicAndSubject()" type="button" class="btn btn-outline-danger btn-block d-flex justify-content-center align-items-center" style="width: 90%;">
                                                 -
                                             </button>
                                         </span>
