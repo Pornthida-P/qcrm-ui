@@ -576,12 +576,12 @@
                                             <th style="width: 10%" scope="col">
                                                 <a>เลือก</a>
                                             </th>
-                                            <th style="width: 72%" scope="col">
+                                            <th style="width: 62%" scope="col">
                                                 <a (click)="sortSmn('name')">ชื่อ </a
                                                 ><i *ngIf="sortIdSmn == 'name'" class="{{ sortIcon }}"></i>
                                             </th>
-                                            <th style="width: 20%" scope="col">
-                                                <a (click)="sortSmn('createdAt')">วันที่บันทึก</a
+                                            <th style="width: 30%" scope="col">
+                                                <a (click)="sortSmn('createdAt')">วันที่เริ่มและสิ้นสุดโครงการ</a
                                                 ><i *ngIf="sortIdSmn == 'createdAt'" class="{{ sortIcon }}"></i>
                                             </th>
                                         </tr>
@@ -599,8 +599,8 @@
                                                         "
                                                     />
                                                 </td>
-                                                <td style="width: 70%" scope="row">{{ smn.name }}</td>
-                                                <td style="width: 20%" scope="row">{{ smn.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
+                                                <td style="width: 62%" scope="row">{{ smn.name }}</td>
+                                                <td style="width: 30%" scope="row">{{ smn.trainingPeriod }}</td>
                                             </tr>
                                         </ng-container>
                                         <ng-template #noDataTemplate>
@@ -689,12 +689,12 @@
                                             <th style="width: 10%" scope="col">
                                                 <a>เลือก</a>
                                             </th>
-                                            <th style="width: 70%" scope="col">
+                                            <th style="width: 71%" scope="col">
                                                 <a (click)="sortEln('name')">ชื่อ </a
                                                 ><i *ngIf="sortIdEln == 'name'" class="{{ sortIcon }}"></i>
                                             </th>
                                             <th style="width: 20%" scope="col">
-                                                <a (click)="sortEln('createdAt')">วันที่บันทึก</a
+                                                <a (click)="sortEln('createdAt')">วันที่เริ่มโครงการ</a
                                                 ><i *ngIf="sortIdEln == 'createdAt'" class="{{ sortIcon }}"></i>
                                             </th>
                                         </tr>
@@ -711,7 +711,7 @@
                                                     />
                                                 </td>
                                                 <td style="width: 72%" scope="row">{{ eln.name }}</td>
-                                                <td style="width: 20%" scope="row">{{ eln.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
+                                                <td style="width: 20%" scope="row">{{ eln.trainingStartDate | date : 'dd/MM/yyyy' }}</td>
                                             </tr>
                                         </ng-container>
                                         <ng-template #noDataTemplate>

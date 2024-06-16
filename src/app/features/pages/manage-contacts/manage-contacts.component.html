@@ -956,7 +956,7 @@
                                                 ><i *ngIf="sortIdSmn == 'name'" class="{{ sortIcon }}"></i>
                                             </th>
                                             <th style="width: 20%" scope="col">
-                                                <a (click)="sortSmn('createdAt')">วันที่บันทึก</a
+                                                <a (click)="sortSmn('createdAt')">วันที่เริ่มและสิ้นสุดโครงการ</a
                                                 ><i *ngIf="sortIdSmn == 'createdAt'" class="{{ sortIcon }}"></i>
                                             </th>
                                         </tr>
@@ -975,7 +975,7 @@
                                                     />
                                                 </td>
                                                 <td style="width: 70%" scope="row">{{ smn.name }}</td>
-                                                <td style="width: 20%" scope="row">{{ smn.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
+                                                <td style="width: 20%" scope="row">{{ smn.trainingPeriod }}</td>
                                             </tr>
                                         </ng-container>
                                         <ng-template #noDataTemplate>
@@ -1077,7 +1077,7 @@
                                                 ><i *ngIf="sortIdEln == 'name'" class="{{ sortIcon }}"></i>
                                             </th>
                                             <th style="width: 20%" scope="col">
-                                                <a (click)="sortEln('createdAt')">วันที่บันทึก</a
+                                                <a (click)="sortEln('createdAt')">วันที่เริ่มโครงการ</a
                                                 ><i *ngIf="sortIdEln == 'createdAt'" class="{{ sortIcon }}"></i>
                                             </th>
                                         </tr>
@@ -1094,7 +1094,7 @@
                                                     />
                                                 </td>
                                                 <td style="width: 72%" scope="row">{{ eln.name }}</td>
-                                                <td style="width: 20%" scope="row">{{ eln.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
+                                                <td style="width: 20%" scope="row">{{ eln.trainingStartDate | date : 'dd/MM/yyyy' }}</td>
                                             </tr>
                                         </ng-container>
                                         <ng-template #noDataTemplate>
