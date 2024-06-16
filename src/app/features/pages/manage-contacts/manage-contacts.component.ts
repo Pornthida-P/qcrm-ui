@@ -317,6 +317,7 @@ export class ManageContactsComponent implements OnInit {
                 this.selectedCallTypeId = this.inbound;
             }
             this.caller_id = params['caller_id'];
+            this.contactNum = params['call_id'];
         });
     }
 
