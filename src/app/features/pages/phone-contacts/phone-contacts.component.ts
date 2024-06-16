@@ -106,33 +106,37 @@ export class PhoneContactsComponent {
     }
 
     ngOnInit(): void {
-        this.route.queryParamMap.subscribe((params) => {
-            this.calls = params.get('phone');
+      this.route.queryParamMap.subscribe((params) => {
+        this.calls = params.get('phone');
 
-            if (this.contactId) {
-                this.getContactByPhoneId(this.contactId);
-                this.processParams();
-            } else if (this.calls) {
-                const dataCallArray = this.calls.split(',');
+        if (this.contactId) {
+            this.getContactByPhoneId(this.contactId);
+            this.processParams(this.contactId);
+        } else if (this.calls) {
+            const dataCallArray = this.calls.split(',');
 
-                this.call_id = dataCallArray[0];
-                this.caller_id = dataCallArray[1];
+            this.call_id = dataCallArray[0];
+            this.caller_id = dataCallArray[1];
 
-                this.contactNumber = this.call_id;
+            this.contactNumber = this.call_id;
 
-                this.contactsService.getContactsByParamPhone(this.call_id).subscribe((data: any) => {
-                    if (data && data.length > 0) {
-                        this.contact = data[0].contactNumber;
-                        this.contactNumber = this.call_id;
-                        this.contactIdParams = data[0].contactId;
-                        this.getContactByPhoneId(this.contact);
-                        this.processParams();
-                    } else {
-                        console.log('Data does not exist');
-                    }
-                });
-            }
-        });
+            this.contactsService.getContactsByParamPhone(this.call_id).subscribe((data: any) => {
+                if (data && data.length > 0) {
+                    this.contact = data[0].contactNumber;
+                    this.contactNumber = this.call_id;
+                    this.contactIdParams = data[0].contactId;
+                    this.getContactByPhoneId(this.contact);
+                } else {
+                    console.log('Data does not exist');
+                    this.contactIdParams = '';
+                }
+                this.processParams(this.contactIdParams);
+            });
+        } else {
+            this.processParams('');
+        }
+    });
+
 
         this.selectedFilter = 'all';
 
@@ -149,16 +153,19 @@ export class PhoneContactsComponent {
         return true;
     }
 
-    processParams(): void {
-        const navigationExtras: NavigationExtras = {
-            queryParams: {
-                key: this.contactIdParams,
-                call_id: this.call_id,
-                caller_id: this.caller_id,
-            },
-        };
-        this.router.navigate(['/contacts/edit'], navigationExtras);
-    }
+    processParams(contactId?: string): void {
+      const queryParams: any = {
+          call_id: this.call_id,
+          caller_id: this.caller_id,
+          key: contactId || ''
+      };
+
+      const navigationExtras: NavigationExtras = {
+          queryParams: queryParams,
+      };
+
+      this.router.navigate(['/contacts/edit'], navigationExtras);
+  }
 
     async getContactByPhoneId(contactId: string) {
         try {
