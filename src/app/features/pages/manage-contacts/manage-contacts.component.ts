@@ -378,7 +378,7 @@ export class ManageContactsComponent implements OnInit {
 
     submit() {
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-        // if (userData && this.contactId && this.contactId !== '' && this.contact.components.length > 1) {
+        // if (userData && this.contactId && this.contactId !== '' && this.contact.components.length > 1) {    
         if (this.detailItem && this.state != 'copy') {
             const data = {
                 contactId: this.contactId,
@@ -430,7 +430,7 @@ export class ManageContactsComponent implements OnInit {
                             const contactId = res.contactId;
                             this.router.navigate(['/contacts/edit'], { queryParams: { key: contactId } });
                             this.auditLogService.log('', 'Contact', 'Create Contact', JSON.stringify(data), `Success`);
-                        } else if (res.success === false && res.message === 'Duplicate') {
+                        } else if (res.success === false && res.message === 'Duplicate' && this.MultiNumber === false) {
                             if (res.duplicates.length > 0) {
                                 const duplicatedFields = res.duplicates.map((dup: any) => dup.duplicateOn).join(' และ ');
                                 this.sweetalertServices.contactSwal('error', `${duplicatedFields}นี้ได้มีการลงทะเบียนแล้ว`, res.duplicates);
@@ -443,6 +443,20 @@ export class ManageContactsComponent implements OnInit {
                                 JSON.stringify(data),
                                 `Failed, Error Duplicate: ${res.duplicates}`,
                             );
+                        } else if (res.success === false && res.message === 'Duplicate' && this.MultiNumber === true) {
+                            this.contactsService.editContacts2(data)
+                            .pipe(
+                                tap((res) => {
+                                    this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/contacts');
+                                    this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), 'Success');
+                                }),
+                                catchError((error) => {
+                                    this.sweetalertServices.handleError(error);
+                                    this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), `Failed, Error : ${error}`);
+                                    throw error;
+                                }),
+                            )
+                            .subscribe();
                         }
                     }),
                     catchError((error) => {
