@@ -24,6 +24,7 @@ import { WebSocketSubject } from 'rxjs/webSocket';
     styleUrls: ['./manage-contacts.component.scss'],
 })
 export class ManageContactsComponent implements OnInit {
+    MultiNumber: boolean = false;
     contactActivities: any[] = [];
     contactDrive: any;
     contactSurveyForm: any[] = [];
@@ -39,6 +40,7 @@ export class ManageContactsComponent implements OnInit {
     contactType: string = '';
     contactEmail: string = '';
     contactNum: string = '';
+    contactNum2: string = '';
     contactProvince: string = '';
     contactProductType: string = '';
     contactSource: string = '';
@@ -376,7 +378,7 @@ export class ManageContactsComponent implements OnInit {
 
     submit() {
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-        // if (userData && this.contactId && this.contactId !== '' && this.contact.components.length > 1) {
+        // if (userData && this.contactId && this.contactId !== '' && this.contact.components.length > 1) {    
         if (this.detailItem && this.state != 'copy') {
             const data = {
                 contactId: this.contactId,
@@ -387,6 +389,7 @@ export class ManageContactsComponent implements OnInit {
                 contactType: this.contactType,
                 email: this.contactEmail,
                 contactNumber: this.contactNum,
+                contactNumber2: this.contactNum2,
                 province: this.contactProvince,
                 modifiedById: userData.userId,
             };
@@ -416,6 +419,7 @@ export class ManageContactsComponent implements OnInit {
                 contactNumber: this.contactNum,
                 province: this.contactProvince,
                 createdById: userData.userId,
+                contactNumber2: this.contactNum2,
             };
 
             this.contactsService
@@ -426,7 +430,7 @@ export class ManageContactsComponent implements OnInit {
                             const contactId = res.contactId;
                             this.router.navigate(['/contacts/edit'], { queryParams: { key: contactId } });
                             this.auditLogService.log('', 'Contact', 'Create Contact', JSON.stringify(data), `Success`);
-                        } else if (res.success === false && res.message === 'Duplicate') {
+                        } else if (res.success === false && res.message === 'Duplicate' && this.MultiNumber === false) {
                             if (res.duplicates.length > 0) {
                                 const duplicatedFields = res.duplicates.map((dup: any) => dup.duplicateOn).join(' และ ');
                                 this.sweetalertServices.contactSwal('error', `${duplicatedFields}นี้ได้มีการลงทะเบียนแล้ว`, res.duplicates);
@@ -439,6 +443,20 @@ export class ManageContactsComponent implements OnInit {
                                 JSON.stringify(data),
                                 `Failed, Error Duplicate: ${res.duplicates}`,
                             );
+                        } else if (res.success === false && res.message === 'Duplicate' && this.MultiNumber === true) {
+                            this.contactsService.editContacts2(data)
+                            .pipe(
+                                tap((res) => {
+                                    this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/contacts');
+                                    this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), 'Success');
+                                }),
+                                catchError((error) => {
+                                    this.sweetalertServices.handleError(error);
+                                    this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), `Failed, Error : ${error}`);
+                                    throw error;
+                                }),
+                            )
+                            .subscribe();
                         }
                     }),
                     catchError((error) => {
@@ -524,11 +542,24 @@ export class ManageContactsComponent implements OnInit {
             this.contactsService.getDriveContact(this.contactIden).subscribe(
                 (res: any) => {
                     this.contactDrive = res;
-                    this.contactFirstName = this.contactDrive.firstname_TH;
-                    this.contactLastName = this.contactDrive.lastname_TH;
-                    this.contactEmail = this.contactDrive.email;
-                    this.contactNum = this.contactDrive.mobile;
-                    this.contactProvince = this.contactDrive.province.name;
+                    if (this.contactNum == '' || this.contactNum == null || this.contactNum == undefined) {
+                        this.contactFirstName = this.contactDrive.firstname_TH;
+                        this.contactLastName = this.contactDrive.lastname_TH;
+                        this.contactEmail = this.contactDrive.email;
+                        this.contactNum = this.contactDrive.mobile;
+                        this.contactProvince = this.contactDrive.province.name;
+                    } else {
+                        if (this.contactDrive.mobile != this.contactNum) {
+                            const contactNo = this.contactNum;
+                            this.contactFirstName = this.contactDrive.firstname_TH;
+                            this.contactLastName = this.contactDrive.lastname_TH;
+                            this.contactEmail = this.contactDrive.email;
+                            this.contactNum = this.contactDrive.mobile;
+                            this.contactProvince = this.contactDrive.province.name;
+                            this.contactNum2 = contactNo;
+                            this.MultiNumber = true;
+                        }
+                    }    
                 },
                 (error: any) => {
                     this.sweetalertServices.getSwal('warning', 'Warning', 'ไม่พบข้อมูลในระบบ Drive', false, '');
