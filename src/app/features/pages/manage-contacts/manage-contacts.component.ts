@@ -446,8 +446,9 @@ export class ManageContactsComponent implements OnInit {
                         } else if (res.success === false && res.message === 'Duplicate' && this.MultiNumber === true) {
                             this.contactsService.editContacts2(data)
                             .pipe(
-                                tap((res) => {
-                                    this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/contacts');
+                                tap((res: any) => {
+                                    const contactId = res.contactId;
+                                    this.router.navigate(['/contacts/edit'], { queryParams: { key: contactId } });
                                     this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), 'Success');
                                 }),
                                 catchError((error) => {
