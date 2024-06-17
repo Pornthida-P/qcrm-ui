@@ -224,12 +224,13 @@ export class CallComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.getUserData();
-        this.userRole = this.userData.role.roleTitle.toLocaleLowerCase();
-        this.filterOption = [
-            { name: 'ทั้งหมด', code: 'all' },
-            { name: 'เฉพาะฉัน', code: this.userData.username },
-        ];
+      this.getUserData();
+
+      this.userRole = this.userData.role.roleTitle.toLocaleLowerCase();
+      this.filterOption = [
+          { name: 'ทั้งหมด', code: 'all' },
+          { name: 'เฉพาะฉัน', code: this.userData.username },
+      ];
 
         this.filterDate = [
             { name: 'กรุณาเลือกวันที่', type: '' },
@@ -239,15 +240,15 @@ export class CallComponent implements OnInit {
             { name: 'เลือกวันที่', type: 'custom' },
         ];
 
-        this.activeRoute.queryParams.subscribe((params) => {
-            if (params['cb'] != undefined && params['cb'] != '') {
-                const cbArray = params['cb'].split(',').map(Number);
-                this.pageSize = cbArray[0];
-                this.currentPage = cbArray[1];
-                this.totalItems = cbArray[2];
-                this.totalPages = cbArray[3];
-            }
-        });
+      this.activeRoute.queryParams.subscribe((params) => {
+          if (params['cb'] != undefined && params['cb'] != '') {
+              const cbArray = params['cb'].split(',').map(Number);
+              this.pageSize = cbArray[0];
+              this.currentPage = cbArray[1];
+              this.totalItems = cbArray[2];
+              this.totalPages = cbArray[3];
+          }
+      });
 
         this.selectedFilter = this.filterOption[0].code;
         if (this.selectedFilter !== 'all') {
@@ -256,32 +257,31 @@ export class CallComponent implements OnInit {
 
         this.filterDateType = this.filterDate[0].type;
 
-        this.getCallsData(this.currentPage, this.pageSize);
-        this.getPage();
+      this.getCallsData((this.currentPage - 1) *  this.currentPage, this.pageSize);
+      this.getPage();
 
-        this.dateRangeForm = this.fb.group({
-            startDate: [''],
-            endDate: [''],
-        });
-        this.dateRangeForm.get('startDate')!.valueChanges.subscribe((value) => {
-            this.startDate = moment(value).format('YYYY-MM-DD');
-            console.log('Formatted Start Date:', this.startDate);
-            this.getCallsData(this.currentPage, this.pageSize);
-            this.getPage();
-        });
+      this.dateRangeForm = this.fb.group({
+          startDate: [''],
+          endDate: [''],
+      });
 
-        this.dateRangeForm.get('endDate')!.valueChanges.subscribe((value) => {
-            this.endDate = moment(value).format('YYYY-MM-DD');
-            console.log('Formatted End Date:', this.endDate);
-            this.getCallsData(this.currentPage, this.pageSize);
-            this.getPage();
-        });
+      this.dateRangeForm.get('startDate')!.valueChanges.subscribe((value) => {
+          this.startDate = moment(value).format('YYYY-MM-DD');
+          this.getCallsData(this.currentPage, this.pageSize);
+          this.getPage();
+      });
 
-        this.callTypes = [
-            { id: '1', name: this.inbound },
-            { id: '2', name: this.outbound },
-        ];
-    }
+      this.dateRangeForm.get('endDate')!.valueChanges.subscribe((value) => {
+          this.endDate = moment(value).format('YYYY-MM-DD');
+          this.getCallsData(this.currentPage, this.pageSize);
+          this.getPage();
+      });
+
+      this.callTypes = [
+          { id: '1', name: this.inbound },
+          { id: '2', name: this.outbound },
+      ];
+  }
 
     onUserSelectDateFilter(newDateFilterType: string) {
         this.updateDateFilterAndRefreshData(newDateFilterType, (this.currentPage - 1) * this.pageSize, this.pageSize);
@@ -384,7 +384,7 @@ export class CallComponent implements OnInit {
 
     async pageChange(page: number) {
         if (page != this.currentPage) {
-            if (page >= 1 && page <= this.totalPages) {
+            if (page >= 0 && page <= this.totalPages) {
                 this.currentPage = page;
                 await this.getCallsData((this.currentPage - 1) * this.pageSize, this.pageSize);
                 this.checkedValues = [];
