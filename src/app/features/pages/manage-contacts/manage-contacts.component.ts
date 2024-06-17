@@ -24,6 +24,7 @@ import { WebSocketSubject } from 'rxjs/webSocket';
     styleUrls: ['./manage-contacts.component.scss'],
 })
 export class ManageContactsComponent implements OnInit {
+    MultiNumber: boolean = false;
     contactActivities: any[] = [];
     contactDrive: any;
     contactSurveyForm: any[] = [];
@@ -39,6 +40,7 @@ export class ManageContactsComponent implements OnInit {
     contactType: string = '';
     contactEmail: string = '';
     contactNum: string = '';
+    contactNum2: string = '';
     contactProvince: string = '';
     contactProductType: string = '';
     contactSource: string = '';
@@ -387,6 +389,7 @@ export class ManageContactsComponent implements OnInit {
                 contactType: this.contactType,
                 email: this.contactEmail,
                 contactNumber: this.contactNum,
+                contactNumber2: this.contactNum2,
                 province: this.contactProvince,
                 modifiedById: userData.userId,
             };
@@ -416,6 +419,7 @@ export class ManageContactsComponent implements OnInit {
                 contactNumber: this.contactNum,
                 province: this.contactProvince,
                 createdById: userData.userId,
+                contactNumber2: this.contactNum2,
             };
 
             this.contactsService
@@ -524,11 +528,24 @@ export class ManageContactsComponent implements OnInit {
             this.contactsService.getDriveContact(this.contactIden).subscribe(
                 (res: any) => {
                     this.contactDrive = res;
-                    this.contactFirstName = this.contactDrive.firstname_TH;
-                    this.contactLastName = this.contactDrive.lastname_TH;
-                    this.contactEmail = this.contactDrive.email;
-                    this.contactNum = this.contactDrive.mobile;
-                    this.contactProvince = this.contactDrive.province.name;
+                    if (this.contactNum == '' || this.contactNum == null || this.contactNum == undefined) {
+                        this.contactFirstName = this.contactDrive.firstname_TH;
+                        this.contactLastName = this.contactDrive.lastname_TH;
+                        this.contactEmail = this.contactDrive.email;
+                        this.contactNum = this.contactDrive.mobile;
+                        this.contactProvince = this.contactDrive.province.name;
+                    } else {
+                        if (this.contactDrive.mobile != this.contactNum) {
+                            const contactNo = this.contactNum;
+                            this.contactFirstName = this.contactDrive.firstname_TH;
+                            this.contactLastName = this.contactDrive.lastname_TH;
+                            this.contactEmail = this.contactDrive.email;
+                            this.contactNum = this.contactDrive.mobile;
+                            this.contactProvince = this.contactDrive.province.name;
+                            this.contactNum2 = contactNo;
+                            this.MultiNumber = true;
+                        }
+                    }    
                 },
                 (error: any) => {
                     this.sweetalertServices.getSwal('warning', 'Warning', 'ไม่พบข้อมูลในระบบ Drive', false, '');
