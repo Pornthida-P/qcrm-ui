@@ -237,6 +237,7 @@ export class ManageContactsComponent implements OnInit {
     activitiesTopic: any;
     selectedActivitiesElearning: any;
     selectedCheckboxIds: any;
+    contactNumParams: any;
 
     constructor(
         private _location: Location,
@@ -320,7 +321,10 @@ export class ManageContactsComponent implements OnInit {
             }
             this.caller_id = params['caller_id'];
             this.contactNum = params['call_id'];
+            this.contactNumParams = params['call_id'];
         });
+        console.log('contactNumParams: ', this.contactNumParams)
+        localStorage.setItem("contactNum", this.contactNum);
     }
 
     checkRole(): boolean {
@@ -377,8 +381,8 @@ export class ManageContactsComponent implements OnInit {
     }
 
     submit() {
-        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-        // if (userData && this.contactId && this.contactId !== '' && this.contact.components.length > 1) {    
+      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        // if (userData && this.contactId && this.contactId !== '' && this.contact.components.length > 1) {
         if (this.detailItem && this.state != 'copy') {
             const data = {
                 contactId: this.contactId,
@@ -426,9 +430,11 @@ export class ManageContactsComponent implements OnInit {
                 .createContacts(data)
                 .pipe(
                     tap((res: any) => {
-                        if (res.success === true) {
-                            const contactId = res.contactId;
-                            this.router.navigate(['/contacts/edit'], { queryParams: { key: contactId } });
+                      if (res.success === true) {
+                          console.log('phone: ', res.contactNumber)
+                        const contactId = res.contactId;
+                        const contactNumber = data.contactNumber;
+                            this.router.navigate(['/contacts/edit'], { queryParams: { key: contactId, call_id: contactNumber} });
                             this.auditLogService.log('', 'Contact', 'Create Contact', JSON.stringify(data), `Success`);
                         } else if (res.success === false && res.message === 'Duplicate' && this.MultiNumber === false) {
                             if (res.duplicates.length > 0) {
@@ -444,20 +450,29 @@ export class ManageContactsComponent implements OnInit {
                                 `Failed, Error Duplicate: ${res.duplicates}`,
                             );
                         } else if (res.success === false && res.message === 'Duplicate' && this.MultiNumber === true) {
-                            this.contactsService.editContacts2(data)
-                            .pipe(
-                                tap((res: any) => {
-                                    const contactId = res.contactId;
-                                    this.router.navigate(['/contacts/edit'], { queryParams: { key: contactId } });
-                                    this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), 'Success');
-                                }),
-                                catchError((error) => {
-                                    this.sweetalertServices.handleError(error);
-                                    this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), `Failed, Error : ${error}`);
-                                    throw error;
-                                }),
-                            )
-                            .subscribe();
+                            this.contactsService
+                                .editContacts2(data)
+                                .pipe(
+                                    tap((res: any) => {
+                                      const contactId = res.contactId;
+                                      const contactNumber = res.contactNumber;
+                                      console.log('contactNumber: ', contactNumber)
+                                        this.router.navigate(['/contacts/edit'], { queryParams: { key: contactId, call_id: contactNumber } });
+                                        this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), 'Success');
+                                    }),
+                                    catchError((error) => {
+                                        this.sweetalertServices.handleError(error);
+                                        this.auditLogService.log(
+                                            '',
+                                            'Contact',
+                                            'Edit Contact',
+                                            JSON.stringify(data),
+                                            `Failed, Error : ${error}`,
+                                        );
+                                        throw error;
+                                    }),
+                                )
+                                .subscribe();
                         }
                     }),
                     catchError((error) => {
@@ -560,7 +575,7 @@ export class ManageContactsComponent implements OnInit {
                             this.contactNum2 = contactNo;
                             this.MultiNumber = true;
                         }
-                    }    
+                    }
                 },
                 (error: any) => {
                     this.sweetalertServices.getSwal('warning', 'Warning', 'ไม่พบข้อมูลในระบบ Drive', false, '');
@@ -1222,7 +1237,8 @@ export class ManageContactsComponent implements OnInit {
             }
         }
 
-        if (!this.callId) {
+      if (!this.callId) {
+
             if (this.selectedCaseTopics.length > 0) {
                 const data = {
                     contactId: this.contactId,
@@ -1238,7 +1254,8 @@ export class ManageContactsComponent implements OnInit {
                     solution: this.solutions,
                     createdById: userData.userId,
                     attachment: this.attachmentsId,
-                    call_id: this.phoneCall,
+                    call_id: this.contactNumParams,
+                    caller_id: this.caller_id,
                     operationType: selectedCallTypeId,
                     activitySmn: selectedActivitiesSmnIds,
                     activityEln: selectedActivitiesElnIds,

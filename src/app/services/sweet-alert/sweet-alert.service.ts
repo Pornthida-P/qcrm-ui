@@ -36,10 +36,13 @@ export class SweetAlertService {
         });
     }
 
-    contactSwal(icon: any, title: string, contacts: any,): any {
+  contactSwal(icon: any, title: string, contacts: any, ): any {
+    const contactNum = (localStorage.getItem('contactNum') || '{}');
+    console.log('contactNum: ' ,contactNum)
         let contactList = '';
-        contacts.forEach((contact: any) => {
-            contactList += `<a href="contacts/edit?key=${contact.contactId}">${contact.fullname}</a><br>`;
+      contacts.forEach((contact: any) => {
+          console.log('contact: ', contact)
+            contactList += `<a href="contacts/edit?key=${contact.contactId}&call_id=${contactNum}">${contact.fullname}</a><br>`;
         });
         return Swal.fire({
             icon: icon,
