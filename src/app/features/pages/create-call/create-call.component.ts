@@ -204,6 +204,10 @@ export class CreateCallComponent {
     callIdEdit: any;
     callId: any;
     callFideId: any;
+    contactNumber: any;
+    contactNumbers: any;
+    selectedContactNumber: any[] = [];
+
     // pageEln: number | undefined = 0;
 
     // selectedActivityTopicId: string[] = [];
@@ -410,7 +414,7 @@ export class CreateCallComponent {
             createdById: userData.userId,
             attachment: this.attachmentsId,
             caller_id: this.caller_id,
-            call_id: this.call_id,
+            call_id: this.selectedContactNumber,
             operationType: selectedCallTypeId,
             activitySmn: selectedActivitiesSmnIds,
             activityEln: selectedActivitiesElnIds,
@@ -556,6 +560,7 @@ export class CreateCallComponent {
         this.callServive.getContactById(contactsId).subscribe((res: any) => {
             this.contactName = `${res[0].firstName} ${res[0].lastName}`;
         });
+        this.getContactNumber(contactsId);
     }
 
     async pageChangeContact(pageContact: number) {
@@ -751,6 +756,22 @@ export class CreateCallComponent {
                 this.organizations = res;
                 this.spareorganizations = res;
             });
+    }
+
+    async getContactNumber(contactsId: string) {
+        try {
+            const contactNumber = (await this.callServive.getContactNumbertById(contactsId).toPromise()) as any[];
+            console.log('contactNumber Res:', contactNumber);
+
+            if (contactNumber && contactNumber.length > 0) {
+                this.contactNumber = contactNumber;
+                console.log('contactNumber: ', this.contactNumber);
+            } else {
+                console.warn('No contact number found for this contactId');
+            }
+        } catch (error) {
+            console.error('Error fetching contact number', error);
+        }
     }
 
     async getPageOrg() {

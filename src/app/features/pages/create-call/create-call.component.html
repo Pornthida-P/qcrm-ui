@@ -99,6 +99,14 @@
                 </div>
 
                 <div class="col-6">
+                  <label for="inputContactNumber" class="form-label">เบอร์ติดต่อ</label>
+                  <select id="inputContactNumber" class="form-select" name="selectedContactNumber" [(ngModel)]="selectedContactNumber">
+                      <option disabled value="">กรุณาเลือกข้อมูล</option>
+                      <option *ngFor="let contactNumbers of contactNumber" [value]="contactNumbers.contactNumber">{{ contactNumbers.contactNumber }}</option>
+                  </select>
+              </div>
+
+                <div class="col-6">
                     <label for="inputChannel" class="form-label">ช่องทางติดต่อ</label>
                     <select id="inputChannel" class="form-select" name="selectedChannels" [(ngModel)]="selectedChannels">
                         <option disabled value="">กรุณาเลือกข้อมูล</option>
@@ -509,7 +517,7 @@
                         <div class="p-5 shadow call-side-detail" *ngIf="SearchSmnShowing">
                             <div>
                                 <div class="row" style="padding-bottom: 20px" (ngSubmit)="submitActivityTopic()">
-                                    <h5 style="margin-bottom: 7px">เพิ่มโครงการอบรม</h5>
+                                    <h5 style="margin-bottom: 20px">เพิ่มโครงการอบรม</h5>
                                     <div class="col-sm">
                                         <label for="staticEmail2" class="visually">ชื่อโครงการอบรม</label>
                                         <input

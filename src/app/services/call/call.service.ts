@@ -155,4 +155,8 @@ export class CallService {
     getCaseById(id: string) {
         return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.caseById}/${id}`);
     }
+
+    getContactNumbertById(id: string) {
+      return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.contactNumberById}/${id}`);
+  }
 }
