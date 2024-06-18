@@ -83,6 +83,7 @@ export const config = {
                 createActivityTopic: '/activityTopic',
                 callById: '/call-id',
                 caseById: '/case-id',
+                contactNumberById: '/contacts-number',
             },
             survey: {
                 baseUrl: '/survey',
