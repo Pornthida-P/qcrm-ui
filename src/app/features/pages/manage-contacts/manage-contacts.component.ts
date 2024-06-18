@@ -433,7 +433,7 @@ export class ManageContactsComponent implements OnInit {
                       if (res.success === true) {
                           console.log('phone: ', res.contactNumber)
                         const contactId = res.contactId;
-                        const contactNumber = res.contactNumber;
+                        const contactNumber = data.contactNumber;
                             this.router.navigate(['/contacts/edit'], { queryParams: { key: contactId, call_id: contactNumber} });
                             this.auditLogService.log('', 'Contact', 'Create Contact', JSON.stringify(data), `Success`);
                         } else if (res.success === false && res.message === 'Duplicate' && this.MultiNumber === false) {
@@ -1273,7 +1273,7 @@ export class ManageContactsComponent implements OnInit {
                                 JSON.stringify(data),
                                 `Success`,
                             );
-                            // window.location.reload();
+                            window.location.reload();
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
