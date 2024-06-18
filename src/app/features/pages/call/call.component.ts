@@ -267,13 +267,13 @@ export class CallComponent implements OnInit {
 
       this.dateRangeForm.get('startDate')!.valueChanges.subscribe((value) => {
           this.startDate = moment(value).format('YYYY-MM-DD');
-          this.getCallsData(this.currentPage, this.pageSize);
+          this.getCallsData((this.currentPage - 1) * this.currentPage, this.pageSize);
           this.getPage();
       });
 
       this.dateRangeForm.get('endDate')!.valueChanges.subscribe((value) => {
           this.endDate = moment(value).format('YYYY-MM-DD');
-          this.getCallsData(this.currentPage, this.pageSize);
+          this.getCallsData((this.currentPage - 1) * this.currentPage, this.pageSize);
           this.getPage();
       });
 
@@ -333,9 +333,17 @@ export class CallComponent implements OnInit {
             });
     }
 
-    async getPage() {
+  async getPage() {
+    let userFilter = '';
+    if (this.selectedFilter === 'all') {
+        userFilter = this.selectedFilter;
+    } else {
+        userFilter = this.userData.userId;
+    }
+
+    console.log('user: ', userFilter)
         await this.callService
-            .getCallsCount(this.valueSearch, this.userId, this.filterDateType, this.startDate, this.endDate)
+            .getCallsCount(this.valueSearch, userFilter, this.filterDateType, this.startDate, this.endDate)
             .subscribe((res: any) => {
                 this.totalItems = res.count;
             });
