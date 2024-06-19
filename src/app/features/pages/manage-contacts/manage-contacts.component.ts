@@ -1709,4 +1709,16 @@ export class ManageContactsComponent implements OnInit {
         if (this.selectSubject > 0) this.selectSubject--;
         console.log(this.selectSubject);
     }
+
+    onInputChange(event: any, index: string) {
+        let inputValue = event.target.value;
+
+        inputValue = inputValue.replace(/\D/g, '');
+
+        if (index === 'contactNum') {
+            this.contactNum = inputValue;
+        } else if (index === 'contactNum2') {
+            this.contactNum2 = inputValue;
+        }    
+    }
 }
