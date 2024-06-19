@@ -26,7 +26,11 @@ export class ReportService {
         return this.http.get(`${this.baseUrl}${config.api.path.report.sendEmailSurvey}/${startDate}/${endDate}`);
     }
 
-    getCaseDetail(startDate: string, endDate: string) {
-        return this.http.get(`${this.baseUrl}${config.api.path.report.caseDetail}/${startDate}/${endDate}`);
+    getCaseDetail(startDate: string, endDate: string, users: any) {
+        return this.http.get(`${this.baseUrl}${config.api.path.report.caseDetail}/${startDate}/${endDate}/${users}`);
+    }
+
+    getAgent() {
+        return this.http.get(`${this.baseUrl}${config.api.path.report.getAgent}`);
     }
 }
