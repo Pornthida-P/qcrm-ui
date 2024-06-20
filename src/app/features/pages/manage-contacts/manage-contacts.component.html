@@ -141,7 +141,7 @@
                         onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                         (input)="onInputChange($event, 'contactNum2')"
                     />
-                </div>                
+                </div>
                 <div class="col-md-6">
                     <label for="inputContactProvince" class="form-label">จังหวัด</label>
                     <input
@@ -737,7 +737,7 @@
                                     <option disabled value="">กรุณาเลือกข้อมูล</option>
                                     <option *ngFor="let channel of channels" [value]="channel.channelId">{{ channel.name }}</option>
                                 </select>
-                                <div class="col-6 w-100 pd-t-20" *ngIf="selectedChannels === '1'">
+                                <div class="col-6 w-100 pd-t-20" *ngIf="selectedChannels === '1' || selectedChannels === '2' || selectedChannels === '3'">
                                     <label for="inputCallType" class="form-label">ประเภทสาย</label>
                                     <select
                                         id="inputCallType"
@@ -749,6 +749,27 @@
                                         <option *ngFor="let callType of callTypes" [value]="callType.name">{{ callType.name }}</option>
                                     </select>
                                 </div>
+
+                                <div class="col-6" *ngIf="selectedChannels === '1' || selectedChannels === '2'">
+                                  <label for="inputContactNumber" class="form-label">เบอร์ติดต่อ<span class="color-red">*</span></label>
+                                  <select id="inputContactNumber" class="form-select" name="selectedContactNumber" [(ngModel)]="selectedContactNumber">
+                                      <option disabled value="">กรุณาเลือกข้อมูล</option>
+                                      <option *ngFor="let contactNumbers of contactNumber" [value]="contactNumbers.contactNumber">
+                                          {{ contactNumbers.contactNumber }}
+                                      </option>
+                                  </select>
+                              </div>
+
+                              <div class="col-6" *ngIf="selectedChannels === '3'">
+                                  <label for="inputEmail" class="form-label">อีเมล<span class="color-red">*</span></label>
+                                  <select id="inputEmail" class="form-select" name="selectedEmail" [(ngModel)]="selectedEmail">
+                                      <!-- <option disabled value="">กรุณาเลือกข้อมูล</option> -->
+                                      <option *ngFor="let emails of email" [value]="emails.emailId">
+                                          {{ emails.email }}
+                                      </option>
+                                  </select>
+                              </div>
+
                                 <div class="form-check" style="margin-top: 17px">
                                     <input
                                         class="form-check-input"
