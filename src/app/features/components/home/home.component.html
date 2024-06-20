@@ -3,12 +3,12 @@
         <div class="col-12 mb-3">
             <div class="d-flex justify-content-between align-items-center">
                 <p class="label fs-5">{{ 'title.' + title | translate }}</p>
-                <button *ngIf="isAction" type="button" class="btn btn-primary-color text-white" (click)="onClickAddEvent()">
+                <!-- <button *ngIf="isAction" type="button" class="btn btn-primary-color text-white" (click)="onClickAddEvent()">
                     <div class="d-flex gap-2">
                         <fa-icon [icon]="faPlus"></fa-icon>
                         <span class="label">{{ 'page.home.add' | translate }}</span>
                     </div>
-                </button>
+                </button> -->
             </div>
         </div>
         <div class="col-6" #calendar>
@@ -16,7 +16,44 @@
         </div>
         <div class="col-6 overflow-scroll" #event>
             <div class="row gap-3">
-                <div *ngIf="!events || events.length === 0; else eventsContent" class="col-12">
+                <div *ngFor="let tag of tagList" class="col-12">
+                    <div class="position-relative pb-2" [class.card]="isBorder">
+                        <div class="row d-flex justify-content-between my-2">
+                            <div class="col-auto d-flex align-items-center">
+                                <span class="fs-5 color-primary mx-2" style><fa-icon [icon]="faTag"></fa-icon></span>
+                                <p class="card-text btn text-white fs-5" [style.background-color]="tag.color" placement="bottom">
+                                    #{{ tag.tagName }}
+                                </p>
+                            </div>
+                            <div class="col-auto d-flex align-items-center me-2">
+                                <span class="fs-6 color-primary cursor-pointer">
+                                    <fa-icon [icon]="faView"></fa-icon>
+                                </span>
+                            </div>
+                        </div>
+                        <div *ngIf="!tag.events || tag.events.length === 0; else eventsContent" class="col-12">
+                            <div class="card mx-2">
+                                <div class="card-body">
+                                    <p class="card-text text-center p-1">
+                                        {{ 'component.card-event-list.noEvent' | translate }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <ng-template #eventsContent>
+                            <div class="list-group mx-2">
+                                <div *ngFor="let event of tag.events" class="list-group-item list-group-item-action">
+                                    <app-event-tag-list [event]="event"></app-event-tag-list>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </div>
+                </div>
+                <!-- <div *ngFor="let tag of tagList" class="col-12">
+                    <app-event-tag-list [tag]="tag"></app-event-tag-list>
+                </div> -->
+
+                <!-- <div *ngIf="!events || events.length === 0; else eventsContent" class="col-12">
                     <div class="card">
                         <div class="card-body">
                             <p class="card-text text-center p-5">
@@ -29,7 +66,7 @@
                     <div *ngFor="let event of events" class="col-12">
                         <app-calendar-card [event]="event"></app-calendar-card>
                     </div>
-                </ng-template>
+                </ng-template> -->
             </div>
         </div>
     </div>

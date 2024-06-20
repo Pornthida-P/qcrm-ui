@@ -1,24 +1,28 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CardEventListComponent } from './card-event-list.component';
-import { CalendarCardModule } from '../calendar-card/calendar-card.module';
+import { EventTagListComponent } from './event-tag-list.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { EventTagListModule } from '../event-tag-list/event-tag-list.module';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { AttachmentsListModule } from '../attachments-list/attachments-list.module';
+import { ProfileModule } from '../profile/profile.module';
+import { ProfileListModule } from '../profile-list/profile-list.module';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/nea-qcrm-ui/i18n/', '.json');
 }
 
 @NgModule({
-    declarations: [CardEventListComponent],
+    declarations: [EventTagListComponent],
     imports: [
         CommonModule,
-        CalendarCardModule,
-        EventTagListModule,
+        AttachmentsListModule,
+        ProfileModule,
+        ProfileListModule,
+        NgbTooltipModule,
         FontAwesomeModule,
         ReactiveFormsModule,
         FormsModule,
@@ -30,6 +34,6 @@ export function HttpLoaderFactory(http: HttpClient) {
             },
         }),
     ],
-    exports: [CardEventListComponent],
+    exports: [EventTagListComponent],
 })
-export class CardEventListModule {}
+export class EventTagListModule {}

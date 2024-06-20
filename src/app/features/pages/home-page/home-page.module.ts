@@ -28,6 +28,7 @@ import { AttachmentsListModule } from '../../components/attachments-list/attachm
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { EventTagListModule } from '../../components/event-tag-list/event-tag-list.module';
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/nea-qcrm-ui/i18n/', '.json');
@@ -59,6 +60,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         CalendarPreviewModule,
         CardEventListModule,
         AttachmentsListModule,
+        EventTagListModule,
         RouterModule.forChild([
             {
                 path: '',

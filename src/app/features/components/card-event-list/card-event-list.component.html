@@ -3,7 +3,7 @@
         <div class="col-12 mb-3" *ngIf="isShowTitle">
             <div class="d-flex justify-content-between align-items-center">
                 <p class="label fs-5">{{ title }}</p>
-                <button *ngIf="isAction" type="button" class="btn btn-primary-color text-white" (click)="onClickAddEvent()">
+                <button *ngIf="isAction && tag" type="button" class="btn btn-primary-color text-white" (click)="onClickAddEvent(tag)">
                     <div class="d-flex gap-2">
                         <fa-icon [icon]="faPlus"></fa-icon>
                         <span class="label">
@@ -129,9 +129,11 @@
                                 </div>
                             </div>
                             <ng-template #eventsContent>
-                                <div *ngFor="let event of getFilteredEvents()" class="col-12">
-                                    <app-calendar-card [event]="event"></app-calendar-card>
-                                </div>
+                                        <div class="list-group mx-2">
+                                            <div *ngFor="let event of getFilteredEvents()" class="list-group-item list-group-item-action cursor-pointer" (click)="viewEvent()">
+                                                <app-event-tag-list [event]="event"></app-event-tag-list>
+                                            </div>
+                                        </div>
                             </ng-template>
                         </div>
                     </div>
