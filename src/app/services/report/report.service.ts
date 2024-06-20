@@ -22,8 +22,8 @@ export class ReportService {
         return this.http.get(`${this.baseUrl}${config.api.path.report.summaryByMonth}/${startYear}/${endYear}`);
     }
 
-    getEmailSurvey(startDate: string, endDate: string) {
-        return this.http.get(`${this.baseUrl}${config.api.path.report.sendEmailSurvey}/${startDate}/${endDate}`);
+    getEmailSurvey(startDate: string, endDate: string, users: any) {
+        return this.http.get(`${this.baseUrl}${config.api.path.report.sendEmailSurvey}/${startDate}/${endDate}/${users}`);
     }
 
     getCaseDetail(startDate: string, endDate: string, users: any) {

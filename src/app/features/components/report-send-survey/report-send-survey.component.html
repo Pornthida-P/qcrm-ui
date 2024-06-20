@@ -47,6 +47,37 @@
                     aria-haspopup="true"
                     aria-expanded="false"
                 >
+                    <fa-icon [icon]="faUser"></fa-icon>
+                </button>
+
+                <div class="dropdown-menu p-3" aria-labelledby="dropdownMenuButton">
+                    <div class="form-check" *ngFor="let user of usersVisibilityKeys">
+                        <input
+                            class="form-check-input cursor-pointer"
+                            type="checkbox"
+                            [(ngModel)]="usersVisibility[user]"
+                            id="checkbox-{{ user }}"
+                        />
+                        <span class="form-check-label cursor-default">
+                            {{ user }}
+                        </span>
+                    </div>
+                    <button type="button" class="btn btn-primary-color text-white w-100 mt-1" (click)="applyUserVisibility()">
+                        {{ 'page.tag.save' | translate }}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-auto">
+            <div class="dropdown">
+                <button
+                    class="dropdown-toggle d-md-none d-lg-flex btn-primary-color rounded p-2 text-white"
+                    type="button"
+                    id="dropdownMenuButton"
+                    data-bs-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                >
                     <fa-icon [icon]="faGear"></fa-icon>
                 </button>
 
