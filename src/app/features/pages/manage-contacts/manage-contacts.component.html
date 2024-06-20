@@ -44,7 +44,7 @@
                             id="inputContactIden"
                             [disabled]="!checkRole()"
                         />
-                        <button type="button" class="btn btn-primary" *ngIf="SearchButton" (click)="searchDrive()">
+                        <button type="button" class="btn btn-primary " (click)="searchDrive()">
                             ค้นหาจากระบบ Drive <i class="fas fa-search"></i>
                         </button>
                     </div>
@@ -114,8 +114,7 @@
                     />
                 </div>
                 <div class="col-md-6">
-                    <label for="inputContactNum" class="form-label" *ngIf="MultiNumber == false">เบอร์ติดต่อ</label>
-                    <label for="inputContactNum" class="form-label" *ngIf="MultiNumber == true">เบอร์ติดต่อ (เก่า)</label>
+                    <label for="inputContactNum" class="form-label">เบอร์ติดต่อ</label>
                     <input
                         type="text"
                         class="form-control"
@@ -126,6 +125,17 @@
                         inputmode="numeric"
                         onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                         (input)="onInputChange($event, 'contactNum')"
+                    />
+                </div>               
+                <div class="col-md-6">
+                    <label for="inputContactProvince" class="form-label">จังหวัด</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        [(ngModel)]="contactProvince"
+                        name="contactProvince"
+                        id="inputContactProvince"
+                        [disabled]="!checkRole()"
                     />
                 </div>
                 <div class="col-md-6" *ngIf="MultiNumber == true">
@@ -140,17 +150,6 @@
                         inputmode="numeric"
                         onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                         (input)="onInputChange($event, 'contactNum2')"
-                    />
-                </div>
-                <div class="col-md-6">
-                    <label for="inputContactProvince" class="form-label">จังหวัด</label>
-                    <input
-                        type="text"
-                        class="form-control"
-                        [(ngModel)]="contactProvince"
-                        name="contactProvince"
-                        id="inputContactProvince"
-                        [disabled]="!checkRole()"
                     />
                 </div>
                 <div class="col-md-6">

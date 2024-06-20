@@ -35,6 +35,7 @@ export class ManageContactsComponent implements OnInit {
     contactFirstName: string = '';
     contactLastName: string = '';
     contactIden: string = '';
+    oldIden: string = '';
     contactOrg: string = '';
     contactOrgName: string = '';
     contactType: string = '';
@@ -343,6 +344,7 @@ export class ManageContactsComponent implements OnInit {
             this.contactFirstName = this.detailItem.firstName;
             this.contactLastName = this.detailItem.lastName;
             this.contactIden = this.detailItem.iden;
+            this.oldIden = this.detailItem.iden;
             this.contactOrg = this.detailItem.organization_id;
             this.contactType = this.detailItem.contact_type;
             this.contactEmail = this.detailItem.email;
@@ -387,113 +389,139 @@ export class ManageContactsComponent implements OnInit {
     }
 
     submit() {
-        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
         // if (userData && this.contactId && this.contactId !== '' && this.contact.components.length > 1) {
-        if (this.detailItem && this.state != 'copy') {
-            const data = {
-                contactId: this.contactId,
-                firstName: this.contactFirstName,
-                lastName: this.contactLastName,
-                identification: this.contactIden,
-                organizationId: this.contactOrg,
-                contactType: this.contactType,
-                email: this.contactEmail,
-                contactNumber: this.contactNum,
-                contactNumber2: this.contactNum2,
-                province: this.contactProvince,
-                modifiedById: userData.userId,
-            };
+        if (this.contactNum || this.contactNum2) {    
+            if (this.detailItem && this.state != 'copy') {
+                const data = {
+                    contactId: this.contactId,
+                    firstName: this.contactFirstName,
+                    lastName: this.contactLastName,
+                    identification: this.contactIden,
+                    organizationId: this.contactOrg,
+                    contactType: this.contactType,
+                    email: this.contactEmail,
+                    contactNumber: this.contactNum,
+                    contactNumber2: this.contactNum2,
+                    province: this.contactProvince,
+                    modifiedById: userData.userId,
+                    oldIdentification: this.oldIden,
+                };
+                if (this.contactIden !== this.oldIden && this.oldIden != null && this.oldIden != undefined && this.oldIden != '') {
+                    console.log('oldIden: ', this.oldIden);
+                    console.log('contactIden: ', this.contactIden);
+                    this.sweetalertServices
+                        .confirmSwal('warning', 'Warning', `ทำการบันทึกลงในผู้ใช้ที่มีเลขประจำตัว ${this.contactIden}`, 'Yes', 'No')
+                        .then((result: { isConfirmed: any }) => {
+                            if (result.isConfirmed) {
+                                this.contactsService
+                                    .editContacts(data)
+                                    .pipe(
+                                        tap((res) => {
+                                            this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/contacts');
+                                            this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), 'Success');
+                                        }),
+                                        catchError((error) => {
+                                            this.sweetalertServices.handleError(error);
+                                            this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), `Failed, Error : ${error}`);
+                                            throw error;
+                                        }),
+                                    )
+                                    .subscribe();
+                            }
+                        });
+                } else {
+                    this.contactsService
+                        .editContacts(data)
+                        .pipe(
+                            tap((res) => {
+                                this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/contacts');
+                                this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), 'Success');
+                            }),
+                            catchError((error) => {
+                                this.sweetalertServices.handleError(error);
+                                this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), `Failed, Error : ${error}`);
+                                throw error;
+                            }),
+                        )
+                        .subscribe();
+                }    
+            } else {
+                const data = {
+                    firstName: this.contactFirstName,
+                    lastName: this.contactLastName,
+                    identification: this.contactIden,
+                    organizationId: this.contactOrg,
+                    contactType: this.contactType,
+                    email: this.contactEmail,
+                    contactNumber: this.contactNum,
+                    province: this.contactProvince,
+                    createdById: userData.userId,
+                    contactNumber2: this.contactNum2,
+                };
 
-            this.contactsService
-                .editContacts(data)
-                .pipe(
-                    tap((res) => {
-                        this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/contacts');
-                        this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), 'Success');
-                    }),
-                    catchError((error) => {
-                        this.sweetalertServices.handleError(error);
-                        this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), `Failed, Error : ${error}`);
-                        throw error;
-                    }),
-                )
-                .subscribe();
-        } else {
-            const data = {
-                firstName: this.contactFirstName,
-                lastName: this.contactLastName,
-                identification: this.contactIden,
-                organizationId: this.contactOrg,
-                contactType: this.contactType,
-                email: this.contactEmail,
-                contactNumber: this.contactNum,
-                province: this.contactProvince,
-                createdById: userData.userId,
-                contactNumber2: this.contactNum2,
-            };
-
-            this.contactsService
-                .createContacts(data)
-                .pipe(
-                    tap((res: any) => {
+                this.contactsService
+                    .createContacts(data)
+                    .pipe(
+                        tap((res: any) => {
                         if (res.success === true) {
                             console.log('phone: ', res.contactNumber);
                             const contactId = res.contactId;
                             const contactNumber = data.contactNumber;
-                            this.router.navigate(['/contacts/edit'], { queryParams: { key: contactId, call_id: contactNumber } });
-                            this.auditLogService.log('', 'Contact', 'Create Contact', JSON.stringify(data), `Success`);
-                        } else if (res.success === false && res.message === 'Duplicate' && this.MultiNumber === false) {
-                            if (res.duplicates.length > 0) {
-                                const duplicatedFields = res.duplicates.map((dup: any) => dup.duplicateOn).join(' และ ');
-                                this.sweetalertServices.contactSwal('error', `${duplicatedFields}นี้ได้มีการลงทะเบียนแล้ว`, res.duplicates);
-                                return;
-                            }
-                            this.auditLogService.log(
-                                '',
-                                'Contact',
-                                'Create Contact',
-                                JSON.stringify(data),
-                                `Failed, Error Duplicate: ${res.duplicates}`,
-                            );
-                        } else if (res.success === false && res.message === 'Duplicate' && this.MultiNumber === true) {
-                            this.contactsService
-                                .editContacts2(data)
-                                .pipe(
-                                    tap((res: any) => {
+                                this.router.navigate(['/contacts/edit'], { queryParams: { key: contactId, call_id: contactNumber } });
+                                this.auditLogService.log('', 'Contact', 'Create Contact', JSON.stringify(data), `Success`);
+                            } else if (res.success === false && res.message === 'Duplicate' && this.MultiNumber === false) {
+                                if (res.duplicates.length > 0) {
+                                    const duplicatedFields = [...new Set(res.duplicates.map((dup: any) => dup.duplicateOn))].join(' และ ');
+                                    this.sweetalertServices.contactSwal('error', `${duplicatedFields}นี้ได้มีการลงทะเบียนแล้ว`, res.duplicates);
+                                    return;
+                                }
+                                this.auditLogService.log(
+                                    '',
+                                    'Contact',
+                                    'Create Contact',
+                                    JSON.stringify(data),
+                                    `Failed, Error Duplicate: ${res.duplicates}`,
+                                );
+                            } else if (res.success === false && res.message === 'Duplicate' && this.MultiNumber === true) {
+                                this.contactsService
+                                    .editContacts2(data)
+                                    .pipe(
+                                        tap((res: any) => {
                                         const contactId = res.contactId;
                                         const contactNumber = res.contactNumber;
                                         console.log('contactNumber: ', contactNumber);
-                                        this.router.navigate(['/contacts/edit'], {
+                                            this.router.navigate(['/contacts/edit'], {
                                             queryParams: { key: contactId, call_id: contactNumber },
                                         });
-                                        this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), 'Success');
-                                    }),
-                                    catchError((error) => {
-                                        this.sweetalertServices.handleError(error);
-                                        this.auditLogService.log(
-                                            '',
-                                            'Contact',
-                                            'Edit Contact',
-                                            JSON.stringify(data),
-                                            `Failed, Error : ${error}`,
-                                        );
-                                        throw error;
-                                    }),
-                                )
-                                .subscribe();
-                        }
-                    }),
-                    catchError((error) => {
-                        this.sweetalertServices.handleError(error);
-                        this.auditLogService.log('', 'Contact', 'Create Contact', JSON.stringify(data), `Failed, Error : ${error}`);
-                        throw error;
-                    }),
-                )
-                .subscribe();
+                                            this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), 'Success');
+                                        }),
+                                        catchError((error) => {
+                                            this.sweetalertServices.handleError(error);
+                                            this.auditLogService.log(
+                                                '',
+                                                'Contact',
+                                                'Edit Contact',
+                                                JSON.stringify(data),
+                                                `Failed, Error : ${error}`,
+                                            );
+                                            throw error;
+                                        }),
+                                    )
+                                    .subscribe();
+                            }
+                        }),
+                        catchError((error) => {
+                            this.sweetalertServices.handleError(error);
+                            this.auditLogService.log('', 'Contact', 'Create Contact', JSON.stringify(data), `Failed, Error : ${error}`);
+                            throw error;
+                        }),
+                    )
+                    .subscribe();
+            }
+        } else {
+            this.sweetalertServices.getSwal('error', 'โปรดกรอกเบอร์ติดต่อ', '', false, '');
         }
-        // } else {
-        //     this.sweetalertServices.getSwal('error', 'Contact name and contact component cannot be empty.', '', false, '');
-        // }
     }
 
     showSideBar() {
@@ -572,6 +600,7 @@ export class ManageContactsComponent implements OnInit {
                         this.contactEmail = this.contactDrive.email;
                         this.contactNum = this.contactDrive.mobile;
                         this.contactProvince = this.contactDrive.province.name;
+                        this.MultiNumber = false;
                     } else {
                         if (this.contactDrive.mobile != this.contactNum) {
                             const contactNo = this.contactNum;
@@ -582,6 +611,13 @@ export class ManageContactsComponent implements OnInit {
                             this.contactProvince = this.contactDrive.province.name;
                             this.contactNum2 = contactNo;
                             this.MultiNumber = true;
+                        } else {
+                            this.contactFirstName = this.contactDrive.firstname_TH;
+                            this.contactLastName = this.contactDrive.lastname_TH;
+                            this.contactEmail = this.contactDrive.email;
+                            this.contactNum = this.contactDrive.mobile;
+                            this.contactProvince = this.contactDrive.province.name;
+                            this.MultiNumber = false;
                         }
                     }
                 },
@@ -1254,7 +1290,7 @@ export class ManageContactsComponent implements OnInit {
             }
         }
 
-        if (!this.callId) {
+      if (!this.callId) {
             if (this.selectedCaseTopics.length > 0) {
                 const data = {
                     contactId: this.contactId,
@@ -1275,7 +1311,7 @@ export class ManageContactsComponent implements OnInit {
                     operationType: selectedCallTypeId,
                     activitySmn: selectedActivitiesSmnIds,
                     activityEln: selectedActivitiesElnIds,
-                    emails: this.selectedEmail,
+emails: this.selectedEmail,
                 };
                 console.log('Data: ', data);
                 this.callServive
@@ -1736,7 +1772,7 @@ export class ManageContactsComponent implements OnInit {
             this.contactNum = inputValue;
         } else if (index === 'contactNum2') {
             this.contactNum2 = inputValue;
-        }
+        }    
     }
 
     async getEmail(contactId: string) {

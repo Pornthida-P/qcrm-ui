@@ -15,7 +15,7 @@ export class SweetAlertService {
             text: text,
             showConfirmButton: showButton,
             confirmButtonColor: '#0a6ebd',
-            timer: 2000,
+            timer: 1000,
             timerProgressBar: true,
         }).then(() => {
             if (route) {
