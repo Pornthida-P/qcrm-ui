@@ -181,8 +181,8 @@ export class ManageContactsComponent implements OnInit {
     ws: any;
     dialCall: string = '';
     phoneCall: string = '';
-    selectedContactNumber: string = '';
-    contactNumbers: any;
+    // selectedContactNumber: string = '';
+    // contactNumbers: any;
 
     isCheckboxSelected: { [key: number]: boolean } = {};
 
@@ -238,6 +238,12 @@ export class ManageContactsComponent implements OnInit {
     selectedActivitiesElearning: any;
     selectedCheckboxIds: any;
     contactNumParams: any;
+
+    contactNumber: any;
+    contactNumbers: any;
+    selectedContactNumber: any[] = [];
+    selectedEmail: any[] = [];
+    email: any;
 
     constructor(
         private _location: Location,
@@ -323,8 +329,8 @@ export class ManageContactsComponent implements OnInit {
             this.contactNum = params['call_id'];
             this.contactNumParams = params['call_id'];
         });
-        console.log('contactNumParams: ', this.contactNumParams)
-        localStorage.setItem("contactNum", this.contactNum);
+        console.log('contactNumParams: ', this.contactNumParams);
+        localStorage.setItem('contactNum', this.contactNum);
     }
 
     checkRole(): boolean {
@@ -381,7 +387,7 @@ export class ManageContactsComponent implements OnInit {
     }
 
     submit() {
-      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
         // if (userData && this.contactId && this.contactId !== '' && this.contact.components.length > 1) {
         if (this.detailItem && this.state != 'copy') {
             const data = {
@@ -430,11 +436,11 @@ export class ManageContactsComponent implements OnInit {
                 .createContacts(data)
                 .pipe(
                     tap((res: any) => {
-                      if (res.success === true) {
-                          console.log('phone: ', res.contactNumber)
-                        const contactId = res.contactId;
-                        const contactNumber = data.contactNumber;
-                            this.router.navigate(['/contacts/edit'], { queryParams: { key: contactId, call_id: contactNumber} });
+                        if (res.success === true) {
+                            console.log('phone: ', res.contactNumber);
+                            const contactId = res.contactId;
+                            const contactNumber = data.contactNumber;
+                            this.router.navigate(['/contacts/edit'], { queryParams: { key: contactId, call_id: contactNumber } });
                             this.auditLogService.log('', 'Contact', 'Create Contact', JSON.stringify(data), `Success`);
                         } else if (res.success === false && res.message === 'Duplicate' && this.MultiNumber === false) {
                             if (res.duplicates.length > 0) {
@@ -454,10 +460,12 @@ export class ManageContactsComponent implements OnInit {
                                 .editContacts2(data)
                                 .pipe(
                                     tap((res: any) => {
-                                      const contactId = res.contactId;
-                                      const contactNumber = res.contactNumber;
-                                      console.log('contactNumber: ', contactNumber)
-                                        this.router.navigate(['/contacts/edit'], { queryParams: { key: contactId, call_id: contactNumber } });
+                                        const contactId = res.contactId;
+                                        const contactNumber = res.contactNumber;
+                                        console.log('contactNumber: ', contactNumber);
+                                        this.router.navigate(['/contacts/edit'], {
+                                            queryParams: { key: contactId, call_id: contactNumber },
+                                        });
                                         this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), 'Success');
                                     }),
                                     catchError((error) => {
@@ -946,6 +954,11 @@ export class ManageContactsComponent implements OnInit {
         this.callServive.getActivitiesType().subscribe((activitiestype: any) => {
             this.activitiestype = activitiestype.filter((activityType: any) => [1, 43].includes(parseInt(activityType.activityTypeId)));
         });
+
+      this.getEmail(this.contactId)
+
+      this.getContactNumber(this.contactId)
+
     }
 
     onFileSelected(event: any) {
@@ -1210,8 +1223,12 @@ export class ManageContactsComponent implements OnInit {
         const selectedDate = this.startTime ? this.formatDate(new Date(this.startTime)) : this.formatDate(new Date());
         const selectedTime = this.timepickStart ? this.formatTime(this.timepickStart) : this.formatTime(new Date());
 
-        const isChannelOne = this.selectedChannels === '1';
+        const isChannelOne = this.selectedChannels === '1' || this.selectedChannels === '2' || this.selectedChannels === '3';
         const selectedCallTypeId = isChannelOne ? this.selectedCallTypeId : null;
+
+        if (this.selectedChannels === '3') {
+          this.contactNumParams = null
+        }
 
         const selectedActivitiesSmnIds = this.selectedActivitiesSmn
             ? this.selectedActivitiesSmn.map((activity: { activityTopicId: any }) => activity.activityTopicId)
@@ -1237,8 +1254,7 @@ export class ManageContactsComponent implements OnInit {
             }
         }
 
-      if (!this.callId) {
-
+        if (!this.callId) {
             if (this.selectedCaseTopics.length > 0) {
                 const data = {
                     contactId: this.contactId,
@@ -1254,11 +1270,12 @@ export class ManageContactsComponent implements OnInit {
                     solution: this.solutions,
                     createdById: userData.userId,
                     attachment: this.attachmentsId,
-                    call_id: this.contactNumParams,
+                    call_id: this.contactNumParams || this.selectedContactNumber,
                     caller_id: this.caller_id,
                     operationType: selectedCallTypeId,
                     activitySmn: selectedActivitiesSmnIds,
                     activityEln: selectedActivitiesElnIds,
+                    emails: this.selectedEmail,
                 };
                 console.log('Data: ', data);
                 this.callServive
@@ -1719,6 +1736,38 @@ export class ManageContactsComponent implements OnInit {
             this.contactNum = inputValue;
         } else if (index === 'contactNum2') {
             this.contactNum2 = inputValue;
-        }    
+        }
     }
+
+    async getEmail(contactId: string) {
+      try {
+          const email = (await this.callServive.getEmailById(contactId).toPromise()) as any[];
+          console.log('Email Res:', email);
+
+          if (email && email.length > 0) {
+              this.email = email;
+              console.log('Email: ', this.email);
+          } else {
+              console.warn('No Email found for this contactId');
+          }
+      } catch (error) {
+          console.error('Error fetching Email', error);
+      }
+    }
+
+    async getContactNumber(contactId: string) {
+      try {
+          const contactNumber = (await this.callServive.getContactNumbertById(contactId).toPromise()) as any[];
+          console.log('contactNumber Res:', contactNumber);
+
+          if (contactNumber && contactNumber.length > 0) {
+              this.contactNumber = contactNumber;
+              console.log('contactNumber: ', this.contactNumber);
+          } else {
+              console.warn('No contact number found for this contactId');
+          }
+      } catch (error) {
+          console.error('Error fetching contact number', error);
+      }
+  }
 }
