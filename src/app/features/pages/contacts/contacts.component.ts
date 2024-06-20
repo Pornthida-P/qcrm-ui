@@ -121,22 +121,21 @@ export class ContactsComponent implements OnInit {
         this.getPage();
 
         this.getForm((this.currentPageForm - 1) * this.pageSizeForm, this.pageSizeForm);
-      this.getFormPage();
-      
+        this.getFormPage();
     }
 
     checkRole(): boolean {
         return true;
     }
 
-    updateCheckedValues(contactId: string,Email: string): void {
-        if (Email){
+    updateCheckedValues(contactId: string, Email: string): void {
+        if (Email) {
             if (this.checkedValues.includes(contactId)) {
                 this.checkedValues = this.checkedValues.filter((id) => id !== contactId);
             } else {
                 this.checkedValues.push(contactId);
             }
-        } else if (!Email)  {
+        } else if (!Email) {
             if (this.checkedValues.includes(contactId)) {
                 this.checkedValues = this.checkedValues.filter((id) => id !== contactId);
                 this.invalid--;
@@ -287,7 +286,7 @@ export class ContactsComponent implements OnInit {
     }
 
     edit(item: any) {
-        this.router.navigate(['/contacts/edit'], { queryParams: { key: item.contactId} });
+        this.router.navigate(['/contacts/edit'], { queryParams: { key: item.contactId } });
     }
 
     deletecontacts(contactId: string) {
@@ -313,7 +312,13 @@ export class ContactsComponent implements OnInit {
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
-                            this.auditLogService.log('', 'Contact', 'Delete Contact', `Contact ID : ${contactId}`, `Failed, Error : ${error}`);
+                            this.auditLogService.log(
+                                '',
+                                'Contact',
+                                'Delete Contact',
+                                `Contact ID : ${contactId}`,
+                                `Failed, Error : ${error}`,
+                            );
                             throw error;
                         }),
                     )
@@ -321,7 +326,6 @@ export class ContactsComponent implements OnInit {
             }
         });
     }
-
 
     deleteSelectcontacts() {
         Swal.fire({
@@ -341,12 +345,24 @@ export class ContactsComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.getSwal('success', 'Delete data success.', '', false, '');
-                            this.auditLogService.log('', 'Contact', 'Delete Contact', `Contact ID : ${this.checkedValues.join(', ')}`, `Success`);
+                            this.auditLogService.log(
+                                '',
+                                'Contact',
+                                'Delete Contact',
+                                `Contact ID : ${this.checkedValues.join(', ')}`,
+                                `Success`,
+                            );
                             window.location.reload();
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
-                            this.auditLogService.log('', 'Contact', 'Delete Contact', `Contact ID : ${this.checkedValues.join(', ')}`, `Failed, Error : ${error}`);
+                            this.auditLogService.log(
+                                '',
+                                'Contact',
+                                'Delete Contact',
+                                `Contact ID : ${this.checkedValues.join(', ')}`,
+                                `Failed, Error : ${error}`,
+                            );
                             throw error;
                         }),
                     )
@@ -370,6 +386,11 @@ export class ContactsComponent implements OnInit {
     }
 
     async sendEmail(formID: string) {
+        const userData = localStorage.getItem('userData');
+        let userId = '';
+        if (userData) {
+            userId = JSON.parse(userData).userId;
+        }
         await Swal.fire({
             icon: 'question',
             title: 'Do you want to send this survey?',
@@ -383,7 +404,7 @@ export class ContactsComponent implements OnInit {
                 const res: any = await this.contactsService.getEmail(this.checkedValues).toPromise();
                 this.AllEmail = res;
                 for (const value of this.AllEmail) {
-                    const data = { email: value.email, contactId: value.contactId, formId: formID };
+                    const data = { email: value.email, contactId: value.contactId, formId: formID, userId: userId };
                     const result: any = await this.contactsService.checkEmailSend(data).toPromise();
                     if (result.email) {
                         this.availableEmail.push(result);
@@ -391,7 +412,7 @@ export class ContactsComponent implements OnInit {
                 }
                 if (this.availableEmail.length > 0) {
                     for (const value of this.availableEmail) {
-                        const data = { email: value.email, id: value.contactId, form: formID };
+                        const data = { email: value.email, id: value.contactId, form: formID, userId: userId };
                         const res: any = await this.contactsService.sendEmail(data).toPromise();
                         console.log('res', res);
                     }
@@ -400,7 +421,6 @@ export class ContactsComponent implements OnInit {
             }
         });
     }
-
 
     contactsManage() {
         this.router.navigate(['/contacts/new']);

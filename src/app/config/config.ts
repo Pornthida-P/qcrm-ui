@@ -102,6 +102,7 @@ export const config = {
                 summaryByMonth: '/report/summaryByMonth',
                 sendEmailSurvey: '/report/sendEmailSurvey',
                 caseDetail: '/report/caseDetail',
+                getAgent: '/report/getAgent'
             },
         },
     },

@@ -232,6 +232,8 @@
         "case-type-by-agent": "Case Summery By Agent",
         "case-detail": "Case Detail",
         "summary-by-month": "Summary By Month",
-        "survey-send": "Survey Send"
+        "survey-send": "Survey Send",
+        "loading": "Loading",
+        "data-not-found": "Data Not Found"
     }
 }

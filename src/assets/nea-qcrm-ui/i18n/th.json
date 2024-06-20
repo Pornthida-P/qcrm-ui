@@ -232,6 +232,8 @@
         "case-type-by-agent": "รายงานสรุปสถิติข้อมูล By Agent",
         "case-detail": "รายละเอียดเคส",
         "summary-by-month": "สรุปสถิติรายเดือน",
-        "survey-send": "การส่งอีเมลแบบฟอร์ม"
+        "survey-send": "การส่งอีเมลแบบฟอร์ม",
+        "loading": "กำลังดาวน์โหลด",
+        "data-not-found": "ไม่มีข้อมูล"
     }
 }

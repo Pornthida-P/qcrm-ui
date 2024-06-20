@@ -94,11 +94,14 @@ export const report = {
         TotalSub: 'รวม (Subject)',
     },
     survey: {
-        ticketId: 'Contact ID',
-        resend: 'Resend',
-        status: 'Status',
+        date: 'Date',
         email: 'Email',
-        createdDate: 'Send Date',
-        resendDate: 'Resend Date',
+        contactName: 'Contact Name',
+        successSend: 'Success Send',
+        errorSend: 'Error Send',
+        successResend: 'Success Resend',
+        errorResend: 'Error Resend',
+        surveyName: 'Survey Name',
+        agent: 'Agent'
     },
 };

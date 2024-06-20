@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ReportService } from 'src/app/services/report/report.service';
 import * as moment from 'moment';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { faFileExport, faGear } from '@fortawesome/free-solid-svg-icons';
+import { faFileExport, faGear, faUser } from '@fortawesome/free-solid-svg-icons';
 import * as XLSX from 'xlsx';
 import { report } from 'src/app/config/report';
 import { config } from 'src/app/config/config';
@@ -18,10 +18,13 @@ export class ReportSendSurveyComponent {
     selectedItems: string[] = [];
 
     faGear = faGear;
+    faUser = faUser;
     faFileExport = faFileExport;
     displayedColumns: string[] = [];
     columnVisibility: { [key: string]: boolean } = {};
+    usersVisibility: { [key: string]: boolean } = {};
     displayedColumnsTemp: any = null;
+    displayedUsersTemp: any = null;
 
     columnName: any = report.survey;
     fileType: string = config.file.type;
@@ -33,16 +36,17 @@ export class ReportSendSurveyComponent {
         const firstDayOfYear = new Date(currentDate.getFullYear(), 0, 1);
         const firstDayOfYearFormat = moment(firstDayOfYear).format('YYYY-MM-DD');
         const currentDateFormat = moment(new Date()).format('YYYY-MM-DD');
-        this.getReport(firstDayOfYearFormat, currentDateFormat);
         this.datePick = this.fb.group({
             startDate: [firstDayOfYearFormat, Validators.required],
             endDate: [currentDate, Validators.required],
         });
+        // this.getReport(firstDayOfYearFormat, currentDateFormat);
+        this.getAgent(firstDayOfYearFormat, currentDateFormat);
     }
 
     async getReport(startDate: string, endDate: string) {
         this.reportTable = [];
-        await this.reportService.getEmailSurvey(startDate, endDate).subscribe((res: any) => {
+        await this.reportService.getEmailSurvey(startDate, endDate, this.displayedUsersTemp).subscribe((res: any) => {
             this.reportTable = res.value;
             if (this.reportTable.length != 0) {
                 // this.rowTotal();
@@ -84,12 +88,22 @@ export class ReportSendSurveyComponent {
         return Object.keys(this.columnVisibility);
     }
 
+    get usersVisibilityKeys(): string[] {
+        return Object.keys(this.usersVisibility);
+    }
+
     get columnNames(): string[] {
         return Object.keys(this.columnName);
     }
 
     applyColumnVisibility(): void {
         this.displayedColumnsTemp = this.columnVisibility;
+        this.clickGetReport();
+    }
+
+    applyUserVisibility(): void {
+        this.displayedUsersTemp = this.usersVisibility;
+        this.displayedUsersTemp = Object.keys(this.usersVisibility).filter((key) => this.usersVisibility[key] == true);
         this.clickGetReport();
     }
 
@@ -105,18 +119,29 @@ export class ReportSendSurveyComponent {
         const totals: Record<string, number> = {};
         const totalSuvey = this.reportTable.length;
         for (const row of this.reportTable) {
-            if (row['createdDate']) {
-                const dateCreated = new Date(row['createdDate']);
-                row['createdDate'] = dateCreated.toLocaleString();
+            if (row['date']) {
+                const dateCreated = new Date(row['date']);
+                row['date'] = dateCreated.toLocaleString();
             }
-            if (row['resendDate']) {
-                const dateResend = new Date(row['resendDate']);
-                row['resendDate'] = dateResend.toLocaleString();
+            if (row['errorSend'] != null) {
+                if (row['errorSend'] == 1) {
+                    row['successSend'] = 0;
+                } else {
+                    row['successSend'] = 1;
+                }
+            }
+
+            if (row['errorResend'] != null) {
+                if (row['errorResend'] == 1) {
+                    row['successResend'] = 0;
+                } else {
+                    row['successResend'] = 1;
+                }
             }
 
             Object.keys(row).forEach((column: string) => {
-                if (column !== 'ticketId') {
-                    if (column !== 'email' && column !== 'createdDate' && column !== 'resendDate') {
+                if (column !== 'date') {
+                    if (column !== 'email' && column !== 'contactName' && column !== 'surveyName' && column !== 'agent') {
                         if (!totals[column]) {
                             totals[column] = 0;
                         }
@@ -129,7 +154,7 @@ export class ReportSendSurveyComponent {
             });
         }
 
-        const totalsRow: Record<string, number | string> = { ticketId: 'Totals : ' + totalSuvey };
+        const totalsRow: Record<string, number | string> = { date: 'Totals : ' + totalSuvey };
         Object.keys(totals).forEach((column: string) => {
             totalsRow[column] = totals[column];
         });
@@ -165,5 +190,17 @@ export class ReportSendSurveyComponent {
 
             XLSX.writeFile(wb, `Survey-Send-Report${this.fileType}`);
         }
+    }
+
+    async getAgent(firstDayOfYearFormat: any, currentDateFormat: any) {
+        this.reportTable = [];
+        await this.reportService.getAgent().subscribe((res: any) => {
+            let users = res.value;
+            for (let i = 0; i < users.length; i++) {
+                this.usersVisibility[users[i].username] = true;
+            }
+            this.displayedUsersTemp = Object.keys(this.usersVisibility).filter((key) => this.usersVisibility[key] == true);
+            this.getReport(firstDayOfYearFormat, currentDateFormat);
+        });
     }
 }

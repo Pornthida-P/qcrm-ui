@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as moment from 'moment';
-import { faFileExport, faGear } from '@fortawesome/free-solid-svg-icons';
+import { faFileExport, faGear, faUser } from '@fortawesome/free-solid-svg-icons';
 import * as XLSX from 'xlsx';
 import { config } from 'src/app/config/config';
 import { report } from 'src/app/config/report';
@@ -17,13 +17,18 @@ export class ReportCaseDetailComponent {
     datePick: FormGroup = new FormGroup({});
 
     faGear = faGear;
+    faUser = faUser;
     faFileExport = faFileExport;
     displayedColumns: string[] = [];
     columnVisibility: { [key: string]: boolean } = {};
+    usersVisibility: { [key: string]: boolean } = {};
     displayedColumnsTemp: any = null;
+    displayedUsersTemp: any = null;
 
     columnName: any = report.cases;
     fileType: string = config.file.type;
+
+    loadingText: string = 'report.loading';
 
     constructor(private reportService: ReportService, private fb: FormBuilder) {}
 
@@ -36,7 +41,8 @@ export class ReportCaseDetailComponent {
             startDate: [firstDayOfYearFormat, Validators.required],
             endDate: [currentDate, Validators.required],
         });
-        this.getReport(firstDayOfYearFormat, currentDateFormat);
+        this.getAgent(firstDayOfYearFormat, currentDateFormat);
+        // this.getReport(firstDayOfYearFormat, currentDateFormat);
     }
 
     clickGetReport() {
@@ -54,12 +60,22 @@ export class ReportCaseDetailComponent {
         return Object.keys(this.columnVisibility);
     }
 
+    get usersVisibilityKeys(): string[] {
+        return Object.keys(this.usersVisibility);
+    }
+
     get columnNames(): string[] {
         return Object.keys(this.columnName);
     }
 
     applyColumnVisibility(): void {
         this.displayedColumnsTemp = this.columnVisibility;
+        this.clickGetReport();
+    }
+
+    applyUserVisibility(): void {
+        this.displayedUsersTemp = this.usersVisibility;
+        this.displayedUsersTemp = Object.keys(this.usersVisibility).filter((key) => this.usersVisibility[key] == true);
         this.clickGetReport();
     }
 
@@ -81,14 +97,30 @@ export class ReportCaseDetailComponent {
 
     async getReport(startDate: string, endDate: string) {
         this.reportTable = [];
-        await this.reportService.getCaseDetail(startDate, endDate).subscribe((res: any) => {
-            this.reportTable = res.value;
-            if (this.reportTable.length != 0) {
-                this.columnTotal();
+        this.loadingText = 'report.loading';
+        await this.reportService.getCaseDetail(startDate, endDate, this.displayedUsersTemp).subscribe((res: any) => {
+            if (res.value.length) {
+                this.reportTable = res.value;
+                if (this.reportTable.length != 0) {
+                    this.columnTotal();
+                }
+                if (!this.displayedColumnsTemp) {
+                    this.setDisplayAllFields();
+                }
             }
-            if (!this.displayedColumnsTemp) {
-                this.setDisplayAllFields();
+            this.loadingText = 'report.data-not-found';
+        });
+    }
+
+    async getAgent(firstDayOfYearFormat: any, currentDateFormat: any) {
+        this.reportTable = [];
+        await this.reportService.getAgent().subscribe((res: any) => {
+            let users = res.value;
+            for (let i = 0; i < users.length; i++) {
+                this.usersVisibility[users[i].username] = true;
             }
+            this.displayedUsersTemp = Object.keys(this.usersVisibility).filter((key) => this.usersVisibility[key] == true);
+            this.getReport(firstDayOfYearFormat, currentDateFormat);
         });
     }
 
