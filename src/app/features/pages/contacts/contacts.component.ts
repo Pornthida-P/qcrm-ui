@@ -386,6 +386,11 @@ export class ContactsComponent implements OnInit {
     }
 
     async sendEmail(formID: string) {
+        const userData = localStorage.getItem('userData');
+        let userId = '';
+        if (userData) {
+            userId = JSON.parse(userData).userId;
+        }
         await Swal.fire({
             icon: 'question',
             title: 'Do you want to send this survey?',
@@ -399,7 +404,7 @@ export class ContactsComponent implements OnInit {
                 const res: any = await this.contactsService.getEmail(this.checkedValues).toPromise();
                 this.AllEmail = res;
                 for (const value of this.AllEmail) {
-                    const data = { email: value.email, contactId: value.contactId, formId: formID };
+                    const data = { email: value.email, contactId: value.contactId, formId: formID, userId: userId };
                     const result: any = await this.contactsService.checkEmailSend(data).toPromise();
                     if (result.email) {
                         this.availableEmail.push(result);
@@ -407,7 +412,7 @@ export class ContactsComponent implements OnInit {
                 }
                 if (this.availableEmail.length > 0) {
                     for (const value of this.availableEmail) {
-                        const data = { email: value.email, id: value.contactId, form: formID };
+                        const data = { email: value.email, id: value.contactId, form: formID, userId: userId };
                         const res: any = await this.contactsService.sendEmail(data).toPromise();
                         console.log('res', res);
                     }
