@@ -84,6 +84,7 @@ export const config = {
                 callById: '/call-id',
                 caseById: '/case-id',
                 contactNumberById: '/contacts-number',
+                emailById: '/email-id',
             },
             survey: {
                 baseUrl: '/survey',
