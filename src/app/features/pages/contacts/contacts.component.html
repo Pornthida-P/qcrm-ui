@@ -28,6 +28,9 @@
                             {{ op.name }}
                         </option>
                     </select>
+                    <button class="form-control btn-primary-color text-white shadow-none align-items-center" (click)="search()">
+                        ค้นหา
+                    </button>
                 </div>
             </div>
             <div *ngIf="checkRole()">
@@ -126,8 +129,13 @@
                                     data-bs-target="#offcanvasRight"
                                     aria-controls="offcanvasRight"
                                     scope="row"
-                                >
-                                    <div [ngbTooltip]="contacts.fullname" placement="bottom" class="text-ellipsis">
+                                    >
+                                    <div
+                                        [ngbTooltip]="contacts.fullname"
+                                        placement="bottom"
+                                        class="text-ellipsis"
+                                        style="color: #3066be; text-decoration: underline;"
+                                    >
                                         {{ contacts.fullname }}
                                     </div>
                                 </td>

@@ -28,6 +28,9 @@
                             {{ op.name }}
                         </option>
                     </select>
+                    <button class="form-control btn-primary-color text-white shadow-none align-items-center" (click)="search()">
+                        ค้นหา
+                    </button>
                 </div>
             </div>
             <div class="d-none d-md-flex d-lg-none p-2 btn-primary-color rounded text-white" (click)="createCall()">
@@ -152,8 +155,25 @@
                                 <td>
                                     {{ calls.createdAt | date : 'dd/MM/yyyy HH:mm' }}
                                 </td>
-                                <td class="sidebar cursor-pointer" (click)="createCallFideId(calls, calls.contactId, calls.caller)">
+                                <!-- <td class="sidebar cursor-pointer" (click)="createCallFideId(calls, calls.contactId, calls.caller)">
                                     <div class="" ngbTooltip="คลิกเพื่อไปที่หน้าการโทร" placement="bottom">
+                                        {{ calls.caller }}
+                                    </div>
+                                </td> -->
+                                <td
+                                    (click)="createCallFideId(calls, calls.contactId, calls.caller)"
+                                    class="sidebar cursor-pointer"
+                                    data-bs-toggle="offcanvas"
+                                    data-bs-target="#offcanvasRight"
+                                    aria-controls="offcanvasRight"
+                                    scope="row"
+                                    >
+                                    <div
+                                        ngbTooltip="คลิกเพื่อไปที่หน้าการโทร"
+                                        placement="bottom"
+                                        class="text-ellipsis"
+                                        style="color: #3066be; text-decoration: underline;"
+                                    >
                                         {{ calls.caller }}
                                     </div>
                                 </td>
