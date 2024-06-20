@@ -207,6 +207,8 @@ export class CreateCallComponent {
     contactNumber: any;
     contactNumbers: any;
     selectedContactNumber: any[] = [];
+    selectedEmail: any[] = [];
+    email: any;
 
     // pageEln: number | undefined = 0;
 
@@ -373,7 +375,7 @@ export class CreateCallComponent {
         const selectedDate = this.startTime ? this.formatDate(new Date(this.startTime)) : this.formatDate(new Date());
         const selectedTime = this.timepickStart ? this.formatTime(this.timepickStart) : this.formatTime(new Date());
 
-        const isChannelOne = this.selectedChannels === '1';
+        const isChannelOne = this.selectedChannels === '1' || this.selectedChannels === '2' || this.selectedChannels === '3';
 
         const selectedCallTypeId = isChannelOne ? this.selectedCallTypeId : null;
 
@@ -418,7 +420,9 @@ export class CreateCallComponent {
             operationType: selectedCallTypeId,
             activitySmn: selectedActivitiesSmnIds,
             activityEln: selectedActivitiesElnIds,
-        };
+            emails: this.selectedEmail,
+        };console.log('data Call: ', data)
+
         this.callServive
             .createCalls(data)
             .pipe(
@@ -504,6 +508,7 @@ export class CreateCallComponent {
             this.sweetalertServices.getSwal('warning', 'กรุณาใส่ข้อมูลให้ครบถ้วน', '', false, '');
         }
     }
+
     showSideBarContact() {
         this.visibleLeftSideBar = true;
         this.visibleRightSideBar = true;
@@ -561,6 +566,7 @@ export class CreateCallComponent {
             this.contactName = `${res[0].firstName} ${res[0].lastName}`;
         });
         this.getContactNumber(contactsId);
+        this.getEmail(contactsId);
     }
 
     async pageChangeContact(pageContact: number) {
@@ -771,6 +777,22 @@ export class CreateCallComponent {
             }
         } catch (error) {
             console.error('Error fetching contact number', error);
+        }
+    }
+
+    async getEmail(contactsId: string) {
+        try {
+            const email = (await this.callServive.getEmailById(contactsId).toPromise()) as any[];
+            console.log('Email Res:', email);
+
+            if (email && email.length > 0) {
+                this.email = email;
+                console.log('Email: ', this.email);
+            } else {
+                console.warn('No Email found for this contactId');
+            }
+        } catch (error) {
+            console.error('Error fetching Email', error);
         }
     }
 
