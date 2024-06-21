@@ -246,6 +246,10 @@ export class ManageContactsComponent implements OnInit {
     selectedEmail: any[] = [];
     email: any;
 
+    contactNumNew: string = '';
+
+    isInputVisible: boolean = false;
+
     constructor(
         private _location: Location,
         private surveyFormService: SurveyFormService,
@@ -389,9 +393,9 @@ export class ManageContactsComponent implements OnInit {
     }
 
     submit() {
-      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
         // if (userData && this.contactId && this.contactId !== '' && this.contact.components.length > 1) {
-        if (this.contactNum || this.contactNum2) {    
+        if (this.contactNum || this.contactNum2) {
             if (this.detailItem && this.state != 'copy') {
                 const data = {
                     contactId: this.contactId,
@@ -406,7 +410,9 @@ export class ManageContactsComponent implements OnInit {
                     province: this.contactProvince,
                     modifiedById: userData.userId,
                     oldIdentification: this.oldIden,
+                    contactNumNew: this.contactNumNew,
                 };
+              console.log('data: ', data)
                 if (this.contactIden !== this.oldIden && this.oldIden != null && this.oldIden != undefined && this.oldIden != '') {
                     console.log('oldIden: ', this.oldIden);
                     console.log('contactIden: ', this.contactIden);
@@ -423,7 +429,13 @@ export class ManageContactsComponent implements OnInit {
                                         }),
                                         catchError((error) => {
                                             this.sweetalertServices.handleError(error);
-                                            this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), `Failed, Error : ${error}`);
+                                            this.auditLogService.log(
+                                                '',
+                                                'Contact',
+                                                'Edit Contact',
+                                                JSON.stringify(data),
+                                                `Failed, Error : ${error}`,
+                                            );
                                             throw error;
                                         }),
                                     )
@@ -445,7 +457,7 @@ export class ManageContactsComponent implements OnInit {
                             }),
                         )
                         .subscribe();
-                }    
+                }
             } else {
                 const data = {
                     firstName: this.contactFirstName,
@@ -464,16 +476,20 @@ export class ManageContactsComponent implements OnInit {
                     .createContacts(data)
                     .pipe(
                         tap((res: any) => {
-                        if (res.success === true) {
-                            console.log('phone: ', res.contactNumber);
-                            const contactId = res.contactId;
-                            const contactNumber = data.contactNumber;
+                            if (res.success === true) {
+                                console.log('phone: ', res.contactNumber);
+                                const contactId = res.contactId;
+                                const contactNumber = data.contactNumber;
                                 this.router.navigate(['/contacts/edit'], { queryParams: { key: contactId, call_id: contactNumber } });
                                 this.auditLogService.log('', 'Contact', 'Create Contact', JSON.stringify(data), `Success`);
                             } else if (res.success === false && res.message === 'Duplicate' && this.MultiNumber === false) {
                                 if (res.duplicates.length > 0) {
                                     const duplicatedFields = [...new Set(res.duplicates.map((dup: any) => dup.duplicateOn))].join(' และ ');
-                                    this.sweetalertServices.contactSwal('error', `${duplicatedFields}นี้ได้มีการลงทะเบียนแล้ว`, res.duplicates);
+                                    this.sweetalertServices.contactSwal(
+                                        'error',
+                                        `${duplicatedFields}นี้ได้มีการลงทะเบียนแล้ว`,
+                                        res.duplicates,
+                                    );
                                     return;
                                 }
                                 this.auditLogService.log(
@@ -488,12 +504,12 @@ export class ManageContactsComponent implements OnInit {
                                     .editContacts2(data)
                                     .pipe(
                                         tap((res: any) => {
-                                        const contactId = res.contactId;
-                                        const contactNumber = res.contactNumber;
-                                        console.log('contactNumber: ', contactNumber);
+                                            const contactId = res.contactId;
+                                            const contactNumber = res.contactNumber;
+                                            console.log('contactNumber: ', contactNumber);
                                             this.router.navigate(['/contacts/edit'], {
-                                            queryParams: { key: contactId, call_id: contactNumber },
-                                        });
+                                                queryParams: { key: contactId, call_id: contactNumber },
+                                            });
                                             this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), 'Success');
                                         }),
                                         catchError((error) => {
@@ -991,10 +1007,9 @@ export class ManageContactsComponent implements OnInit {
             this.activitiestype = activitiestype.filter((activityType: any) => [1, 43].includes(parseInt(activityType.activityTypeId)));
         });
 
-      this.getEmail(this.contactId)
+        this.getEmail(this.contactId);
 
-      this.getContactNumber(this.contactId)
-
+        this.getContactNumber(this.contactId);
     }
 
     onFileSelected(event: any) {
@@ -1263,7 +1278,7 @@ export class ManageContactsComponent implements OnInit {
         const selectedCallTypeId = isChannelOne ? this.selectedCallTypeId : null;
 
         if (this.selectedChannels === '3') {
-          this.contactNumParams = null
+            this.contactNumParams = null;
         }
 
         const selectedActivitiesSmnIds = this.selectedActivitiesSmn
@@ -1290,7 +1305,7 @@ export class ManageContactsComponent implements OnInit {
             }
         }
 
-      if (!this.callId) {
+        if (!this.callId) {
             if (this.selectedCaseTopics.length > 0) {
                 const data = {
                     contactId: this.contactId,
@@ -1311,7 +1326,7 @@ export class ManageContactsComponent implements OnInit {
                     operationType: selectedCallTypeId,
                     activitySmn: selectedActivitiesSmnIds,
                     activityEln: selectedActivitiesElnIds,
-emails: this.selectedEmail,
+                    emails: this.selectedEmail,
                 };
                 console.log('Data: ', data);
                 this.callServive
@@ -1772,38 +1787,42 @@ emails: this.selectedEmail,
             this.contactNum = inputValue;
         } else if (index === 'contactNum2') {
             this.contactNum2 = inputValue;
-        }    
+        }
     }
 
     async getEmail(contactId: string) {
-      try {
-          const email = (await this.callServive.getEmailById(contactId).toPromise()) as any[];
-          console.log('Email Res:', email);
+        try {
+            const email = (await this.callServive.getEmailById(contactId).toPromise()) as any[];
+            console.log('Email Res:', email);
 
-          if (email && email.length > 0) {
-              this.email = email;
-              console.log('Email: ', this.email);
-          } else {
-              console.warn('No Email found for this contactId');
-          }
-      } catch (error) {
-          console.error('Error fetching Email', error);
-      }
+            if (email && email.length > 0) {
+                this.email = email;
+                console.log('Email: ', this.email);
+            } else {
+                console.warn('No Email found for this contactId');
+            }
+        } catch (error) {
+            console.error('Error fetching Email', error);
+        }
     }
 
     async getContactNumber(contactId: string) {
-      try {
-          const contactNumber = (await this.callServive.getContactNumbertById(contactId).toPromise()) as any[];
-          console.log('contactNumber Res:', contactNumber);
+        try {
+            const contactNumber = (await this.callServive.getContactNumbertById(contactId).toPromise()) as any[];
+            console.log('contactNumber Res:', contactNumber);
 
-          if (contactNumber && contactNumber.length > 0) {
-              this.contactNumber = contactNumber;
-              console.log('contactNumber: ', this.contactNumber);
-          } else {
-              console.warn('No contact number found for this contactId');
-          }
-      } catch (error) {
-          console.error('Error fetching contact number', error);
-      }
-  }
+            if (contactNumber && contactNumber.length > 0) {
+                this.contactNumber = contactNumber;
+                console.log('contactNumber: ', this.contactNumber);
+            } else {
+                console.warn('No contact number found for this contactId');
+            }
+        } catch (error) {
+            console.error('Error fetching contact number', error);
+        }
+    }
+
+    inputAddPhone() {
+        this.isInputVisible = !this.isInputVisible;
+    }
 }
