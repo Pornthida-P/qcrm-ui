@@ -62,8 +62,8 @@ export class CallComponent implements OnInit {
     isAction: boolean = false;
     sideBarItemIndex: number = 0;
 
-    pageSizeOptions = [10, 20];
-    pageSize = 10;
+    pageSizeOptions = [15, 50, 100];
+    pageSize = 15;
     currentPage = 1;
     totalItems = 0;
     totalPages = 0;
