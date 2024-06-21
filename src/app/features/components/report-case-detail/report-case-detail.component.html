@@ -124,12 +124,15 @@
             </thead>
             <tbody>
                 <ng-container *ngIf="reportTable?.length > 0; else noDataTemplate">
-                    <tr *ngFor="let data of reportTable.slice(0, reportTable.length - 1); let i = index">
+                    <tr *ngFor="let data of reportTable.slice(0, itemsToShow); let i = index">
                         <ng-container *ngFor="let column of columnNames">
                             <td scope="row" *ngIf="columnVisibility[column]">
                                 <a>{{ data[column] }}</a>
                             </td>
                         </ng-container>
+                    </tr>
+                    <tr>
+                        <td colspan="11" class="show-more text-center" (click)="showMoreItems()" >Show More</td>
                     </tr>
                 </ng-container>
                 <ng-template #noDataTemplate>

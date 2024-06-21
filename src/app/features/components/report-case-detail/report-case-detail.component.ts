@@ -24,6 +24,7 @@ export class ReportCaseDetailComponent {
     usersVisibility: { [key: string]: boolean } = {};
     displayedColumnsTemp: any = null;
     displayedUsersTemp: any = null;
+    itemsToShow: number = 100;
 
     columnName: any = report.cases;
     fileType: string = config.file.type;
@@ -178,4 +179,8 @@ export class ReportCaseDetailComponent {
             XLSX.writeFile(wb, `Channel-By-Agent-Report${this.fileType}`);
         }
     }
+
+    showMoreItems() {
+        this.itemsToShow += 100; // Increase by 100
+      }
 }
