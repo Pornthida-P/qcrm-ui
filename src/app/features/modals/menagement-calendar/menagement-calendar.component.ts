@@ -27,6 +27,7 @@ export class MenagementCalendarComponent implements OnInit {
     selectedMembers: User[] = [];
     attachments: Attachment[] = [];
     tags: CalendarTag[] = [];
+    isActivityTag: boolean = false;
     isAction: boolean = false;
 
     startTime: NgbTimeStruct = { hour: 0, minute: 0, second: 0 };
@@ -120,7 +121,7 @@ export class MenagementCalendarComponent implements OnInit {
 
     initializeForm(): void {
         const isViewMode = this.data.mode === 'view';
-
+        this.isActivityTag = this.data?.eventData?.tag.tagId == 7
         if (this.data.mode === 'add') {
             this.calendarEvent = this.fb.group({
                 eventId: [],
