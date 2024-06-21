@@ -7,16 +7,21 @@ import { CalendarEvent } from 'src/app/shared/interface/calendar.interface';
     providedIn: 'root',
 })
 export class ModalCalendarService {
+    isClose: boolean = true;
     constructor(public dialog: MatDialog) {}
 
     openDialog(mode: 'add' | 'view' | 'edit', eventData?: CalendarEvent): void {
-        const dialogRef = this.dialog.open(MenagementCalendarComponent, {
-            width: '60%',
-            data: { mode, eventData },
-        });
+        if (this.isClose) {
+            this.isClose = false;
+            const dialogRef = this.dialog.open(MenagementCalendarComponent, {
+                width: '60%',
+                data: { mode, eventData },
+            });
 
-        dialogRef.afterClosed().subscribe((result) => {
-            console.log('The dialog was closed');
-        });
+            dialogRef.afterClosed().subscribe((result) => {
+                this.isClose = true;
+                console.log('The dialog was closed');
+            });
+        }
     }
 }
