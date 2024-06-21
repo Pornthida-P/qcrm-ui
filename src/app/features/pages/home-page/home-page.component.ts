@@ -75,13 +75,12 @@ export class HomePageComponent implements OnInit {
 
     onClickChangeMenu(tag: CalendarTag): void {
         this.findEventByTagId(tag.tagId);
-
         this.onHome = false;
         this.onSelectTag = tag;
     }
 
-    onClickAddEvent(): void {
-        this.modalCalendarService.openDialog('add');
+    onClickAddEvent(event: CalendarEvent): void {
+        this.modalCalendarService.openDialog('add',event);
     }
 
     resetSelectTag(): void {

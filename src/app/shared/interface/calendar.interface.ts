@@ -15,6 +15,7 @@ export interface CalendarEvent {
     createdById: string;
     modifyAt: string;
     modifyById: string;
+    username : string;
 }
 
 export interface CalendarTag {

@@ -122,16 +122,19 @@ export class MenagementCalendarComponent implements OnInit {
         const isViewMode = this.data.mode === 'view';
 
         if (this.data.mode === 'add') {
+            
             this.calendarEvent = this.fb.group({
                 eventId: [],
                 title: ['', Validators.required],
-                tag: ['', Validators.required],
+                tag: [],
                 location: [''],
                 startDate: [new Date().toISOString(), Validators.required],
                 endDate: [new Date().toISOString(), Validators.required],
                 description: [, Validators.required],
                 members: [[], Validators.required],
             });
+            console.log('data.event:',this.calendarEvent);
+
         } else {
             this.calendarEvent = this.fb.group({
                 eventId: [{ value: this.data.eventData?.eventId, disabled: isViewMode }],
@@ -238,6 +241,7 @@ export class MenagementCalendarComponent implements OnInit {
         formData.attachments = this.attachments;
 
         if (this.data.mode === 'add') {
+            formData.tag = this.data.eventData?.tag?.tagId
             this.calendarService
                 .addCalendarEvent(formData)
                 .pipe(

@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
 import { faArrowUpShortWide, faArrowUpWideShort, faPlusCircle, faSort, faUser } from '@fortawesome/free-solid-svg-icons';
 import * as moment from 'moment';
 import { UserService } from 'src/app/services/user/user.service';
-import { CalendarEvent } from 'src/app/shared/interface/calendar.interface';
+import { CalendarEvent, CalendarTag } from 'src/app/shared/interface/calendar.interface';
 import { User } from 'src/app/shared/interface/user.interface';
 
 @Component({
@@ -11,6 +11,7 @@ import { User } from 'src/app/shared/interface/user.interface';
     styleUrl: './card-event-list.component.scss',
 })
 export class CardEventListComponent implements OnInit, OnChanges {
+    @Input() tag?: CalendarTag;
     @Input() events: CalendarEvent[] = [];
     @Input() title?: string = '';
     @Input() isShowFilter?: boolean = true;
@@ -36,7 +37,7 @@ export class CardEventListComponent implements OnInit, OnChanges {
     constructor(private userService: UserService) {}
 
     ngOnInit(): void {
-        this.initzation();
+        this.initzation();        
     }
 
     ngOnChanges(changes: any): void {}
@@ -82,12 +83,34 @@ export class CardEventListComponent implements OnInit, OnChanges {
         this.isFilterAttachment = !this.isFilterAttachment;
     }
 
-    onClickAddEvent(): void {
-        this.onClickAdd.emit();
+    onClickAddEvent(tag:CalendarTag): void {
+        let obj:CalendarEvent = {
+            eventId: 0,
+            title: '',
+            tag: tag,
+            location: '',
+            startDate: '',
+            endDate: '',
+            description: '',
+            members: [],
+            attachments: [],
+            createdAt: '',
+            createdById: '',
+            modifyAt: '',
+            modifyById: '',
+            username: ''
+        }
+        this.onClickAdd.emit(obj);
     }
 
+
+    viewEvent(){
+        console.log('view event');
+        
+    }
     getFilteredEvents(): CalendarEvent[] {
         let filteredEvents = this.events;
+        // console.log('this.events',this.events);
 
         if (this.selectedDate) {
             const currentDate = new Date();

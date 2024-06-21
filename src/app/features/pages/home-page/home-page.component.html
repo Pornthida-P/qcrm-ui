@@ -7,20 +7,29 @@
             <div class="d-flex flex-wrap gap-1 justify-content-center justify-content-md-center align-items-center p-2">
                 <button
                     type="button"
-                    class="btn btn-primary-color text-white button"
+                    class="btn text-white button"
                     [class.button-active]="onHome"
+                    [class.btn-primary]="onHome"
+                    [class.btn-secondary]="!onHome"
                     (click)="onClickHome()"
                 >
                     <div class="d-flex align-items-center">
                         <p class="label">{{ 'page.home.menuHome' | translate }}</p>
                     </div>
                 </button>
-                <button
+                <!-- <button //NOTE - without btn-active class
                     *ngFor="let tag of tags"
                     type="button"
                     class="btn text-white button"
                     [class.button-active]="onSelectTag?.tagId === tag.tagId"
-                    [style.background-color]="tag.color ? tag.color : 'var(--primary-color)'"
+                    [style.background-color]="onHome ? (tag.color ? tag.color : 'var(--primary-color)') : onSelectTag?.tagId === tag.tagId ? tag.color :'#6c757d' "
+                    (click)="onClickChangeMenu(tag)"
+                > -->
+                <button
+                    *ngFor="let tag of tags"
+                    type="button"
+                    class="btn text-white button"
+                    [style.background-color]="onHome ? (tag.color ? tag.color : 'var(--primary-color)') : onSelectTag?.tagId === tag.tagId ? tag.color :'#6c757d' "
                     (click)="onClickChangeMenu(tag)"
                 >
                     <div class="d-flex align-items-center">
@@ -34,8 +43,9 @@
             <app-card-event-list
                 *ngIf="!onHome"
                 [events]="events"
+                [tag]="onSelectTag"
                 [title]="onSelectTag?.tagName"
-                (onClickAdd)="onClickAddEvent()"
+                (onClickAdd)="onClickAddEvent($event)"
             ></app-card-event-list>
         </div>
     </div>
