@@ -28,17 +28,17 @@ import { User } from 'src/app/shared/interface/user.interface';
 export class EventTagListComponent {
     @Input() event?: CalendarEvent;
     @Input() isBorder: boolean = true;
+    @Input() isAction: boolean = false;
 
     @Output() viewEvent: EventEmitter<void> = new EventEmitter();
-    @Output() editEvent: EventEmitter<void> = new EventEmitter();
-    @Output() deleteEvent: EventEmitter<void> = new EventEmitter();
+    @Output() isDeleteEvent: EventEmitter<boolean> = new EventEmitter();
 
     @Output() viewMember: EventEmitter<User> = new EventEmitter<User>();
     @Output() editMember: EventEmitter<User> = new EventEmitter<User>();
     @Output() deleteMember: EventEmitter<User> = new EventEmitter<User>();
 
     userData?: User | null;
-    isAction: boolean = false;
+    // isAction: boolean = false;
     profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
 
     faCalendar = faCalendarAlt;
@@ -78,36 +78,21 @@ export class EventTagListComponent {
         }
     }
 
-    onClickViewEvent(event: CalendarEvent) {
-        this.viewEvent.emit();
-
-        if (event && event?.eventId) {
-            this.modalCalendarService.openDialog('view', event);
-        }
-    }
-
     onClickEditEvent(event: CalendarEvent) {
-        this.editEvent.emit();
-
-        if (event && event?.eventId) {
             this.modalCalendarService.openDialog('edit', event);
-        }
     }
 
     onClickDeleteEvent(event: CalendarEvent) {
-        this.deleteEvent.emit();
-
-        if (event && event?.eventId) {
-            this.calendarService
-                .deleteCalendarEvent(event.eventId.toString())
-                .pipe(
-                    catchError((error) => {
-                        this.sweetalertServices.handleError(error);
-                        throw error;
-                    }),
-                )
-                .subscribe(() => {});
-        }
+        this.isDeleteEvent.emit(true)
+        this.calendarService
+            .deleteCalendarEvent(event.eventId.toString())
+            .pipe(
+                catchError((error) => {
+                    this.sweetalertServices.handleError(error);
+                    throw error;
+                }),
+            )
+            .subscribe(() => {});
     }
 
     onClickViewMember(member: User) {

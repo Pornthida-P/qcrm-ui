@@ -129,11 +129,15 @@
                                 </div>
                             </div>
                             <ng-template #eventsContent>
-                                        <div class="list-group mx-2">
-                                            <div *ngFor="let event of getFilteredEvents()" class="list-group-item list-group-item-action cursor-pointer" (click)="viewEvent()">
-                                                <app-event-tag-list [event]="event"></app-event-tag-list>
-                                            </div>
-                                        </div>
+                                <div class="list-group mx-2">
+                                    <div
+                                        *ngFor="let event of getFilteredEvents()"
+                                        class="list-group-item list-group-item-action cursor-pointer"
+                                        (click)="onClickViewEvent(event)"
+                                    >
+                                        <app-event-tag-list [event]="event" [isAction]="true" (isDeleteEvent)="onClickDeleteEvent($event)"></app-event-tag-list>
+                                    </div>
+                                </div>
                             </ng-template>
                         </div>
                     </div>

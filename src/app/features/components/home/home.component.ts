@@ -1,6 +1,5 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { faPlusCircle, faTag, faEye } from '@fortawesome/free-solid-svg-icons';
-import { ModalCalendarService } from 'src/app/services/modal-calendar/modal-calendar.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { CalendarEvent } from 'src/app/shared/interface/calendar.interface';
 import { User } from 'src/app/shared/interface/user.interface';
@@ -28,13 +27,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     title: string = 'home';
 
-    constructor(private userService: UserService, private modalCalendarService: ModalCalendarService) {}
+    constructor(private userService: UserService) {}
 
     ngOnInit(): void {
-        console.log('before');
-
         this.initzation();
-        console.log('after');
     }
 
     ngAfterViewInit() {
@@ -95,7 +91,4 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.selectedCalendarDate = date;
     }
 
-    onClickAddEvent() {
-        this.modalCalendarService.openDialog('add');
-    }
 }

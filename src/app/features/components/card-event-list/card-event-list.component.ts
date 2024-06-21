@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
 import { faArrowUpShortWide, faArrowUpWideShort, faPlusCircle, faSort, faUser } from '@fortawesome/free-solid-svg-icons';
 import * as moment from 'moment';
 import { UserService } from 'src/app/services/user/user.service';
+import { ModalCalendarService } from 'src/app/services/modal-calendar/modal-calendar.service';
 import { CalendarEvent, CalendarTag } from 'src/app/shared/interface/calendar.interface';
 import { User } from 'src/app/shared/interface/user.interface';
 
@@ -21,6 +22,8 @@ export class CardEventListComponent implements OnInit, OnChanges {
 
     userData: User | null = null;
     isAction: boolean = false;
+    isDeleteEvent: boolean = false;
+
     members: User[] = [];
     selectedDate: string = 'week';
     selectedMembers: string[] = [];
@@ -34,10 +37,10 @@ export class CardEventListComponent implements OnInit, OnChanges {
     faArrowUpWideShort = faArrowUpWideShort;
     faArrowUpShortWide = faArrowUpShortWide;
 
-    constructor(private userService: UserService) {}
+    constructor(private userService: UserService, private modalCalendarService: ModalCalendarService) {}
 
     ngOnInit(): void {
-        this.initzation();        
+        this.initzation();
     }
 
     ngOnChanges(changes: any): void {}
@@ -83,8 +86,8 @@ export class CardEventListComponent implements OnInit, OnChanges {
         this.isFilterAttachment = !this.isFilterAttachment;
     }
 
-    onClickAddEvent(tag:CalendarTag): void {
-        let obj:CalendarEvent = {
+    onClickAddEvent(tag: CalendarTag): void {
+        let obj: CalendarEvent = {
             eventId: 0,
             title: '',
             tag: tag,
@@ -98,15 +101,18 @@ export class CardEventListComponent implements OnInit, OnChanges {
             createdById: '',
             modifyAt: '',
             modifyById: '',
-            username: ''
-        }
+            username: '',
+        };
         this.onClickAdd.emit(obj);
     }
 
-
-    viewEvent(){
-        console.log('view event');
-        
+    onClickViewEvent(event: CalendarEvent): void {
+        if(!this.isDeleteEvent){
+            this.modalCalendarService.openDialog('view', event)
+        }
+    }
+    onClickDeleteEvent(isDeleteEvent:boolean){
+        this.isDeleteEvent = isDeleteEvent;
     }
     getFilteredEvents(): CalendarEvent[] {
         let filteredEvents = this.events;
