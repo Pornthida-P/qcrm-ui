@@ -25,6 +25,16 @@
 .table-container tfoot {
     position: sticky;
     bottom: 0;
-    background-color: #f8f9fa; 
+    background-color: #f8f9fa;
     z-index: 1;
+}
+
+.show-more {
+    cursor: pointer;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s ease;
+}
+
+.show-more:hover {
+    background-color: #e0e0e0;
 }
