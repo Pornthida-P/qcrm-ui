@@ -28,6 +28,9 @@
                             {{ op.name }}
                         </option>
                     </select>
+                    <button class="form-control btn-primary-color text-white shadow-none align-items-center" (click)="search()">
+                        ค้นหา
+                    </button>
                 </div>
             </div>
             <div *ngIf="checkRole()">
@@ -106,14 +109,19 @@
                                     />
                                 </td>
                                 <td
-                                    (click)="showSideBar(i, form.surveyFormId)"
+                                (click)="showSideBar(i, form.surveyFormId)"
                                     class="cursor-pointer w-max-ellipsis"
                                     data-bs-toggle="offcanvas"
                                     data-bs-target="#offcanvasRight"
                                     aria-controls="offcanvasRight"
                                     scope="row"
-                                >
-                                    <div [ngbTooltip]="form.name" placement="bottom" class="text-ellipsis">
+                                    >
+                                    <div
+                                        [ngbTooltip]="form.name"
+                                        placement="bottom"
+                                        class="text-ellipsis"
+                                        style="color: #3066be; text-decoration: underline;"
+                                    >
                                         {{ form.name }}
                                     </div>
                                 </td>
