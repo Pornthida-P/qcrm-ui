@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { catchError, tap } from 'rxjs';
 import { CalendarEventService } from 'src/app/services/calendar-event/calendar-event.service';
 import { ModalCalendarService } from 'src/app/services/modal-calendar/modal-calendar.service';
@@ -15,6 +15,8 @@ export class HomePageComponent implements OnInit {
     events: CalendarEvent[] = [];
     onSelectTag?: CalendarTag;
     onHome: boolean = true;
+    
+    @Output() viewEvent: EventEmitter<void> = new EventEmitter();
 
     constructor(
         private calendarService: CalendarEventService,
@@ -82,7 +84,7 @@ export class HomePageComponent implements OnInit {
     onClickAddEvent(event: CalendarEvent): void {
         this.modalCalendarService.openDialog('add',event);
     }
-
+    
     resetSelectTag(): void {
         this.onSelectTag = undefined;
         this.events = [];
