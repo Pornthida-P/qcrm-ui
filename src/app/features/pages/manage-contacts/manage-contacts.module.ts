@@ -12,6 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { ContactsService } from 'src/app/services/contacts/contacts.service';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 (Formio as any).use(bootstrap4);
 (Formio as any).icons = 'fontawesome';
@@ -34,7 +35,8 @@ import { ContactsService } from 'src/app/services/contacts/contacts.service';
         ReactiveFormsModule,
         MatFormFieldModule,
         MatDatepickerModule,
-        NgSelectModule
+        NgSelectModule,
+        NgbTooltipModule,
     ],
     providers: [ContactsService, DecimalPipe],
 })
