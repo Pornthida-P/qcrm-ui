@@ -99,42 +99,39 @@ export class MenagementCalendarComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: { mode: 'add' | 'view' | 'edit'; eventData?: CalendarEvent },
     ) {
         this.startTime = {
-            hour: data.eventData ? moment(data.eventData.startDate).hour() : 0,
-            minute: data.eventData ? moment(data.eventData.startDate).minute() : 0,
-            second: data.eventData ? moment(data.eventData.startDate).second() : 0,
+            hour: data.eventData && data.mode != 'add' ? moment(data.eventData.startDate).hour() : 0,
+            minute: data.eventData && data.mode != 'add' ? moment(data.eventData.startDate).minute() : 0,
+            second: data.eventData && data.mode != 'add' ? moment(data.eventData.startDate).second() : 0,
         };
 
         this.endTime = {
-            hour: data.eventData ? moment(data.eventData.endDate).hour() : 23,
-            minute: data.eventData ? moment(data.eventData.endDate).minute() : 59,
-            second: data.eventData ? moment(data.eventData.endDate).second() : 59,
+            hour: data.eventData && data.mode != 'add' ? moment(data.eventData.endDate).hour() : 23,
+            minute: data.eventData && data.mode != 'add' ? moment(data.eventData.endDate).minute() : 59,
+            second: data.eventData && data.mode != 'add' ? moment(data.eventData.endDate).second() : 59,
         };
     }
 
     ngOnInit(): void {
         this.initializeForm();
-        this.getAllTags();
+        // this.getAllTags();
         this.getDataUser();
-        this.getMembers();
+        // this.getMembers();
     }
 
     initializeForm(): void {
         const isViewMode = this.data.mode === 'view';
 
         if (this.data.mode === 'add') {
-            
             this.calendarEvent = this.fb.group({
                 eventId: [],
                 title: ['', Validators.required],
-                tag: [],
+                tag: [''],
                 location: [''],
                 startDate: [new Date().toISOString(), Validators.required],
                 endDate: [new Date().toISOString(), Validators.required],
                 description: [, Validators.required],
-                members: [[], Validators.required],
+                members: [[]],
             });
-            console.log('data.event:',this.calendarEvent);
-
         } else {
             this.calendarEvent = this.fb.group({
                 eventId: [{ value: this.data.eventData?.eventId, disabled: isViewMode }],
@@ -241,7 +238,7 @@ export class MenagementCalendarComponent implements OnInit {
         formData.attachments = this.attachments;
 
         if (this.data.mode === 'add') {
-            formData.tag = this.data.eventData?.tag?.tagId
+            formData.tag = this.data.eventData?.tag?.tagId;
             this.calendarService
                 .addCalendarEvent(formData)
                 .pipe(
