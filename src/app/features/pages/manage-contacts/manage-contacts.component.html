@@ -20,7 +20,7 @@
         <div class="flex flex-column">
             <form class="row g-3 mg-3">
                 <p class="mb-3 fs-5">ข้อมูลทั่วไป</p>
-                <span *ngIf="contactId === ''" class="color-green"> ผู้ติดต่อใหม่ ({{ contactNum }}) </span>
+                <span *ngIf="contactId === ''" class="text-danger"> ผู้ติดต่อใหม่ ({{ contactNum }}) </span>
                 <div class="contact-number" *ngIf="TableShowing">
                     <div class="col-6 me-3">
                         <label for="inputContactNumber" class="form-label">ช่องทางติดต่อ</label>
@@ -115,7 +115,12 @@
                     />
                 </div>
                 <div class="col-md-6">
-                    <label for="inputContactNum" class="form-label">เบอร์ติดต่อ</label>
+                    <div class="d-flex">
+                        <label for="inputContactNum" class="form-label">เบอร์ติดต่อ</label>
+                        <div class="mb-2 p-1 btn-primary text-white rounded-2 cursor-pointer add-number ms-2" (click)="inputAddPhone()" ngbTooltip="เพิ่มเบอร์ติดต่อ" *ngIf="TableShowing">
+                            <i class="fa-solid fa-plus fs-icon"></i>
+                        </div>
+                    </div>
                     <input
                         type="text"
                         class="form-control"
@@ -126,6 +131,18 @@
                         inputmode="numeric"
                         onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                         (input)="onInputChange($event, 'contactNum')"
+                    />
+                    <input *ngIf="isInputVisible"
+                        type="text"
+                        class="form-control mt-2"
+                        [(ngModel)]="contactNumNew"
+                        placeholder="เพิ่มเบอร์ติดต่อ"
+                        name="contactNumNew"
+                        id="inputContactNumNew"
+                        pattern="[0-9]*"
+                        inputmode="numeric"
+                        onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                        (input)="onInputChange($event, 'contactNumNew')"
                     />
                 </div>
                 <div class="col-md-6">

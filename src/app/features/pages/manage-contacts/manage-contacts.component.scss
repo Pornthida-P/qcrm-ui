@@ -91,14 +91,14 @@ label:has(+ input:required):after {
 .form-check {
     margin-top: 5px;
     margin-right: 12px;
-    width:100%;
+    width: 100%;
 }
 
 ::ng-deep .chevron .ngb-tp-chevron {
     display: none !important;
 }
 ::ng-deep .date-pik .btn-link {
-    display: none ;
+    display: none;
 }
 
 ::ng-deep .tpk {
@@ -119,52 +119,66 @@ label:has(+ input:required):after {
     width: 20%;
 }
 .contact-number {
-  display: flex;
-  justify-content: flex-start;
-  align-items: flex-end;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
 }
 .pd-l-30 {
-  padding-left: 30px;
+    padding-left: 30px;
 }
 
 .w-100 {
-  width: 100%;
+    width: 100%;
 }
 
 .pd-t-20 {
-  padding-top: 20px;
+    padding-top: 20px;
 }
 
 .table-smn {
-  // width: 400px;
-  table-layout: fixed;
-  border-collapse: collapse;
+    // width: 400px;
+    table-layout: fixed;
+    border-collapse: collapse;
 }
 
 .table-smn tbody {
-  display:block;
-  overflow: auto;
-  height: 450px;
+    display: block;
+    overflow: auto;
+    height: 450px;
 }
 
 .table-smn thead tr {
-  display: block;
+    display: block;
 }
 
 .table-smn th {
-  text-align: left;
-  width: 700px;
+    text-align: left;
+    width: 700px;
 }
 
 .submitTopic {
-  display: flex;
-  align-items: flex-end
+    display: flex;
+    align-items: flex-end;
 }
 
 .display-none {
     display: none;
 }
 
-.color-green {
-  color: #28C195;
+.color-red {
+    color: #28c195;
+}
+
+.fs-icon {
+    font-size: 12px;
+}
+
+.add-number {
+    width: 25px;
+    height: 25px;
+    text-align: center;
+    display: flex;
+    justify-content: space-around;
+    align-content: stretch;
+    align-items: center;
 }
