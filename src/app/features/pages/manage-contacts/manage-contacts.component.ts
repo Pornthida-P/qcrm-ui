@@ -242,7 +242,7 @@ export class ManageContactsComponent implements OnInit {
 
     contactNumber: any;
     contactNumbers: any;
-    selectedContactNumber: any[] = [];
+    selectedContactNumber: { contactNumber: string, contactNumberId: string } | null = null;
     selectedEmail: any[] = [];
     email: any;
 
@@ -412,7 +412,7 @@ export class ManageContactsComponent implements OnInit {
                     oldIdentification: this.oldIden,
                     contactNumNew: this.contactNumNew,
                 };
-              console.log('data: ', data)
+                console.log('data: ', data);
                 if (this.contactIden !== this.oldIden && this.oldIden != null && this.oldIden != undefined && this.oldIden != '') {
                     console.log('oldIden: ', this.oldIden);
                     console.log('contactIden: ', this.contactIden);
@@ -1123,13 +1123,14 @@ export class ManageContactsComponent implements OnInit {
                 this.description = call[0].description;
                 this.solutions = call[0].solution;
                 this.selectedCallTypeId = call[0].operationType;
+                this.selectedContactNumber = call[0].caller_id;
+                this.selectedEmail = call[0].emails;
                 const date = new Date(call[0].startTime);
                 this.timepickStart = {
                     hour: date.getHours(),
                     minute: date.getMinutes(),
                     second: date.getSeconds(),
                 };
-
                 // Handle caseTopicIds
                 if (call[0].caseTopicId && call[0].caseTopicId !== 'null') {
                     let caseTopicIds = call[0].caseTopicId;
@@ -1321,7 +1322,8 @@ export class ManageContactsComponent implements OnInit {
                     solution: this.solutions,
                     createdById: userData.userId,
                     attachment: this.attachmentsId,
-                    call_id: this.contactNumParams || this.selectedContactNumber,
+                    call_id: (this.contactNumParams || this.selectedContactNumber) ? this.selectedContactNumber?.contactNumber : null,
+                    contactNumberId: this.selectedContactNumber ? this.selectedContactNumber.contactNumberId : null,
                     caller_id: this.caller_id,
                     operationType: selectedCallTypeId,
                     activitySmn: selectedActivitiesSmnIds,

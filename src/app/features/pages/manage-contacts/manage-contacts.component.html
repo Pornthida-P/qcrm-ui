@@ -758,7 +758,8 @@
                                     class="col-6 w-100 pd-t-20"
                                     *ngIf="selectedChannels === '1' || selectedChannels === '2' || selectedChannels === '3'"
                                 >
-                                    <label for="inputCallType" class="form-label">ประเภทสาย</label>
+                                    <label *ngIf="selectedChannels === '1' || selectedChannels === '2'" for="inputCallType" class="form-label">ประเภทสาย</label>
+                                    <label  *ngIf="selectedChannels === '3'" for="inputCallType" class="form-label">ประเภทอีเมล</label>
                                     <select
                                         id="inputCallType"
                                         class="form-select"
@@ -779,7 +780,7 @@
                                         [(ngModel)]="selectedContactNumber"
                                     >
                                         <option disabled value="">กรุณาเลือกข้อมูล</option>
-                                        <option *ngFor="let contactNumbers of contactNumber" [value]="contactNumbers.contactNumber">
+                                        <option *ngFor="let contactNumbers of contactNumber" [ngValue]="{ contactNumber: contactNumbers.contactNumber, contactNumberId: contactNumbers.contactNumberId }">
                                             {{ contactNumbers.contactNumber }}
                                         </option>
                                     </select>
