@@ -206,7 +206,7 @@ export class CreateCallComponent {
     callFideId: any;
     contactNumber: any;
     contactNumbers: any;
-    selectedContactNumber: any[] = [];
+    selectedContactNumber: { contactNumber: string, contactNumberId: string } | null = null;
     selectedEmail: any[] = [];
     email: any;
 
@@ -416,7 +416,8 @@ export class CreateCallComponent {
             createdById: userData.userId,
             attachment: this.attachmentsId,
             caller_id: this.caller_id,
-            call_id: this.selectedContactNumber,
+            call_id: this.selectedContactNumber ? this.selectedContactNumber.contactNumber : null,
+            contactNumberId: this.selectedContactNumber ? this.selectedContactNumber.contactNumberId : null,
             operationType: selectedCallTypeId,
             activitySmn: selectedActivitiesSmnIds,
             activityEln: selectedActivitiesElnIds,
