@@ -1,7 +1,7 @@
 <div class="bg-white rounded shadow w-100 h-100 d-flex flex-column p-4 overflow-auto">
     <div class="row">
         <div class="col-12">
-            <app-announce></app-announce>
+            <app-announce *ngIf="onHome"></app-announce>
         </div>
         <div class="col-12">
             <div class="d-flex flex-wrap gap-1 justify-content-center justify-content-md-center align-items-center p-2">

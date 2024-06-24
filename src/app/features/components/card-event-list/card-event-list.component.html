@@ -7,7 +7,7 @@
                     <div class="d-flex gap-2">
                         <fa-icon [icon]="faPlus"></fa-icon>
                         <span class="label">
-                            {{ 'component.card-event-list.add' | translate }}
+                            {{ 'component.card-event-list.add' | translate }} {{ tag.tagName}}
                         </span>
                     </div>
                 </button>
@@ -22,7 +22,7 @@
                                 <input
                                     type="text"
                                     class="form-control"
-                                    [placeholder]="'component.card-event-list.placeholder' | translate"
+                                    placeholder="ค้นหา {{ tag?.tagName }} "
                                     [(ngModel)]="isFilterSearch"
                                 />
                             </div>
@@ -55,7 +55,7 @@
                                 </button>
                             </div>
 
-                            <div class="col-auto">
+                            <!-- <div class="col-auto">
                                 <div class="dropdown">
                                     <button
                                         class="btn btn-primary dropdown-toggle"
@@ -89,7 +89,7 @@
                                         </button>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
 
                             <div class="col-auto">
                                 <button type="button" class="btn btn-primary-color text-white" (click)="onClickSort()">
@@ -123,7 +123,7 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <p class="card-text text-center p-5">
-                                            {{ 'component.card-event-list.noEvent' | translate }}
+                                            {{ 'component.card-event-list.noEvent' | translate }} {{ tag?.tagName}}
                                         </p>
                                     </div>
                                 </div>

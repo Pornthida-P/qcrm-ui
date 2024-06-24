@@ -134,8 +134,8 @@
             "sat": "Sat"
         },
         "card-event-list": {
-            "add": "Add Event",
-            "placeholder": "Search Events",
+            "add": "Add",
+            "placeholder": "Search",
             "day": "Day",
             "week": "Week",
             "month": "Month",
@@ -237,3 +237,4 @@
         "data-not-found": "Data Not Found"
     }
 }
+

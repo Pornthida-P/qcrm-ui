@@ -134,8 +134,8 @@
             "sat": "ส."
         },
         "card-event-list": {
-            "add": "เพิ่มอีเว้นท์",
-            "placeholder": "ค้นหาอีเว้นท์",
+            "add": "เพิ่ม",
+            "placeholder": "ค้นหา",
             "day": "วัน",
             "week": "สัปดาห์",
             "month": "เดือน",
