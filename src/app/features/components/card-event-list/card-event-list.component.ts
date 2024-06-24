@@ -25,7 +25,7 @@ export class CardEventListComponent implements OnInit, OnChanges {
     isDeleteEvent: boolean = false;
 
     members: User[] = [];
-    selectedDate: string = 'week';
+    selectedDate: string = 'month';
     selectedMembers: string[] = [];
     isFilterSearch: string = '';
     isFilterAttachment: boolean = false;
