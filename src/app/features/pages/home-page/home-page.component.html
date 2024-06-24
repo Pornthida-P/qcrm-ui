@@ -17,14 +17,6 @@
                         <p class="label">{{ 'page.home.menuHome' | translate }}</p>
                     </div>
                 </button>
-                <!-- <button //NOTE - without btn-active class
-                    *ngFor="let tag of tags"
-                    type="button"
-                    class="btn text-white button"
-                    [class.button-active]="onSelectTag?.tagId === tag.tagId"
-                    [style.background-color]="onHome ? (tag.color ? tag.color : 'var(--primary-color)') : onSelectTag?.tagId === tag.tagId ? tag.color :'#6c757d' "
-                    (click)="onClickChangeMenu(tag)"
-                > -->
                 <button
                     *ngFor="let tag of tags"
                     type="button"

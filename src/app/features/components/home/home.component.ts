@@ -83,8 +83,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
                 events: arr4,
             },
         ]);
-
-        console.log('tagList :', this.tagList);
     }
 
     onSelectDate(date: Date) {
