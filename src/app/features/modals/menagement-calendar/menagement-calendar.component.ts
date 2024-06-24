@@ -137,7 +137,7 @@ export class MenagementCalendarComponent implements OnInit {
             this.calendarEvent = this.fb.group({
                 eventId: [{ value: this.data.eventData?.eventId, disabled: isViewMode }],
                 title: [{ value: this.data.eventData?.title, disabled: isViewMode }, Validators.required],
-                tag: [{ value: this.data.eventData?.tag?.tagId, disabled: isViewMode }, Validators.required],
+                tag: [{ value: this.data.eventData?.tag?.tagId, disabled: isViewMode }],
                 location: [{ value: this.data.eventData?.location, disabled: isViewMode }],
                 startDate: [
                     { value: new Date(this.data.eventData?.startDate || '').toISOString(), disabled: isViewMode },
@@ -145,7 +145,7 @@ export class MenagementCalendarComponent implements OnInit {
                 ],
                 endDate: [{ value: new Date(this.data.eventData?.endDate || '').toISOString(), disabled: isViewMode }, Validators.required],
                 description: [{ value: this.data.eventData?.description, disabled: isViewMode }, Validators.required],
-                members: [{ value: [], disabled: isViewMode }, Validators.required],
+                members: [{ value: [], disabled: isViewMode },],
             });
         }
 
