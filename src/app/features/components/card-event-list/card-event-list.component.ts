@@ -116,7 +116,6 @@ export class CardEventListComponent implements OnInit, OnChanges {
     }
     getFilteredEvents(): CalendarEvent[] {
         let filteredEvents = this.events;
-        // console.log('this.events',this.events);
 
         if (this.selectedDate) {
             const currentDate = new Date();

@@ -45,36 +45,6 @@
                                 />
                             </div>
 
-                            <!-- <div class="row my-3"> //NOTE - tag
-                                <div class="col-sm-12 col-md-12">
-                                    <label for="tag" class="form-label">
-                                        {{ 'modal.calendar.tag' | translate }}
-                                    </label>
-                                    <select
-                                        class="form-select"
-                                        id="tag"
-                                        formControlName="tag"
-                                        name="tag"
-                                        [ngClass]="{
-                                            'invalid-form':
-                                                calendarEvent.get('tag')?.invalid &&
-                                                (calendarEvent.get('tag')?.dirty || calendarEvent.get('tag')?.touched)
-                                        }"
-                                    >
-                                        <option *ngFor="let tag of tags" [value]="tag.tagId">{{ tag.tagName }}</option>
-                                    </select>
-                                </div>
-                            </div> -->
-
-                            <!-- <div class="row my-3">
-                                <div class="col-sm-12 col-md-12">
-                                    <label for="location" class="form-label">
-                                        {{ 'modal.calendar.location' | translate }}
-                                    </label>
-                                    <input type="text" class="form-control" id="location" formControlName="location" name="location" />
-                                </div>
-                            </div> -->
-
                             <div class="row" *ngIf="isActivityTag">
                                 <div class="col-sm-12 col-md-6">
                                     <label for="startDate" class="label">
@@ -150,39 +120,6 @@
                                 <angular-editor formControlName="description" [config]="editorConfig"></angular-editor>
                             </div>
 
-                            <!-- <div class="my-3"> //NOTE - member
-                                <label for="members" class="form-label">
-                                    {{ 'modal.calendar.members' | translate }}
-                                </label>
-                                <mat-select
-                                    class="form-control"
-                                    formControlName="members"
-                                    (selectionChange)="onMemberSelectionChange($event)"
-                                    name="members"
-                                    multiple
-                                    [ngClass]="{
-                                        'invalid-form':
-                                            calendarEvent.get('members')?.invalid &&
-                                            (calendarEvent.get('members')?.dirty || calendarEvent.get('members')?.touched)
-                                    }"
-                                >
-                                    <mat-option class="bg-light" *ngFor="let member of members" [value]="member">
-                                        <app-profile [member]="member"></app-profile>
-                                    </mat-option>
-                                </mat-select>
-
-                                <div *ngIf="selectedMembers.length > 0" class="members my-2">
-                                    <div class="row">
-                                        <app-profile-list
-                                            [members]="selectedMembers"
-                                            [isShowToolbar]="true"
-                                            [isBackground]="false"
-                                            [mode]="data.mode"
-                                            (deleteUserId)="onDeletedMember($event)"
-                                        ></app-profile-list>
-                                    </div>
-                                </div>
-                            </div> -->
                         </form>
                     </div>
                 </div>

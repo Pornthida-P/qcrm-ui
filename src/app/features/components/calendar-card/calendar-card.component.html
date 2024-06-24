@@ -8,20 +8,6 @@
         <img class="w-100 h-auto" src="assets/nea-qcrm-ui/image/card/pngtree-new-red-ribbon-tag-mark-png-image_4685171.png" alt="" />
     </div>
     <div class="card-body">
-        <!-- <div class="row">
-            <div class="col-md-12 d-flex justify-content-end gap-2">
-                <span class="fs-6 color-primary cursor-pointer" (click)="onClickViewEvent(event)">
-                    <fa-icon [icon]="faView"></fa-icon>
-                </span>
-                <span *ngIf="isAction" class="fs-6 color-primary cursor-pointer" (click)="onClickEditEvent(event)">
-                    <fa-icon [icon]="faEdit"></fa-icon>
-                </span>
-                <span *ngIf="isAction" class="fs-6 color-red cursor-pointer" (click)="onClickDeleteEvent(event)">
-                    <fa-icon [icon]="faTrash"></fa-icon>
-                </span>
-            </div>
-        </div> -->
-
         <div class="row d-flex justify-content-center my-2">
             <div class="col-md-2 d-flex justify-content-center">
                 <span class="fs-5 color-primary"><fa-icon [icon]="faCalendar"></fa-icon></span>
@@ -31,45 +17,6 @@
             </div>
         </div>
 
-        <!-- <div class="row d-flex justify-content-center my-2">
-            <div class="col-md-2 d-flex justify-content-center">
-                <span class="fs-5 color-primary"><fa-icon [icon]="faTag"></fa-icon></span>
-            </div>
-            <div class="col-md-10 d-flex align-items-center">
-                <p
-                    class="card-text btn text-white fs-6"
-                    [style.background-color]="event.tag.color"
-                    [ngbTooltip]="event.tag.description"
-                    placement="bottom"
-                >
-                    #{{ event.tag.tagName }}
-                </p>
-            </div>
-        </div> -->
-
-        <!-- <div class="row d-flex justify-content-center my-2" *ngIf="event.tag.tagId == 7">
-            <div class="col-md-2 d-flex justify-content-center"></div>
-            <div class="col-md-10 d-flex align-items-center">
-                <p class="card-text fs-7">{{ event.startDate | date : 'medium' }}</p>
-            </div>
-        </div>
-        <div class="row d-flex justify-content-center my-2" *ngIf="event.tag.tagId == 7">
-            <div class="col-md-2 d-flex justify-content-center"></div>
-            <div class="col-md-10 d-flex align-items-center">
-                <p class="card-text fs-7">{{ event.endDate | date : 'medium' }}</p>
-            </div>
-        </div> -->
-
-        <!-- <div class="row d-flex justify-content-center my-2">
-            <div class="col-md-2 d-flex justify-content-center">
-                <span class="fs-5 color-primary"><fa-icon [icon]="faLocation"></fa-icon></span>
-            </div>
-            <div class="col-md-10 d-flex align-items-center">
-                <p class="card-text fs-6">{{ event.location }}</p>
-            </div>
-        </div> -->
-        
-        <!-- //SECTION - user group -->
         <div class="row d-flex justify-content-center my-2"> 
             <div class="col-md-2 d-flex justify-content-center">
                 <span class="fs-5 color-primary"><fa-icon [icon]="faList"></fa-icon></span>
@@ -78,26 +25,6 @@
                 <p class="card-text fs-6 overflow-auto" [innerHtml]="event.description"></p>
             </div>
         </div>
-        <!-- //!SECTION - user group -->
-
-        <!-- <div class="row d-flex justify-content-center my-2">
-            <div class="col-md-2 d-flex justify-content-center">
-                <span class="fs-5 color-primary"><fa-icon [icon]="faUserGroup"></fa-icon></span>
-            </div>
-            <div class="col-md-10 d-flex flex-column">
-                <p class="card-text fs-6">
-                    {{ 'component.calendar-card.members' | translate }}
-                    {{ event.members.length }} {{ 'component.calendar-card.membersCount' | translate }}
-                </p>
-                <app-profile-list
-                    [members]="event.members"
-                    [isShowToolbar]="true"
-                    (viewUserId)="onClickViewMember($event)"
-                    (editUserId)="onClickEditMember($event)"
-                    (deleteUserId)="onClickDeletedMember($event)"
-                ></app-profile-list>
-            </div>
-        </div> -->
 
         <div class="row d-flex justify-content-center my-2"  *ngIf="event.attachments.length > 0">
             <div class="col-md-2 d-flex justify-content-center">
