@@ -1378,6 +1378,7 @@ export class ManageContactsComponent implements OnInit {
                     operationType: selectedCallTypeId,
                     activitySmn: selectedActivitiesSmnIds,
                     activityEln: selectedActivitiesElnIds,
+                    contactId: this.contactId,
                 };
                 console.log('Data: ', data);
                 this.contactsService
@@ -1424,6 +1425,7 @@ export class ManageContactsComponent implements OnInit {
                     operationType: selectedCallTypeId,
                     activitySmn: selectedActivitiesSmnIds,
                     activityEln: selectedActivitiesElnIds,
+                    contactId: this.contactId,
                 };
                 console.log('Data: ', data);
                 this.contactsService
