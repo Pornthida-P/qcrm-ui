@@ -395,7 +395,7 @@ export class ManageContactsComponent implements OnInit {
     submit() {
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
         // if (userData && this.contactId && this.contactId !== '' && this.contact.components.length > 1) {
-        if (this.contactNum || this.contactNum2) {
+        if (this.contactNum || this.contactNum2 || this.contactEmail) {
             if (this.detailItem && this.state != 'copy') {
                 const data = {
                     contactId: this.contactId,
@@ -536,7 +536,7 @@ export class ManageContactsComponent implements OnInit {
                     .subscribe();
             }
         } else {
-            this.sweetalertServices.getSwal('error', 'โปรดกรอกเบอร์ติดต่อ', '', false, '');
+            this.sweetalertServices.getSwal('error', 'โปรดกรอกเบอร์ติดต่อหรืออีเมล', '', false, '');
         }
     }
 
