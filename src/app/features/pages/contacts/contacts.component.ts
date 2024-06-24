@@ -65,7 +65,7 @@ export class ContactsComponent implements OnInit {
     itemIdex: number = 0;
     sideBarItemIndex: number = 0;
 
-    sortId: string = 'h.startTime';
+    sortId: string = 'startTime';
     sortOrder: string = 'DESC';
     sortIcon: string = '';
 
