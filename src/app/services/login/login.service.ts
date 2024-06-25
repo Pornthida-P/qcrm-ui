@@ -59,6 +59,8 @@ export class LoginService {
     logout(user: User): Observable<any> {
         return this.http.post(`${this.baseUrl}${config.api.path.logout}`, { userId: user?.userId }).pipe(
             tap(() => {
+                this.isLoginedSubject.next(false);
+                localStorage.removeItem(this.keyIsLogined);
                 this.socketIO.logout(user);
             }),
         );
