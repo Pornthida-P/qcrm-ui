@@ -58,6 +58,10 @@ export class ContactsService {
         return this.http.get(`${this.baseUrl}/drive/user/${id}`);
     }
 
+    getDriveCorpContact(id: string) {
+        return this.http.get(`${this.baseUrl}/drive/corporate/${id}`);
+    }
+
     getContactSurveyForm(id: string) {
         return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}${config.api.path.contacts.surveyForm}/${id}`);
     }

@@ -638,7 +638,48 @@ export class ManageContactsComponent implements OnInit {
                     }
                 },
                 (error: any) => {
-                    this.sweetalertServices.getSwal('warning', 'Warning', 'ไม่พบข้อมูลในระบบ Drive', false, '');
+                    this.contactsService.getDriveCorpContact(this.contactIden).subscribe(
+                        (res: any) => {
+                            this.contactDrive = res;
+                            
+                            // Check if contacts array is not empty before accessing it
+                            const firstContact = this.contactDrive.contacts?.[0] || {};
+                            
+                            if (this.contactNum == '' || this.contactNum == null || this.contactNum == undefined) {
+                                this.contactFirstName = this.contactDrive.name_TH;
+                                this.contactLastName = '';
+                                this.contactEmail = firstContact.email || '';
+                                this.contactNum = firstContact.phone || '';
+                                this.contactProvince = this.contactDrive.Address_TH?.province?.name || '';
+                                this.contactType = 'นิติบุคคล';
+                                this.MultiNumber = false;
+                            } else {
+                                if (this.contactDrive.contacts?.[0]?.phone != this.contactNum) {
+                                    const contactNo = this.contactNum;
+                                    this.contactFirstName = this.contactDrive.name_TH;
+                                    this.contactLastName = '';
+                                    this.contactEmail = firstContact.email || '';
+                                    this.contactNum = firstContact.phone || '';
+                                    this.contactProvince = this.contactDrive.Address_TH?.province?.name || '';
+                                    this.contactType = 'นิติบุคคล';
+                                    this.contactNum2 = contactNo;
+                                    this.MultiNumber = true;
+                                } else {
+                                    this.contactFirstName = this.contactDrive.name_TH;
+                                    this.contactLastName = '';
+                                    this.contactEmail = firstContact.email || '';
+                                    this.contactNum = firstContact.phone || '';
+                                    this.contactType = 'นิติบุคคล';
+                                    this.contactProvince = this.contactDrive.Address_TH?.province?.name || '';
+                                    this.MultiNumber = false;
+                                }
+                            }
+                            console.log('contactDrive: ', this.contactDrive);
+                        },
+                        (error: any) => {
+                            this.sweetalertServices.getSwal('warning', 'Warning', 'ไม่พบข้อมูลในระบบ Drive', false, '');
+                        },
+                    );
                 },
             );
         }
