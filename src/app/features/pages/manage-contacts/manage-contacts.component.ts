@@ -242,13 +242,15 @@ export class ManageContactsComponent implements OnInit {
 
     contactNumber: any;
     contactNumbers: any;
-    selectedContactNumber: { contactNumber: string, contactNumberId: string } | null = null;
+    selectedContactNumber: { contactNumber: string; contactNumberId: string } | null = null;
     selectedEmail: any[] = [];
     email: any;
+    contactEmailNew: string = '';
 
     contactNumNew: string = '';
 
     isInputVisible: boolean = false;
+    isInputVisibleMail: boolean = false;
 
     constructor(
         private _location: Location,
@@ -405,6 +407,7 @@ export class ManageContactsComponent implements OnInit {
                     organizationId: this.contactOrg,
                     contactType: this.contactType,
                     email: this.contactEmail,
+                    emailNew: this.contactEmailNew,
                     contactNumber: this.contactNum,
                     contactNumber2: this.contactNum2,
                     province: this.contactProvince,
@@ -641,10 +644,10 @@ export class ManageContactsComponent implements OnInit {
                     this.contactsService.getDriveCorpContact(this.contactIden).subscribe(
                         (res: any) => {
                             this.contactDrive = res;
-                            
+
                             // Check if contacts array is not empty before accessing it
                             const firstContact = this.contactDrive.contacts?.[0] || {};
-                            
+
                             if (this.contactNum == '' || this.contactNum == null || this.contactNum == undefined) {
                                 this.contactFirstName = this.contactDrive.name_TH;
                                 this.contactLastName = '';
@@ -1869,5 +1872,9 @@ export class ManageContactsComponent implements OnInit {
 
     inputAddPhone() {
         this.isInputVisible = !this.isInputVisible;
+    }
+
+    inputAddEmail() {
+        this.isInputVisibleMail = !this.isInputVisibleMail;
     }
 }

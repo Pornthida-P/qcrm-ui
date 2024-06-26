@@ -104,7 +104,17 @@
                 </div>
 
                 <div class="col-md-6">
-                    <label for="inputContactEmail" class="form-label">อีเมล์</label>
+                    <div class="d-flex">
+                        <label for="inputContactEmail" class="form-label">อีเมล์</label>
+                        <div
+                            class="mb-2 p-1 btn-primary text-white rounded-2 cursor-pointer add-number ms-2"
+                            (click)="inputAddEmail()"
+                            ngbTooltip="เพิ่มอีเมล"
+                            *ngIf="TableShowing"
+                        >
+                            <i class="fa-solid fa-plus fs-icon"></i>
+                        </div>
+                    </div>
                     <input
                         type="text"
                         class="form-control"
@@ -113,11 +123,26 @@
                         id="inputContactEmail"
                         [disabled]="!checkRole()"
                     />
+                    <input
+                        *ngIf="isInputVisibleMail"
+                        type="text"
+                        class="form-control mt-2"
+                        placeholder="เพิ่มอีเมล"
+                        [(ngModel)]="contactEmailNew"
+                        name="contactEmailNew"
+                        id="inputContactEmailNew"
+                        [disabled]="!checkRole()"
+                    />
                 </div>
                 <div class="col-md-6">
                     <div class="d-flex">
                         <label for="inputContactNum" class="form-label">เบอร์ติดต่อ</label>
-                        <div class="mb-2 p-1 btn-primary text-white rounded-2 cursor-pointer add-number ms-2" (click)="inputAddPhone()" ngbTooltip="เพิ่มเบอร์ติดต่อ" *ngIf="TableShowing">
+                        <div
+                            class="mb-2 p-1 btn-primary text-white rounded-2 cursor-pointer add-number ms-2"
+                            (click)="inputAddPhone()"
+                            ngbTooltip="เพิ่มเบอร์ติดต่อ"
+                            *ngIf="TableShowing"
+                        >
                             <i class="fa-solid fa-plus fs-icon"></i>
                         </div>
                     </div>
@@ -132,7 +157,8 @@
                         onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                         (input)="onInputChange($event, 'contactNum')"
                     />
-                    <input *ngIf="isInputVisible"
+                    <input
+                        *ngIf="isInputVisible"
                         type="text"
                         class="form-control mt-2"
                         [(ngModel)]="contactNumNew"
@@ -758,8 +784,13 @@
                                     class="col-6 w-100 pd-t-20"
                                     *ngIf="selectedChannels === '1' || selectedChannels === '2' || selectedChannels === '3'"
                                 >
-                                    <label *ngIf="selectedChannels === '1' || selectedChannels === '2'" for="inputCallType" class="form-label">ประเภทสาย</label>
-                                    <label  *ngIf="selectedChannels === '3'" for="inputCallType" class="form-label">ประเภทอีเมล</label>
+                                    <label
+                                        *ngIf="selectedChannels === '1' || selectedChannels === '2'"
+                                        for="inputCallType"
+                                        class="form-label"
+                                        >ประเภทสาย</label
+                                    >
+                                    <label *ngIf="selectedChannels === '3'" for="inputCallType" class="form-label">ประเภทอีเมล</label>
                                     <select
                                         id="inputCallType"
                                         class="form-select"
@@ -780,7 +811,13 @@
                                         [(ngModel)]="selectedContactNumber"
                                     >
                                         <option disabled value="">กรุณาเลือกข้อมูล</option>
-                                        <option *ngFor="let contactNumbers of contactNumber" [ngValue]="{ contactNumber: contactNumbers.contactNumber, contactNumberId: contactNumbers.contactNumberId }">
+                                        <option
+                                            *ngFor="let contactNumbers of contactNumber"
+                                            [ngValue]="{
+                                                contactNumber: contactNumbers.contactNumber,
+                                                contactNumberId: contactNumbers.contactNumberId
+                                            }"
+                                        >
                                             {{ contactNumbers.contactNumber }}
                                         </option>
                                     </select>
