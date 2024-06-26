@@ -245,12 +245,12 @@ export class ManageContactsComponent implements OnInit {
     selectedContactNumber: { contactNumber: string; contactNumberId: string } | null = null;
     selectedEmail: any[] = [];
     email: any;
-    contactEmailNew: string = '';
+contactEmailNew: string = '';
 
     contactNumNew: string = '';
 
     isInputVisible: boolean = false;
-    isInputVisibleMail: boolean = false;
+isInputVisibleMail: boolean = false;
 
     constructor(
         private _location: Location,
@@ -275,31 +275,41 @@ export class ManageContactsComponent implements OnInit {
             this.contactId = state.itemId;
             this.state = state.state;
         } else {
-            this.route.queryParams.subscribe((params) => {
+            this.route.queryParams.subscribe(params => {
                 this.contactId = params['key'];
+                this.calls = params['phone'];
+                this.caller_id = params['caller_id'];
+                this.contactNum = params['call_id'];
+                this.contactNumParams = params['call_id'];
+    
+                // React to the new contactId
+                if (this.contactId) {
+                    this.getContactById(this.contactId);
+                }
+    
+                // React to the new phone parameter
+                if (this.calls) {
+                    this.contactsService.getContactsByParamPhone(this.calls).subscribe(data => {
+                        if (data) {
+                            console.log('Data exists:', data);
+                        } else {
+                            console.log('Data does not exist');
+                        }
+                    });
+                }
+    
+                // React to the new caller_id parameter
+                if (!params['caller_id']) {
+                    this.selectedCallTypeId = this.outbound;
+                } else {
+                    this.selectedCallTypeId = this.inbound;
+                }
+    
+                console.log('contactNumParams: ', this.contactNumParams);
+                localStorage.setItem('contactNum', this.contactNum);
             });
         }
-
-        if (this.contactId) {
-            this.getContactById(this.contactId);
-        }
-        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-        this.userRole = userData.role.roleTitle.toLocaleLowerCase();
-
-        this.route.queryParamMap.subscribe((params) => {
-            this.calls = params.get('phone');
-
-            if (this.calls) {
-                this.contactsService.getContactsByParamPhone(this.calls).subscribe((data: any) => {
-                    if (data) {
-                        console.log('Data exists:', data);
-                    } else {
-                        console.log('Data does not exist');
-                    }
-                });
-            }
-        });
-
+    
         if (this.contactId) {
             this.TableShowing = true;
             this.SearchButton = false;
@@ -307,7 +317,10 @@ export class ManageContactsComponent implements OnInit {
             this.TableShowing = false;
             this.SearchButton = true;
         }
-
+    
+        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        this.userRole = userData.role.roleTitle.toLocaleLowerCase();
+    
         this.selectedFilter = 'all';
         if (this.selectedFilter !== 'all') {
             this.userId = this.userData.userId;
@@ -317,28 +330,16 @@ export class ManageContactsComponent implements OnInit {
         this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
         this.getPageOrg();
         this.connect();
-
+    
         const now = new Date();
         this.timepickStart = { hour: now.getHours(), minute: now.getMinutes(), second: now.getSeconds() };
-
+    
         this.callTypes = [
             { id: '1', name: this.inbound },
             { id: '2', name: this.outbound },
         ];
-
-        this.route.queryParams.subscribe((params: any) => {
-            if (!params['caller_id']) {
-                this.selectedCallTypeId = this.outbound;
-            } else {
-                this.selectedCallTypeId = this.inbound;
-            }
-            this.caller_id = params['caller_id'];
-            this.contactNum = params['call_id'];
-            this.contactNumParams = params['call_id'];
-        });
-        console.log('contactNumParams: ', this.contactNumParams);
-        localStorage.setItem('contactNum', this.contactNum);
     }
+    
 
     checkRole(): boolean {
         return true;
@@ -407,7 +408,7 @@ export class ManageContactsComponent implements OnInit {
                     organizationId: this.contactOrg,
                     contactType: this.contactType,
                     email: this.contactEmail,
-                    emailNew: this.contactEmailNew,
+emailNew: this.contactEmailNew,
                     contactNumber: this.contactNum,
                     contactNumber2: this.contactNum2,
                     province: this.contactProvince,
@@ -426,9 +427,12 @@ export class ManageContactsComponent implements OnInit {
                                 this.contactsService
                                     .editContacts(data)
                                     .pipe(
-                                        tap((res) => {
-                                            this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/contacts');
+                                        tap((res: any) => {
+                                            this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/contacts/edit', { key: res.contactId });
                                             this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), 'Success');
+                                            if (this.contactId === res.contactId){
+                                                location.reload();
+                                            }
                                         }),
                                         catchError((error) => {
                                             this.sweetalertServices.handleError(error);
@@ -449,9 +453,12 @@ export class ManageContactsComponent implements OnInit {
                     this.contactsService
                         .editContacts(data)
                         .pipe(
-                            tap((res) => {
-                                this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/contacts');
+                            tap((res: any) => {
+                                this.sweetalertServices.getSwal('success', 'Save data success.', '', false, 'contacts/edit', { key: res.contactId });
                                 this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), 'Success');
+                                if (this.contactId === res.contactId){
+                                    location.reload();
+                                }
                             }),
                             catchError((error) => {
                                 this.sweetalertServices.handleError(error);
@@ -644,10 +651,10 @@ export class ManageContactsComponent implements OnInit {
                     this.contactsService.getDriveCorpContact(this.contactIden).subscribe(
                         (res: any) => {
                             this.contactDrive = res;
-
+                            
                             // Check if contacts array is not empty before accessing it
                             const firstContact = this.contactDrive.contacts?.[0] || {};
-
+                            
                             if (this.contactNum == '' || this.contactNum == null || this.contactNum == undefined) {
                                 this.contactFirstName = this.contactDrive.name_TH;
                                 this.contactLastName = '';
@@ -1872,9 +1879,5 @@ export class ManageContactsComponent implements OnInit {
 
     inputAddPhone() {
         this.isInputVisible = !this.isInputVisible;
-    }
-
-    inputAddEmail() {
-        this.isInputVisibleMail = !this.isInputVisibleMail;
     }
 }
