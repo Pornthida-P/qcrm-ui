@@ -105,6 +105,10 @@ export class CalendarEventService {
     onSetRefreshData(): void {
         this.refreshDataSubject.next();
     }
+    clearDataCalendar(): void {
+        this.refreshDataSubject.unsubscribe();
+        this.refreshDataSubject = new BehaviorSubject<void>(undefined);
+       }
 
     findAllTags(): Observable<any> {
         return this.http.get(`${this.baseUrl}${config.api.path.calendarEvent.findAlltags}`);
