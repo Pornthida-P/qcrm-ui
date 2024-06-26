@@ -1880,4 +1880,8 @@ emailNew: this.contactEmailNew,
     inputAddPhone() {
         this.isInputVisible = !this.isInputVisible;
     }
+
+    inputAddEmail() {
+        this.isInputVisibleMail = !this.isInputVisibleMail;
+    }
 }
