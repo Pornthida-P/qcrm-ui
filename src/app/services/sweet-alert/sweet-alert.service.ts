@@ -8,7 +8,7 @@ import Swal from 'sweetalert2';
 export class SweetAlertService {
     constructor(private router: Router) {}
 
-    getSwal(icon: any, title: string, text: string, showButton: boolean, route: string) {
+    getSwal(icon: any, title: string, text: string, showButton: boolean, route: string, queryParams?: any) {
         Swal.fire({
             icon: icon,
             title: title,
@@ -19,7 +19,11 @@ export class SweetAlertService {
             timerProgressBar: true,
         }).then(() => {
             if (route) {
-                setTimeout(() => this.router.navigate([`/${route}`]), 500);
+                if (queryParams) {
+                    setTimeout(() => this.router.navigate([`/${route}`], { queryParams }), 500);
+                } else {
+                   setTimeout(() => this.router.navigate([`/${route}`]), 500); 
+                }
             }
         });
     }
