@@ -30,7 +30,15 @@ export class ReportService {
         return this.http.get(`${this.baseUrl}${config.api.path.report.caseDetail}/${startDate}/${endDate}/${users}`);
     }
 
+    getSurveyForm(startDate: string, endDate: string, formId: string) {
+        return this.http.get(`${this.baseUrl}${config.api.path.report.surveyForm}/${startDate}/${endDate}/${formId}`);
+    }
+
     getAgent() {
         return this.http.get(`${this.baseUrl}${config.api.path.report.getAgent}`);
+    }
+
+    getSurvey() {
+        return this.http.get(`${this.baseUrl}${config.api.path.report.getSurvey}`);
     }
 }

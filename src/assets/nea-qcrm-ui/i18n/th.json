@@ -233,7 +233,9 @@
         "case-detail": "รายละเอียดเคส",
         "summary-by-month": "สรุปสถิติรายเดือน",
         "survey-send": "การส่งอีเมลแบบฟอร์ม",
+        "survey-form": "การทำแบบฟอร์ม",
         "loading": "กำลังดาวน์โหลด",
-        "data-not-found": "ไม่มีข้อมูล"
+        "data-not-found": "ไม่มีข้อมูล",
+        "select-survey-form": "กรุณาเลือกแบบฟอร์ม"
     }
 }

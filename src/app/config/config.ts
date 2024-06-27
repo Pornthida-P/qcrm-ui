@@ -102,7 +102,9 @@ export const config = {
                 summaryByMonth: '/report/summaryByMonth',
                 sendEmailSurvey: '/report/sendEmailSurvey',
                 caseDetail: '/report/caseDetail',
-                getAgent: '/report/getAgent'
+                surveyForm: '/report/surveyForm',
+                getAgent: '/report/getAgent',
+                getSurvey: '/report/getSurvey'
             },
         },
     },
