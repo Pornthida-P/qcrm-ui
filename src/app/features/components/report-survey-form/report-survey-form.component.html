@@ -148,10 +148,19 @@
                     <tr *ngFor="let data of reportTable.slice(0, reportTable.length - 1); let i = index">
                         <ng-container *ngFor="let column of columnNames">
                             <ng-container *ngIf="isObject(data[column])">
-                                <ng-container *ngFor="let subColumn of data[column] | keyvalue">
-                                    <td scope="row">
-                                        <a>{{ subColumn.value }}</a>
-                                    </td>
+                                <ng-container *ngIf="reportColumn[column].type == 'survey'">
+                                    <ng-container *ngFor="let subColumn of data[column] | keyvalue">
+                                        <td scope="row">
+                                            <a>{{ subColumn.value }}</a>
+                                        </td>
+                                    </ng-container>
+                                </ng-container>
+                                <ng-container *ngIf="reportColumn[column].type == 'selectboxes'">
+                                    <ng-container *ngFor="let subColumn of reportColumn[column].value">
+                                        <td scope="row">
+                                            <a>{{ data[column][subColumn.value] }}</a>
+                                        </td>
+                                    </ng-container>
                                 </ng-container>
                             </ng-container>
                             <ng-container *ngIf="!isObject(data[column])">

@@ -57,8 +57,8 @@ export class ReportSurveyFormComponent {
         if (this.selectedForms == '') return;
         const startDate = moment(this.datePick.get('startDate')!.value).format('YYYY-MM-DD');
         const endDate = moment(this.datePick.get('endDate')!.value).format('YYYY-MM-DD');
-        await this.reportService.getSurveyForm(startDate, endDate, this.selectedForms).subscribe((res: any) => {
-            this.genColumnForm(JSON.parse(res.form[0].form), 0);
+        this.reportService.getSurveyForm(startDate, endDate, this.selectedForms).subscribe(async (res: any) => {
+            await this.genColumnForm(JSON.parse(res.form[0].form), 0);
             this.genSurveyForm(res.answer);
         });
     }
@@ -66,6 +66,7 @@ export class ReportSurveyFormComponent {
     isObject(value: any): boolean {
         return typeof value === 'object' && value !== null;
     }
+
     async genSurveyForm(data: any) {
         if (data.length) {
             for (const survey of data) {
@@ -82,9 +83,9 @@ export class ReportSurveyFormComponent {
                                 };
                                 this.reportSubColumn = true;
                                 this.reportColumn[column]['colspan']++;
-                                if (this.reportColumn[column]['panel'] !== '') {
+                                if (this.reportColumn[column]['panelkey'] !== '') {
                                     for (const panels of this.reportPanel) {
-                                        if (panels.label === this.reportColumn[column]['panel']) {
+                                        if (panels.key === this.reportColumn[column]['panelkey']) {
                                             panels.colspan++;
                                         }
                                     }
@@ -101,7 +102,7 @@ export class ReportSurveyFormComponent {
         }
     }
 
-    async genColumnForm(data: any, level: number, panel?: string) {
+    async genColumnForm(data: any, level: number, panel?: string, panelKey?: string) {
         if (data['components']) {
             for (const component of data.components) {
                 if (component.input) {
@@ -110,13 +111,13 @@ export class ReportSurveyFormComponent {
                         key: component.key,
                         type: component.type,
                         value: component.values,
-                        // survey: {},
                         colspan: 1,
                         panel: panel || '',
+                        panelkey: panelKey || '',
                     };
                     if (panel !== '') {
                         for (const panels of this.reportPanel) {
-                            if (panels.label === panel) {
+                            if (panels.key === panelKey) {
                                 panels.colspan++;
                             }
                         }
@@ -125,7 +126,7 @@ export class ReportSurveyFormComponent {
                         this.reportColumn[component.key].colspan += component.values.length;
                         this.reportSubColumn = true;
                         for (const panels of this.reportPanel) {
-                            if (panels.label === panel) {
+                            if (panels.key === panelKey) {
                                 panels.colspan += this.reportColumn[component.key].colspan;
                             }
                         }
@@ -136,8 +137,18 @@ export class ReportSurveyFormComponent {
                             await this.genColumnForm(column, level++, panel || '');
                         }
                     } else if (component.type === 'panel') {
-                        this.reportPanel.push({ label: component.title, colspan: 0 });
-                        await this.genColumnForm(component, level++, component.title);
+                        let Panel = panel || component.title;
+                        let key = component.key;
+                        if (level == 0) {
+                            this.reportPanel.push({ key: component.key, label: Panel, colspan: 0 });
+                        } else {
+                            for (const panels of this.reportPanel) {
+                                if (panels.label === Panel) {
+                                    key = panels.key;
+                                }
+                            }
+                        }
+                        await this.genColumnForm(component, level + 1, Panel, key);
                     }
                 }
             }
