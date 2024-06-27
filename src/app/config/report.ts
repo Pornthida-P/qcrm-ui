@@ -32,17 +32,21 @@ export const report = {
     },
     cases: {
         caseId: 'ID',
-        channel: 'Channel',
-        contact: 'Contact',
-        caller: 'Number',
-        casetype: 'Topic',
-        casesub: 'Subject',
-        description: 'Description',
-        solution: 'Solution',
-        agent: 'Agent',
-        province : 'Province',
-        created: 'Created Date',
-        type: 'Type'
+        channel: 'ช่องทาง',
+        contact: 'ผู้ติดต่อ',
+        org: 'ร้านค้า/บริษัท',
+        contacttype: 'ประเภทผู้ประกอบการ',
+        email: 'อีเมล์',
+        caller: 'เบอร์ติดต่อ',
+        activityname: 'ประเภทกิจกรรม',
+        casetype: 'หัวข้อที่ติดต่อ',
+        casesub: 'เรื่องที่ติดต่อ',
+        description: 'รายระเอียด',
+        solution: 'แนวทางแนะนำ/แก้ไข',
+        agent: 'เจ้าหน้าที่',
+        province : 'จังหวัด',
+        created: 'วันที่สร้าง',
+        type: 'ประเภท'
     },
     topic: {
         username: 'Agent Name',
@@ -101,7 +105,7 @@ export const report = {
         errorSend: 'Error Send',
         successResend: 'Success Resend',
         errorResend: 'Error Resend',
-        surveyName: 'Survey Name',
+        surveyName: 'Evaluation Form',
         agent: 'Agent'
     },
 };
