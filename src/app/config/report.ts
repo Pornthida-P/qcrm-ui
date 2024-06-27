@@ -8,7 +8,7 @@ export const report = {
         Mobile: 'Mobile Unit',
         LiveChat: 'Live Chat',
         Other: 'อื่นๆ',
-        TotalChannel: 'รวม (Channel)',
+        TotalChannel: 'รวม (ช่องทาง)',
         Topic1: 'ข้อมูลทั่วไป',
         Topic2: 'ระบบ Drive',
         Topic3: 'E-Academy',
@@ -20,7 +20,7 @@ export const report = {
         TotalTopic: 'รวม (Case Type)',
     },
     channel: {
-        username: 'Agent Name',
+        username: 'เจ้าหน้าที่',
         HotIn: 'Hotline (Inbound)',
         HotOut: 'Hotline (Outbound)',
         MailIn: 'Email (Inbound)',
@@ -49,7 +49,7 @@ export const report = {
         type: 'ประเภท'
     },
     topic: {
-        username: 'Agent Name',
+        username: 'เจ้าหน้าที่',
         HotIn: 'Hotline (Inbound)',
         HotOut: 'Hotline (Outbound)',
         MailIn: 'Email (Inbound)',
@@ -57,7 +57,7 @@ export const report = {
         Mobile: 'Mobile Unit',
         LiveChat: 'Live Chat',
         Other: 'อื่นๆ',
-        TotalChannel: 'รวม (Channel)',
+        TotalChannel: 'รวม (ช่องทาง)',
         Topic1: 'ข้อมูลทั่วไป',
         Topic2: 'ระบบ Drive',
         Topic3: 'E-Academy',
@@ -66,7 +66,7 @@ export const report = {
         Topic7: 'ร้องเรียน',
         Topic8: 'ชมเชย',
         Topic6: 'อื่นๆ',
-        TotalTopic: 'รวม (Topic)',
+        TotalTopic: 'รวม (หัวข้อที่ติดต่อ)',
         Sub1: 'แนะนำโครงการ ฝึกอบรม/สัมนา',
         Sub2: 'กำหนดการรายระเอียดการจัดโครงการ',
         Sub3: 'เนื้อหาหลักสูตร/การฝึกอบรมของแต่ละโครงการ/หลักสูตร',
@@ -95,7 +95,7 @@ export const report = {
         Sub26: 'ก่อกวน',
         Sub27: 'สายหลุด',
         Sub28: 'เจ้าหน้าที่ตอบกลับทางอีเมล',
-        TotalSub: 'รวม (Subject)',
+        TotalSub: 'รวม (เรื่องที่ติดต่อ)',
     },
     survey: {
         date: 'Date',
