@@ -62,6 +62,7 @@ export const config = {
                 surveyForm: '/survey-form',
                 call: '/call',
                 contactNumberFide: '/contact-number',
+                findEmailByContact: '/contact-email',
             },
             call: {
                 url: '/call',
