@@ -156,4 +156,9 @@ export class ContactsService {
     updateCase(data: any) {
         return this.http.post(`${this.baseUrl}${config.api.path.contacts.baseUrl}/update-case`, data);
     }
+
+    getEmailById(id: string) {
+      return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}${config.api.path.contacts.findEmailByContact}/${id}`);
+  }
+
 }

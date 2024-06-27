@@ -115,7 +115,7 @@
                             <i class="fa-solid fa-plus fs-icon"></i>
                         </div>
                     </div>
-                    <input
+                    <input *ngIf="!contactId"
                         type="text"
                         class="form-control"
                         [(ngModel)]="contactEmail"
@@ -133,6 +133,16 @@
                         id="inputContactEmailNew"
                         [disabled]="!checkRole()"
                     />
+
+                    <div *ngFor="let email of emailById; let i = index">
+                      <input
+                        type="text"
+                        class="form-control mt-2"
+                        [(ngModel)]="email.email"
+                        name="email{{i}}"
+                        id="inputemail{{i}}"
+                      />
+                    </div>
                 </div>
                 <div class="col-md-6">
                     <div class="d-flex">
@@ -146,7 +156,7 @@
                             <i class="fa-solid fa-plus fs-icon"></i>
                         </div>
                     </div>
-                    <input
+                    <input *ngIf="!contactId"
                         type="text"
                         class="form-control"
                         [(ngModel)]="contactNum"
@@ -170,6 +180,18 @@
                         onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                         (input)="onInputChange($event, 'contactNumNew')"
                     />
+                    <div *ngFor="let contact of contactNumbers; let i = index">
+                      <input
+                        type="text"
+                        class="form-control mt-2"
+                        [(ngModel)]="contact.contactNumber"
+                        name="contactNum{{i}}"
+                        id="inputContactNum{{i}}"
+                        pattern="[0-9]*"
+                        inputmode="numeric"
+                        onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                      />
+                    </div>
                 </div>
                 <div class="col-md-6">
                     <label for="inputContactProvince" class="form-label">จังหวัด</label>

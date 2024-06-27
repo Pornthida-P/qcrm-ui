@@ -241,16 +241,19 @@ export class ManageContactsComponent implements OnInit {
     contactNumParams: any;
 
     contactNumber: any;
-    contactNumbers: any;
+    contactNumbers: { contactNumber: string }[] = [];
     selectedContactNumber: { contactNumber: string; contactNumberId: string } | null = null;
     selectedEmail: any[] = [];
     email: any;
-contactEmailNew: string = '';
+    emailById: { email: string }[] = [];
+    contactEmailNew: string = '';
 
     contactNumNew: string = '';
 
     isInputVisible: boolean = false;
-isInputVisibleMail: boolean = false;
+    isInputVisibleMail: boolean = false;
+
+    phoneNumbers: string[] = [''];
 
     constructor(
         private _location: Location,
@@ -275,21 +278,21 @@ isInputVisibleMail: boolean = false;
             this.contactId = state.itemId;
             this.state = state.state;
         } else {
-            this.route.queryParams.subscribe(params => {
+            this.route.queryParams.subscribe((params) => {
                 this.contactId = params['key'];
                 this.calls = params['phone'];
                 this.caller_id = params['caller_id'];
                 this.contactNum = params['call_id'];
                 this.contactNumParams = params['call_id'];
-    
+
                 // React to the new contactId
                 if (this.contactId) {
                     this.getContactById(this.contactId);
                 }
-    
+
                 // React to the new phone parameter
                 if (this.calls) {
-                    this.contactsService.getContactsByParamPhone(this.calls).subscribe(data => {
+                    this.contactsService.getContactsByParamPhone(this.calls).subscribe((data) => {
                         if (data) {
                             console.log('Data exists:', data);
                         } else {
@@ -297,19 +300,19 @@ isInputVisibleMail: boolean = false;
                         }
                     });
                 }
-    
+
                 // React to the new caller_id parameter
                 if (!params['caller_id']) {
                     this.selectedCallTypeId = this.outbound;
                 } else {
                     this.selectedCallTypeId = this.inbound;
                 }
-    
+
                 console.log('contactNumParams: ', this.contactNumParams);
                 localStorage.setItem('contactNum', this.contactNum);
             });
         }
-    
+
         if (this.contactId) {
             this.TableShowing = true;
             this.SearchButton = false;
@@ -317,10 +320,10 @@ isInputVisibleMail: boolean = false;
             this.TableShowing = false;
             this.SearchButton = true;
         }
-    
+
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
         this.userRole = userData.role.roleTitle.toLocaleLowerCase();
-    
+
         this.selectedFilter = 'all';
         if (this.selectedFilter !== 'all') {
             this.userId = this.userData.userId;
@@ -330,16 +333,15 @@ isInputVisibleMail: boolean = false;
         this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
         this.getPageOrg();
         this.connect();
-    
+
         const now = new Date();
         this.timepickStart = { hour: now.getHours(), minute: now.getMinutes(), second: now.getSeconds() };
-    
+
         this.callTypes = [
             { id: '1', name: this.inbound },
             { id: '2', name: this.outbound },
         ];
     }
-    
 
     checkRole(): boolean {
         return true;
@@ -386,7 +388,17 @@ isInputVisibleMail: boolean = false;
         });
 
         await this.contactsService.getContactNumberById(contactId).subscribe((res: any) => {
-            this.contactNumbers = res;
+            // this.contactNumbers = res;
+            this.contactNumbers = res.map((item: any) => ({
+                contactNumber: item.contactNumber || item,
+            }));
+        });
+
+      await this.contactsService.getEmailById(contactId).subscribe((res: any) => {
+          console.log('emailId: ', res)
+            this.emailById = res.map((item: any) => ({
+              email: item.email || item,
+            }));
         });
     }
 
@@ -398,7 +410,7 @@ isInputVisibleMail: boolean = false;
     submit() {
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
         // if (userData && this.contactId && this.contactId !== '' && this.contact.components.length > 1) {
-        if (this.contactNum || this.contactNum2 || this.contactEmail) {
+        if (this.contactNum || this.contactNum2 || this.contactEmail || this.contactEmailNew || this.contactNumNew) {
             if (this.detailItem && this.state != 'copy') {
                 const data = {
                     contactId: this.contactId,
@@ -408,7 +420,7 @@ isInputVisibleMail: boolean = false;
                     organizationId: this.contactOrg,
                     contactType: this.contactType,
                     email: this.contactEmail,
-emailNew: this.contactEmailNew,
+                    emailNew: this.contactEmailNew,
                     contactNumber: this.contactNum,
                     contactNumber2: this.contactNum2,
                     province: this.contactProvince,
@@ -428,9 +440,11 @@ emailNew: this.contactEmailNew,
                                     .editContacts(data)
                                     .pipe(
                                         tap((res: any) => {
-                                            this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/contacts/edit', { key: res.contactId });
+                                            this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/contacts/edit', {
+                                                key: res.contactId,
+                                            });
                                             this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), 'Success');
-                                            if (this.contactId === res.contactId){
+                                            if (this.contactId === res.contactId) {
                                                 location.reload();
                                             }
                                         }),
@@ -454,9 +468,11 @@ emailNew: this.contactEmailNew,
                         .editContacts(data)
                         .pipe(
                             tap((res: any) => {
-                                this.sweetalertServices.getSwal('success', 'Save data success.', '', false, 'contacts/edit', { key: res.contactId });
+                                this.sweetalertServices.getSwal('success', 'Save data success.', '', false, 'contacts/edit/${contactId}', {
+                                    key: res.contactId,
+                                });
                                 this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), 'Success');
-                                if (this.contactId === res.contactId){
+                                if (this.contactId === res.contactId) {
                                     location.reload();
                                 }
                             }),
@@ -651,10 +667,10 @@ emailNew: this.contactEmailNew,
                     this.contactsService.getDriveCorpContact(this.contactIden).subscribe(
                         (res: any) => {
                             this.contactDrive = res;
-                            
+
                             // Check if contacts array is not empty before accessing it
                             const firstContact = this.contactDrive.contacts?.[0] || {};
-                            
+
                             if (this.contactNum == '' || this.contactNum == null || this.contactNum == undefined) {
                                 this.contactFirstName = this.contactDrive.name_TH;
                                 this.contactLastName = '';
@@ -1373,7 +1389,7 @@ emailNew: this.contactEmailNew,
                     solution: this.solutions,
                     createdById: userData.userId,
                     attachment: this.attachmentsId,
-                    call_id: (this.contactNumParams || this.selectedContactNumber) ? this.selectedContactNumber?.contactNumber : null,
+                    call_id: this.contactNumParams || this.selectedContactNumber ? this.selectedContactNumber?.contactNumber : null,
                     contactNumberId: this.selectedContactNumber ? this.selectedContactNumber.contactNumberId : null,
                     caller_id: this.caller_id,
                     operationType: selectedCallTypeId,
