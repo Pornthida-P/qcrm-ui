@@ -71,7 +71,11 @@ export class ReportSurveyFormComponent {
         if (data.length) {
             for (const survey of data) {
                 let Survey = JSON.parse(survey.surveyData);
-                // Survey['name'] = survey.firstName;
+                if (Survey['data'] && typeof Survey['data'] === 'object' && !Array.isArray(Survey['data'])) {
+                    this.reportTable.push(Survey['data']);
+                } else {
+                    this.reportTable.push(Survey);
+                }
                 if (Survey) {
                     Object.keys(Survey)!.forEach((column) => {
                         if (this.reportColumn[column]?.type == 'survey') {
@@ -95,8 +99,6 @@ export class ReportSurveyFormComponent {
                         }
                     });
                 }
-
-                this.reportTable.push(Survey);
             }
         } else {
             this.reportSubColumn = false;
