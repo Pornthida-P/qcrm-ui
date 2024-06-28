@@ -150,7 +150,7 @@
             </thead>
             <tbody>
                 <ng-container *ngIf="reportTable?.length > 0; else noDataTemplate">
-                    <tr *ngFor="let data of reportTable.slice(0, reportTable.length - 1); let i = index">
+                    <tr *ngFor="let data of reportTable let i = index">
                         <ng-container *ngFor="let column of columnNames">
                             <ng-container *ngIf="isObject(data[column])">
                                 <ng-container *ngIf="reportColumn[column].type == 'survey'">
