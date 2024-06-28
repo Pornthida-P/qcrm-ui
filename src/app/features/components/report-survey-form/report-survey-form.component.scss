@@ -28,11 +28,43 @@
     z-index: 1;
 }
 
+.input-group {
+    max-width: 90%;
+}
+
+.input-group.no-wrap {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+.select-container {
+    flex-grow: 1;
+}
+
 .form-select {
-    width: 25vw;
-    white-space: nowrap;
+    width: 100%;
+    max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.button-container {
+    margin-left: 5px; /* Adjust this value to control the space between select and button */
+}
+
+.input-group.no-wrap {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+.input-group.no-wrap .form-select {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .border-both {
