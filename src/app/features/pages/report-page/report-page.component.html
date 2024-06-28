@@ -41,6 +41,13 @@
                 >
                     {{ 'report.survey-send' | translate }}
                 </button>
+                <button
+                    class="d-flex align-items-center gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white"
+                    [class.button-active]="onSelectReport === 'survey-form'"
+                    (click)="onChangeReport('survey-form')"
+                >
+                    {{ 'report.survey-form' | translate }}
+                </button>
             </div>
         </div>
         <router-outlet></router-outlet>

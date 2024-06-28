@@ -233,8 +233,10 @@
         "case-detail": "Case Detail",
         "summary-by-month": "Summary By Month",
         "survey-send": "Survey Send",
+        "survey-form": "Survey Form",
         "loading": "Loading",
-        "data-not-found": "Data Not Found"
+        "data-not-found": "Data Not Found",
+        "select-survey-form": "Please select a form"
     }
 }
 

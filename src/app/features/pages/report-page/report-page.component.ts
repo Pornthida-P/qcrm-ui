@@ -62,6 +62,11 @@ export class ReportPageComponent implements OnInit {
         this.router.navigate(['/report-page']);
     }
 
+    onSurveyForm() {
+        this.onSelectReport = 'SurveyForm';
+        this.router.navigate(['/report-page/survey-form']);
+    }
+
     onChangeReport(report: string) {
         this.onSelectReport = report;
         this.router.navigate(['/report-page/' + report]);

@@ -116,7 +116,7 @@
             <thead>
                 <tr>
                     <ng-container *ngFor="let column of columnNames">
-                        <th scope="row" *ngIf="columnVisibility[column]">
+                        <th scope="row" *ngIf="columnVisibility[column]" style="white-space: nowrap;">
                             <a>{{ columnName[column] }}</a>
                         </th>
                     </ng-container>
@@ -132,12 +132,12 @@
                         </ng-container>
                     </tr>
                     <tr>
-                        <td colspan="11" class="show-more text-center" (click)="showMoreItems()" >Show More</td>
+                        <td colspan="15" class="show-more text-center" (click)="showMoreItems()" >Show More</td>
                     </tr>
                 </ng-container>
                 <ng-template #noDataTemplate>
                     <tr>
-                        <td colspan="11" class="text-center">{{ loadingText | translate }}</td>
+                        <td colspan="15" class="text-center">{{ loadingText | translate }}</td>
                     </tr>
                 </ng-template>
             </tbody>
