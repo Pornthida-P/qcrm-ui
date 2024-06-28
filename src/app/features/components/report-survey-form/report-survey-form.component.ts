@@ -71,33 +71,35 @@ export class ReportSurveyFormComponent {
         if (data.length) {
             for (const survey of data) {
                 let Survey = JSON.parse(survey.surveyData);
-                Survey['name'] = survey.firstName;
-
-                Object.keys(Survey)!.forEach((column) => {
-                    if (this.reportColumn[column]?.type == 'survey') {
-                        if (!this.reportColumn[column]?.survey) {
-                            this.reportColumn[column]['survey'] = {};
-                            Object.keys(Survey[column])!.forEach((survey) => {
-                                this.reportColumn[column]['survey'][survey] = {
-                                    label: survey,
-                                };
-                                this.reportSubColumn = true;
-                                this.reportColumn[column]['colspan']++;
-                                if (this.reportColumn[column]['panelkey'] !== '') {
-                                    for (const panels of this.reportPanel) {
-                                        if (panels.key === this.reportColumn[column]['panelkey']) {
-                                            panels.colspan++;
+                // Survey['name'] = survey.firstName;
+                if (Survey) {
+                    Object.keys(Survey)!.forEach((column) => {
+                        if (this.reportColumn[column]?.type == 'survey') {
+                            if (!this.reportColumn[column]?.survey) {
+                                this.reportColumn[column]['survey'] = {};
+                                Object.keys(Survey[column])!.forEach((survey) => {
+                                    this.reportColumn[column]['survey'][survey] = {
+                                        label: survey,
+                                    };
+                                    this.reportSubColumn = true;
+                                    this.reportColumn[column]['colspan']++;
+                                    if (this.reportColumn[column]['panelkey'] !== '') {
+                                        for (const panels of this.reportPanel) {
+                                            if (panels.key === this.reportColumn[column]['panelkey']) {
+                                                panels.colspan++;
+                                            }
                                         }
                                     }
-                                }
-                            });
+                                });
+                            }
                         }
-                    }
-                });
+                    });
+                }
 
                 this.reportTable.push(Survey);
             }
         } else {
+            this.reportSubColumn = false;
             this.loadingText = 'report.data-not-found';
         }
     }
@@ -217,6 +219,7 @@ export class ReportSurveyFormComponent {
         this.reportTable = [];
         this.reportColumn = [];
         this.reportPanel = [];
+        this.reportSubColumn = false;
         this.getReport();
     }
 

@@ -34,3 +34,13 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.border-both {
+    white-space: nowrap !important;
+    border-right: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+}
+
+.no-border {
+    white-space: nowrap !important;
+}

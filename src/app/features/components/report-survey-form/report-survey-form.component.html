@@ -91,7 +91,12 @@
             <thead>
                 <tr>
                     <ng-container *ngFor="let panel of reportPanel">
-                        <th [attr.colspan]="panel.colspan" scope="row" style="white-space: nowrap">
+                        <th
+                            [attr.colspan]="panel.colspan"
+                            scope="row"
+                            class="border-both"
+                            style="white-space: nowrap; border-right: 1px solid #ddd; border-left: 1px solid #ddd"
+                        >
                             <a>{{ panel.label }}</a>
                         </th>
                     </ng-container>
@@ -103,7 +108,7 @@
                                 reportColumn[column]?.colspan > 1 ? reportColumn[column]?.colspan - 1 : reportColumn[column]?.colspan
                             "
                             scope="row"
-                            style="white-space: nowrap"
+                            class="border-both"
                         >
                             <a>{{ reportColumn[column].label }}</a>
                         </th>
@@ -114,14 +119,14 @@
                         <ng-container *ngFor="let column of columnNames">
                             <ng-container *ngIf="reportColumn[column].type === 'survey'">
                                 <ng-container *ngFor="let survey of reportColumn[column].survey | keyvalue">
-                                    <th colspan="1" scope="row" style="white-space: nowrap">
+                                    <th colspan="1" scope="row" class="border-both">
                                         <a>{{ survey.key }}</a>
                                     </th>
                                 </ng-container>
                             </ng-container>
                             <ng-container *ngIf="reportColumn[column].type === 'selectboxes'">
                                 <ng-container *ngFor="let selected of reportColumn[column].value">
-                                    <th colspan="1" scope="row" style="white-space: nowrap">
+                                    <th colspan="1" scope="row" class="border-both">
                                         <a>{{ selected.label }}</a>
                                     </th>
                                 </ng-container>
@@ -134,7 +139,7 @@
                                             : reportColumn[column]?.colspan
                                     "
                                     scope="row"
-                                    style="white-space: nowrap"
+                                    class="no-border"
                                 >
                                     <a></a>
                                 </th>
