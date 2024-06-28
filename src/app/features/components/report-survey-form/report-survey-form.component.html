@@ -1,13 +1,31 @@
 <div>
     <div class="row justify-content-end align-items-center pe-4">
         <div class="col-auto">
-            <div class="input-group">
-                <select id="inputForm" class="form-select" name="selectedForms" [(ngModel)]="selectedForms" (change)="onChangeForm($event)">
-                    <option disabled value="">{{ selectText | translate }}</option>
-                    <option *ngFor="let option of optionForms" [value]="option.surveyFormId">{{ option.name }}</option>
-                </select>
+            <div class="input-group no-wrap pb-4">
+                <div class="select-container pe-4 ps-4">
+                    <select
+                        id="inputForm"
+                        class="form-select"
+                        name="selectedForms"
+                        [(ngModel)]="selectedForms"
+                        (change)="onChangeForm($event)"
+                    >
+                        <option disabled value="">{{ selectText | translate }}</option>
+                        <option *ngFor="let option of optionForms" [value]="option.surveyFormId">{{ option.name }}</option>
+                    </select>
+                </div>
+                <div class="button-container" [style.display]="displayIf()">
+                    <button
+                        class="btn-primary-color rounded p-2 text-white"
+                        (click)="exportExcel('data-table')"
+                        ngbTooltip="Export to Excel"
+                    >
+                        <fa-icon [icon]="faFileExport"></fa-icon>
+                    </button>
+                </div>
             </div>
         </div>
+
         <div class="col-auto" [formGroup]="datePick" [style.display]="'none'">
             <div class="input-group start-date">
                 <input
@@ -76,7 +94,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-auto" [style.display]="displayIf()">
+        <!-- <div class="col-auto" [style.display]="displayIf()">
             <button
                 class="d-flex gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white"
                 (click)="exportExcel('data-table')"
@@ -84,7 +102,7 @@
             >
                 <fa-icon [icon]="faFileExport"></fa-icon>
             </button>
-        </div>
+        </div> -->
     </div>
     <div class="pe-4 ps-4 table-container">
         <table class="table table-responsive" id="data-table">
@@ -150,7 +168,7 @@
             </thead>
             <tbody>
                 <ng-container *ngIf="reportTable?.length > 0; else noDataTemplate">
-                    <tr *ngFor="let data of reportTable let i = index">
+                    <tr *ngFor="let data of reportTable; let i = index">
                         <ng-container *ngFor="let column of columnNames">
                             <ng-container *ngIf="isObject(data[column])">
                                 <ng-container *ngIf="reportColumn[column].type == 'survey'">
