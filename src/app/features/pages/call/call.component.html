@@ -131,7 +131,9 @@
                             </th>
                             <th scope="col" style="width: 12%">เวลา</th>
                             <th scope="col" style="width: 8%">เบอร์โทร</th>
+                            <th scope="col" style="width: 6%">อีเมล</th>
                             <th scope="col" style="width: 14%">ผู้ติดต่อ</th>
+                            <th scope="col" style="width: 14%">ประเภท</th>
                             <th scope="col" style="width: 8%">ประเภทสาย</th>
                             <th scope="col" style="width: 16%">เรื่องที่ติดต่อ</th>
                             <th scope="col" style="width: 16%">รายละเอียด</th>
@@ -188,7 +190,9 @@
                                         {{ calls.caller }}
                                     </div>
                                 </td> -->
+                                <td style="width: 10px;">{{ calls.email }}</td>
                                 <td>{{ calls.contact }}</td>
+                                <td>{{ calls.channel }}</td>
                                 <td>{{ calls.type }}</td>
                                 <td class="w-max-ellipsis">
                                     <div [ngbTooltip]="calls.casesub" placement="bottom" class="text-ellipsis">
