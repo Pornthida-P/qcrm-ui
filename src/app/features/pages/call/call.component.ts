@@ -209,6 +209,12 @@ export class CallComponent implements OnInit {
     contactId: string = '';
     phoneCall: string = '';
 
+    selectedContactNumber: { contactNumber: string; contactNumberId: string } | null = null;
+    contactNumber: any;
+    selectedEmail: any[] = [];
+    email: any;
+    emails: any;
+
     constructor(
         private callService: CallService,
         private router: Router,
@@ -224,13 +230,13 @@ export class CallComponent implements OnInit {
     }
 
     ngOnInit() {
-      this.getUserData();
+        this.getUserData();
 
-      this.userRole = this.userData.role.roleTitle.toLocaleLowerCase();
-      this.filterOption = [
-          { name: 'ทั้งหมด', code: 'all' },
-          { name: 'เฉพาะฉัน', code: this.userData.username },
-      ];
+        this.userRole = this.userData.role.roleTitle.toLocaleLowerCase();
+        this.filterOption = [
+            { name: 'ทั้งหมด', code: 'all' },
+            { name: 'เฉพาะฉัน', code: this.userData.username },
+        ];
 
         this.filterDate = [
             { name: 'กรุณาเลือกวันที่', type: '' },
@@ -240,15 +246,15 @@ export class CallComponent implements OnInit {
             { name: 'เลือกวันที่', type: 'custom' },
         ];
 
-      this.activeRoute.queryParams.subscribe((params) => {
-          if (params['cb'] != undefined && params['cb'] != '') {
-              const cbArray = params['cb'].split(',').map(Number);
-              this.pageSize = cbArray[0];
-              this.currentPage = cbArray[1];
-              this.totalItems = cbArray[2];
-              this.totalPages = cbArray[3];
-          }
-      });
+        this.activeRoute.queryParams.subscribe((params) => {
+            if (params['cb'] != undefined && params['cb'] != '') {
+                const cbArray = params['cb'].split(',').map(Number);
+                this.pageSize = cbArray[0];
+                this.currentPage = cbArray[1];
+                this.totalItems = cbArray[2];
+                this.totalPages = cbArray[3];
+            }
+        });
 
         this.selectedFilter = this.filterOption[0].code;
         if (this.selectedFilter !== 'all') {
@@ -257,31 +263,31 @@ export class CallComponent implements OnInit {
 
         this.filterDateType = this.filterDate[0].type;
 
-      this.getCallsData((this.currentPage - 1) *  this.currentPage, this.pageSize);
-      this.getPage();
+        this.getCallsData((this.currentPage - 1) * this.currentPage, this.pageSize);
+        this.getPage();
 
-      this.dateRangeForm = this.fb.group({
-          startDate: [''],
-          endDate: [''],
-      });
+        this.dateRangeForm = this.fb.group({
+            startDate: [''],
+            endDate: [''],
+        });
 
-      this.dateRangeForm.get('startDate')!.valueChanges.subscribe((value) => {
-          this.startDate = moment(value).format('YYYY-MM-DD');
-          this.getCallsData((this.currentPage - 1) * this.currentPage, this.pageSize);
-          this.getPage();
-      });
+        this.dateRangeForm.get('startDate')!.valueChanges.subscribe((value) => {
+            this.startDate = moment(value).format('YYYY-MM-DD');
+            this.getCallsData((this.currentPage - 1) * this.currentPage, this.pageSize);
+            this.getPage();
+        });
 
-      this.dateRangeForm.get('endDate')!.valueChanges.subscribe((value) => {
-          this.endDate = moment(value).format('YYYY-MM-DD');
-          this.getCallsData((this.currentPage - 1) * this.currentPage, this.pageSize);
-          this.getPage();
-      });
+        this.dateRangeForm.get('endDate')!.valueChanges.subscribe((value) => {
+            this.endDate = moment(value).format('YYYY-MM-DD');
+            this.getCallsData((this.currentPage - 1) * this.currentPage, this.pageSize);
+            this.getPage();
+        });
 
-      this.callTypes = [
-          { id: '1', name: this.inbound },
-          { id: '2', name: this.outbound },
-      ];
-  }
+        this.callTypes = [
+            { id: '1', name: this.inbound },
+            { id: '2', name: this.outbound },
+        ];
+    }
 
     onUserSelectDateFilter(newDateFilterType: string) {
         this.updateDateFilterAndRefreshData(newDateFilterType, (this.currentPage - 1) * this.pageSize, this.pageSize);
@@ -333,15 +339,15 @@ export class CallComponent implements OnInit {
             });
     }
 
-  async getPage() {
-    let userFilter = '';
-    if (this.selectedFilter === 'all') {
-        userFilter = this.selectedFilter;
-    } else {
-        userFilter = this.userData.userId;
-    }
+    async getPage() {
+        let userFilter = '';
+        if (this.selectedFilter === 'all') {
+            userFilter = this.selectedFilter;
+        } else {
+            userFilter = this.userData.userId;
+        }
 
-    console.log('user: ', userFilter)
+        console.log('user: ', userFilter);
         await this.callService
             .getCallsCount(this.valueSearch, userFilter, this.filterDateType, this.startDate, this.endDate)
             .subscribe((res: any) => {
@@ -567,7 +573,8 @@ export class CallComponent implements OnInit {
         });
     }
 
-    editCall(callId: string, type: string) {
+    editCall(callId: string, type: string, contactId: string) {
+        console.log('contactIdEdit: ', contactId);
         this.attachmentShowing = false;
         console.log('Edit Call:', callId);
         console.log('Type:', type);
@@ -621,6 +628,8 @@ export class CallComponent implements OnInit {
                     minute: date.getMinutes(),
                     second: date.getSeconds(),
                 };
+              this.selectedEmail = call[0].email;
+              this.selectedContactNumber = call[0].caller_id
 
                 // Handle caseTopicIds
                 if (call[0].caseTopicId && call[0].caseTopicId !== 'null') {
@@ -696,7 +705,9 @@ export class CallComponent implements OnInit {
                     second: date.getSeconds(),
                 };
                 this.selectedChannels = call.channelId;
-                this.selectedCallTypeId = call.operationType;
+              this.selectedCallTypeId = call.operationType;
+              this.selectedEmail = call.email;
+              this.selectedContactNumber = call.contactNumber
 
                 if (call.caseTopicIds && call.caseTopicIds !== 'null') {
                     let caseTopicIds = call.caseTopicIds;
@@ -753,6 +764,8 @@ export class CallComponent implements OnInit {
         });
 
         this.showAddCall();
+        this.getContactNumber(contactId);
+        this.getEmail(contactId);
     }
 
     saveSelectedActivitiesSmn() {
@@ -1179,6 +1192,9 @@ export class CallComponent implements OnInit {
                     operationType: selectedCallTypeId,
                     activitySmn: selectedActivitiesSmnIds,
                     activityEln: selectedActivitiesElnIds,
+                    call_id: this.selectedContactNumber ? this.selectedContactNumber.contactNumber : null,
+                    emails: this.selectedEmail,
+                    contactNumberId: this.selectedContactNumber ? this.selectedContactNumber.contactNumberId : null,
                 };
                 console.log('Data: ', data);
                 this.contactsService
@@ -1341,8 +1357,41 @@ export class CallComponent implements OnInit {
         if (this.selectSubject < 5) this.selectSubject++;
         console.log(this.selectSubject);
     }
+
     removeTopicAndSubject() {
         if (this.selectSubject > 0) this.selectSubject--;
         console.log(this.selectSubject);
+    }
+
+    async getContactNumber(contactsId: string) {
+        try {
+            const contactNumber = (await this.callService.getContactNumbertById(contactsId).toPromise()) as any[];
+            console.log('contactNumber Res:', contactNumber);
+
+            if (contactNumber && contactNumber.length > 0) {
+                this.contactNumber = contactNumber;
+                console.log('contactNumber: ', this.contactNumber);
+            } else {
+                console.warn('No contact number found for this contactId');
+            }
+        } catch (error) {
+            console.error('Error fetching contact number', error);
+        }
+    }
+
+    async getEmail(contactsId: string) {
+        try {
+            const email = (await this.callService.getEmailById(contactsId).toPromise()) as any[];
+            console.log('Email Res:', email);
+
+            if (email && email.length > 0) {
+                this.email = email;
+                console.log('Email: ', this.email);
+            } else {
+                console.warn('No Email found for this contactId');
+            }
+        } catch (error) {
+            console.error('Error fetching Email', error);
+        }
     }
 }
