@@ -169,12 +169,12 @@
                                     data-bs-target="#offcanvasRight"
                                     aria-controls="offcanvasRight"
                                     scope="row"
-                                    >
+                                >
                                     <div
                                         ngbTooltip="คลิกเพื่อไปที่หน้าการโทร"
                                         placement="bottom"
                                         class="text-ellipsis"
-                                        style="color: #3066be; text-decoration: underline;"
+                                        style="color: #3066be; text-decoration: underline"
                                     >
                                         {{ calls.caller }}
                                     </div>
@@ -190,7 +190,7 @@
                                         {{ calls.caller }}
                                     </div>
                                 </td> -->
-                                <td style="width: 10px;">{{ calls.email }}</td>
+                                <td style="width: 10px">{{ calls.email }}</td>
                                 <td>{{ calls.contact }}</td>
                                 <td>{{ calls.channel }}</td>
                                 <td>{{ calls.type }}</td>
@@ -220,7 +220,7 @@
                                             data-bs-target="#offcanvasRight"
                                             aria-controls="offcanvasRight"
                                             ngbTooltip="แก้ไข"
-                                            (click)="editCall(calls.callId, calls.table)"
+                                            (click)="editCall(calls.callId, calls.table, calls.contactId)"
                                         >
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </div>
@@ -468,8 +468,17 @@
                                         <option disabled value="">กรุณาเลือกข้อมูล</option>
                                         <option *ngFor="let channel of channels" [value]="channel.channelId">{{ channel.name }}</option>
                                     </select>
-                                    <div class="col-6 w-100 pd-t-20" *ngIf="selectedChannels === '1'">
-                                        <label for="inputCallType" class="form-label">ประเภทสาย</label>
+                                    <div
+                                        class="col-6"
+                                        *ngIf="selectedChannels === '1' || selectedChannels === '2' || selectedChannels === '3'"
+                                    >
+                                        <label
+                                            *ngIf="selectedChannels === '1' || selectedChannels === '2'"
+                                            for="inputCallType"
+                                            class="form-label"
+                                            >ประเภทสาย</label
+                                        >
+                                        <label *ngIf="selectedChannels === '3'" for="inputCallType" class="form-label">ประเภทอีเมล</label>
                                         <select
                                             id="inputCallType"
                                             class="form-select"
@@ -479,6 +488,55 @@
                                             <option disabled value="">กรุณาเลือกข้อมูล</option>
                                             <option *ngFor="let callType of callTypes" [value]="callType.name">{{ callType.name }}</option>
                                         </select>
+                                    </div>
+                                    <div class="col-6" *ngIf="selectedChannels === '1' || selectedChannels === '2'">
+                                        <label for="inputContactNumber" class="form-label"
+                                            >เบอร์ติดต่อ<span class="color-red">*</span></label
+                                        >
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            [(ngModel)]="selectedContactNumber"
+                                            name="selectedContactNumber"
+                                            id="inputContactNumber"
+                                            pattern="[0-9]*"
+                                            inputmode="numeric"
+                                            onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                                            disabled
+                                        />
+                                        <!-- <select
+                                            id="inputContactNumber"
+                                            class="form-select"
+                                            name="selectedContactNumber"
+                                            [(ngModel)]="selectedContactNumber"
+                                        >
+                                            <option
+                                                *ngFor="let contactNumbers of contactNumber"
+                                                [ngValue]="{
+                                                    contactNumber: contactNumbers.contactNumber,
+                                                    contactNumberId: contactNumbers.contactNumberId
+                                                }"
+                                            >
+                                                {{ contactNumbers.contactNumber }}
+                                            </option>
+                                        </select> -->
+                                    </div>
+
+                                    <div class="col-6" *ngIf="selectedChannels === '3'">
+                                        <label for="inputEmail" class="form-label">อีเมล<span class="color-red">*</span></label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            [(ngModel)]="selectedEmail"
+                                            name="selectedEmail"
+                                            id="inputEmail"
+                                            disabled
+                                        />
+                                        <!-- <select id="inputEmail" class="form-select" name="selectedEmail" [(ngModel)]="selectedEmail">
+                                            <option *ngFor="let emails of email" [value]="emails.emailId">
+                                                {{ emails.email }}
+                                            </option>
+                                        </select> -->
                                     </div>
                                     <div class="form-check" style="margin-top: 17px">
                                         <input
