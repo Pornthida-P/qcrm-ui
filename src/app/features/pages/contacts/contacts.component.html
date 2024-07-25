@@ -336,7 +336,7 @@
                                 <tbody>
                                     <ng-container *ngIf="surveyForms?.length > 0; else noDataTemplate">
                                         <tr *ngFor="let form of surveyForms; let i = index">
-                                            <td scope="row" class="cursor-pointer w-max-ellipsis" (click)="sendEmail(form.surveyFormId)">
+                                            <td scope="row" class="cursor-pointer w-max-ellipsis" (click)="sendEmail(form.surveyFormId, form.name)">
                                                 {{ form.name }}
                                             </td>
                                             <td scope="row">{{ form.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>

@@ -385,7 +385,7 @@ export class ContactsComponent implements OnInit {
         });
     }
 
-    async sendEmail(formID: string) {
+    async sendEmail(formID: string, surveyName: string) {
         const userData = localStorage.getItem('userData');
         let userId = '';
         if (userData) {
@@ -412,7 +412,7 @@ export class ContactsComponent implements OnInit {
                 }
                 if (this.availableEmail.length > 0) {
                     for (const value of this.availableEmail) {
-                        const data = { email: value.email, id: value.contactId, form: formID, userId: userId };
+                        const data = { email: value.email, id: value.contactId, form: formID, userId: userId, surveyName};
                         const res: any = await this.contactsService.sendEmail(data).toPromise();
                         console.log('res', res);
                     }
