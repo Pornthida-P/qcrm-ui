@@ -35,8 +35,8 @@ export class ReportCaseDetailComponent {
 
     ngOnInit(): void {
         const currentDate = new Date();
-        const firstDayOfYear = new Date(currentDate.getFullYear(), 0, 1);
-        const firstDayOfYearFormat = moment(firstDayOfYear).format('YYYY-MM-DD');
+        /* const firstDayOfYear = new Date(currentDate.getFullYear(), 0, 1); */ //First day of the year
+        const firstDayOfYearFormat = moment(new Date()).format('YYYY-MM-DD');
         const currentDateFormat = moment(new Date()).format('YYYY-MM-DD');
         this.datePick = this.fb.group({
             startDate: [firstDayOfYearFormat, Validators.required],
