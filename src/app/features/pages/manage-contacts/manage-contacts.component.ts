@@ -381,7 +381,7 @@ export class ManageContactsComponent implements OnInit {
 
         await this.contactsService.getContactSurveyForm(contactId).subscribe((res: any) => {
             this.contactSurveyForm = res;
-        });
+                    });
 
         await this.contactsService.getContactCall(contactId).subscribe((res: any) => {
             this.contactCall = res;
@@ -785,6 +785,7 @@ export class ManageContactsComponent implements OnInit {
             const submissionData = {
                 data: submission.data,
             };
+            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
             if (submissionData.data) {
                 const surveyData = {
                     surveyData: submissionData,
@@ -792,7 +793,7 @@ export class ManageContactsComponent implements OnInit {
                     surveyFormId: formId,
                     channel: '',
                     description: null,
-                    createdBy: null,
+                    createdBy: userData.userId,
                 };
                 this.surveyFormService.saveSurveyData(surveyData).subscribe((res: any) => {
                     if (res.success) {
