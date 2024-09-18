@@ -115,7 +115,8 @@
                             <i class="fa-solid fa-plus fs-icon"></i>
                         </div>
                     </div>
-                    <input *ngIf="!contactId"
+                    <input
+                        *ngIf="!contactId"
                         type="text"
                         class="form-control"
                         [(ngModel)]="contactEmail"
@@ -135,13 +136,7 @@
                     />
 
                     <div *ngFor="let email of emailById; let i = index">
-                      <input
-                        type="text"
-                        class="form-control mt-2"
-                        [(ngModel)]="email.email"
-                        name="email{{i}}"
-                        id="inputemail{{i}}"
-                      />
+                        <input type="text" class="form-control mt-2" [(ngModel)]="email.email" name="email{{ i }}" id="inputemail{{ i }}" />
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -156,7 +151,8 @@
                             <i class="fa-solid fa-plus fs-icon"></i>
                         </div>
                     </div>
-                    <input *ngIf="!contactId"
+                    <input
+                        *ngIf="!contactId"
                         type="text"
                         class="form-control"
                         [(ngModel)]="contactNum"
@@ -181,16 +177,16 @@
                         (input)="onInputChange($event, 'contactNumNew')"
                     />
                     <div *ngFor="let contact of contactNumbers; let i = index">
-                      <input
-                        type="text"
-                        class="form-control mt-2"
-                        [(ngModel)]="contact.contactNumber"
-                        name="contactNum{{i}}"
-                        id="inputContactNum{{i}}"
-                        pattern="[0-9]*"
-                        inputmode="numeric"
-                        onkeypress="return event.charCode >= 48 && event.charCode <= 57"
-                      />
+                        <input
+                            type="text"
+                            class="form-control mt-2"
+                            [(ngModel)]="contact.contactNumber"
+                            name="contactNum{{ i }}"
+                            id="inputContactNum{{ i }}"
+                            pattern="[0-9]*"
+                            inputmode="numeric"
+                            onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                        />
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -548,15 +544,26 @@
                             </select>
                         </li>
                     </ul>
-                    <button
-                        type="button"
-                        (click)="showSideBar()"
-                        class="btn btn-outline-danger"
-                        style="margin-bottom: 5%"
-                        *ngIf="FormShowing"
-                    >
-                        ย้อนกลับ
-                    </button>
+                    <div class="d-flex justify-content-between">
+                        <button
+                            type="button"
+                            (click)="showSideBar()"
+                            class="btn btn-outline-danger"
+                            style="margin-bottom: 5%"
+                            *ngIf="FormShowing"
+                        >
+                            ย้อนกลับ
+                        </button>
+                        <button
+                            type="button"
+                            (click)="editForm()"
+                            class="btn btn-outline-warning"
+                            style="margin-bottom: 5%"
+                            *ngIf="canEditForm"
+                        >
+                            แก้ไข
+                        </button>
+                    </div>
                     <div class="h-minus-navbar bg-body-tertiary p-3 w-100 h-100 overflow-auto p-4" *ngIf="FormShowing">
                         <div [ngClass]="thanks || existing ? 'd-flex align-content-center justify-content-around align-items-center' : ''">
                             <div class="d-flex justify-content-center flex-column" *ngIf="!thanks && !existing">
@@ -566,6 +573,14 @@
                                     [submission]="formData"
                                     [readOnly]="readOnlyForm"
                                     (submit)="onSubmit($event, contactId, formId)"
+                                    *ngIf="readOnlyForm"
+                                ></formio>
+                                <formio
+                                    [form]="form"
+                                    [submission]="formData"
+                                    [readOnly]="readOnlyForm"
+                                    (submit)="onSubmit($event, contactId, formId)"
+                                    *ngIf="!readOnlyForm"
                                 ></formio>
                                 <button
                                     class="btn-primary-color rounded p-2 text-white mt-2"
