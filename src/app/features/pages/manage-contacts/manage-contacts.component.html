@@ -341,9 +341,10 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th style="width: 30%">แบบฟอร์มสำรวจ</th>
-                                <th style="width: 30%">ชื่อผู้ติดตามและประเมินผลฯ</th>
-                                <th style="width: 30%">วันที่เพิ่ม</th>
+                                <th style="width: 40%">แบบฟอร์มสำรวจ</th>
+                                <th style="width: 20%">ชื่อผู้ติดตามและประเมินผลฯ</th>
+                                <th style="width: 15%">วันที่เพิ่ม</th>
+                                <th style="width: 15%">ผู้รับผิดชอบ</th>
                                 <th style="width: 10%" *ngIf="checkRole()">จัดการ</th>
                             </tr>
                         </thead>
@@ -360,6 +361,7 @@
                                     </td>
                                     <td>{{ surveyForm.fullname }}</td>
                                     <td>{{ surveyForm.createdAt | date : 'dd/MM/yyyy  HH:mm' }}</td>
+                                    <td>{{ surveyForm.create_by }}</td>
                                     <td>
                                         <div class="d-flex flex-row flex-nowrap" *ngIf="checkRole()">
                                             <div
