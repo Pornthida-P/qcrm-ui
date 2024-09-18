@@ -13,7 +13,7 @@ export class SurveyService {
 
     checkExisting(surveyFormId: string, contactId: string) {
         return this.http.get(
-            `${this.baseUrl}${config.api.path.survey.baseUrl}${config.api.path.survey.existing}/${surveyFormId}/${contactId}`,
+            `${this.baseUrl}${config.api.path.survey.baseUrl}${config.api.path.survey.existing}/${surveyFormId}/${contactId}/undefined`,
         );
     }
 }

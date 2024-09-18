@@ -255,6 +255,8 @@ export class ManageContactsComponent implements OnInit {
 
     phoneNumbers: string[] = [''];
 
+    canEditForm: boolean = false;
+
     constructor(
         private _location: Location,
         private surveyFormService: SurveyFormService,
@@ -381,7 +383,7 @@ export class ManageContactsComponent implements OnInit {
 
         await this.contactsService.getContactSurveyForm(contactId).subscribe((res: any) => {
             this.contactSurveyForm = res;
-                    });
+        });
 
         await this.contactsService.getContactCall(contactId).subscribe((res: any) => {
             this.contactCall = res;
@@ -394,10 +396,10 @@ export class ManageContactsComponent implements OnInit {
             }));
         });
 
-      await this.contactsService.getEmailById(contactId).subscribe((res: any) => {
-          console.log('emailId: ', res)
+        await this.contactsService.getEmailById(contactId).subscribe((res: any) => {
+            console.log('emailId: ', res);
             this.emailById = res.map((item: any) => ({
-              email: item.email || item,
+                email: item.email || item,
             }));
         });
     }
@@ -575,6 +577,12 @@ export class ManageContactsComponent implements OnInit {
         this.thanks = false;
         this.AddOrgShowing = false;
         this.AddCallShowing = false;
+        this.canEditForm = false;
+    }
+
+    editForm() {
+        this.readOnlyForm = false;
+        this.submitButtonShowing = true;
     }
 
     deleteSurvey(surveyId: string) {
@@ -781,11 +789,11 @@ export class ManageContactsComponent implements OnInit {
     }
 
     onSubmit(submission: any, contactId: string, formId: string) {
+        const userId = this.userData.userId;
         if (submission) {
             const submissionData = {
                 data: submission.data,
             };
-            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
             if (submissionData.data) {
                 const surveyData = {
                     surveyData: submissionData,
@@ -793,7 +801,9 @@ export class ManageContactsComponent implements OnInit {
                     surveyFormId: formId,
                     channel: '',
                     description: null,
-                    createdBy: userData.userId,
+                    createdBy: userId,
+                    modifiedBy: userId,
+                    activityName: submissionData.data.Radio1_2,
                 };
                 this.surveyFormService.saveSurveyData(surveyData).subscribe((res: any) => {
                     if (res.success) {
@@ -826,6 +836,7 @@ export class ManageContactsComponent implements OnInit {
             this.readOnlyForm = false;
             this.AddOrgShowing = false;
             this.AddCallShowing = false;
+            this.canEditForm = false;
             if (this.existing == false) {
                 this.surveyFormService.getSurveyFormById(formId).subscribe((res) => {
                     this.surveyForm = res;
@@ -848,6 +859,7 @@ export class ManageContactsComponent implements OnInit {
         this.readOnlyForm = true;
         this.AddOrgShowing = false;
         this.AddCallShowing = false;
+        this.canEditForm = true;
         // Get the survey form by ID
         this.surveyFormService.getSurveyFormById(formId).subscribe((res) => {
             this.surveyForm = res;
