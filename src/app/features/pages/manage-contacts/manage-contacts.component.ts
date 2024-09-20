@@ -893,7 +893,7 @@ export class ManageContactsComponent implements OnInit {
 
             this.contactsService.getContactsSurvey(surveyId).subscribe((res) => {
                 this.survey = res;
-                this.formData = JSON.parse(this.survey[0].surveyData);
+                this.formData = { data:JSON.parse(this.survey[0].surveyData)};
 
                 console.log(this.formData);
             });
