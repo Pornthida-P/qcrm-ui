@@ -77,6 +77,7 @@ export class SurveyComponent implements OnInit {
                     channel: '',
                     description: null,
                     createdBy: null,
+                    activityName: submissionData.data.Radio1_2,
                 };
                 this.surveyFormService.saveSurveyData(surveyData).subscribe((res: any) => {
                     if (res.success) {
@@ -105,7 +106,7 @@ export class SurveyComponent implements OnInit {
     }
 
     checkExisting() {
-        this.surveyService.checkExisting(this.formId, this.userId).subscribe((res: any) => {
+        this.surveyService.checkExisting(this.formId, this.userId, 'undefied').subscribe((res: any) => {
             this.existing = res;
         });
     }

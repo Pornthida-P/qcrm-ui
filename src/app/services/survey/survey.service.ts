@@ -11,9 +11,9 @@ export class SurveyService {
 
     constructor(private http: HttpClient) {}
 
-    checkExisting(surveyFormId: string, contactId: string) {
+    checkExisting(surveyFormId: string, contactId: string, activityName: string) {
         return this.http.get(
-            `${this.baseUrl}${config.api.path.survey.baseUrl}${config.api.path.survey.existing}/${surveyFormId}/${contactId}/undefined`,
+            `${this.baseUrl}${config.api.path.survey.baseUrl}${config.api.path.survey.existing}/${surveyFormId}/${contactId}/${activityName}`,
         );
     }
 }

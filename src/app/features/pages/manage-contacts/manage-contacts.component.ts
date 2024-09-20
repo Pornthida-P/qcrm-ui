@@ -581,8 +581,8 @@ export class ManageContactsComponent implements OnInit {
     }
 
     editForm() {
-        this.readOnlyForm = false;
-        this.submitButtonShowing = true;
+        this.readOnlyForm = !this.readOnlyForm;
+        this.submitButtonShowing = !this.submitButtonShowing;
     }
 
     deleteSurvey(surveyId: string) {
@@ -805,30 +805,58 @@ export class ManageContactsComponent implements OnInit {
                     modifiedBy: userId,
                     activityName: submissionData.data.Radio1_2,
                 };
-                this.surveyFormService.saveSurveyData(surveyData).subscribe((res: any) => {
-                    if (res.success) {
-                        this.sweetalertServices.getSwal('success', 'Success', 'Survey submitted successfully.', false, '');
-                        this.auditLogService.log('', 'Contact', 'Save Survey', JSON.stringify(surveyData), `Success`);
-                        this.thanks = true;
-                        location.reload();
-                    } else {
-                        this.sweetalertServices.getSwal('error', 'Error', res.message, false, '');
-                        this.auditLogService.log(
-                            '',
-                            'Contact',
-                            'Save Survey',
-                            JSON.stringify(surveyData),
-                            `Failed, Error : ${res.message}`,
-                        );
-                    }
-                });
+                if (this.canEditForm === false) {
+                    this.surveyService.checkExisting(formId, contactId, submissionData.data.Radio1_2).subscribe((res: any) => {
+                        this.existing = res;
+                        if (this.existing) {
+                            this.sweetalertServices.getSwal('warning', 'Warning', 'ท่านได้ทำแบบสำรวจจากโครงการนี้ไปแล้ว.', false, '');
+                        } else {
+                            this.surveyFormService.saveSurveyData(surveyData).subscribe((res: any) => {
+                                if (res.success) {
+                                    this.sweetalertServices.getSwal('success', 'Success', 'Survey submitted successfully.', false, '');
+                                    this.auditLogService.log('', 'Contact', 'Save Survey', JSON.stringify(surveyData), `Success`);
+                                    this.thanks = true;
+                                    location.reload();
+                                } else {
+                                    this.sweetalertServices.getSwal('error', 'Error', res.message, false, '');
+                                    this.auditLogService.log(
+                                        '',
+                                        'Contact',
+                                        'Save Survey',
+                                        JSON.stringify(surveyData),
+                                        `Failed, Error : ${res.message}`,
+                                    );
+                                }
+                            });
+                        }
+                    });    
+                } else {    
+                    this.surveyFormService.saveSurveyData(surveyData).subscribe((res: any) => {
+                        if (res.success) {
+                            this.sweetalertServices.getSwal('success', 'Success', 'Survey submitted successfully.', false, '');
+                            this.auditLogService.log('', 'Contact', 'Save Survey', JSON.stringify(surveyData), `Success`);
+                            this.thanks = true;
+                            location.reload();
+                        } else {
+                            this.sweetalertServices.getSwal('error', 'Error', res.message, false, '');
+                            this.auditLogService.log(
+                                '',
+                                'Contact',
+                                'Save Survey',
+                                JSON.stringify(surveyData),
+                                `Failed, Error : ${res.message}`,
+                            );
+                        }
+                    });
+                }
             }
         }
     }
 
-    getSurveyForm(formId: string, contactId: string) {
-        this.surveyService.checkExisting(formId, contactId).subscribe((res: any) => {
-            this.existing = res;
+    getSurveyForm(formId: string) {
+        this.surveyFormService.getSurveyFormById(formId).subscribe((res) => {
+            this.existing = false;
+            this.formData = '';
             this.FormShowing = true;
             this.SearchFormShowing = false;
             this.submitButtonShowing = true;
@@ -837,16 +865,12 @@ export class ManageContactsComponent implements OnInit {
             this.AddOrgShowing = false;
             this.AddCallShowing = false;
             this.canEditForm = false;
-            if (this.existing == false) {
-                this.surveyFormService.getSurveyFormById(formId).subscribe((res) => {
-                    this.surveyForm = res;
-                    this.form = JSON.parse(this.surveyForm[0].form);
-                    this.formName = this.surveyForm[0].name;
-                    this.formId = this.surveyForm[0].surveyFormId;
-                });
-            }
+            this.surveyForm = res;
+            this.form = JSON.parse(this.surveyForm[0].form);
+            this.formName = this.surveyForm[0].name;
+            this.formId = this.surveyForm[0].surveyFormId;
         });
-    }
+    }    
 
     showFinishedForm(formId: string, surveyId: string) {
         this.visibleLeftSideBar = true;

@@ -338,9 +338,10 @@
                         <thead>
                             <tr>
                                 <th style="width: 40%">แบบฟอร์มสำรวจ</th>
-                                <th style="width: 20%">ชื่อผู้ติดตามและประเมินผลฯ</th>
-                                <th style="width: 15%">วันที่เพิ่ม</th>
-                                <th style="width: 15%">ผู้รับผิดชอบ</th>
+                                <th style="width: 15%">โครงการ</th>
+                                <th style="width: 15%">ชื่อผู้ติดตามและประเมินผลฯ</th>
+                                <th style="width: 10%">วันที่เพิ่ม</th>
+                                <th style="width: 10%">ผู้รับผิดชอบ</th>
                                 <th style="width: 10%" *ngIf="checkRole()">จัดการ</th>
                             </tr>
                         </thead>
@@ -355,6 +356,7 @@
                                     >
                                         {{ surveyForm.name }}
                                     </td>
+                                    <td>{{ surveyForm.activityName }}</td>
                                     <td>{{ surveyForm.fullname }}</td>
                                     <td>{{ surveyForm.createdAt | date : 'dd/MM/yyyy  HH:mm' }}</td>
                                     <td>{{ surveyForm.create_by }}</td>
@@ -493,7 +495,7 @@
                                         <td
                                             scope="row"
                                             class="cursor-pointer w-max-ellipsis"
-                                            (click)="getSurveyForm(form.surveyFormId, contactId)"
+                                            (click)="getSurveyForm(form.surveyFormId)"
                                         >
                                             {{ form.name }}
                                         </td>
@@ -565,8 +567,8 @@
                         </button>
                     </div>
                     <div class="h-minus-navbar bg-body-tertiary p-3 w-100 h-100 overflow-auto p-4" *ngIf="FormShowing">
-                        <div [ngClass]="thanks || existing ? 'd-flex align-content-center justify-content-around align-items-center' : ''">
-                            <div class="d-flex justify-content-center flex-column" *ngIf="!thanks && !existing">
+                        <div [ngClass]="thanks ? 'd-flex align-content-center justify-content-around align-items-center' : ''">
+                            <div class="d-flex justify-content-center flex-column" *ngIf="!thanks">
                                 <p class="pb-4 text-dark fs-5 m-0">แบบสำรวจ : {{ formName }}</p>
                                 <formio
                                     [form]="form"
@@ -595,11 +597,11 @@
                                     <p class="pb-4 text-dark fs-5 m-0 text-center fs-2">ขอบคุณสำหรับการทำแบบสำรวจ</p>
                                 </div>
                             </div>
-                            <div *ngIf="existing">
+                            <!-- <div *ngIf="existing">
                                 <div class="d-flex justify-content-center flex-column">
                                     <p class="pb-4 text-dark fs-5 m-0 text-center fs-2">ท่านได้ทำแบบสำรวจนี้ไปแล้ว</p>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                     <div class="table-responsive" *ngIf="SearchOrgShowing">
