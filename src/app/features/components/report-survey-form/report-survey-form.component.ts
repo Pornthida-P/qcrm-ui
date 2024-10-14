@@ -91,26 +91,29 @@ export class ReportSurveyFormComponent {
                     continue; // Skip this survey if JSON is invalid
                 }
 
-                // Add survey data to the reportTable
+                Object.keys(Survey).forEach((key) => {
+                    // Check if the value is an object
+                    if (typeof Survey[key] === 'object' && Survey[key] !== null) {
+                        const selectedOptions = Object.keys(Survey[key])
+                            .filter((innerKey) => Survey[key][innerKey])
+                            .join(',');
+                        Survey[key] = selectedOptions;
+                    }
+                });
+
                 if (Survey['data'] && typeof Survey['data'] === 'object' && !Array.isArray(Survey['data'])) {
                     this.reportTable.push({
-                        created_date: this.formatDate(survey.created_date), // Add created_date
-                        created_by: survey.created_by, // Add created_by
+                        created_date: this.formatDate(survey.created_date),
+                        created_by: survey.created_by,
                         ...Survey['data'],
                     });
                 } else {
                     this.reportTable.push({
-                        created_date: this.formatDate(survey.created_date), // Add created_date
-                        created_by: survey.created_by, // Add created_by
+                        created_date: this.formatDate(survey.created_date),
+                        created_by: survey.created_by,
                         ...Survey,
                     });
                 }
-
-                // if (Survey['data'] && typeof Survey['data'] === 'object' && !Array.isArray(Survey['data'])) {
-                //     this.reportTable.push(Survey['data']);
-                // } else {
-                //     this.reportTable.push(Survey);
-                // }
 
                 if (Survey) {
                     Object.keys(Survey)!.forEach((column) => {
@@ -177,15 +180,6 @@ export class ReportSurveyFormComponent {
                         for (const panels of this.reportPanel) {
                             if (panels.key === panelKey) {
                                 panels.colspan++;
-                            }
-                        }
-                    }
-                    if (component.type == 'selectboxes') {
-                        this.reportColumn[component.key].colspan += component.values.length;
-                        this.reportSubColumn = true;
-                        for (const panels of this.reportPanel) {
-                            if (panels.key === panelKey) {
-                                panels.colspan += this.reportColumn[component.key].colspan;
                             }
                         }
                     }
