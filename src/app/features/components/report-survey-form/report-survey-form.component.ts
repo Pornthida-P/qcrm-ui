@@ -67,15 +67,51 @@ export class ReportSurveyFormComponent {
         return typeof value === 'object' && value !== null;
     }
 
+    formatDate(dateString: string): string {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = ('0' + (date.getMonth() + 1)).slice(-2);
+        const day = ('0' + date.getDate()).slice(-2);
+        const hours = ('0' + date.getHours()).slice(-2);
+        const minutes = ('0' + date.getMinutes()).slice(-2);
+        const seconds = ('0' + date.getSeconds()).slice(-2);
+
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    }
+
     async genSurveyForm(data: any) {
         if (data.length) {
             for (const survey of data) {
-                let Survey = JSON.parse(survey.surveyData);
-                if (Survey['data'] && typeof Survey['data'] === 'object' && !Array.isArray(Survey['data'])) {
-                    this.reportTable.push(Survey['data']);
-                } else {
-                    this.reportTable.push(Survey);
+                // Handle potential JSON parsing errors
+                let Survey: Record<string, any>;
+                try {
+                    Survey = JSON.parse(survey.surveyData) as Record<string, any>;
+                } catch (error) {
+                    console.error('Invalid JSON in survey.surveyData:', error, survey.surveyId);
+                    continue; // Skip this survey if JSON is invalid
                 }
+
+                // Add survey data to the reportTable
+                if (Survey['data'] && typeof Survey['data'] === 'object' && !Array.isArray(Survey['data'])) {
+                    this.reportTable.push({
+                        created_date: this.formatDate(survey.created_date), // Add created_date
+                        created_by: survey.created_by, // Add created_by
+                        ...Survey['data'],
+                    });
+                } else {
+                    this.reportTable.push({
+                        created_date: this.formatDate(survey.created_date), // Add created_date
+                        created_by: survey.created_by, // Add created_by
+                        ...Survey,
+                    });
+                }
+
+                // if (Survey['data'] && typeof Survey['data'] === 'object' && !Array.isArray(Survey['data'])) {
+                //     this.reportTable.push(Survey['data']);
+                // } else {
+                //     this.reportTable.push(Survey);
+                // }
+
                 if (Survey) {
                     Object.keys(Survey)!.forEach((column) => {
                         if (this.reportColumn[column]?.type == 'survey') {
@@ -107,6 +143,24 @@ export class ReportSurveyFormComponent {
     }
 
     async genColumnForm(data: any, level: number, panel?: string, panelKey?: string) {
+        // Define created_date and created_by columns
+        this.reportColumn['created_date'] = {
+            label: 'วันที่บันทึกข้อมูล',
+            key: 'created_date',
+            type: 'text',
+            colspan: 1,
+            panel: '',
+            panelkey: '',
+        };
+
+        this.reportColumn['created_by'] = {
+            label: 'บันทึกโดย',
+            key: 'created_by',
+            type: 'text',
+            colspan: 1,
+            panel: '',
+            panelkey: '',
+        };
         if (data['components']) {
             for (const component of data.components) {
                 if (component.input) {
