@@ -803,7 +803,7 @@ export class ManageContactsComponent implements OnInit {
                     description: null,
                     createdBy: userId,
                     modifiedBy: userId,
-                    activityName: submissionData.data.Radio1_2,
+                    activityName: submissionData.data.Radio1_2 || submissionData.data.info17,
                 };
                 if (this.canEditForm === false) {
                     this.surveyService.checkExisting(formId, contactId, submissionData.data.Radio1_2).subscribe((res: any) => {
@@ -829,8 +829,8 @@ export class ManageContactsComponent implements OnInit {
                                 }
                             });
                         }
-                    });    
-                } else {    
+                    });
+                } else {
                     this.surveyFormService.saveSurveyData(surveyData).subscribe((res: any) => {
                         if (res.success) {
                             this.sweetalertServices.getSwal('success', 'Success', 'Survey submitted successfully.', false, '');
@@ -870,7 +870,7 @@ export class ManageContactsComponent implements OnInit {
             this.formName = this.surveyForm[0].name;
             this.formId = this.surveyForm[0].surveyFormId;
         });
-    }    
+    }
 
     showFinishedForm(formId: string, surveyId: string) {
         this.visibleLeftSideBar = true;
