@@ -256,6 +256,7 @@ export class ManageContactsComponent implements OnInit {
     phoneNumbers: string[] = [''];
 
     canEditForm: boolean = false;
+    surveyId: string = '';
 
     constructor(
         private _location: Location,
@@ -804,6 +805,7 @@ export class ManageContactsComponent implements OnInit {
                     createdBy: userId,
                     modifiedBy: userId,
                     activityName: submissionData.data.Radio1_2 || submissionData.data.info17,
+                    surveyId: this.surveyId,
                 };
                 if (this.canEditForm === false) {
                     this.surveyService.checkExisting(formId, contactId, submissionData.data.Radio1_2).subscribe((res: any) => {
@@ -884,6 +886,7 @@ export class ManageContactsComponent implements OnInit {
         this.AddOrgShowing = false;
         this.AddCallShowing = false;
         this.canEditForm = true;
+        this.surveyId = surveyId;
         // Get the survey form by ID
         this.surveyFormService.getSurveyFormById(formId).subscribe((res) => {
             this.surveyForm = res;
@@ -893,7 +896,7 @@ export class ManageContactsComponent implements OnInit {
 
             this.contactsService.getContactsSurvey(surveyId).subscribe((res) => {
                 this.survey = res;
-                this.formData = { data:JSON.parse(this.survey[0].surveyData)};
+                this.formData = { data: JSON.parse(this.survey[0].surveyData) };
 
                 console.log(this.formData);
             });
