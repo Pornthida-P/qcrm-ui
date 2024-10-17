@@ -808,30 +808,32 @@ export class ManageContactsComponent implements OnInit {
                     surveyId: this.surveyId,
                 };
                 if (this.canEditForm === false) {
-                    this.surveyService.checkExisting(formId, contactId, submissionData.data.Radio1_2).subscribe((res: any) => {
-                        this.existing = res;
-                        if (this.existing) {
-                            this.sweetalertServices.getSwal('warning', 'Warning', 'ท่านได้ทำแบบสำรวจจากโครงการนี้ไปแล้ว.', false, '');
-                        } else {
-                            this.surveyFormService.saveSurveyData(surveyData).subscribe((res: any) => {
-                                if (res.success) {
-                                    this.sweetalertServices.getSwal('success', 'Success', 'Survey submitted successfully.', false, '');
-                                    this.auditLogService.log('', 'Contact', 'Save Survey', JSON.stringify(surveyData), `Success`);
-                                    this.thanks = true;
-                                    location.reload();
-                                } else {
-                                    this.sweetalertServices.getSwal('error', 'Error', res.message, false, '');
-                                    this.auditLogService.log(
-                                        '',
-                                        'Contact',
-                                        'Save Survey',
-                                        JSON.stringify(surveyData),
-                                        `Failed, Error : ${res.message}`,
-                                    );
-                                }
-                            });
-                        }
-                    });
+                    this.surveyService
+                        .checkExisting(formId, contactId, submissionData.data.Radio1_2 || submissionData.data.info17)
+                        .subscribe((res: any) => {
+                            this.existing = res;
+                            if (this.existing) {
+                                this.sweetalertServices.getSwal('warning', 'Warning', 'ท่านได้ทำแบบสำรวจจากโครงการนี้ไปแล้ว.', false, '');
+                            } else {
+                                this.surveyFormService.saveSurveyData(surveyData).subscribe((res: any) => {
+                                    if (res.success) {
+                                        this.sweetalertServices.getSwal('success', 'Success', 'Survey submitted successfully.', false, '');
+                                        this.auditLogService.log('', 'Contact', 'Save Survey', JSON.stringify(surveyData), `Success`);
+                                        this.thanks = true;
+                                        location.reload();
+                                    } else {
+                                        this.sweetalertServices.getSwal('error', 'Error', res.message, false, '');
+                                        this.auditLogService.log(
+                                            '',
+                                            'Contact',
+                                            'Save Survey',
+                                            JSON.stringify(surveyData),
+                                            `Failed, Error : ${res.message}`,
+                                        );
+                                    }
+                                });
+                            }
+                        });
                 } else {
                     this.surveyFormService.saveSurveyData(surveyData).subscribe((res: any) => {
                         if (res.success) {
