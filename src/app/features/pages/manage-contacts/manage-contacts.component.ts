@@ -826,11 +826,11 @@ export class ManageContactsComponent implements OnInit {
                                 this.surveyFormService.saveSurveyData(surveyData).subscribe((res: any) => {
                                     if (res.success) {
                                         this.sweetalertServices.getSwal('success', 'Success', 'Survey submitted successfully.', false, '');
-                                        this.auditLogService.log('', 'Contact', 'Save Survey', JSON.stringify(submission.data), `Success`);
+                                        this.auditLogService.log('', 'Contact', 'Save Survey', JSON.stringify(surveyData), `Success`);
                                         this.thanks = true;
-                                        // setTimeout(() => {
-                                        //     location.reload();
-                                        // }, 1000);
+                                        setTimeout(() => {
+                                            location.reload();
+                                        }, 1000);
                                     } else {
                                         this.sweetalertServices.getSwal('error', 'Error', res.message, false, '');
                                         this.auditLogService.log(
