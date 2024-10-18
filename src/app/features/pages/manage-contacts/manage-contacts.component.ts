@@ -579,6 +579,7 @@ export class ManageContactsComponent implements OnInit {
         this.AddOrgShowing = false;
         this.AddCallShowing = false;
         this.canEditForm = false;
+        this.surveyId = '';
     }
 
     editForm() {
@@ -814,6 +815,7 @@ export class ManageContactsComponent implements OnInit {
                             this.existing = res;
                             if (this.existing) {
                                 this.sweetalertServices.getSwal('warning', 'Warning', 'ท่านได้ทำแบบสำรวจจากโครงการนี้ไปแล้ว.', false, '');
+                                location.reload();
                             } else {
                                 this.surveyFormService.saveSurveyData(surveyData).subscribe((res: any) => {
                                     if (res.success) {
@@ -843,6 +845,10 @@ export class ManageContactsComponent implements OnInit {
                             location.reload();
                         } else {
                             this.sweetalertServices.getSwal('error', 'Error', res.message, false, '');
+                            if (res.message === 'Existing') {
+                                this.sweetalertServices.getSwal('warning', 'Warning', 'ท่านได้ทำแบบสำรวจจากโครงการนี้ไปแล้ว.', false, '');
+                                location.reload();
+                            }
                             this.auditLogService.log(
                                 '',
                                 'Contact',
