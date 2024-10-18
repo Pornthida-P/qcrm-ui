@@ -805,12 +805,16 @@ export class ManageContactsComponent implements OnInit {
                     description: null,
                     createdBy: userId,
                     modifiedBy: userId,
-                    activityName: submissionData.data.Radio1_2 || submissionData.data.info17,
+                    activityName: submissionData.data.Radio1_2 || submissionData.data.info17 || submissionData.data.info18,
                     surveyId: this.surveyId,
                 };
                 if (this.canEditForm === false) {
                     this.surveyService
-                        .checkExisting(formId, contactId, submissionData.data.Radio1_2 || submissionData.data.info17)
+                        .checkExisting(
+                            formId,
+                            contactId,
+                            submissionData.data.Radio1_2 || submissionData.data.info17 || submissionData.data.info18,
+                        )
                         .subscribe((res: any) => {
                             this.existing = res;
                             if (this.existing) {
