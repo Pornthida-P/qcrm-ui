@@ -815,14 +815,18 @@ export class ManageContactsComponent implements OnInit {
                             this.existing = res;
                             if (this.existing) {
                                 this.sweetalertServices.getSwal('warning', 'Warning', 'ท่านได้ทำแบบสำรวจจากโครงการนี้ไปแล้ว.', false, '');
-                                location.reload();
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1000);
                             } else {
                                 this.surveyFormService.saveSurveyData(surveyData).subscribe((res: any) => {
                                     if (res.success) {
                                         this.sweetalertServices.getSwal('success', 'Success', 'Survey submitted successfully.', false, '');
                                         this.auditLogService.log('', 'Contact', 'Save Survey', JSON.stringify(surveyData), `Success`);
                                         this.thanks = true;
-                                        location.reload();
+                                        setTimeout(() => {
+                                            location.reload();
+                                        }, 1000);
                                     } else {
                                         this.sweetalertServices.getSwal('error', 'Error', res.message, false, '');
                                         this.auditLogService.log(
@@ -842,12 +846,16 @@ export class ManageContactsComponent implements OnInit {
                             this.sweetalertServices.getSwal('success', 'Success', 'Survey submitted successfully.', false, '');
                             this.auditLogService.log('', 'Contact', 'Save Survey', JSON.stringify(surveyData), `Success`);
                             this.thanks = true;
-                            location.reload();
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1000);
                         } else {
                             this.sweetalertServices.getSwal('error', 'Error', res.message, false, '');
                             if (res.message === 'Existing') {
                                 this.sweetalertServices.getSwal('warning', 'Warning', 'ท่านได้ทำแบบสำรวจจากโครงการนี้ไปแล้ว.', false, '');
-                                location.reload();
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1000);
                             }
                             this.auditLogService.log(
                                 '',
