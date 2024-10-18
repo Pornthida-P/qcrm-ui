@@ -805,12 +805,16 @@ export class ManageContactsComponent implements OnInit {
                     description: null,
                     createdBy: userId,
                     modifiedBy: userId,
-                    activityName: submissionData.data.Radio1_2 || submissionData.data.info17,
+                    activityName: submissionData.data.Radio1_2 || submissionData.data.info17 || submissionData.data.info18,
                     surveyId: this.surveyId,
                 };
                 if (this.canEditForm === false) {
                     this.surveyService
-                        .checkExisting(formId, contactId, submissionData.data.Radio1_2 || submissionData.data.info17)
+                        .checkExisting(
+                            formId,
+                            contactId,
+                            submissionData.data.Radio1_2 || submissionData.data.info17 || submissionData.data.info18,
+                        )
                         .subscribe((res: any) => {
                             this.existing = res;
                             if (this.existing) {
@@ -822,11 +826,11 @@ export class ManageContactsComponent implements OnInit {
                                 this.surveyFormService.saveSurveyData(surveyData).subscribe((res: any) => {
                                     if (res.success) {
                                         this.sweetalertServices.getSwal('success', 'Success', 'Survey submitted successfully.', false, '');
-                                        this.auditLogService.log('', 'Contact', 'Save Survey', JSON.stringify(surveyData), `Success`);
+                                        this.auditLogService.log('', 'Contact', 'Save Survey', JSON.stringify(submission.data), `Success`);
                                         this.thanks = true;
-                                        setTimeout(() => {
-                                            location.reload();
-                                        }, 1000);
+                                        // setTimeout(() => {
+                                        //     location.reload();
+                                        // }, 1000);
                                     } else {
                                         this.sweetalertServices.getSwal('error', 'Error', res.message, false, '');
                                         this.auditLogService.log(
