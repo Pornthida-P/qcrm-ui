@@ -24,6 +24,8 @@ import { WebSocketSubject } from 'rxjs/webSocket';
     styleUrls: ['./manage-contacts.component.scss'],
 })
 export class ManageContactsComponent implements OnInit {
+    availableEmail: any[] = [];
+    AllEmail: any[] = [];
     MultiNumber: boolean = false;
     contactActivities: any[] = [];
     contactDrive: any;
@@ -182,6 +184,7 @@ export class ManageContactsComponent implements OnInit {
     ws: any;
     dialCall: string = '';
     phoneCall: string = '';
+    emailTo: string = '';
     // selectedContactNumber: string = '';
     // contactNumbers: any;
 
@@ -258,6 +261,7 @@ export class ManageContactsComponent implements OnInit {
     canEditForm: boolean = false;
     surveyId: string = '';
 
+    sendEmailStatus: boolean = false;
     constructor(
         private _location: Location,
         private surveyFormService: SurveyFormService,
@@ -582,6 +586,16 @@ export class ManageContactsComponent implements OnInit {
         this.surveyId = '';
     }
 
+    showSideBarForm() {
+        this.sendEmailStatus = false;
+        this.showSideBar();
+    }
+
+    showSendEmail() {
+        this.sendEmailStatus = true;
+        this.showSideBar();
+    }
+
     editForm() {
         this.readOnlyForm = !this.readOnlyForm;
         this.submitButtonShowing = !this.submitButtonShowing;
@@ -875,8 +889,11 @@ export class ManageContactsComponent implements OnInit {
         }
     }
 
-    getSurveyForm(formId: string) {
-        this.surveyFormService.getSurveyFormById(formId).subscribe((res) => {
+    getSurveyForm(formId: string, formName: string) {
+        if (this.sendEmailStatus === true) {
+            this.sendEmail(formId, formName)
+        } else {
+            this.surveyFormService.getSurveyFormById(formId).subscribe((res) => {
             this.existing = false;
             this.formData = '';
             this.FormShowing = true;
@@ -892,6 +909,8 @@ export class ManageContactsComponent implements OnInit {
             this.formName = this.surveyForm[0].name;
             this.formId = this.surveyForm[0].surveyFormId;
         });
+        }       
+        
     }
 
     showFinishedForm(formId: string, surveyId: string) {
@@ -1959,5 +1978,44 @@ export class ManageContactsComponent implements OnInit {
 
     inputAddEmail() {
         this.isInputVisibleMail = !this.isInputVisibleMail;
+    }
+
+    async sendEmail(formID: string, surveyName: string) {
+        const userData = localStorage.getItem('userData');
+        let userId = '';
+        if (userData) {
+            userId = JSON.parse(userData).userId;
+        }
+        await Swal.fire({
+            icon: 'question',
+            title: 'Do you want to send this survey?',
+            showCancelButton: true,
+            confirmButtonColor: '#3066be',
+            cancelButtonColor: '#ec5365',
+            width: '50%',
+        }).then(async (result) => {
+            this.availableEmail = [];
+            const ids = Array.isArray(this.contactId) ? this.contactId : [this.contactId];
+            if (result.isConfirmed) {
+                const res: any = await this.contactsService.getEmail(ids).toPromise();
+                this.AllEmail = res;
+                for (const value of this.AllEmail) {
+                    const data = { email: this.emailTo, contactId: value.contactId, formId: formID, userId: userId };
+                    const result: any = await this.contactsService.checkEmailSend(data).toPromise();
+                    if (result.email) {
+                        this.availableEmail.push(result);
+                    }
+                }
+                if (this.availableEmail.length > 0) {
+                    for (const value of this.availableEmail) {
+                        const data = { email: value.email, id: value.contactId, form: formID, userId: userId, surveyName};
+                        const res: any = await this.contactsService.sendEmail(data).toPromise();
+                        console.log('res', res);
+                    }
+                }
+                this.sweetalertServices.getSwal('success', 'Send Survey success.', '', false, '');
+                this.sendEmailStatus = false;
+            }
+        });
     }
 }

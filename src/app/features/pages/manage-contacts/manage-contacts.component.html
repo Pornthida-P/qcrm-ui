@@ -34,6 +34,17 @@
                     <button type="button" class="btn btn-success me-3" (click)="sendMessage()" [disabled]="!phoneCall">โทรออก</button>
                     <!-- <button type="button" class="btn btn-danger" [disabled]="!connected" (click)="disconnect()">วางสาย</button> -->
                 </div>
+                <div class="contact-number" *ngIf="TableShowing">
+                    <div class="col-6 me-3">
+                        <select id="inputEmail" class="form-select" name="selectedEmail" [(ngModel)]="emailTo">
+                            <option disabled value="">กรุณาเลือกอีเมล์</option>
+                            <option *ngFor="let email of emailById" [value]="email.email">
+                                {{ email.email }}
+                            </option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-success" (click)="showSendEmail()" data-bs-toggle="offcanvas"data-bs-target="#offcanvasRight" [disabled]="!emailTo">ส่งอีเมล์</button>
+                </div>
                 <form class="mb-3 p-2">
                     <label for="inputFormName" class="form-label">เลขประจำตัว/เลขนิติบุคคล</label>
                     <div class="input-group">
@@ -324,7 +335,7 @@
                 <button
                     class="btn btn-primary ms-2"
                     style="margin-top: -14px"
-                    (click)="showSideBar()"
+                    (click)="showSideBarForm()"
                     data-bs-toggle="offcanvas"
                     data-bs-target="#offcanvasRight"
                     aria-controls="offcanvasRight"
@@ -495,7 +506,7 @@
                                         <td
                                             scope="row"
                                             class="cursor-pointer w-max-ellipsis"
-                                            (click)="getSurveyForm(form.surveyFormId)"
+                                            (click)="getSurveyForm(form.surveyFormId, form.name)"
                                         >
                                             {{ form.name }}
                                         </td>
@@ -549,7 +560,7 @@
                     <div class="d-flex justify-content-between">
                         <button
                             type="button"
-                            (click)="showSideBar()"
+                            (click)="showSideBarForm()"
                             class="btn btn-outline-danger"
                             style="margin-bottom: 5%"
                             *ngIf="FormShowing"
