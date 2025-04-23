@@ -391,35 +391,49 @@ export class ContactsComponent implements OnInit {
         if (userData) {
             userId = JSON.parse(userData).userId;
         }
-        await Swal.fire({
+
+        const res: any = await this.contactsService.getEmail(this.checkedValues).toPromise();
+        this.AllEmail = res;
+
+        const emailList = this.AllEmail.map((e: any) => e.email).join('<br>');
+
+        const result = await Swal.fire({
             icon: 'question',
             title: 'Do you want to send this survey?',
+            html: `<p>The following emails will receive this survey:</p><div style="max-height:200px; overflow-y:auto;">${emailList}</div>`,
             showCancelButton: true,
+            showDenyButton: this.checkedValues.length === 1,
+            confirmButtonText: 'Send',
+            denyButtonText: 'Edit Emails',
+            cancelButtonText: 'Cancel',
             confirmButtonColor: '#3066be',
+            denyButtonColor: '#f0ad4e',
             cancelButtonColor: '#ec5365',
             width: '50%',
-        }).then(async (result) => {
-            this.availableEmail = [];
-            if (result.isConfirmed) {
-                const res: any = await this.contactsService.getEmail(this.checkedValues).toPromise();
-                this.AllEmail = res;
-                for (const value of this.AllEmail) {
-                    const data = { email: value.email, contactId: value.contactId, formId: formID, userId: userId };
-                    const result: any = await this.contactsService.checkEmailSend(data).toPromise();
-                    if (result.email) {
-                        this.availableEmail.push(result);
-                    }
-                }
-                if (this.availableEmail.length > 0) {
-                    for (const value of this.availableEmail) {
-                        const data = { email: value.email, id: value.contactId, form: formID, userId: userId, surveyName};
-                        const res: any = await this.contactsService.sendEmail(data).toPromise();
-                        console.log('res', res);
-                    }
-                }
-                this.sweetalertServices.getSwal('success', 'Send Survey success.', '', false, '');
-            }
         });
+
+        if (result.isConfirmed) {
+            this.availableEmail = [];
+            for (const value of this.AllEmail) {
+                const data = { email: value.email, contactId: value.contactId, formId: formID, userId: userId };
+                const check: any = await this.contactsService.checkEmailSend(data).toPromise();
+                if (check.email) {
+                    this.availableEmail.push(check);
+                }
+            }
+
+            if (this.availableEmail.length > 0) {
+                for (const value of this.availableEmail) {
+                    const data = { email: value.email, id: value.contactId, form: formID, userId: userId, surveyName };
+                    const res: any = await this.contactsService.sendEmail(data).toPromise();
+                    console.log('res', res);
+                }
+            }
+
+            this.sweetalertServices.getSwal('success', 'Send Survey success.', '', false, '');
+        } else if (result.isDenied && this.checkedValues.length === 1) {
+            this.edit({ contactId: this.checkedValues[0] });
+        }
     }
 
     contactsManage() {
