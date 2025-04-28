@@ -237,6 +237,7 @@
         "survey-link": "รายงานแบบสำรวจ ",
         "loading": "กำลังดาวน์โหลด",
         "data-not-found": "ไม่มีข้อมูล",
-        "select-survey-form": "กรุณาเลือกแบบฟอร์ม"
+        "select-survey-form": "กรุณาเลือกแบบฟอร์ม",
+        "survey-send-by-agent": "การส่งอีเมลแบบฟอร์ม By Agent"
     }
 }

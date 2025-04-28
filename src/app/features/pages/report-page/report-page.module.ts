@@ -20,6 +20,8 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { ReportSurveyFormComponent } from '../../components/report-survey-form/report-survey-form.component';
 import { ReportSurveyFormModule } from '../../components/report-survey-form/report-survey-form.module';
+import { ReportSurveySendByAgentComponent } from '../../components/report-survey-send-by-agent/report-survey-send-by-agent.component';
+import { ReportSurveySendByAgentModule } from '../../components/report-survey-send-by-agent/report-survey-send-by-agent.module';
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/nea-qcrm-ui/i18n/', '.json');
@@ -61,6 +63,10 @@ export function HttpLoaderFactory(http: HttpClient) {
                         path: 'survey-form',
                         component: ReportSurveyFormComponent,
                     },
+                    {
+                        path: 'survey-send-by-agent',
+                        component: ReportSurveySendByAgentComponent,
+                    },
                 ],
             },
         ]),
@@ -73,6 +79,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         ReportCaseDetailModule,
         ReportSendSurveyModule,
         ReportSurveyFormModule,
+        ReportSurveySendByAgentModule,
         TranslateModule.forChild({
             loader: {
                 provide: TranslateLoader,
