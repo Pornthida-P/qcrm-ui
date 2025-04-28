@@ -71,7 +71,9 @@ export class ReportPageComponent implements OnInit {
         this.onSelectReport = report;
         this.router.navigate(['/report-page/' + report]);
     }
-
+    onRouterLink(){
+        window.open('https://nea.convtech.app/survey/dashboard/overview', '_blank');
+    }
     exportExcel() {
         if (this.checkedValues.length != 0) {
             this.selectedSurveyForms = this.surveyForms.filter((form: any) => this.checkedValues.includes(form.surveyFormId));
