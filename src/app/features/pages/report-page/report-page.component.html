@@ -48,6 +48,12 @@
                 >
                     {{ 'report.survey-form' | translate }}
                 </button>
+                <button
+                    class="d-flex align-items-center gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white"
+                    (click)="onRouterLink()"
+                >
+                    {{ 'report.survey-link' | translate }}
+                </button>
             </div>
         </div>
         <router-outlet></router-outlet>
