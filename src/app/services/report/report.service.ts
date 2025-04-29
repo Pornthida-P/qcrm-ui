@@ -41,4 +41,8 @@ export class ReportService {
     getSurvey() {
         return this.http.get(`${this.baseUrl}${config.api.path.report.getSurvey}`);
     }
+
+  getSurveySendById(id: string, startDate: string, endDate: string) {
+        return this.http.get(`${this.baseUrl}${config.api.path.report.getSurveySendById}/${id}/${startDate}/${endDate}`);
+    }
 }

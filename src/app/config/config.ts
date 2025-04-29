@@ -105,7 +105,8 @@ export const config = {
                 caseDetail: '/report/caseDetail',
                 surveyForm: '/report/surveyForm',
                 getAgent: '/report/getAgent',
-                getSurvey: '/report/getSurvey'
+                getSurvey: '/report/getSurvey',
+                getSurveySendById: '/report/getSurveySendByID',
             },
         },
     },

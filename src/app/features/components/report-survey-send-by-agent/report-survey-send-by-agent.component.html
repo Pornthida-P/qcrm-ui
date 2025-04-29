@@ -1,1 +1,119 @@
-<p>report-survey-send-by-agent works!</p>
+<div>
+  <div class="row justify-content-end align-items-center pe-4">
+      <div class="col-auto" [formGroup]="datePick">
+          <div class="input-group start-date">
+              <input
+                  matInput
+                  [matDatepicker]="startDatePicker"
+                  formControlName="startDate"
+                  name="datetime"
+                  class="input-date form-control"
+                  (dateChange)="onStartDateChange($event)"
+              />
+              <span class="input-group-text" ngbTooltip="From Date">
+                  <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+                  <mat-datepicker #startDatePicker></mat-datepicker>
+              </span>
+          </div>
+      </div>
+      <div class="col-auto" [formGroup]="datePick">
+          <div class="input-group end-date">
+              <input
+                  matInput
+                  [matDatepicker]="endDatePicker"
+                  formControlName="endDate"
+                  name="datetime"
+                  class="input-date form-control"
+                  (dateChange)="onEndDateChange($event)"
+              />
+              <span class="input-group-text" ngbTooltip="To Date">
+                  <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+                  <mat-datepicker #endDatePicker></mat-datepicker>
+              </span>
+          </div>
+      </div>
+      <div class="col-auto">
+          <div class="align-self-end">
+              <button class="d-flex gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white" (click)="clickgo()">ค้นหา</button>
+          </div>
+      </div>
+      <div class="col-auto">
+          <div class="dropdown">
+              <button
+                  class="dropdown-toggle d-md-none d-lg-flex btn-primary-color rounded p-2 text-white"
+                  type="button"
+                  id="dropdownMenuButton"
+                  data-bs-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+              >
+                  <fa-icon [icon]="faUser"></fa-icon>
+              </button>
+
+              <div class="dropdown-menu p-3" aria-labelledby="dropdownMenuButton">
+                  <div class="form-check" *ngFor="let user of usersVisibilityKeys">
+                      <input
+                          class="form-check-input cursor-pointer"
+                          type="checkbox"
+                          [(ngModel)]="usersVisibility[user]"
+                          id="checkbox-{{ user }}"
+                      />
+                      <span class="form-check-label cursor-default">
+                          {{ user }}
+                      </span>
+                  </div>
+                  <button type="button" class="btn btn-primary-color text-white w-100 mt-1" (click)="applyUserVisibility()">
+                      {{ 'page.tag.save' | translate }}
+                  </button>
+              </div>
+          </div>
+      </div>
+      <div class="col-auto">
+          <button
+              class="d-flex gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white"
+              (click)="exportExcel()"
+              ngbTooltip="Export to Excel"
+          >
+              <fa-icon [icon]="faFileExport"></fa-icon>
+          </button>
+      </div>
+  </div>
+  <div class="pe-4 ps-4 table-container">
+      <table class="table table-responsive">
+          <thead>
+              <tr>
+                  <ng-container *ngFor="let column of columnNames">
+                      <th scope="row" *ngIf="columnVisibility[column]">
+                          <a>{{ columnName[column] }}</a>
+                      </th>
+                  </ng-container>
+              </tr>
+          </thead>
+          <tbody>
+              <ng-container *ngIf="reportTable?.length > 0; else noDataTemplate">
+                  <tr *ngFor="let data of reportTable.slice(0, reportTable.length - 1); let i = index">
+                      <ng-container *ngFor="let column of columnNames">
+                          <td scope="row" *ngIf="columnVisibility[column]">
+                              <a>{{ data[column] }}</a>
+                          </td>
+                      </ng-container>
+                  </tr>
+              </ng-container>
+              <ng-template #noDataTemplate>
+                  <tr>
+                      <td colspan="10" class="text-center">ไม่มีข้อมูล</td>
+                  </tr>
+              </ng-template>
+          </tbody>
+          <tfoot>
+              <tr>
+                  <ng-container *ngFor="let column of columnNames">
+                      <td scope="row" *ngIf="columnVisibility[column]">
+                          <a>{{ getTotal(column) }}</a>
+                      </td>
+                  </ng-container>
+              </tr>
+          </tfoot>
+      </table>
+  </div>
+</div>
