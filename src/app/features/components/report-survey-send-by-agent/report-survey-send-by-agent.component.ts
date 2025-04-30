@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as moment from 'moment';
 import { ReportService } from 'src/app/services/report/report.service';
 import { faUser, faGear, faFileExport } from '@fortawesome/free-solid-svg-icons';
+import * as XLSX from 'xlsx';
 import { report } from 'src/app/config/report';
 import { config } from 'src/app/config/config';
 @Component({
@@ -25,38 +26,78 @@ export class ReportSurveySendByAgentComponent {
     displayedUsersTemp: any = null;
     usersVisibility: { [key: string]: boolean } = {};
 
-    columnName: any = report.survey;
+    columnName: any = report.surveySendById;
+    filterDate!: any[];
+    selectedFilter: any | undefined;
+    filterOption!: any[];
+
+    dateFilterType: string = '';
+    filterDateType: any | undefined;
+    startDate: any | undefined;
+    endDate: any | undefined;
+    dateRangeForm!: FormGroup;
+    selectedUserId: string | undefined;
+
+    fileType: string = config.file.type;
 
     constructor(private reportService: ReportService, private fb: FormBuilder) {}
 
     ngOnInit() {
-        console.log('testest');
-
         const currentDate = new Date();
         const firstDayOfYearFormat = moment(new Date()).format('YYYY-MM-DD');
         const currentDateFormat = moment(new Date()).format('YYYY-MM-DD');
-        this.datePick = this.fb.group({
-            startDate: [firstDayOfYearFormat, Validators.required],
-            endDate: [currentDate, Validators.required],
+
+        this.dateRangeForm = this.fb.group({
+            startDate: [''],
+            endDate: [''],
         });
         const id = 'system';
-        this.getSurveySendByAgent(id, firstDayOfYearFormat, currentDateFormat);
+        this.getSurveySendByAgent();
         this.getAgent(firstDayOfYearFormat, currentDateFormat);
+        console.log('columnNames', this.columnNames);
+        console.log('columnName: ', this.columnName);
+
+        this.columnNames.forEach((key) => {
+            this.columnVisibility[key] = true;
+        });
+
+        this.filterDate = [
+            { name: 'กรุณาเลือกวันที่', type: '' },
+            { name: 'วันนี้', type: 'toDay' },
+            { name: 'อาทิตย์นี้', type: 'thisWeek' },
+            { name: 'เดือนนี้', type: 'thisMonth' },
+            { name: 'เลือกวันที่', type: 'custom' },
+        ];
+
+        this.filterDateType = this.filterDate[1].type;
+
+        this.dateRangeForm.get('startDate')!.valueChanges.subscribe((value) => {
+            this.startDate = moment(value).format('YYYY-MM-DD');
+            console.log('startDate', this.startDate);
+            this.getSurveySendByAgent();
+        });
+        this.dateRangeForm.get('endDate')!.valueChanges.subscribe((value) => {
+            this.endDate = moment(value).format('YYYY-MM-DD');
+            console.log('endDate', this.endDate);
+            this.getSurveySendByAgent();
+        });
     }
 
-    getSurveySendByAgent(id: string, startDate: string, endDate: string) {
-        this.reportService.getSurveySendById(id, startDate, endDate).subscribe((res: any) => {
-            console.log(res);
-          this.reportTable = res.value.value;
-          console.log(this.reportTable);
+    getSurveySendByAgent() {
+        const selectedUserIds = Object.keys(this.usersVisibility).filter((key) => this.usersVisibility[key] === true);
+
+        this.reportService.getSurveySendById(selectedUserIds, this.startDate, this.endDate, this.filterDateType).subscribe((res: any) => {
+            this.reportTable = res.value.value;
         });
+        // if (this.reportTable.length != 0) {
+        //     // this.rowTotal();
+        //     this.columnTotal();
+        // }
     }
 
     onStartDateChange(event: any) {}
 
     onEndDateChange(event: any) {}
-
-    applyUserVisibility() {}
 
     applyColumnVisibility() {}
 
@@ -64,10 +105,38 @@ export class ReportSurveySendByAgentComponent {
         const startDate = moment(this.datePick.get('startDate')!.value).format('YYYY-MM-DD');
         const endDate = moment(this.datePick.get('endDate')!.value).format('YYYY-MM-DD');
         const id = 'system';
-        this.getSurveySendByAgent(id, startDate, endDate);
+        this.getSurveySendByAgent();
     }
 
-    exportExcel() {}
+    exportExcel() {
+        if (this.reportTable.length != 0) {
+            var columnFilter: any = [];
+            const processedForms = this.reportTable.reduce((acc: any, cur: any) => {
+                const processedForm: any = {};
+                Object.keys(this.columnName).forEach((column: string) => {
+                    if (this.columnVisibility[column]) {
+                        processedForm[column] = cur[column];
+                    }
+                });
+                acc.push(processedForm);
+                return acc;
+            }, []);
+            Object.keys(processedForms[0]).forEach((column: string) => {
+                if (this.columnVisibility[column]) columnFilter.push(this.columnName[column]);
+            });
+
+            const columns = [columnFilter];
+            const wb = XLSX.utils.book_new();
+            const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet([]);
+            XLSX.utils.sheet_add_aoa(ws, columns);
+
+            XLSX.utils.sheet_add_json(ws, processedForms, { origin: 'A2', skipHeader: true });
+
+            XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+            XLSX.writeFile(wb, `Survey-Send-Report-By-Agent${this.fileType}`);
+        }
+    }
 
     get columnVisibilityKeys(): string[] {
         return Object.keys(this.columnVisibility);
@@ -90,11 +159,52 @@ export class ReportSurveySendByAgentComponent {
         this.reportTable = [];
         await this.reportService.getAgent().subscribe((res: any) => {
             let users = res.value;
-            for (let i = 0; i < users.length; i++) {
-                this.usersVisibility[users[i].username] = true;
+            users.forEach((user: any) => {
+                this.usersVisibility[user.username] = true;
+            });
+
+            this.displayedUsersTemp = Object.keys(this.usersVisibility).filter((key) => this.usersVisibility[key]);
+            if (this.displayedUsersTemp.length) {
+                this.getSurveySendByAgent();
             }
-            this.displayedUsersTemp = Object.keys(this.usersVisibility).filter((key) => this.usersVisibility[key] == true);
-            // this.getSurveySendByAgent(id ,firstDayOfYearFormat, currentDateFormat);
         });
+    }
+
+    onDateFilterChange(newDateFilterType: string) {
+        this.filterDateType = newDateFilterType;
+        console.log('Selected filter type:', this.filterDateType);
+        this.getSurveySendByAgent();
+    }
+
+    applyUserVisibility(): void {
+        this.displayedUsersTemp = this.usersVisibility;
+        this.displayedUsersTemp = Object.keys(this.usersVisibility).filter((key) => this.usersVisibility[key] == true);
+        this.getSurveySendByAgent();
+    }
+
+    columnTotal() {
+        const totals: Record<string, number> = {};
+        const totalSurvey = this.reportTable.length;
+
+        for (const row of this.reportTable) {
+            Object.keys(row).forEach((column: string) => {
+                if (column !== 'date') {
+                    if (!totals[column]) {
+                        totals[column] = 0;
+                    }
+
+                    if (row[column] !== '-') {
+                        totals[column] += Number(row[column]);
+                    }
+                }
+            });
+        }
+
+        const totalsRow: Record<string, number | string> = { date: 'Totals : ' + totalSurvey };
+        Object.keys(totals).forEach((column: string) => {
+            totalsRow[column] = totals[column];
+        });
+
+        this.reportTable.push(totalsRow);
     }
 }

@@ -44,9 +44,9 @@ export const report = {
         description: 'รายละเอียด',
         solution: 'แนวทางแนะนำ/แก้ไข',
         agent: 'เจ้าหน้าที่',
-        province : 'จังหวัด',
+        province: 'จังหวัด',
         created: 'วันที่สร้าง',
-        type: 'ประเภท'
+        type: 'ประเภท',
     },
     topic: {
         username: 'เจ้าหน้าที่',
@@ -106,6 +106,14 @@ export const report = {
         successResend: 'Success Resend',
         errorResend: 'Error Resend',
         surveyName: 'Evaluation Form',
-        agent: 'Agent'
+        agent: 'Agent',
+    },
+    surveySendById: {
+        username: 'Agent',
+        totalResend: 'Total Resend',
+        totalStatus: 'Total Status',
+        totalErrorSend: 'Total Error Send',
+        totalErrorReSend: 'Total Error ReSend',
+        createdDate: 'Date',
     },
 };
