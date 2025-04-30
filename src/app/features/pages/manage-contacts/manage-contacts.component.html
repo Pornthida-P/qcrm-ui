@@ -43,7 +43,16 @@
                             </option>
                         </select>
                     </div>
-                    <button type="button" class="btn btn-success" (click)="showSendEmail()" data-bs-toggle="offcanvas"data-bs-target="#offcanvasRight" [disabled]="!emailTo">ส่งอีเมล์</button>
+                    <button
+                        type="button"
+                        class="btn btn-success"
+                        (click)="showSendEmail()"
+                        data-bs-toggle="offcanvas"
+                        data-bs-target="#offcanvasRight"
+                        [disabled]="!emailTo"
+                    >
+                        ส่งอีเมล์
+                    </button>
                 </div>
                 <form class="mb-3 p-2">
                     <label for="inputFormName" class="form-label">เลขประจำตัว/เลขนิติบุคคล</label>
@@ -136,6 +145,7 @@
                         [disabled]="!checkRole()"
                     />
                     <input
+                        #emailInput
                         *ngIf="isInputVisibleMail"
                         type="text"
                         class="form-control mt-2"
