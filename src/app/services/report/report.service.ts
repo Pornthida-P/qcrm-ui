@@ -42,7 +42,7 @@ export class ReportService {
         return this.http.get(`${this.baseUrl}${config.api.path.report.getSurvey}`);
     }
 
-  getSurveySendById(id: string, startDate: string, endDate: string) {
-        return this.http.get(`${this.baseUrl}${config.api.path.report.getSurveySendById}/${id}/${startDate}/${endDate}`);
+  getSurveySendById(id: any, startDate: string, endDate: string, dateFilterType: string) {
+        return this.http.get(`${this.baseUrl}${config.api.path.report.getSurveySendById}/${id}/${startDate}/${endDate}/${dateFilterType}`);
     }
 }
