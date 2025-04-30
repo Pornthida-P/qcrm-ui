@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { FormioComponent } from '@formio/angular';
 import { FormGroup, FormControl } from '@angular/forms';
@@ -17,6 +17,7 @@ import Swal from 'sweetalert2';
 import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
 import * as moment from 'moment';
 import { WebSocketSubject } from 'rxjs/webSocket';
+declare var bootstrap: any;
 
 @Component({
     selector: 'app-manage-contacts',
@@ -255,6 +256,7 @@ export class ManageContactsComponent implements OnInit {
 
     isInputVisible: boolean = false;
     isInputVisibleMail: boolean = false;
+    @ViewChild('emailInput') emailInputRef!: ElementRef;
 
     phoneNumbers: string[] = [''];
 
@@ -891,26 +893,25 @@ export class ManageContactsComponent implements OnInit {
 
     getSurveyForm(formId: string, formName: string) {
         if (this.sendEmailStatus === true) {
-            this.sendEmail(formId, formName)
+            this.sendEmail(formId, formName);
         } else {
             this.surveyFormService.getSurveyFormById(formId).subscribe((res) => {
-            this.existing = false;
-            this.formData = '';
-            this.FormShowing = true;
-            this.SearchFormShowing = false;
-            this.submitButtonShowing = true;
-            this.SearchOrgShowing = false;
-            this.readOnlyForm = false;
-            this.AddOrgShowing = false;
-            this.AddCallShowing = false;
-            this.canEditForm = false;
-            this.surveyForm = res;
-            this.form = JSON.parse(this.surveyForm[0].form);
-            this.formName = this.surveyForm[0].name;
-            this.formId = this.surveyForm[0].surveyFormId;
-        });
-        }       
-        
+                this.existing = false;
+                this.formData = '';
+                this.FormShowing = true;
+                this.SearchFormShowing = false;
+                this.submitButtonShowing = true;
+                this.SearchOrgShowing = false;
+                this.readOnlyForm = false;
+                this.AddOrgShowing = false;
+                this.AddCallShowing = false;
+                this.canEditForm = false;
+                this.surveyForm = res;
+                this.form = JSON.parse(this.surveyForm[0].form);
+                this.formName = this.surveyForm[0].name;
+                this.formId = this.surveyForm[0].surveyFormId;
+            });
+        }
     }
 
     showFinishedForm(formId: string, surveyId: string) {
@@ -1978,6 +1979,11 @@ export class ManageContactsComponent implements OnInit {
 
     inputAddEmail() {
         this.isInputVisibleMail = !this.isInputVisibleMail;
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                this.emailInputRef.nativeElement.focus();
+            });
+        });
     }
 
     async sendEmail(formID: string, surveyName: string) {
@@ -1986,19 +1992,29 @@ export class ManageContactsComponent implements OnInit {
         if (userData) {
             userId = JSON.parse(userData).userId;
         }
+
+        const ids = Array.isArray(this.contactId) ? this.contactId : [this.contactId];
+        const res: any = await this.contactsService.getEmail(ids).toPromise();
+        this.AllEmail = res;
+
+        const emailList = this.AllEmail.map((e: any) => e.email).join('<br>');
+
         await Swal.fire({
             icon: 'question',
             title: 'Do you want to send this survey?',
+            html: `<p>The following emails will receive this survey:</p><div style="max-height:200px; overflow-y:auto;">${emailList}</div>`,
             showCancelButton: true,
+            showDenyButton: true,
+            confirmButtonText: 'Send',
+            denyButtonText: 'Edit Emails',
+            cancelButtonText: 'Cancel',
             confirmButtonColor: '#3066be',
+            denyButtonColor: '#f0ad4e',
             cancelButtonColor: '#ec5365',
             width: '50%',
         }).then(async (result) => {
             this.availableEmail = [];
-            const ids = Array.isArray(this.contactId) ? this.contactId : [this.contactId];
             if (result.isConfirmed) {
-                const res: any = await this.contactsService.getEmail(ids).toPromise();
-                this.AllEmail = res;
                 for (const value of this.AllEmail) {
                     const data = { email: this.emailTo, contactId: value.contactId, formId: formID, userId: userId };
                     const result: any = await this.contactsService.checkEmailSend(data).toPromise();
@@ -2008,13 +2024,22 @@ export class ManageContactsComponent implements OnInit {
                 }
                 if (this.availableEmail.length > 0) {
                     for (const value of this.availableEmail) {
-                        const data = { email: value.email, id: value.contactId, form: formID, userId: userId, surveyName};
+                        const data = { email: value.email, id: value.contactId, form: formID, userId: userId, surveyName };
                         const res: any = await this.contactsService.sendEmail(data).toPromise();
                         console.log('res', res);
                     }
                 }
                 this.sweetalertServices.getSwal('success', 'Send Survey success.', '', false, '');
                 this.sendEmailStatus = false;
+            } else if (result.isDenied) {
+                const offcanvasElement = document.getElementById('offcanvasRight');
+                if (offcanvasElement) {
+                    const bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvasElement);
+                    if (bsOffcanvas) {
+                        bsOffcanvas.hide(); // close sidebar
+                    }
+                }
+                this.inputAddEmail();
             }
         });
     }
