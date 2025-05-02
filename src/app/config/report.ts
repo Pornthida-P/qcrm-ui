@@ -114,6 +114,6 @@ export const report = {
         totalStatus: 'Total Status',
         totalErrorSend: 'Total Error Send',
         totalErrorReSend: 'Total Error ReSend',
-        createdDate: 'Date',
+        // createdDate: 'Date',
     },
 };
