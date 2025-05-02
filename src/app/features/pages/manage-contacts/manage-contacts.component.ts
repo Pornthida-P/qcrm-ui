@@ -1993,16 +1993,10 @@ export class ManageContactsComponent implements OnInit {
             userId = JSON.parse(userData).userId;
         }
 
-        const ids = Array.isArray(this.contactId) ? this.contactId : [this.contactId];
-        const res: any = await this.contactsService.getEmail(ids).toPromise();
-        this.AllEmail = res;
-
-        const emailList = this.AllEmail.map((e: any) => e.email).join('<br>');
-
         await Swal.fire({
             icon: 'question',
             title: 'Do you want to send this survey?',
-            html: `<p>The following emails will receive this survey:</p><div style="max-height:200px; overflow-y:auto;">${emailList}</div>`,
+            html: `<p>The following emails will receive this survey:</p><div style="max-height:200px; overflow-y:auto;">${this.emailTo}</div>`,
             showCancelButton: true,
             showDenyButton: true,
             confirmButtonText: 'Send',
@@ -2014,7 +2008,10 @@ export class ManageContactsComponent implements OnInit {
             width: '50%',
         }).then(async (result) => {
             this.availableEmail = [];
+            const ids = Array.isArray(this.contactId) ? this.contactId : [this.contactId];
             if (result.isConfirmed) {
+                const res: any = await this.contactsService.getEmail(ids).toPromise();
+                this.AllEmail = res;
                 for (const value of this.AllEmail) {
                     const data = { email: this.emailTo, contactId: value.contactId, formId: formID, userId: userId };
                     const result: any = await this.contactsService.checkEmailSend(data).toPromise();
