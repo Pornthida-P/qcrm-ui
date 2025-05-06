@@ -107,6 +107,7 @@ export const config = {
                 getAgent: '/report/getAgent',
                 getSurvey: '/report/getSurvey',
                 getSurveySendById: '/report/getSurveySendByID',
+                getSurveySummary: '/report/getSurveySendByDate',
             },
         },
     },
