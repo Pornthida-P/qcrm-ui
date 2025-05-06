@@ -10,6 +10,7 @@ import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.serv
 import Swal from 'sweetalert2';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
+declare var bootstrap: any;
 
 @Component({
     selector: 'app-contacts',
@@ -428,9 +429,19 @@ export class ContactsComponent implements OnInit {
                     const res: any = await this.contactsService.sendEmail(data).toPromise();
                     console.log('res', res);
                 }
+            } else {
+                this.sweetalertServices.getSwal('warning', 'Sent Survey', '', false, '');
+                return;
             }
 
             this.sweetalertServices.getSwal('success', 'Send Survey success.', '', false, '');
+            const offcanvasElement = document.getElementById('offcanvasRight');
+            if (offcanvasElement) {
+                const bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvasElement);
+                if (bsOffcanvas) {
+                    bsOffcanvas.hide(); // close sidebar
+                }
+            }
         } else if (result.isDenied && this.checkedValues.length === 1) {
             this.edit({ contactId: this.checkedValues[0] });
         }
