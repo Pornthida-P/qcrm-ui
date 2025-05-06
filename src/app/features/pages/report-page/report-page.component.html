@@ -57,7 +57,8 @@
                 </button>
                 <button
                     class="d-flex align-items-center gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white"
-                    (click)="onSurveySendSummary()"
+                    [class.button-active]="onSelectReport === 'survey-send-summary'"
+                    (click)="onChangeReport('survey-send-summary')"
                 >
                     {{ 'report.survey-send-summary' | translate }}
                 </button>
