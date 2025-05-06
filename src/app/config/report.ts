@@ -116,4 +116,13 @@ export const report = {
         totalErrorReSend: 'Total Error ReSend',
         // createdDate: 'Date',
     },
+    surveySendSummary: {
+        createdDate: 'Send Date',
+        Total: 'Total Send',
+        TotalSend: 'Send',
+        TotalErrorSend: 'Error Send',
+        ResendDate: 'Resend Date',
+        TotalReSend: 'Total Resend',
+        totalErrorReSend: 'Error ReSend',
+    },
 };

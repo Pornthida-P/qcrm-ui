@@ -72,6 +72,11 @@ export class ReportPageComponent implements OnInit {
         this.router.navigate(['/report-page/survey-send-by-agent']);
     }
 
+    onSurveySendSummary() {
+        this.onSelectReport = 'SurveySendSummary';
+        this.router.navigate(['/report-page/survey-send-summary']);
+    }
+
     onChangeReport(report: string) {
         this.onSelectReport = report;
         this.router.navigate(['/report-page/' + report]);
