@@ -232,13 +232,13 @@
         "case-type-by-agent": "รายงานสรุปสถิติข้อมูล By Agent",
         "case-detail": "รายละเอียดเคส",
         "summary-by-month": "สรุปสถิติรายเดือน",
-        "survey-send": "การส่งอีเมลแบบฟอร์ม",
+        "survey-send": "การส่งอีเมลแบบสำรวจ",
         "survey-form": "การทำแบบสำรวจ",
         "survey-link": "รายงานแบบสำรวจ ",
         "loading": "กำลังดาวน์โหลด",
         "data-not-found": "ไม่มีข้อมูล",
-        "select-survey-form": "กรุณาเลือกแบบฟอร์ม",
-        "survey-send-by-agent": "การส่งอีเมลแบบฟอร์ม By Agent",
-         "survey-send-summary": "สรุปสถิติแบบสำรวจ"
+        "select-survey-form": "กรุณาเลือกแบบสำรวจ",
+        "survey-send-by-agent": "การส่งอีเมลแบบสำรวจ By Agent",
+        "survey-send-summary": "สรุปสถิติแบบสำรวจ"
     }
 }
