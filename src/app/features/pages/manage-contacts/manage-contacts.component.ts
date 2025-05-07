@@ -2025,9 +2025,6 @@ export class ManageContactsComponent implements OnInit {
                         const res: any = await this.contactsService.sendEmail(data).toPromise();
                         console.log('res', res);
                     }
-                } else {
-                    this.sweetalertServices.getSwal('warning', 'Sent Survey', '', false, '');
-                    return;
                 }
                 this.sweetalertServices.getSwal('success', 'Send Survey success.', '', false, '');
                 this.sendEmailStatus = false;
