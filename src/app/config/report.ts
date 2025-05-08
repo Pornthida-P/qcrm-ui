@@ -121,7 +121,7 @@ export const report = {
         Total: 'Total Send',
         TotalSend: 'Send',
         TotalErrorSend: 'Error Send',
-        ResendDate: 'Resend Date',
+        // ResendDate: 'Resend Date',
         TotalReSend: 'Total Resend',
         totalErrorReSend: 'Error ReSend',
     },
