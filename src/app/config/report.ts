@@ -111,10 +111,11 @@ export const report = {
     surveySendById: {
         username: 'Agent',
         Total: 'Total Send',
-        TotalSend: 'Send',
-        TotalErrorSend: 'Error Send',
+        TotalSend: 'Success',
+        TotalErrorSend: 'Non Success',
         TotalReSend: 'Total Resend',
-        totalErrorReSend: 'Error ReSend',
+        ReSendSuccess: 'Success ReSend',
+        TotalErrorReSend: 'Non Success ReSend',
     },
     surveySendSummary: {
         createdDate: 'Send Date',
