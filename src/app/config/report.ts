@@ -124,6 +124,7 @@ export const report = {
         TotalErrorSend: 'Error Send',
         // ResendDate: 'Resend Date',
         TotalReSend: 'Total Resend',
-        totalErrorReSend: 'Error ReSend',
+        ReSendSuccess: 'ReSend Success',
+        TotalErrorReSend: 'Error ReSend',
     },
 };
