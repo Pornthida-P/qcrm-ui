@@ -316,15 +316,16 @@
                                             >
                                                 <i class="fa-solid fa-pen-to-square"></i>
                                             </div>
-                                            <!-- <div
+                                            <div
                                                 class="color-red"
                                                 placement="top"
                                                 style="cursor: pointer"
                                                 ngbTooltip="ลบ"
+                                                *ngIf="checkSupRole()"
                                                 (click)="deleteCall(call.callId, call.table_type)"
                                             >
                                                 <i class="fa-solid fa-trash"></i>
-                                            </div> -->
+                                            </div>
                                         </div>
                                     </td>
                                 </tr>
@@ -840,7 +841,7 @@
 
                             <div class="col-6">
                                 <label for="inputChannel" class="form-label">ช่องทางติดต่อ</label>
-                                <select id="inputChannel" class="form-select" name="selectedChannels" [(ngModel)]="selectedChannels">
+                                <select id="inputChannel" class="form-select" name="selectedChannels" [(ngModel)]="selectedChannels" (ngModelChange)="onChannelChange($event)">
                                     <option disabled value="">กรุณาเลือกข้อมูล</option>
                                     <option *ngFor="let channel of channels" [value]="channel.channelId">{{ channel.name }}</option>
                                 </select>

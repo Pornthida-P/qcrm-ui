@@ -86,6 +86,7 @@ export class ManageContactsComponent implements OnInit {
     selectedCasesubject: any;
     selectedCaseTopics: any[] = [];
     selectedChannels: any;
+    currentChannel: any;
     channels: any;
     isEmailSubscribed: number = 0;
     activitiestype: any;
@@ -355,6 +356,14 @@ export class ManageContactsComponent implements OnInit {
     checkRole(): boolean {
         return true;
     }
+
+    checkSupRole(): boolean {
+        if (this.userRole === 'super admin') {
+            return true;
+        } else {
+            return false;
+        }
+    }    
 
     async getContactById(contactId: string) {
         await this.contactsService.getContactsById(contactId).subscribe((res: any) => {
@@ -1128,7 +1137,13 @@ export class ManageContactsComponent implements OnInit {
         this.isCheckboxSelected[activityTypeId] = event.target.checked;
     }
 
+    onChannelChange(event: any) {
+        this.currentChannel = event;
+        console.log('currentChannel:', this.currentChannel);
+    }
+
     showAddCall() {
+        this.selectedChannels = ''; 
         this.AddOrgShowing = false;
         this.FormShowing = false;
         this.SearchFormShowing = false;
@@ -1148,8 +1163,9 @@ export class ManageContactsComponent implements OnInit {
 
         this.callServive.getAllChannels().subscribe((channels: any) => {
             this.channels = channels;
+            this.selectedChannels = this.currentChannel || '';
         });
-
+        
         this.callServive.getActivitiesType().subscribe((activitiestype: any) => {
             this.activitiestype = activitiestype.filter((activityType: any) => [1, 43].includes(parseInt(activityType.activityTypeId)));
         });
@@ -1190,6 +1206,7 @@ export class ManageContactsComponent implements OnInit {
     }
 
     createCall() {
+        this.currentChannel = '';
         this.attachmentShowing = true;
         this.cType = '';
         this.callId = '';
@@ -1224,6 +1241,7 @@ export class ManageContactsComponent implements OnInit {
     }
 
     editCall(callId: string, type: string) {
+        this.currentChannel = ''; 
         this.attachmentShowing = false;
         console.log('Edit Call:', callId);
         console.log('Type:', type);
@@ -1264,6 +1282,7 @@ export class ManageContactsComponent implements OnInit {
                 this.callId = call[0].callId;
                 // this.selectedCasesubject = call[0].caseSubject;
                 this.selectedChannels = call[0].channel;
+                this.currentChannel = call[0].channel;
                 this.isEmailSubscribed = call[0].emailInfo;
                 this.activityTypeId = call[0].activityType;
                 this.startTime = call[0].startTime;
@@ -1352,6 +1371,7 @@ export class ManageContactsComponent implements OnInit {
                     second: date.getSeconds(),
                 };
                 this.selectedChannels = call.channelId;
+                this.currentChannel = call.channelId;
                 this.selectedCallTypeId = call.operationType;
 
                 if (call.caseTopicIds && call.caseTopicIds !== 'null') {
@@ -1414,6 +1434,43 @@ export class ManageContactsComponent implements OnInit {
     deleteCall(callId: string, type: string) {
         console.log('Delete Call:', callId);
         console.log('Type:', type);
+        Swal.fire({
+            icon: 'warning',
+            title: 'คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้?',
+            showCancelButton: true,
+            confirmButtonText: 'ตกลง',
+            cancelButtonText: 'ยกเลิก',
+            confirmButtonColor: '#3066be',
+            cancelButtonColor: '#ec5365',
+            width: '50%',
+        }).then((result) => {
+            if (result.isConfirmed) {    
+                this.contactsService.deleteCall(callId, type).subscribe(
+                    (res: any) => {
+                        this.sweetalertServices.getSwal('success', 'ลบข้อมูลเรียบร้อยแล้ว', '', false, '');
+                        this.auditLogService.log(
+                            '',
+                            'Contact',
+                            `Delete Call From ContactID : ${this.contactId}`,
+                            `Call ID : ${callId}, Type : ${type}`,
+                            `Success`,
+                        );
+                        window.location.reload();
+                    },
+                    (error: any) => {
+                        this.sweetalertServices.handleError(error);
+                        this.auditLogService.log(
+                            '',
+                            'Contact',
+                            `Delete Call From ContactID : ${this.contactId}`,
+                            `Call ID : ${callId}, Type : ${type}`,
+                            `Failed, Error : ${error}`,
+                        );
+                    },
+                );
+            }
+        });  
+            
     }
 
     submitCall() {
