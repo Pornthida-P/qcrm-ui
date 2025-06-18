@@ -161,4 +161,8 @@ export class ContactsService {
       return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}${config.api.path.contacts.findEmailByContact}/${id}`);
   }
 
+    deleteCall(id: string, type: string) {
+        return this.http.delete(`${this.baseUrl}${config.api.path.contacts.baseUrl}/call/${id}/${type}`);
+    }
+
 }

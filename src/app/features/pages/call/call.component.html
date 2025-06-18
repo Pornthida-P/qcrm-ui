@@ -224,7 +224,18 @@
                                         >
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </div>
-                                    </div>
+                                        <div
+                                            class="color-danger"
+                                            [style]="{ cursor: 'pointer', color: '#dc3545' }"
+                                            placement="top"
+                                            style="cursor: pointer"
+                                            ngbTooltip="ลบ"
+                                            *ngIf="checkSupRole()"
+                                            (click)="deleteCall(calls.callId, calls.table)"
+                                        >
+                                            <i class="fa-solid fa-trash"></i>
+                                        </div> 
+                                    </div> 
                                 </td>
                             </tr>
                         </ng-container>
@@ -464,7 +475,7 @@
 
                                 <div class="col-6">
                                     <label for="inputChannel" class="form-label">ช่องทางติดต่อ</label>
-                                    <select id="inputChannel" class="form-select" name="selectedChannels" [(ngModel)]="selectedChannels">
+                                    <select id="inputChannel" class="form-select" name="selectedChannels" [(ngModel)]="selectedChannels" (ngModelChange)="onChannelChange($event)">
                                         <option disabled value="">กรุณาเลือกข้อมูล</option>
                                         <option *ngFor="let channel of channels" [value]="channel.channelId">{{ channel.name }}</option>
                                     </select>
