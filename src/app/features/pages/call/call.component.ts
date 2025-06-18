@@ -1447,4 +1447,12 @@ export class CallComponent implements OnInit {
         this.currentChannel = event;
         console.log('currentChannel:', this.currentChannel);
     }
+
+    checkSupRole(): boolean {
+        if (this.userRole === 'super admin') {
+            return true;
+        } else {
+            return false;
+        }
+    }    
 }

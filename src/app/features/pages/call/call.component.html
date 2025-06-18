@@ -230,6 +230,7 @@
                                             placement="top"
                                             style="cursor: pointer"
                                             ngbTooltip="ลบ"
+                                            *ngIf="checkSupRole()"
                                             (click)="deleteCall(calls.callId, calls.table)"
                                         >
                                             <i class="fa-solid fa-trash"></i>
