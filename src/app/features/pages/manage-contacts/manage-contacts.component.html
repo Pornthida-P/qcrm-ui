@@ -37,7 +37,7 @@
                 <div class="contact-number" *ngIf="TableShowing">
                     <div class="col-6 me-3">
                         <select id="inputEmail" class="form-select" name="selectedEmail" [(ngModel)]="emailTo">
-                            <option disabled value="">กรุณาเลือกอีเมล์</option>
+                            <option disabled value="">กรุณาเลือกอีเมล</option>
                             <option *ngFor="let email of emailById" [value]="email.email">
                                 {{ email.email }}
                             </option>
@@ -51,7 +51,7 @@
                         data-bs-target="#offcanvasRight"
                         [disabled]="!emailTo"
                     >
-                        ส่งอีเมล์
+                        ส่งอีเมล
                     </button>
                 </div>
                 <form class="mb-3 p-2">
@@ -125,7 +125,7 @@
 
                 <div class="col-md-6">
                     <div class="d-flex">
-                        <label for="inputContactEmail" class="form-label">อีเมล์</label>
+                        <label for="inputContactEmail" class="form-label">อีเมล</label>
                         <div
                             class="mb-2 p-1 btn-primary text-white rounded-2 cursor-pointer add-number ms-2"
                             (click)="inputAddEmail()"
@@ -841,7 +841,13 @@
 
                             <div class="col-6">
                                 <label for="inputChannel" class="form-label">ช่องทางติดต่อ</label>
-                                <select id="inputChannel" class="form-select" name="selectedChannels" [(ngModel)]="selectedChannels" (ngModelChange)="onChannelChange($event)">
+                                <select
+                                    id="inputChannel"
+                                    class="form-select"
+                                    name="selectedChannels"
+                                    [(ngModel)]="selectedChannels"
+                                    (ngModelChange)="onChannelChange($event)"
+                                >
                                     <option disabled value="">กรุณาเลือกข้อมูล</option>
                                     <option *ngFor="let channel of channels" [value]="channel.channelId">{{ channel.name }}</option>
                                 </select>

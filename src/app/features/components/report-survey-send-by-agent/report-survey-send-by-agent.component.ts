@@ -84,15 +84,15 @@ export class ReportSurveySendByAgentComponent {
     }
 
     getSurveySendByAgent() {
-      const selectedUserIds = Object.keys(this.usersVisibility).filter((key) => this.usersVisibility[key] === true);
+        const selectedUserIds = Object.keys(this.usersVisibility).filter((key) => this.usersVisibility[key] === true);
 
-      this.reportService.getSurveySendById(selectedUserIds, this.startDate, this.endDate, this.filterDateType).subscribe((res: any) => {
-        this.reportTable = res.value.value;
+        this.reportService.getSurveySendById(selectedUserIds, this.startDate, this.endDate, this.filterDateType).subscribe((res: any) => {
+            this.reportTable = res.value.value;
 
-        if (this.reportTable && this.reportTable.length !== 0) {
-          this.columnTotal();
-        }
-      });
+            if (this.reportTable && this.reportTable.length !== 0) {
+                this.columnTotal();
+            }
+        });
     }
 
     onStartDateChange(event: any) {}
@@ -102,9 +102,6 @@ export class ReportSurveySendByAgentComponent {
     applyColumnVisibility() {}
 
     clickgo() {
-        const startDate = moment(this.datePick.get('startDate')!.value).format('YYYY-MM-DD');
-        const endDate = moment(this.datePick.get('endDate')!.value).format('YYYY-MM-DD');
-        const id = 'system';
         this.getSurveySendByAgent();
     }
 
@@ -183,31 +180,31 @@ export class ReportSurveySendByAgentComponent {
     }
 
     columnTotal() {
-      const totals: Record<string, number> = {};
+        const totals: Record<string, number> = {};
 
-      for (const row of this.reportTable) {
-        Object.keys(row).forEach((column: string) => {
-          if (column !== 'username' && column !== 'createdDate') { // ไม่รวมคอลัมน์ date
-            if (!totals[column]) {
-              totals[column] = 0;
-            }
+        for (const row of this.reportTable) {
+            Object.keys(row).forEach((column: string) => {
+                if (column !== 'username' && column !== 'createdDate') {
+                    // ไม่รวมคอลัมน์ date
+                    if (!totals[column]) {
+                        totals[column] = 0;
+                    }
 
-            if (row[column] !== '-') {
-              const value = Number(row[column]);
-              if (!isNaN(value)) {
-                totals[column] += value;
-              }
-            }
-          }
+                    if (row[column] !== '-') {
+                        const value = Number(row[column]);
+                        if (!isNaN(value)) {
+                            totals[column] += value;
+                        }
+                    }
+                }
+            });
+        }
+
+        const totalsRow: Record<string, number | string> = { username: 'Total:' }; // ลบคอลัมน์ date ออกจากแถว Total
+        Object.keys(totals).forEach((column: string) => {
+            totalsRow[column] = totals[column];
         });
-      }
 
-      const totalsRow: Record<string, number | string> = { username: 'Total:' }; // ลบคอลัมน์ date ออกจากแถว Total
-      Object.keys(totals).forEach((column: string) => {
-        totalsRow[column] = totals[column];
-      });
-
-      this.reportTable.push(totalsRow);
+        this.reportTable.push(totalsRow);
     }
-
 }

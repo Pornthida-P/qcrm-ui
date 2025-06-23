@@ -10,6 +10,7 @@ import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.serv
 import Swal from 'sweetalert2';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
+import { TranslateService } from '@ngx-translate/core';
 declare var bootstrap: any;
 
 @Component({
@@ -92,6 +93,7 @@ export class ContactsComponent implements OnInit {
         private sweetalertServices: SweetAlertService,
         private clipboard: Clipboard,
         private auditLogService: AuditLogService,
+        private translate: TranslateService,
     ) {}
 
     ngOnInit() {
@@ -376,7 +378,7 @@ export class ContactsComponent implements OnInit {
         this.contactsService.checkEmail(this.checkedValues).subscribe((res: any) => {
             if (res.length > 0) {
                 this.sidebarShowing = false;
-                this.sweetalertServices.getSwal('warning', `ผู้ใช้ ${res} ไม่ได้ลงทะเบียนอีเมล์`, '', false, '');
+                this.sweetalertServices.getSwal('warning', `ผู้ใช้ ${res} ไม่ได้ลงทะเบียนอีเมล`, '', false, '');
             } else {
                 this.visibleLeftSideBar = false;
                 this.visibleRightSideBar = false;
@@ -400,13 +402,15 @@ export class ContactsComponent implements OnInit {
 
         const result = await Swal.fire({
             icon: 'question',
-            title: 'Do you want to send this survey?',
-            html: `<p>The following emails will receive this survey:</p><div style="max-height:200px; overflow-y:auto;">${emailList}</div>`,
+            title: this.translate.instant('modal.send-email.title'),
+            html: `<p>${this.translate.instant(
+                'modal.send-email.description',
+            )}:</p><div style="max-height:200px; overflow-y:auto;">${emailList}</div>`,
             showCancelButton: true,
             showDenyButton: this.checkedValues.length === 1,
-            confirmButtonText: 'Send',
-            denyButtonText: 'Edit Emails',
-            cancelButtonText: 'Cancel',
+            confirmButtonText: this.translate.instant('modal.send-email.send'),
+            denyButtonText: this.translate.instant('modal.send-email.edit'),
+            cancelButtonText: this.translate.instant('modal.send-email.cancel'),
             confirmButtonColor: '#3066be',
             denyButtonColor: '#f0ad4e',
             cancelButtonColor: '#ec5365',
@@ -415,16 +419,19 @@ export class ContactsComponent implements OnInit {
 
         if (result.isConfirmed) {
             this.availableEmail = [];
-            for (const value of this.AllEmail) {
-                const data = { email: value.email, contactId: value.contactId, formId: formID, userId: userId };
-                const check: any = await this.contactsService.checkEmailSend(data).toPromise();
-                if (check.email) {
-                    this.availableEmail.push(check);
-                }
-            }
+            this.AllEmail.forEach((value) => {
+                value.formId = formID;
+            });
+            // for (const value of this.AllEmail) {
+            //     const data = { email: value.email, contactId: value.contactId, formId: formID, userId: userId };
+            //     const check: any = await this.contactsService.checkEmailSend(data).toPromise();
+            //     if (check.email) {
+            //         this.availableEmail.push(check);
+            //     }
+            // }
 
-            if (this.availableEmail.length > 0) {
-                for (const value of this.availableEmail) {
+            if (this.AllEmail.length > 0) {
+                for (const value of this.AllEmail) {
                     const data = { email: value.email, id: value.contactId, form: formID, userId: userId, surveyName };
                     const res: any = await this.contactsService.sendEmail(data).toPromise();
                     console.log('res', res);

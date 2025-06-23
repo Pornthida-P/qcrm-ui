@@ -65,7 +65,7 @@
                     (click)="deleteSelectcontacts()"
                     placement="top"
                     ngbTooltip="ลบ"
-                    style="margin-left: 8px;"
+                    style="margin-left: 8px"
                 >
                     <i class="fa-solid fa-trash"></i>
                 </button>
@@ -95,7 +95,7 @@
                                 ><i *ngIf="sortId == 'organization'" class="{{ sortIcon }}"></i>
                             </th>
                             <th style="width: 12.5%" scope="col">
-                                <a (click)="sort('email')">อีเมล์</a><i *ngIf="sortId == 'email'" class="{{ sortIcon }}"></i>
+                                <a (click)="sort('email')">อีเมล</a><i *ngIf="sortId == 'email'" class="{{ sortIcon }}"></i>
                             </th>
                             <th style="width: 12.5%" scope="col">
                                 <a (click)="sort('contactNumber')">เบอร์ติดต่อ</a
@@ -129,12 +129,12 @@
                                     data-bs-target="#offcanvasRight"
                                     aria-controls="offcanvasRight"
                                     scope="row"
-                                    >
+                                >
                                     <div
                                         [ngbTooltip]="contacts.fullname"
                                         placement="bottom"
                                         class="text-ellipsis"
-                                        style="color: #3066be; text-decoration: underline;"
+                                        style="color: #3066be; text-decoration: underline"
                                     >
                                         {{ contacts.fullname }}
                                     </div>
@@ -336,7 +336,11 @@
                                 <tbody>
                                     <ng-container *ngIf="surveyForms?.length > 0; else noDataTemplate">
                                         <tr *ngFor="let form of surveyForms; let i = index">
-                                            <td scope="row" class="cursor-pointer w-max-ellipsis" (click)="sendEmail(form.surveyFormId, form.name)">
+                                            <td
+                                                scope="row"
+                                                class="cursor-pointer w-max-ellipsis"
+                                                (click)="sendEmail(form.surveyFormId, form.name)"
+                                            >
                                                 {{ form.name }}
                                             </td>
                                             <td scope="row">{{ form.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>

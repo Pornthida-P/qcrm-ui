@@ -36,7 +36,7 @@ export const report = {
         contact: 'ผู้ติดต่อ',
         org: 'ร้านค้า/บริษัท',
         contacttype: 'ประเภทผู้ประกอบการ',
-        email: 'อีเมล์',
+        email: 'อีเมล',
         caller: 'เบอร์ติดต่อ',
         activityname: 'ประเภทกิจกรรม',
         casetype: 'หัวข้อที่ติดต่อ',
@@ -126,5 +126,6 @@ export const report = {
         TotalReSend: 'Total Resend',
         ReSendSuccess: 'ReSend Success',
         TotalErrorReSend: 'Error ReSend',
+        TotalAnswer: 'Total Answer',
     },
 };

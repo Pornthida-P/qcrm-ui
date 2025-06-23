@@ -69,10 +69,10 @@ export class ReportSurveySummaryComponent {
             console.log('endDate', this.endDate);
             this.getSurveySendSummary();
         });
-      this.getSurveySendSummary();
-      this.columnNames.forEach((key) => {
-        this.columnVisibility[key] = true;
-    });
+        this.getSurveySendSummary();
+        this.columnNames.forEach((key) => {
+            this.columnVisibility[key] = true;
+        });
     }
 
     onDateFilterChange(newDateFilterType: string) {
@@ -84,7 +84,7 @@ export class ReportSurveySummaryComponent {
     getSurveySendSummary() {
         this.reportService.getSurveySummary(this.startDate, this.endDate, this.filterDateType).subscribe((res: any) => {
             console.log('Survey Send Summary:', res);
-            this.reportTable = res.value.value;
+            this.reportTable = res.value;
 
             if (this.reportTable && this.reportTable.length !== 0) {
                 this.columnTotal();
@@ -124,8 +124,6 @@ export class ReportSurveySummaryComponent {
     onEndDateChange(event: any) {}
 
     clickgo() {
-        const startDate = moment(this.datePick.get('startDate')!.value).format('YYYY-MM-DD');
-        const endDate = moment(this.datePick.get('endDate')!.value).format('YYYY-MM-DD');
         this.getSurveySendSummary();
     }
 
@@ -168,11 +166,10 @@ export class ReportSurveySummaryComponent {
     }
 
     getTotal(column: string) {
-      if (Array.isArray(this.reportTable) && this.reportTable.length > 0) {
-          const lastRow = this.reportTable[this.reportTable.length - 1];
-          return lastRow ? lastRow[column] : null;
-      }
-      return null;
-  }
-
+        if (Array.isArray(this.reportTable) && this.reportTable.length > 0) {
+            const lastRow = this.reportTable[this.reportTable.length - 1];
+            return lastRow ? lastRow[column] : null;
+        }
+        return null;
+    }
 }
