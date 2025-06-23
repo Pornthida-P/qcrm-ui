@@ -17,6 +17,7 @@ import Swal from 'sweetalert2';
 import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
 import * as moment from 'moment';
 import { WebSocketSubject } from 'rxjs/webSocket';
+import { TranslateService } from '@ngx-translate/core';
 declare var bootstrap: any;
 
 @Component({
@@ -277,6 +278,7 @@ export class ManageContactsComponent implements OnInit {
         private auditLogService: AuditLogService,
         private attachmentService: AttachmentService,
         private callServive: CallService,
+        private translate: TranslateService,
     ) {
         this.contact = { components: [] };
         this.startTime = this.formatDate(new Date());
@@ -363,7 +365,7 @@ export class ManageContactsComponent implements OnInit {
         } else {
             return false;
         }
-    }    
+    }
 
     async getContactById(contactId: string) {
         await this.contactsService.getContactsById(contactId).subscribe((res: any) => {
@@ -1143,7 +1145,7 @@ export class ManageContactsComponent implements OnInit {
     }
 
     showAddCall() {
-        this.selectedChannels = ''; 
+        this.selectedChannels = '';
         this.AddOrgShowing = false;
         this.FormShowing = false;
         this.SearchFormShowing = false;
@@ -1165,7 +1167,7 @@ export class ManageContactsComponent implements OnInit {
             this.channels = channels;
             this.selectedChannels = this.currentChannel || '';
         });
-        
+
         this.callServive.getActivitiesType().subscribe((activitiestype: any) => {
             this.activitiestype = activitiestype.filter((activityType: any) => [1, 43].includes(parseInt(activityType.activityTypeId)));
         });
@@ -1241,7 +1243,7 @@ export class ManageContactsComponent implements OnInit {
     }
 
     editCall(callId: string, type: string) {
-        this.currentChannel = ''; 
+        this.currentChannel = '';
         this.attachmentShowing = false;
         console.log('Edit Call:', callId);
         console.log('Type:', type);
@@ -1444,7 +1446,7 @@ export class ManageContactsComponent implements OnInit {
             cancelButtonColor: '#ec5365',
             width: '50%',
         }).then((result) => {
-            if (result.isConfirmed) {    
+            if (result.isConfirmed) {
                 this.contactsService.deleteCall(callId, type).subscribe(
                     (res: any) => {
                         this.sweetalertServices.getSwal('success', 'ลบข้อมูลเรียบร้อยแล้ว', '', false, '');
@@ -1469,8 +1471,7 @@ export class ManageContactsComponent implements OnInit {
                     },
                 );
             }
-        });  
-            
+        });
     }
 
     submitCall() {
@@ -2052,13 +2053,15 @@ export class ManageContactsComponent implements OnInit {
 
         await Swal.fire({
             icon: 'question',
-            title: 'Do you want to send this survey?',
-            html: `<p>The following emails will receive this survey:</p><div style="max-height:200px; overflow-y:auto;">${this.emailTo}</div>`,
+            title: this.translate.instant('modal.send-email.title'),
+            html: `<p>${this.translate.instant('modal.send-email.description')}:</p><div style="max-height:200px; overflow-y:auto;">${
+                this.emailTo
+            }</div>`,
             showCancelButton: true,
             showDenyButton: true,
-            confirmButtonText: 'Send',
-            denyButtonText: 'Edit Emails',
-            cancelButtonText: 'Cancel',
+            confirmButtonText: this.translate.instant('modal.send-email.send'),
+            denyButtonText: this.translate.instant('modal.send-email.edit'),
+            cancelButtonText: this.translate.instant('modal.send-email.cancel'),
             confirmButtonColor: '#3066be',
             denyButtonColor: '#f0ad4e',
             cancelButtonColor: '#ec5365',
@@ -2069,18 +2072,21 @@ export class ManageContactsComponent implements OnInit {
             if (result.isConfirmed) {
                 const res: any = await this.contactsService.getEmail(ids).toPromise();
                 this.AllEmail = res;
-                for (const value of this.AllEmail) {
-                    const data = { email: this.emailTo, contactId: value.contactId, formId: formID, userId: userId };
-                    const result: any = await this.contactsService.checkEmailSend(data).toPromise();
-                    if (result.email) {
-                        this.availableEmail.push(result);
-                    }
-                }
-                if (this.availableEmail.length > 0) {
-                    for (const value of this.availableEmail) {
+                this.AllEmail.forEach((value) => {
+                    value.formId = formID;
+                });
+                // for (const value of this.AllEmail) {
+                //     const data = { email: this.emailTo, contactId: value.contactId, formId: formID, userId: userId };
+                //     const result: any = await this.contactsService.checkEmailSend(data).toPromise();
+                //     if (result.email) {
+                //         this.availableEmail.push(result);
+                //     }
+                // }
+
+                if (this.AllEmail.length > 0) {
+                    for (const value of this.AllEmail) {
                         const data = { email: value.email, id: value.contactId, form: formID, userId: userId, surveyName };
                         const res: any = await this.contactsService.sendEmail(data).toPromise();
-                        console.log('res', res);
                     }
                 }
                 this.sweetalertServices.getSwal('success', 'Send Survey success.', '', false, '');

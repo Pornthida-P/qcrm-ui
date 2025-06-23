@@ -184,6 +184,13 @@
             "description": "Description",
             "members": "Members",
             "save": "Save"
+        },
+        "send-email": {
+            "title": "Do you want to send this survey?",
+            "description": "The following emails will receive this survey",
+            "send": "Send",
+            "edit": "Edit Emails",
+            "cancel": "Cancel"
         }
     },
     "menuNavber": {
@@ -242,4 +249,3 @@
         "survey-send-summary": "Survey Send Summary"
     }
 }
-
