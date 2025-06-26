@@ -1584,6 +1584,7 @@ export class ManageContactsComponent implements OnInit {
                     activitySmn: selectedActivitiesSmnIds,
                     activityEln: selectedActivitiesElnIds,
                     contactId: this.contactId,
+                    callerId: this.selectedContactNumber ? this.selectedContactNumber.contactNumber : null,
                 };
                 console.log('Data: ', data);
                 this.contactsService
