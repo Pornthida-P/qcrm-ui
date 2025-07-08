@@ -880,8 +880,10 @@
                                         class="form-select"
                                         name="selectedContactNumber"
                                         [(ngModel)]="selectedContactNumber"
+                                        required
+                                        #contactNumberSelect="ngModel"
                                     >
-                                        <option disabled value="">กรุณาเลือกข้อมูล</option>
+                                        <option disabled value="">กรุณาเลือกเบอร์ติดต่อ</option>
                                         <option
                                             *ngFor="let contactNumbers of contactNumber"
                                             [ngValue]="{
@@ -892,6 +894,9 @@
                                             {{ contactNumbers.contactNumber }}
                                         </option>
                                     </select>
+                                    <div *ngIf="contactNumberSelect.invalid && contactNumberSelect.touched" class="text-danger" style="font-size: 0.9em;">
+                                        กรุณาเลือกเบอร์ติดต่อ
+                                    </div>
                                 </div>
 
                                 <div class="col-6" *ngIf="selectedChannels === '3'">
