@@ -1449,7 +1449,7 @@ export class CallComponent implements OnInit {
     }
 
     checkSupRole(): boolean {
-        if (this.userRole === 'super admin') {
+        if (this.userRole === 'super admin' || this.userRole === 'admin') {
             return true;
         } else {
             return false;
