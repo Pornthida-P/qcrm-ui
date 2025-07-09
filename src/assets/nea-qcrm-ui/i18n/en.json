@@ -246,6 +246,7 @@
         "data-not-found": "Data Not Found",
         "select-survey-form": "Please select a form",
         "survey-send-by-agent": "Survey Send By Agent",
-        "survey-send-summary": "Survey Send Summary"
+        "survey-send-summary": "Survey Send Summary",
+        "summary-link": "Summary Chart"
     }
 }
