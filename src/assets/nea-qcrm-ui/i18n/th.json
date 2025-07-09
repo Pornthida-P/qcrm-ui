@@ -246,6 +246,7 @@
         "data-not-found": "ไม่มีข้อมูล",
         "select-survey-form": "กรุณาเลือกแบบสำรวจ",
         "survey-send-by-agent": "การส่งอีเมลแบบสำรวจ By Agent",
-        "survey-send-summary": "สรุปสถิติแบบสำรวจ"
+        "survey-send-summary": "สรุปสถิติแบบสำรวจ",
+        "summary-link": "กราฟสรุปสถิติ"
     }
 }
