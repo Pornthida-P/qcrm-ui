@@ -1511,11 +1511,6 @@ export class ManageContactsComponent implements OnInit {
             }
         }
 
-        if (this.selectedContactNumber == null) {
-            this.sweetalertServices.getSwal('warning', 'กรุณาเลือกเบอร์ติดต่อ', '', false, '');
-            return;
-        }
-
         if (!this.callId) {
             if (this.selectedCaseTopics.length > 0) {
                 const data = {
