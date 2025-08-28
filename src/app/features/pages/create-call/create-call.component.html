@@ -119,15 +119,8 @@
 
                 <div class="col-6" *ngIf="selectedChannels === '1' || selectedChannels === '2'">
                     <label for="inputContactNumber" class="form-label">เบอร์ติดต่อ<span class="color-red">*</span></label>
-                    <select
-                        id="inputContactNumber"
-                        class="form-select"
-                        name="selectedContactNumber"
-                        [(ngModel)]="selectedContactNumber"
-                        required
-                        #contactNumberSelect="ngModel"
-                    >
-                        <option disabled value="">กรุณาเลือกข้อมูล</option>
+                    <select id="inputContactNumber" class="form-select" name="selectedContactNumber" [(ngModel)]="selectedContactNumber">
+                        <!-- <option disabled value="">กรุณาเลือกข้อมูล</option> -->
                         <option
                             *ngFor="let contactNumbers of contactNumber"
                             [ngValue]="{ contactNumber: contactNumbers.contactNumber, contactNumberId: contactNumbers.contactNumberId }"
@@ -135,9 +128,6 @@
                             {{ contactNumbers.contactNumber }}
                         </option>
                     </select>
-                    <div *ngIf="contactNumberSelect.invalid && contactNumberSelect.touched" class="text-danger" style="font-size: 0.9em;">
-                        กรุณาเลือกเบอร์ติดต่อ
-                    </div>
                 </div>
 
                 <div class="col-6" *ngIf="selectedChannels === '3'">

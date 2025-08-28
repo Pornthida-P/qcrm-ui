@@ -401,11 +401,6 @@ export class CreateCallComponent {
             this.selectedCaseTopics = this.selectedCaseTopics.slice(0, this.selectSubject);
         }
 
-        if (this.selectedContactNumber == null) {
-            this.sweetalertServices.getSwal('warning', 'กรุณาเลือกเบอร์ติดต่อ', '', false, '');
-            return;
-        }
-
         const data = {
             contactId: this.contactIdSelect,
             name: this.contactId,
