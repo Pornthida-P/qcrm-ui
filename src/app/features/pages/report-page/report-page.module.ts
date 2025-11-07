@@ -26,7 +26,7 @@ import { ReportSurveySummaryComponent } from '../../components/report-survey-sum
 import { ReportSurveySummaryModule } from '../../components/report-survey-summary/report-survey-summary.module';
 
 export function HttpLoaderFactory(http: HttpClient) {
-    return new TranslateHttpLoader(http, './assets/nea-qcrm-ui/i18n/', '.json');
+    return new TranslateHttpLoader(http, './assets/qcrm-ui/i18n/', '.json');
 }
 
 @NgModule({

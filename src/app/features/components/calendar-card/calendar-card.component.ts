@@ -39,7 +39,7 @@ export class CalendarCardComponent implements OnInit {
 
     userData?: User | null;
     isAction: boolean = false;
-    profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
+    profileError: string = './assets/qcrm-ui/image/profile/user.jpg';
 
     faCalendar = faCalendarAlt;
     faTag = faTag;

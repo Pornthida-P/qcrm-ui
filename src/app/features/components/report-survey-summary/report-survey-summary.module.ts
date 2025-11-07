@@ -10,28 +10,27 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReportSurveySummaryComponent } from './report-survey-summary.component';
 
-
 export function HttpLoaderFactory(http: HttpClient) {
-  return new TranslateHttpLoader(http, './assets/nea-qcrm-ui/i18n/', '.json');
+    return new TranslateHttpLoader(http, './assets/qcrm-ui/i18n/', '.json');
 }
 @NgModule({
-  declarations: [ReportSurveySummaryComponent],
-   imports: [
-          CommonModule,
-          ReactiveFormsModule,
-          FormsModule,
-          MatInputModule,
-          MatDatepickerModule,
-          FontAwesomeModule,
-          NgbTooltipModule,
-          TranslateModule.forChild({
-              loader: {
-                  provide: TranslateLoader,
-                  useFactory: HttpLoaderFactory,
-                  deps: [HttpClient],
-              },
-          }),
-      ],
-      exports: [ReportSurveySummaryComponent],
+    declarations: [ReportSurveySummaryComponent],
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        FormsModule,
+        MatInputModule,
+        MatDatepickerModule,
+        FontAwesomeModule,
+        NgbTooltipModule,
+        TranslateModule.forChild({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient],
+            },
+        }),
+    ],
+    exports: [ReportSurveySummaryComponent],
 })
-export class ReportSurveySummaryModule { }
+export class ReportSurveySummaryModule {}

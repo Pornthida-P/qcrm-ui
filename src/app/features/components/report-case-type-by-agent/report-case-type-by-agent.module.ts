@@ -12,7 +12,7 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 export function HttpLoaderFactory(http: HttpClient) {
-    return new TranslateHttpLoader(http, './assets/nea-qcrm-ui/i18n/', '.json');
+    return new TranslateHttpLoader(http, './assets/qcrm-ui/i18n/', '.json');
 }
 
 @NgModule({

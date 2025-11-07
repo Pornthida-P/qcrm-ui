@@ -13,7 +13,7 @@ export class MenagementAccountComponent implements OnInit {
     isAction: boolean = false;
     mode: 'add' | 'view' | 'edit' = 'edit';
 
-    profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
+    profileError: string = './assets/qcrm-ui/image/profile/user.jpg';
 
     constructor(private userService: UserService) {}
 

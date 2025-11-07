@@ -35,7 +35,7 @@ export class MenagementCalendarComponent implements OnInit {
 
     @ViewChild('fileInput') fileInput: ElementRef | undefined;
 
-    profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
+    profileError: string = './assets/qcrm-ui/image/profile/user.jpg';
 
     faXmark = faXmark;
     faCalendar = faCalendarAlt;
@@ -121,7 +121,7 @@ export class MenagementCalendarComponent implements OnInit {
 
     initializeForm(): void {
         const isViewMode = this.data.mode === 'view';
-        this.isActivityTag = this.data?.eventData?.tag.tagId == 7
+        this.isActivityTag = this.data?.eventData?.tag.tagId == 7;
         if (this.data.mode === 'add') {
             this.calendarEvent = this.fb.group({
                 eventId: [],
@@ -145,7 +145,7 @@ export class MenagementCalendarComponent implements OnInit {
                 ],
                 endDate: [{ value: new Date(this.data.eventData?.endDate || '').toISOString(), disabled: isViewMode }, Validators.required],
                 description: [{ value: this.data.eventData?.description, disabled: isViewMode }, Validators.required],
-                members: [{ value: [], disabled: isViewMode },],
+                members: [{ value: [], disabled: isViewMode }],
             });
         }
 

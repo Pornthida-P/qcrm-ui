@@ -27,7 +27,7 @@ export class TeamComponent {
     searchGroup: Group[] = [];
     dataUser?: User | null;
 
-    profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
+    profileError: string = './assets/qcrm-ui/image/profile/user.jpg';
 
     constructor(
         private userService: UserService,
@@ -101,7 +101,7 @@ export class TeamComponent {
             )
             .subscribe(() => {
                 this.sweetalertService.getSwal('success', 'Success', 'Group has been deleted.', false, '');
-                this.auditLogService.log('', 'Setting', 'Delete Group', `Group : ${group.groupTitle}`,`Success`);
+                this.auditLogService.log('', 'Setting', 'Delete Group', `Group : ${group.groupTitle}`, `Success`);
             });
     }
 

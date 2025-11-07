@@ -82,10 +82,10 @@ export class ReportPageComponent implements OnInit {
         this.router.navigate(['/report-page/' + report]);
     }
     onRouterLink() {
-        window.open('https://nea.convtech.app/survey/dashboard/overview', '_blank');
+        console.log('onRouterLink');
     }
     onSummaryLink() {
-        window.open('https://nea.convtech.app/qcrm/dashboard/', '_blank');
+        console.log('onSummaryLink');
     }
     exportExcel() {
         if (this.checkedValues.length != 0) {

@@ -19,7 +19,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 (Formio as any).use(bootstrap4);
 
 export function HttpLoaderFactory(http: HttpClient) {
-    return new TranslateHttpLoader(http, './assets/nea-qcrm-ui/i18n/', '.json');
+    return new TranslateHttpLoader(http, './assets/qcrm-ui/i18n/', '.json');
 }
 
 @NgModule({

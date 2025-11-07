@@ -31,7 +31,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { EventTagListModule } from '../../components/event-tag-list/event-tag-list.module';
 
 export function HttpLoaderFactory(http: HttpClient) {
-    return new TranslateHttpLoader(http, './assets/nea-qcrm-ui/i18n/', '.json');
+    return new TranslateHttpLoader(http, './assets/qcrm-ui/i18n/', '.json');
 }
 
 @NgModule({

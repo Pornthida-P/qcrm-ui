@@ -39,7 +39,7 @@ export class EventTagListComponent {
 
     userData?: User | null;
     // isAction: boolean = false;
-    profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
+    profileError: string = './assets/qcrm-ui/image/profile/user.jpg';
 
     faCalendar = faCalendarAlt;
     faTag = faTag;
@@ -79,11 +79,11 @@ export class EventTagListComponent {
     }
 
     onClickEditEvent(event: CalendarEvent) {
-            this.modalCalendarService.openDialog('edit', event);
+        this.modalCalendarService.openDialog('edit', event);
     }
 
     onClickDeleteEvent(event: CalendarEvent) {
-        this.isDeleteEvent.emit(true)
+        this.isDeleteEvent.emit(true);
         this.calendarService
             .deleteCalendarEvent(event.eventId.toString())
             .pipe(

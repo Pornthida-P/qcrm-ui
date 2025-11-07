@@ -13,7 +13,7 @@ export class UserMenagementComponent {
 
     faXmark = faXmark;
 
-    profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
+    profileError: string = './assets/qcrm-ui/image/profile/user.jpg';
 
     constructor(
         public dialogRef: MatDialogRef<UserMenagementComponent>,

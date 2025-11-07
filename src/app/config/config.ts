@@ -112,7 +112,7 @@ export const config = {
         },
     },
     strapi: {
-        url: 'https://devel.convtech.dev/nea-qcrm-strapi/api',
+        url: 'https://devel.convtech.dev/qcrm-strapi/api',
         path: {
             auditlog: '/auditlogs',
         },

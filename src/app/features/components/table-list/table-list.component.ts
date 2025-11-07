@@ -39,7 +39,7 @@ export class TableListComponent implements OnInit, OnChanges {
     faEdit = faEdit;
     faTrash = faTrash;
 
-    profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
+    profileError: string = './assets/qcrm-ui/image/profile/user.jpg';
 
     constructor(private socketIO: SocketIoService) {}
 

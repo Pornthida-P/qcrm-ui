@@ -40,7 +40,7 @@ export class NavbarComponent implements OnInit {
     currentLanguage: string = '';
     languages: any[] = [];
 
-    profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
+    profileError: string = './assets/qcrm-ui/image/profile/user.jpg';
 
     faBars = faBars;
     faEnvelope = faEnvelope;

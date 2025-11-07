@@ -11,7 +11,7 @@ export const environment = {
             },
         },
     },
-    subPath: '/nea-qcrm',
+    subPath: '/qcrm',
     socket: {
         url: 'http://localhost:3000',
         path: '/socket.io',

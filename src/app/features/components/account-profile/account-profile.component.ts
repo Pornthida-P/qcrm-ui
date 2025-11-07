@@ -31,7 +31,7 @@ export class AccountProfileComponent {
 
     faXmark = faXmark;
 
-    profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
+    profileError: string = './assets/qcrm-ui/image/profile/user.jpg';
 
     usernameValidators = [Validators.required, Validators.pattern(/^[a-zA-Z0-9]+$/)];
     emailValidators = [Validators.required, Validators.email];

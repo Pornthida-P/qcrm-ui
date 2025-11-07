@@ -23,7 +23,7 @@ export class ProfileComponent implements OnInit {
 
     userData?: User | null;
     isAction: boolean = false;
-    profileError: string = './assets/nea-qcrm-ui/image/profile/user.jpg';
+    profileError: string = './assets/qcrm-ui/image/profile/user.jpg';
 
     faEye = faEye;
     faEdit = faEdit;
