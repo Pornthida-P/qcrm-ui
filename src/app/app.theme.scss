@@ -34,7 +34,6 @@ body {
 }
 
 .btn-primary {
-    //formio
     border: none !important;
     background: var(--primary) !important;
 }
@@ -167,9 +166,6 @@ th[sortable].desc:before {
     cursor: default;
 }
 
-.formio-component-datagrid {
-    overflow: unset !important;
-}
 
 .h-minus-navbar {
     height: calc(100vh - 66px);

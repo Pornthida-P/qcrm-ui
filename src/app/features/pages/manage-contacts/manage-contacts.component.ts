@@ -1,6 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
-import { FormioComponent } from '@formio/angular';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ContactsService } from 'src/app/services/contacts/contacts.service';
 import { faArrowLeft, faArrowRight, faPenToSquare, faTrashCan, faCircleXmark, faEye, faClipboard } from '@fortawesome/free-solid-svg-icons';
@@ -804,17 +803,9 @@ export class ManageContactsComponent implements OnInit {
         return page;
     }
 
-    @ViewChild(FormioComponent, { static: false })
-    formio!: FormioComponent;
-
     submitButton() {
-        if (this.formio) {
-            const isValid = this.formio.formio.checkValidity();
-            this.formio.formio.emit('submitButton');
-            if (!isValid) {
-                this.sweetalertServices.getSwal('warning', 'Warning', 'Please fill all the required fields.', false, '');
-            }
-        }
+        // Formio removed - validation and submission handled elsewhere
+        this.sweetalertServices.getSwal('warning', 'Warning', 'Please fill all the required fields.', false, '');
     }
 
     onSubmit(submission: any, contactId: string, formId: string) {

@@ -6,8 +6,6 @@ import { FooterComponent } from './features/components/footer/footer.component';
 import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { Formio, FormioModule } from '@formio/angular';
-import bootstrap4 from '@formio/bootstrap/bootstrap4';
 import { NgbModule, NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { TokenInterceptor } from './core/interceptor/token.interceptor';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -15,8 +13,6 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { LoaderModule } from './features/components/loader/loader.module';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-
-(Formio as any).use(bootstrap4);
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/qcrm-ui/i18n/', '.json');
@@ -30,7 +26,6 @@ export function HttpLoaderFactory(http: HttpClient) {
         HttpClientModule,
         BrowserAnimationsModule,
         FontAwesomeModule,
-        FormioModule,
         NgbModule,
         MatDatepickerModule,
         MatNativeDateModule,

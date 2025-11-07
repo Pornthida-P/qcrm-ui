@@ -31,8 +31,8 @@
             <p class="mb-3" class="bg-primary-color rounded p-2 text-white fs-5" *ngIf="checkRole()">สร้าง</p>
             <div class="p-2">
                 <p class="mb-3">แบบฟอร์ม</p>
-                <form-builder id="form" [form]="form" *ngIf="checkRole()"></form-builder>
-                <formio [form]="form" [readOnly]="!checkRole()" *ngIf="!checkRole()"></formio>
+                <!-- Formio removed -->
+                <div class="alert alert-info">Formio component has been removed</div>
             </div>
         </div>
     </div>
