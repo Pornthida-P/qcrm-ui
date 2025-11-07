@@ -592,20 +592,8 @@
                         <div [ngClass]="thanks ? 'd-flex align-content-center justify-content-around align-items-center' : ''">
                             <div class="d-flex justify-content-center flex-column" *ngIf="!thanks">
                                 <p class="pb-4 text-dark fs-5 m-0">แบบสำรวจ : {{ formName }}</p>
-                                <formio
-                                    [form]="form"
-                                    [submission]="formData"
-                                    [readOnly]="readOnlyForm"
-                                    (submit)="onSubmit($event, contactId, formId)"
-                                    *ngIf="readOnlyForm"
-                                ></formio>
-                                <formio
-                                    [form]="form"
-                                    [submission]="formData"
-                                    [readOnly]="readOnlyForm"
-                                    (submit)="onSubmit($event, contactId, formId)"
-                                    *ngIf="!readOnlyForm"
-                                ></formio>
+                                <!-- Formio removed -->
+                                <div class="alert alert-info">Formio component has been removed</div>
                                 <button
                                     class="btn-primary-color rounded p-2 text-white mt-2"
                                     (click)="submitButton()"

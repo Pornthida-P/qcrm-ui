@@ -13,7 +13,8 @@
         >
             <div class="d-flex justify-content-center flex-column" *ngIf="!thanks && !existing">
                 <p class="pb-4 text-dark fs-5 m-0">แบบสำรวจ : {{ formName }}</p>
-                <formio [form]="form" (submit)="onSubmit($event)"></formio>
+                <!-- Formio removed -->
+                <div class="alert alert-info">Formio component has been removed</div>
                 <button class="btn-primary-color rounded p-2 text-white mt-2" (click)="submitButton()">บันทึก</button>
             </div>
             <div *ngIf="thanks && !existing">

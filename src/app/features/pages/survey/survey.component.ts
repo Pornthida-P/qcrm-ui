@@ -1,6 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { FormioComponent } from '@formio/angular';
 import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
 import { SurveyFormService } from 'src/app/services/survey-form/survey-form.service';
 import { SurveyService } from 'src/app/services/survey/survey.service';
@@ -51,17 +50,9 @@ export class SurveyComponent implements OnInit {
         });
     }
 
-    @ViewChild(FormioComponent, { static: false })
-    formio!: FormioComponent;
-
     submitButton() {
-        if (this.formio) {
-            const isValid = this.formio.formio.checkValidity();
-            this.formio.formio.emit('submitButton');
-            if (!isValid) {
-                this.sweetalertService.getSwal('warning', 'Warning', 'Please fill all the required fields.', false, '');
-            }
-        }
+        // Formio removed - validation and submission handled elsewhere
+        this.sweetalertService.getSwal('warning', 'Warning', 'Please fill all the required fields.', false, '');
     }
 
     onSubmit(submission: any) {
