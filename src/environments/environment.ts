@@ -14,6 +14,6 @@ export const environment = {
     subPath: '/roddonjai-qcrm',
     socket: {
         url: 'https://devel02.convtech.dev',
-        path: '/roddonjai-qcrm/socket.io',
+        path: '/roddonjai-qcrm-apis/socket.io',
     },
 };
