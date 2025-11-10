@@ -1,7 +1,7 @@
 export const environment = {
     production: true,
     api: {
-        url: 'http://localhost:3000',
+        url: 'https://devel02.convtech.dev/roddonjai-qcrm-apis',
         endpoint: {
             contact: {
                 findAll: '/contact/all',
@@ -11,9 +11,9 @@ export const environment = {
             },
         },
     },
-    subPath: '/qcrm',
+    subPath: '/roddonjai-qcrm',
     socket: {
-        url: 'http://localhost:3000',
-        path: '/socket.io',
+        url: 'https://devel02.convtech.dev',
+        path: '/roddonjai-qcrm/socket.io',
     },
 };
