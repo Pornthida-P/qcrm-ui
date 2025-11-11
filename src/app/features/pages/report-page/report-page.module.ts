@@ -14,16 +14,8 @@ import { ReportSummaryByMonthComponent } from '../../components/report-summary-b
 import { ReportSummaryByMonthModule } from '../../components/report-summary-by-month/report-summary-by-month.module';
 import { ReportCaseDetailModule } from '../../components/report-case-detail/report-case-detail.module';
 import { ReportCaseDetailComponent } from '../../components/report-case-detail/report-case-detail.component';
-import { ReportSendSurveyComponent } from '../../components/report-send-survey/report-send-survey.component';
-import { ReportSendSurveyModule } from '../../components/report-send-survey/report-send-survey.module';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { ReportSurveyFormComponent } from '../../components/report-survey-form/report-survey-form.component';
-import { ReportSurveyFormModule } from '../../components/report-survey-form/report-survey-form.module';
-import { ReportSurveySendByAgentComponent } from '../../components/report-survey-send-by-agent/report-survey-send-by-agent.component';
-import { ReportSurveySendByAgentModule } from '../../components/report-survey-send-by-agent/report-survey-send-by-agent.module';
-import { ReportSurveySummaryComponent } from '../../components/report-survey-summary/report-survey-summary.component';
-import { ReportSurveySummaryModule } from '../../components/report-survey-summary/report-survey-summary.module';
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/qcrm-ui/i18n/', '.json');
@@ -57,22 +49,6 @@ export function HttpLoaderFactory(http: HttpClient) {
                         path: 'summary-by-month',
                         component: ReportSummaryByMonthComponent,
                     },
-                    {
-                        path: 'survey-send',
-                        component: ReportSendSurveyComponent,
-                    },
-                    {
-                        path: 'survey-form',
-                        component: ReportSurveyFormComponent,
-                    },
-                    {
-                        path: 'survey-send-by-agent',
-                        component: ReportSurveySendByAgentComponent,
-                    },
-                    {
-                        path: 'survey-send-summary',
-                        component: ReportSurveySummaryComponent,
-                    },
                 ],
             },
         ]),
@@ -83,10 +59,6 @@ export function HttpLoaderFactory(http: HttpClient) {
         ReportCaseTypeByAgentModule,
         ReportSummaryByMonthModule,
         ReportCaseDetailModule,
-        ReportSendSurveyModule,
-        ReportSurveyFormModule,
-        ReportSurveySendByAgentModule,
-        ReportSurveySummaryModule,
         TranslateModule.forChild({
             loader: {
                 provide: TranslateLoader,

@@ -34,46 +34,6 @@
                 >
                     {{ 'report.summary-by-month' | translate }}
                 </button>
-                <button
-                    class="d-flex align-items-center gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white"
-                    [class.button-active]="onSelectReport === 'survey-send'"
-                    (click)="onChangeReport('survey-send')"
-                >
-                    {{ 'report.survey-send' | translate }}
-                </button>
-                <button
-                    class="d-flex align-items-center gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white"
-                    [class.button-active]="onSelectReport === 'survey-form'"
-                    (click)="onChangeReport('survey-form')"
-                >
-                    {{ 'report.survey-form' | translate }}
-                </button>
-                <button
-                    class="d-flex align-items-center gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white"
-                    [class.button-active]="onSelectReport === 'survey-send-by-agent'"
-                    (click)="onChangeReport('survey-send-by-agent')"
-                >
-                    {{ 'report.survey-send-by-agent' | translate }}
-                </button>
-                <button
-                    class="d-flex align-items-center gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white"
-                    [class.button-active]="onSelectReport === 'survey-send-summary'"
-                    (click)="onChangeReport('survey-send-summary')"
-                >
-                    {{ 'report.survey-send-summary' | translate }}
-                </button>
-                <button
-                    class="d-flex align-items-center gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white"
-                    (click)="onRouterLink()"
-                >
-                    {{ 'report.survey-link' | translate }}
-                </button>
-                <button
-                    class="d-flex align-items-center gap-2 d-md-none d-lg-flex btn-primary-color rounded p-2 text-white"
-                    (click)="onSummaryLink()"
-                >
-                    {{ 'report.summary-link' | translate }}
-                </button>
             </div>
         </div>
         <router-outlet></router-outlet>

@@ -1,9 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { catchError, tap } from 'rxjs';
-import { CalendarEventService } from 'src/app/services/calendar-event/calendar-event.service';
-import { ModalCalendarService } from 'src/app/services/modal-calendar/modal-calendar.service';
-import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
-import { CalendarEvent, CalendarTag } from 'src/app/shared/interface/calendar.interface';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
     selector: 'app-home-page',
@@ -11,82 +6,7 @@ import { CalendarEvent, CalendarTag } from 'src/app/shared/interface/calendar.in
     styleUrls: ['./home-page.component.scss'],
 })
 export class HomePageComponent implements OnInit {
-    tags: CalendarTag[] = [];
-    events: CalendarEvent[] = [];
-    onSelectTag?: CalendarTag;
-    onHome: boolean = true;
-    
-    @Output() viewEvent: EventEmitter<void> = new EventEmitter();
+    constructor() {}
 
-    constructor(
-        private calendarService: CalendarEventService,
-        private sweetAlertService: SweetAlertService,
-        private modalCalendarService: ModalCalendarService,
-    ) {}
-
-    ngOnInit(): void {
-        this.initzation();
-    }
-
-    initzation(): void {
-        this.calendarService.onRefrashTag().subscribe(() => {
-            this.findAllTag();
-        });
-
-        this.calendarService.onRefreshData().subscribe(() => {
-            this.findEventByTagId(this.onSelectTag?.tagId);
-        });
-    }
-
-    findAllTag(): void {
-        this.calendarService
-            .findAllTags()
-            .pipe(
-                tap((tags) => {
-                    this.tags = tags;
-                }),
-                catchError((error) => {
-                    this.sweetAlertService.handleError(error);
-                    throw error;
-                }),
-            )
-            .subscribe((tags) => {});
-    }
-
-    findEventByTagId(tagId?: number): void {
-        if (tagId) {
-            this.calendarService
-                .findEventByTagId(tagId)
-                .pipe(
-                    tap((events) => {
-                        this.events = events;
-                    }),
-                    catchError((error) => {
-                        this.sweetAlertService.handleError(error);
-                        throw error;
-                    }),
-                )
-                .subscribe(() => {});
-        }
-    }
-
-    onClickHome(): void {
-        this.onHome = true;
-        this.resetSelectTag();
-    }
-
-    onClickChangeMenu(tag: CalendarTag): void {
-        this.findEventByTagId(tag.tagId);
-        this.onHome = false;
-        this.onSelectTag = tag;
-    }
-
-    onClickAddEvent(event: CalendarEvent): void {
-        this.modalCalendarService.openDialog('add',event);
-    }
-    
-    resetSelectTag(): void {
-        this.onSelectTag = undefined;
-        this.events = [];
-    }
+    ngOnInit(): void {}
 }

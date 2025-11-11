@@ -1,4 +1,4 @@
-<div class="vh-100 d-flex flex-column" *ngIf="!searchSidebarVisible && !notificationSidebarVisible">
+<div class="vh-100 d-flex flex-column" *ngIf="!searchSidebarVisible">
     <div class="px-3 py-2 bg-white border-bottom border-2 border-light-subtle">
         <div class="d-flex flex-row justify-content-between align-items-center">
             <div class="flex-lg-none d-flex flex-row align-items-center me-lg-6">
@@ -11,99 +11,10 @@
                 >
                     <fa-icon [icon]="faBars"></fa-icon>
                 </button>
-                <img src="./assets/qcrm-ui/image/logo_CRM.png" class="nav-img cursor-pointer" [routerLink]="'home'" />
+                <img src="./assets/qcrm-ui/image/logo_roddonjai.svg" class="nav-img cursor-pointer" [routerLink]="'home'" />
+                <!-- <img src="./assets/qcrm-ui/image/logo_CRM.svg" class="nav-img cursor-pointer" [routerLink]="'home'" /> -->
             </div>
             <div class="flex-lg-none d-flex flex-row align-items-center gap-4">
-                <div
-                    class="position-relative"
-                    [ngbPopover]="popContentNotification"
-                    popoverClass="border rounded popover-notification"
-                    (click)="readAllNotification()"
-                >
-                    <i class="fa-regular fa-bell d-none d-md-flex fs-3 cursor-pointer" id="notification"></i>
-                    <div class="dot-inner dot-notification" [ngClass]="{ 'unread-notification': notifications.length > 0 && unread }"></div>
-                </div>
-                <ng-template #popContentNotification>
-                    <div class="notification-container">
-                        <div class="switches-container">
-                            <input
-                                type="radio"
-                                id="switchNewNotification"
-                                name="switchPlan"
-                                [value]="false"
-                                [(ngModel)]="showReadNotifications"
-                                (change)="getNotifications()"
-                            />
-                            <input
-                                type="radio"
-                                id="switchReadNotification"
-                                name="switchPlan"
-                                [value]="true"
-                                [(ngModel)]="showReadNotifications"
-                                (change)="getNotifications()"
-                            />
-                            <label for="switchNewNotification">
-                                {{ 'component.navbar.newNotifications' | translate }}
-                            </label>
-                            <label for="switchReadNotification">
-                                {{ 'component.navbar.readNotifications' | translate }}
-                            </label>
-                            <div class="switch-wrapper">
-                                <div class="switch">
-                                    <div>
-                                        <fa-icon [icon]="faEnvelope"></fa-icon>
-                                    </div>
-                                    <div>
-                                        <fa-icon [icon]="faEnvelopeOpen"></fa-icon>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div *ngIf="notifications.length > 0; else noNotification">
-                            <div class="row py-3 gap-3" style="max-height: 50vh; overflow: scroll">
-                                <div *ngFor="let notification of notifications" class="col-12">
-                                    <div class="row align-items-center">
-                                        <div class="col-2 position-relative d-flex justify-content-center align-items-center">
-                                            <div class="position-relative">
-                                                <div class="profile-container m-auto cursor-pointer">
-                                                    <img
-                                                        class="profile-image img-fluid"
-                                                        [src]="notification.user.profile"
-                                                        [alt]="notification.user.username"
-                                                        (error)="handleProfileError($event)"
-                                                    />
-                                                </div>
-                                                <div
-                                                    class="dot-inner dot-status"
-                                                    [ngbTooltip]="getStatusOnline(notification.user.userId) ? 'Online' : 'Offline'"
-                                                    [class.dot-status-online]="getStatusOnline(notification.user.userId)"
-                                                ></div>
-                                            </div>
-                                        </div>
-                                        <div class="col-10">
-                                            <div class="notification-content">
-                                                <p class="label fw-bolder">{{ notification.title }}</p>
-                                                <p class="label">{{ notification.message }}</p>
-                                            </div>
-                                            <div class="d-flex flex-column">
-                                                <p class="label">{{ formatTimeSinceCreation(notification.createdAt) }}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <ng-template #noNotification>
-                            <div class="p-3 text-center">
-                                <p class="label">
-                                    {{ 'component.navbar.noNotification' | translate }}
-                                </p>
-                            </div>
-                        </ng-template>
-                    </div>
-                </ng-template>
-
                 <div class="dropdown">
                     <button
                         class="btn btn-primary-color text-white dropdown-toggle"
@@ -216,15 +127,5 @@
                 aria-describedby="basic-addon1"
             />
         </div>
-    </div>
-</div>
-<div *ngIf="notificationSidebarVisible">
-    <div class="vw-100 vh-100 bg-white d-flex flex-column p-3 gap-2">
-        <div class="text-end">
-            <i class="fa-solid fa-xmark" (click)="closeNotificationSideBar()"></i>
-        </div>
-        <p class="m-0">
-            {{ 'component.navbar.notification' | translate }}
-        </p>
     </div>
 </div>

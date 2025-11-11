@@ -6,5 +6,4 @@ export interface Contacts {
     email: string;
     contact_number: string;
     province: string;
-    source: string;
 }

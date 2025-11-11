@@ -69,20 +69,6 @@
                         [(ngModel)]="contactProvince"
                     />
                 </div>
-                <div class="col-md-6">
-                    <label for="inputContactProductType" class="form-label">ประเภทสินค้า</label>
-                    <input
-                        type="text"
-                        class="form-control"
-                        name="contactProductType"
-                        id="inputContactProductType"
-                        [(ngModel)]="contactProductType"
-                    />
-                </div>
-                <div class="col-md-6">
-                    <label for="inputContactSource" class="form-label">แหล่งที่มา</label>
-                    <input type="text" class="form-control" name="contactSource" id="inputContactSource" [(ngModel)]="contactSource" />
-                </div>
             </form>
 
             <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
@@ -224,23 +210,6 @@
                                 </div>
                             </form>
                             <div class="row">
-                                <div class="col-md-6">
-                                    <label for="inputOrgIndustryType" class="form-label">ประเภทอุตสาหกรรม</label>
-                                    <select
-                                        class="form-select"
-                                        [(ngModel)]="orgIndustryType"
-                                        name="orgIndustryType"
-                                        id="inputOrgIndustryType"
-                                    >
-                                        <option *ngFor="let ind of industryType" [value]="ind.industryTypeId">{{ ind.name }}</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="inputOrgProductType" class="form-label">Product Types</label>
-                                    <select class="form-select" [(ngModel)]="orgProductType" name="orgProductType" id="inputOrgProductType">
-                                        <option *ngFor="let prod of productTypes" [value]="prod.productTypeId">{{ prod.name }}</option>
-                                    </select>
-                                </div>
                                 <div class="col-md-3">
                                     <button
                                         class="btn btn-primary"

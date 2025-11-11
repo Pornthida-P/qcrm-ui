@@ -31,12 +31,6 @@ export class SidebarComponent implements OnInit {
                 roles: [1,2,3]
             },
             {
-                label: 'surveyform',
-                icon: faFilePen,
-                routerLink: '/surveyform',
-                roles: [1,2,3]
-            },
-            {
                 label: 'call',
                 icon: faPhoneVolume,
                 routerLink: '/call',

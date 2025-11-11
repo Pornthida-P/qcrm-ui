@@ -22,31 +22,11 @@ export class ReportService {
         return this.http.get(`${this.baseUrl}${config.api.path.report.summaryByMonth}/${startYear}/${endYear}`);
     }
 
-    getEmailSurvey(startDate: string, endDate: string, users: any) {
-        return this.http.get(`${this.baseUrl}${config.api.path.report.sendEmailSurvey}/${startDate}/${endDate}/${users}`);
-    }
-
     getCaseDetail(startDate: string, endDate: string, users: any) {
         return this.http.get(`${this.baseUrl}${config.api.path.report.caseDetail}/${startDate}/${endDate}/${users}`);
     }
 
-    getSurveyForm(startDate: string, endDate: string, formId: string) {
-        return this.http.get(`${this.baseUrl}${config.api.path.report.surveyForm}/${startDate}/${endDate}/${formId}`);
-    }
-
     getAgent() {
         return this.http.get(`${this.baseUrl}${config.api.path.report.getAgent}`);
-    }
-
-    getSurvey() {
-        return this.http.get(`${this.baseUrl}${config.api.path.report.getSurvey}`);
-    }
-
-    getSurveySendById(id: any, startDate: string, endDate: string, dateFilterType: string) {
-        return this.http.get(`${this.baseUrl}${config.api.path.report.getSurveySendById}/${id}/${startDate}/${endDate}/${dateFilterType}`);
-    }
-
-    getSurveySummary(startDate: string, endDate: string, dateFilterType: string) {
-        return this.http.get(`${this.baseUrl}${config.api.path.report.getSurveySummary}/${startDate}/${endDate}/${dateFilterType}`);
     }
 }

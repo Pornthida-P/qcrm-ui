@@ -35,21 +35,6 @@ export class SettingComponent implements OnInit, AfterViewInit {
                 routerLink: 'menagement-member',
             },
             {
-                label: 'tag',
-                icon: '',
-                routerLink: 'tag',
-            },
-            {
-                label: 'menagement-team',
-                icon: '',
-                routerLink: 'menagement-team',
-            },
-            {
-                label: 'menagement-appearance',
-                icon: '',
-                routerLink: 'menagement-appearance',
-            },
-            {
                 label: 'logout',
                 icon: '',
                 routerLink: '/logout',

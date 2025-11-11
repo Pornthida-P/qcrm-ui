@@ -9,6 +9,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { MatDialogModule } from '@angular/material/dialog';
+import { UserMenagementModule } from '../../modals/user-menagement/user-menagement.module';
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/qcrm-ui/i18n/', '.json');
@@ -23,6 +25,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         ProfileListModule,
         FormsModule,
         ReactiveFormsModule,
+        MatDialogModule,
+        UserMenagementModule,
         TranslateModule.forChild({
             loader: {
                 provide: TranslateLoader,
