@@ -1,15 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { tap } from 'rxjs';
 import { config } from 'src/app/config/config';
 import { environment } from 'src/environments/environment';
-import { CalendarEventService } from '../calendar-event/calendar-event.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class AttachmentService {
-    constructor(private http: HttpClient, private calendarService: CalendarEventService) {}
+    constructor(private http: HttpClient) {}
 
     view(attachmentPath: string) {
         window.open(`${environment.api.url}${attachmentPath}`, '_blank');
@@ -35,10 +33,6 @@ export class AttachmentService {
     }
 
     delete(attachmentId: string) {
-        return this.http.post(`${environment.api.url}${config.api.path.attachment.delete}${attachmentId}`, {}).pipe(
-            tap(() => {
-                this.calendarService.onSetRefreshData();
-            }),
-        );
+        return this.http.post(`${environment.api.url}${config.api.path.attachment.delete}${attachmentId}`, {});
     }
 }

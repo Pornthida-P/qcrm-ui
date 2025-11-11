@@ -24,8 +24,6 @@ export class PhoneContactsComponent {
     contactIden: any;
     contactType: any;
     contactEmail: any;
-    contactProductType: any;
-    contactSource: any;
     contactNumber: any;
     contactLastName: any;
     organizations: any;
@@ -79,13 +77,8 @@ export class PhoneContactsComponent {
     sortId: string = 'createdAt';
     sortOrder: string = 'DESC';
 
-    industryType: any[] = [];
-    productTypes: any[] = [];
-
     orgName: string = '';
     orgIden: string = '';
-    orgIndustryType: string = '';
-    orgProductType: string = '';
 
     userData: any = JSON.parse(localStorage.getItem('userData') || '{}');
     userId: any;
@@ -182,13 +175,10 @@ export class PhoneContactsComponent {
                 this.contactEmail = detailItemByPhone.email;
                 this.contactNumber = detailItemByPhone.contactNumber;
                 this.contactProvince = detailItemByPhone.province;
-                this.contactProductType = detailItemByPhone.product_type;
-                this.contactSource = detailItemByPhone.source;
 
                 if (this.contactOrg != '' && this.contactOrg != null && this.contactOrg != undefined) {
                     this.contactsService.getOrganizationById(this.contactOrg).subscribe((res: any) => {
                         this.contactOrgName = res[0].orgName;
-                        this.contactProductType = res[0].prodName;
                     });
                 }
             } else {
@@ -317,7 +307,6 @@ export class PhoneContactsComponent {
         this.contactOrg = orgId;
         this.contactsService.getOrganizationById(orgId).subscribe((res: any) => {
             this.contactOrgName = res[0].orgName;
-            this.contactProductType = res[0].prodName;
         });
     }
 
@@ -394,13 +383,6 @@ export class PhoneContactsComponent {
         this.thanks = false;
         this.SearchOrgShowing = false;
         this.AddCallShowing = false;
-        this.contactsService.getAllIndustryType().subscribe((res: any) => {
-            this.industryType = res;
-        });
-
-        this.contactsService.getAllProductTypes().subscribe((res: any) => {
-            this.productTypes = res;
-        });
     }
 
     submitOrg() {
@@ -409,8 +391,6 @@ export class PhoneContactsComponent {
             const data = {
                 name: this.orgName,
                 identification: this.orgIden,
-                industryTypeId: this.orgIndustryType,
-                productTypeId: this.orgProductType,
                 createdById: userData.userId,
             };
 

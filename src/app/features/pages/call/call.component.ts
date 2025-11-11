@@ -121,26 +121,13 @@ export class CallComponent implements OnInit {
     numberArray = [1, 2, 3, 4, 5];
     selectSubject = 1;
 
-    selectedActivityTopicIdSmn: string[] = [];
-    selectedActivitiesSmn: any;
-    selectedActivities: any;
-
     selectedActivityTopicId: string[] = [];
     searchContactShowing: boolean = false;
 
     selectedCallTypeId: string = '';
     activityTypeById: any;
     activitiesTopic: any;
-    selectedActivitiesElearning: any;
     selectedCheckboxIds: any;
-    valueSearchSmn!: string;
-
-    activitySmn: any;
-    activityEln: any;
-
-    SearchElearningShowing: boolean = false;
-    valueSearchEln!: string;
-    activitiestypeEln: any;
 
     pageSizeOptionOrgs = [5, 10, 20];
     pageSizeOrg = 5;
@@ -168,36 +155,12 @@ export class CallComponent implements OnInit {
 
     isCheckboxSelected: { [key: number]: boolean } = {};
 
-    inputActivity: string = '';
-    inputActivity_2: string = '';
-
-    showActivitySeminarSideBar: boolean = false;
-    showActivityElearningSideBar: boolean = false;
-
-    nameActivityTopic: string = '';
-    selectedActivityTopicName: any;
-    activitiestypeTopic: any;
-    SearchSmnShowing: boolean = false;
-    sortIdSmn: string = 'createdAt';
-    sortOrderSmn: string = 'DESC';
-    checkedValueSmns: string[] = [];
-    AddSmnShowing: boolean = false;
-
-    sortIdEln: string = 'createdAt';
-    sortOrderEln: string = 'DESC';
-    checkedValueEln: string[] = [];
-    AddElnShowing: boolean = false;
     FormShowing: boolean = false;
 
     thanks: boolean = false;
 
-    industryType: any[] = [];
-    productTypes: any[] = [];
-
     contactOrg: string = '';
     contactOrgName: string = '';
-
-    contactProductType: string = '';
     checkedValueOrgs: string[] = [];
     AddContactShowing: boolean = false;
 
@@ -548,15 +511,13 @@ export class CallComponent implements OnInit {
     date = new FormControl(new Date());
 
     showAddCall() {
-        this.selectedChannels = ''; 
+        this.selectedChannels = '';
         this.AddOrgShowing = false;
         this.FormShowing = false;
         this.SearchFormShowing = false;
         this.thanks = false;
         this.SearchOrgShowing = false;
         this.AddCallShowing = true;
-        this.showActivitySeminarSideBar = false;
-        this.showActivityElearningSideBar = false;
 
         this.callService.getCaseTopic().subscribe((casetopics: any) => {
             this.casetopics = casetopics;
@@ -577,7 +538,7 @@ export class CallComponent implements OnInit {
     }
 
     editCall(callId: string, type: string, contactId: string) {
-        this.currentChannel = ''; 
+        this.currentChannel = '';
         console.log('contactIdEdit: ', contactId);
         this.attachmentShowing = false;
         console.log('Edit Call:', callId);
@@ -600,17 +561,7 @@ export class CallComponent implements OnInit {
         };
         this.selectedCaseTopics = [];
         this.selectedCasesubject = [];
-        this.selectedActivityTopicIdSmn = [];
-        this.selectedActivitiesSmn = [];
         this.selectedActivityTopicId = [];
-        this.callService.getActivitiesTypeSmn(this.valueSearchSmn).subscribe((activitySmn: any) => {
-            this.activitySmn = activitySmn;
-            this.saveSelectedActivitiesSmn();
-        });
-        this.callService.getActivityById(this.valueSearchEln).subscribe((activityEln: any) => {
-            this.activityEln = activityEln;
-            this.saveSelectedActivities();
-        });
 
         if (type === 'call') {
             this.callService.getCallById(callId).subscribe((call: any) => {
@@ -633,8 +584,8 @@ export class CallComponent implements OnInit {
                     minute: date.getMinutes(),
                     second: date.getSeconds(),
                 };
-              this.selectedEmail = call[0].email;
-              this.selectedContactNumber = call[0].caller_id
+                this.selectedEmail = call[0].email;
+                this.selectedContactNumber = call[0].caller_id;
 
                 // Handle caseTopicIds
                 if (call[0].caseTopicId && call[0].caseTopicId !== 'null') {
@@ -666,34 +617,6 @@ export class CallComponent implements OnInit {
                         }
                     }
                 }
-
-                // Handle selectedActivityTopicIdSmnr
-                if (call[0].activitySmn && call[0].activitySmn !== 'null') {
-                    let selectedActivityTopicIdSmnr = call[0].activitySmn;
-                    if (!Array.isArray(selectedActivityTopicIdSmnr)) {
-                        selectedActivityTopicIdSmnr = JSON.parse(selectedActivityTopicIdSmnr);
-                    }
-                    this.selectedActivityTopicIdSmn = selectedActivityTopicIdSmnr.map(String);
-
-                    this.callService.getActivitiesTypeSmn(this.valueSearchSmn).subscribe((activitySmn: any) => {
-                        this.activitySmn = activitySmn;
-                        this.saveSelectedActivitiesSmn();
-                    });
-                }
-
-                // Handle selectedActivitiesEl
-                if (call[0].activityEln && call[0].activityEln !== 'null') {
-                    let selectedActivityTopicIds = call[0].activityEln;
-                    if (!Array.isArray(selectedActivityTopicIds)) {
-                        selectedActivityTopicIds = JSON.parse(selectedActivityTopicIds);
-                    }
-                    this.selectedActivityTopicId = selectedActivityTopicIds.map(String);
-                    // Fetch and filter activitiestypeTopic
-                    this.callService.getActivityById(this.valueSearchEln).subscribe((activityEln: any) => {
-                        this.activityEln = activityEln;
-                        this.saveSelectedActivities();
-                    });
-                }
             });
         } else if (type === 'case') {
             this.callService.getCaseById(callId).subscribe((call: any) => {
@@ -711,9 +634,9 @@ export class CallComponent implements OnInit {
                 };
                 this.selectedChannels = call.channelId;
                 this.currentChannel = call.channelId;
-              this.selectedCallTypeId = call.operationType;
-              this.selectedEmail = call.email;
-              this.selectedContactNumber = call.contactNumber
+                this.selectedCallTypeId = call.operationType;
+                this.selectedEmail = call.email;
+                this.selectedContactNumber = call.contactNumber;
 
                 if (call.caseTopicIds && call.caseTopicIds !== 'null') {
                     let caseTopicIds = call.caseTopicIds;
@@ -730,66 +653,12 @@ export class CallComponent implements OnInit {
                     }
                     this.selectedCasesubject[0] = caseSubjects.map(String);
                 }
-
-                if (call.activitySmn && call.activitySmn !== 'null') {
-                    let selectedActivityTopicIdSmnr = call.activitySmn;
-                    if (!Array.isArray(selectedActivityTopicIdSmnr)) {
-                        selectedActivityTopicIdSmnr = JSON.parse(selectedActivityTopicIdSmnr);
-                    }
-                    this.selectedActivityTopicIdSmn = selectedActivityTopicIdSmnr.map(String);
-
-                    this.callService.getActivitiesTypeSmn(this.valueSearchSmn).subscribe((activitySmn: any) => {
-                        this.activitySmn = activitySmn;
-                        this.saveSelectedActivitiesSmn();
-                    });
-                }
-
-                // Handle selectedActivitiesEl
-                if (call.activityEln && call.activityEln !== 'null') {
-                    let selectedActivityTopicIds = call.activityEln;
-                    if (!Array.isArray(selectedActivityTopicIds)) {
-                        selectedActivityTopicIds = JSON.parse(selectedActivityTopicIds);
-                    }
-                    this.selectedActivityTopicId = selectedActivityTopicIds.map(String);
-                    // Fetch and filter activitiestypeTopic
-                    this.callService.getActivityById(this.valueSearchEln).subscribe((activityEln: any) => {
-                        this.activityEln = activityEln;
-                        this.saveSelectedActivities();
-                    });
-                }
             });
         }
-
-        // Fetch activitySmn
-        this.callService.getActivitiesTypeSmn(this.valueSearchSmn).subscribe((activitySmn: any) => {
-            this.activitySmn = activitySmn;
-        });
-
-        this.callService.getActivityById(this.valueSearchEln).subscribe((activityEln: any) => {
-            this.activityEln = activityEln;
-        });
 
         this.showAddCall();
         this.getContactNumber(contactId);
         this.getEmail(contactId);
-    }
-
-    saveSelectedActivitiesSmn() {
-        this.selectedActivitiesSmn = this.activitySmn.filter((activity: { activityTopicId: string }) => {
-            return this.selectedActivityTopicIdSmn.includes(activity.activityTopicId);
-        });
-        // this.showAddCall();
-    }
-
-    toggleActivityTopicIdSmn(activityTopicId: string) {
-        const index = this.selectedActivityTopicIdSmn.indexOf(activityTopicId);
-        if (index === -1) {
-            this.selectedActivityTopicIdSmn.push(activityTopicId);
-        } else {
-            this.selectedActivityTopicIdSmn.splice(index, 1);
-        }
-        this.saveSelectedActivitiesSmn();
-        console.log('select id activity:', this.selectedActivityTopicIdSmn);
     }
 
     toggleCheckbox(activityTopicId: number) {
@@ -801,24 +670,6 @@ export class CallComponent implements OnInit {
         }
     }
 
-    toggleActivityTopicId(activityTopicId: string) {
-        const index = this.selectedActivityTopicId.indexOf(activityTopicId);
-        if (index === -1) {
-            this.selectedActivityTopicId.push(activityTopicId);
-        } else {
-            this.selectedActivityTopicId.splice(index, 1);
-        }
-        this.saveSelectedActivities();
-        console.log('select id activity:', this.selectedActivityTopicId);
-    }
-
-    saveSelectedActivities() {
-        this.selectedActivities = this.activityEln.filter((activity: { activityTopicId: string }) => {
-            return this.selectedActivityTopicId.includes(activity.activityTopicId);
-        });
-        // this.showAddCall();
-    }
-
     searchOrg() {
         if (this.selectedFilter !== 'all') {
             this.userId = this.userData.userId;
@@ -827,54 +678,6 @@ export class CallComponent implements OnInit {
         }
         this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
         this.getPageOrg();
-    }
-
-    searchEln(): void {
-        this.callService.getActivityById(this.valueSearchEln).subscribe((activityEln: any) => {
-            this.activityEln = activityEln;
-        });
-    }
-
-    sortEln(value: string) {
-        if (this.sortIdOrg == value) {
-            if (this.sortIcon == 'fa-solid fa-sort-down') {
-                this.sortIcon = 'fa-solid fa-sort-up';
-                this.sortOrderOrg = 'DESC';
-            } else {
-                this.sortIcon = 'fa-solid fa-sort-down';
-                this.sortOrderOrg = 'ASC';
-            }
-        } else {
-            this.sortIdOrg = value;
-        }
-        this.getFormEln();
-    }
-
-    async getFormEln() {
-        await this.callService.getActivityIdByPage(this.valueSearchEln).subscribe((res: any) => {
-            console.log('API response:', res);
-            this.activityTypeById = res;
-            // this.spareActivityTypeById = res;
-        });
-        console.log('ActivityIdByPage:', this.activityTypeById);
-    }
-
-    // อัปเดตรายการทั้งหมดสำหรับโครงการอบรม/สัมมนา
-    updateSelectedActivitiesListSmn() {
-        this.selectedActivitiesSmn = this.activityTypeById.filter((smn: { activityTopicId: string }) =>
-            this.selectedActivityTopicIdSmn.includes(smn.activityTopicId),
-        );
-    }
-
-    // อัปเดตรายการทั้งหมดสำหรับ E-Learning
-    updateSelectedActivitiesListElearning() {
-        this.selectedActivitiesElearning = this.activityEln.filter((elearning: { activityTopicId: string }) =>
-            this.selectedActivityTopicId.includes(elearning.activityTopicId),
-        );
-    }
-
-    filterActivities(): any[] {
-        return this.activitiestype.filter((activityType: { activityTypeId: number }) => [21, 27, 28].includes(activityType.activityTypeId));
     }
 
     async getFormOrg(pageOrg: number, pageSizeOrg: number) {
@@ -899,13 +702,6 @@ export class CallComponent implements OnInit {
         this.thanks = false;
         this.SearchOrgShowing = false;
         this.AddCallShowing = false;
-        this.contactsService.getAllIndustryType().subscribe((res: any) => {
-            this.industryType = res;
-        });
-
-        this.contactsService.getAllProductTypes().subscribe((res: any) => {
-            this.productTypes = res;
-        });
     }
 
     sortOrg(value: string) {
@@ -927,7 +723,6 @@ export class CallComponent implements OnInit {
         this.contactOrg = orgId;
         this.contactsService.getOrganizationById(orgId).subscribe((res: any) => {
             this.contactOrgName = res[0].orgName;
-            this.contactProductType = res[0].prodName;
         });
     }
 
@@ -1012,60 +807,6 @@ export class CallComponent implements OnInit {
         this.isCheckboxSelected[activityTypeId] = event.target.checked;
     }
 
-    async showSideBarActivitySeminar() {
-        this.visibleLeftSideBar = true;
-        this.visibleRightSideBar = true;
-        this.FormShowing = false;
-        this.SearchFormShowing = false;
-        this.searchContactShowing = false;
-        this.SearchOrgShowing = false;
-        this.SearchSmnShowing = true;
-        this.thanks = false;
-        this.AddContactShowing = false;
-        this.showOrgSidebar = false;
-        this.showContactSidebar = false;
-        this.showActivitySeminarSideBar = true;
-        this.showActivityElearningSideBar = false;
-        this.AddCallShowing = false;
-
-        this.callService.getActivitiesType().subscribe((activitiestype: any) => {
-            this.activitiestypeTopic = activitiestype.filter((activityType: any) =>
-                [21, 27, 28].includes(parseInt(activityType.activityTypeId)),
-            );
-        });
-
-        this.callService.getActivitiesTypeSmn(this.valueSearchSmn).subscribe((activitySmn: any) => {
-            this.activitySmn = activitySmn;
-        });
-    }
-
-    inputActivityElearning(event: any) {
-        console.log(event.target.value);
-    }
-
-    async showSideBarActivityElearning() {
-        this.visibleLeftSideBar = true;
-        this.visibleRightSideBar = true;
-        this.FormShowing = false;
-        this.SearchFormShowing = false;
-        this.SearchElearningShowing = true;
-        this.thanks = false;
-        this.AddContactShowing = false;
-        this.showOrgSidebar = false;
-        this.showContactSidebar = false;
-        this.showActivitySeminarSideBar = false;
-        this.showActivityElearningSideBar = true;
-        this.AddCallShowing = false;
-
-        this.callService.getActivitiesType().subscribe((activitiestype: any) => {
-            this.activitiestypeEln = activitiestype.filter((activityType: any) => [43].includes(parseInt(activityType.activityTypeId)));
-        });
-
-        this.callService.getActivityById(this.valueSearchEln).subscribe((activityEln: any) => {
-            this.activityEln = activityEln;
-        });
-    }
-
     onFileSelected(event: any) {
         const files = event.target.files;
         const createdAt = moment().format('YYYY-MM-DD HH:mm:ss');
@@ -1105,13 +846,6 @@ export class CallComponent implements OnInit {
         const isChannelOne = this.selectedChannels === '1';
         const selectedCallTypeId = isChannelOne ? this.selectedCallTypeId : null;
 
-        const selectedActivitiesSmnIds = this.selectedActivitiesSmn
-            ? this.selectedActivitiesSmn.map((activity: { activityTopicId: any }) => activity.activityTopicId)
-            : null;
-        const selectedActivitiesElnIds = this.selectedActivities
-            ? this.selectedActivities.map((activity: { activityTopicId: any }) => activity.activityTopicId)
-            : null;
-
         if (this.cType === 'call') {
             for (let i = 0; i < this.selectSubject; i++) {
                 if (this.selectedCaseTopics[i] == null) {
@@ -1147,8 +881,6 @@ export class CallComponent implements OnInit {
                     attachment: this.attachmentsId,
                     call_id: this.phoneCall,
                     operationType: selectedCallTypeId,
-                    activitySmn: selectedActivitiesSmnIds,
-                    activityEln: selectedActivitiesElnIds,
                 };
                 console.log('Data: ', data);
                 this.callService
@@ -1196,8 +928,6 @@ export class CallComponent implements OnInit {
                     solution: this.solutions,
                     modifiedById: userData.userId,
                     operationType: selectedCallTypeId,
-                    activitySmn: selectedActivitiesSmnIds,
-                    activityEln: selectedActivitiesElnIds,
                     call_id: this.selectedContactNumber ? this.selectedContactNumber.contactNumber : null,
                     emails: this.selectedEmail,
                     contactNumberId: this.selectedContactNumber ? this.selectedContactNumber.contactNumberId : null,
@@ -1245,8 +975,6 @@ export class CallComponent implements OnInit {
                     startTime: `${selectedDate} ${selectedTime}`,
                     modifiedById: userData.userId,
                     operationType: selectedCallTypeId,
-                    activitySmn: selectedActivitiesSmnIds,
-                    activityEln: selectedActivitiesElnIds,
                 };
                 console.log('Data: ', data);
                 this.contactsService
@@ -1274,75 +1002,6 @@ export class CallComponent implements OnInit {
                 this.sweetalertServices.getSwal('error', 'โปรดกรอกหัวข้อที่ติดต่อ', '', false, '');
             }
         }
-    }
-
-    searchSmn(): void {
-        this.callService.getActivitiesTypeSmn(this.valueSearchSmn).subscribe((activitySmn: any) => {
-            this.activitySmn = activitySmn;
-        });
-    }
-
-    submitActivityTopic() {
-        if (this.selectedActivityTopicName && this.nameActivityTopic) {
-            const isDuplicate = this.activitySmn.some((smn: any) => {
-                return smn.activityTopicName === this.nameActivityTopic && smn.activityId === this.selectedActivityTopicName;
-            });
-
-            if (!isDuplicate) {
-                const data = {
-                    activityId: this.selectedActivityTopicName,
-                    activityTopicName: this.nameActivityTopic,
-                };
-                console.log(data);
-
-                this.callService
-                    .createActivityTopic(data)
-                    .pipe(
-                        tap((res) => {
-                            this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
-                            this.auditLogService.log(
-                                '',
-                                'Contact Create Call ActivityTopic',
-                                'Contact Create Case Call ActivityTopic',
-                                `ContactID : ${this.contactId}`,
-                                `Success`,
-                            );
-                            window.location.reload();
-                        }),
-                        catchError((error) => {
-                            this.sweetalertServices.handleError(error);
-                            this.auditLogService.log(
-                                '',
-                                'Contact Create Call ActivityTopic',
-                                'Contact Create ActivityTopic',
-                                `ContactID : ${this.contactId}`,
-                                `Failed, Error : ${error}`,
-                            );
-                            throw error;
-                        }),
-                    )
-                    .subscribe();
-            } else {
-                this.sweetalertServices.getSwal('warning', 'ข้อมูลซ้ำกับข้อมูลที่มีอยู่แล้ว', '', false, '');
-            }
-        } else {
-            this.sweetalertServices.getSwal('warning', 'กรุณาใส่ข้อมูลให้ครบถ้วน', '', false, '');
-        }
-    }
-
-    sortSmn(value: string) {
-        if (this.sortIdSmn == value) {
-            if (this.sortIcon == 'fa-solid fa-sort-down') {
-                this.sortIcon = 'fa-solid fa-sort-up';
-                this.sortOrderSmn = 'DESC';
-            } else {
-                this.sortIcon = 'fa-solid fa-sort-down';
-                this.sortOrderSmn = 'ASC';
-            }
-        } else {
-            this.sortIdSmn = value;
-        }
-        this.getFormEln();
     }
 
     formatDate(date: Date): string {
@@ -1414,7 +1073,7 @@ export class CallComponent implements OnInit {
             cancelButtonColor: '#ec5365',
             width: '50%',
         }).then((result) => {
-            if (result.isConfirmed) {    
+            if (result.isConfirmed) {
                 this.contactsService.deleteCall(callId, type).subscribe(
                     (res: any) => {
                         this.sweetalertServices.getSwal('success', 'ลบข้อมูลเรียบร้อยแล้ว', '', false, '');
@@ -1439,8 +1098,7 @@ export class CallComponent implements OnInit {
                     },
                 );
             }
-        });  
-            
+        });
     }
 
     onChannelChange(event: any) {
@@ -1454,5 +1112,5 @@ export class CallComponent implements OnInit {
         } else {
             return false;
         }
-    }    
+    }
 }

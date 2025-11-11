@@ -1,8 +1,8 @@
 :root {
-    --primary: #3066be;
-    --primary-active-color: #60afff;
-    --color-blue-dark: #003c71;
-    --color-light-sky: #28c2ff;
+    --primary: rgb(255, 95, 31);
+    --primary-active-color: rgb(255, 128, 64);
+    --color-blue-dark: rgb(1, 9, 102);
+    --color-light-sky: rgb(32, 160, 255);
     --color-lighter-red: #ec5365;
     --color-lighter-green: #53ec62;
     --color-white: #ffffff;
@@ -52,11 +52,6 @@ body {
 
 .popover-search {
     max-width: 90% !important;
-    width: 100% !important;
-}
-
-.popover-notification {
-    max-width: 40% !important;
     width: 100% !important;
 }
 
@@ -112,6 +107,9 @@ th[sortable].desc:before {
 .color-primary {
     color: var(--primary) !important;
 }
+.color-blue-dark {
+    color: var(--color-blue-dark) !important;
+}
 
 .color-red {
     color: var(--color-lighter-red) !important;
@@ -165,7 +163,6 @@ th[sortable].desc:before {
 .cursor-default {
     cursor: default;
 }
-
 
 .h-minus-navbar {
     height: calc(100vh - 66px);

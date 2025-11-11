@@ -20,26 +20,10 @@ const routes: Routes = [
                 loadChildren: () => import('../../components/member/member.module').then((m) => m.MemberModule),
             },
             {
-                path: 'menagement-team',
-                loadChildren: () => import('../../components/team/team.module').then((m) => m.TeamModule),
-                title: 'Menagement Team',
-            },
-            {
-                path: 'tag',
-                loadChildren: () => import('../../components/tag/tag.module').then((m) => m.TagModule),
-                title: 'Tag',
-            },
-            {
                 path: 'menagement-password',
                 loadChildren: () =>
                     import('../../components/menagement-password/menagement-password.module').then((m) => m.MenagementPasswordModule),
                 title: 'Menagement Password',
-            },
-            {
-                path: 'menagement-appearance',
-                loadChildren: () =>
-                    import('../../components/menagement-appearance/menagement-appearance.module').then((m) => m.MenagementAppearanceModule),
-                title: 'Menagement Appearance',
             },
             {
                 path: '',

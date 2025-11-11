@@ -104,9 +104,6 @@
                             <th style="width: 12.5%" scope="col">
                                 <a (click)="sort('province')">จังหวัด</a><i *ngIf="sortId == 'province'" class="{{ sortIcon }}"></i>
                             </th>
-                            <th style="width: 12.5%" scope="col">
-                                <a (click)="sort('a.source')">แหล่งที่มา</a><i *ngIf="sortId == 'a.source'" class="{{ sortIcon }}"></i>
-                            </th>
                             <th scope="col" *ngIf="checkRole()"><a>จัดการ</a></th>
                         </tr>
                     </thead>
@@ -145,13 +142,17 @@
                                 <td scope="row">{{ contacts.email }}</td>
                                 <td scope="row">{{ contacts.contactNumber }}</td>
                                 <td scope="row">{{ contacts.province }}</td>
-                                <td scope="row">{{ contacts.sourced }}</td>
                                 <td class="text-center" scope="row" *ngIf="checkRole()">
                                     <div class="d-flex flex-row flex-nowrap">
-                                        <div class="me-3 color-primary" placement="top" ngbTooltip="แก้ไข" (click)="edit(contacts)">
+                                        <div class="me-3 color-blue-dark" placement="top" ngbTooltip="แก้ไข" (click)="edit(contacts)">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </div>
-                                        <div class="color-red" placement="top" ngbTooltip="ลบ" (click)="deletecontacts(contacts.contactId)">
+                                        <div
+                                            class="color-primary"
+                                            placement="top"
+                                            ngbTooltip="ลบ"
+                                            (click)="deletecontacts(contacts.contactId)"
+                                        >
                                             <i class="fa-solid fa-trash"></i>
                                         </div>
                                     </div>
@@ -258,22 +259,6 @@
                             <h6>{{ detailItem?.fullname || emptyItem }}</h6>
                         </div>
                     </div>
-                    <div class="p-5 shadow call-side-detail" *ngIf="FormShowing">
-                        <div>
-                            <h4>เลือกแบบฟอร์มสำรวจ</h4>
-                            <input
-                                id="table-complete-search"
-                                type="text"
-                                class="form-control border border-start-0 shadow-none"
-                                name="search"
-                                [(ngModel)]="valueSearchForm"
-                                placeholder="ค้นหา..."
-                                aria-describedby="basic-addon1"
-                                style="width: 70%"
-                                (change)="searchForm()"
-                            />
-                        </div>
-                    </div>
                     <div class="p-5 shadow call-side-change-by" *ngIf="contactShowing">
                         <div class="row row-side">
                             <div class="col">
@@ -313,85 +298,6 @@
                                 <div>{{ (detailItem?.modified_at | date : 'dd/MM/yyyy  HH:mm') || emptyItem }}</div>
                             </div>
                         </div>
-                    </div>
-                    <div class="p-5 shadow call-side-change-by w-100 h-100 overflow-auto p-4">
-                        <div class="table-responsive" *ngIf="FormShowing">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th style="width: 70%" scope="col">
-                                            <a (click)="sort('name')">แบบฟอร์มสำรวจ </a
-                                            ><i *ngIf="sortIdForm == 'name'" class="{{ sortIcon }}"></i>
-                                        </th>
-                                        <th style="width: 15%" scope="col">
-                                            <a (click)="sort('createdAt')">วันที่บันทึก</a
-                                            ><i *ngIf="sortIdForm == 'createdAt'" class="{{ sortIcon }}"></i>
-                                        </th>
-                                        <th style="width: 15%" scope="col">
-                                            <a (click)="sort('createdById')">บันทึกโดย</a
-                                            ><i *ngIf="sortIdForm == 'createById'" class="{{ sortIcon }}"></i>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <ng-container *ngIf="surveyForms?.length > 0; else noDataTemplate">
-                                        <tr *ngFor="let form of surveyForms; let i = index">
-                                            <td
-                                                scope="row"
-                                                class="cursor-pointer w-max-ellipsis"
-                                                (click)="sendEmail(form.surveyFormId, form.name)"
-                                            >
-                                                {{ form.name }}
-                                            </td>
-                                            <td scope="row">{{ form.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
-                                            <td scope="row">{{ form.createdBy }}</td>
-                                        </tr>
-                                    </ng-container>
-                                    <ng-template #noDataTemplate>
-                                        <tr>
-                                            <td colspan="4" class="text-center">ไม่มีข้อมูล</td>
-                                        </tr>
-                                    </ng-template>
-                                </tbody>
-                            </table>
-                        </div>
-                        <ul class="pagination cursor-pointer justify-content-center" *ngIf="FormShowing">
-                            <li class="page-item" [class.disabled]="currentPageForm == 1">
-                                <a class="page-link custom-link preBtn" (click)="pageChangeForm(1)" aria-label="Previous">
-                                    <i class="fa-solid fa-angles-left"></i>
-                                </a>
-                            </li>
-                            <li class="page-item" [class.disabled]="currentPageForm == 1">
-                                <a class="page-link custom-link" (click)="pageChangeForm(currentPageForm - 1)" aria-label="Previous">
-                                    <i class="fa-solid fa-angle-left"></i>
-                                </a>
-                            </li>
-                            <li *ngFor="let page of pagesForm" class="page-item" [class.active]="currentPageForm == page">
-                                <a class="page-link custom-link" (click)="pageChangeForm(page)">{{ page }}</a>
-                            </li>
-                            <li class="page-item" [class.disabled]="currentPageForm == totalPagesForm">
-                                <a class="page-link custom-link" (click)="pageChangeForm(currentPageForm + 1)" aria-label="Next">
-                                    <i class="fa-solid fa-angle-right"></i>
-                                </a>
-                            </li>
-                            <li class="page-item" [class.disabled]="currentPageForm == totalPagesForm">
-                                <a class="page-link custom-link nextBtn" (click)="pageChangeForm(totalPagesForm)" aria-label="Next">
-                                    <i class="fa-solid fa-angles-right"></i>
-                                </a>
-                            </li>
-                            <li class="page-item ms-3">
-                                <select
-                                    class="form-select"
-                                    aria-label="Default select example"
-                                    [(ngModel)]="pageSizeForm"
-                                    (change)="pageSizeChangeForm()"
-                                >
-                                    <option class="dropdown-item" *ngFor="let option of pageSizeOptionsForm" [value]="option">
-                                        {{ option }}
-                                    </option>
-                                </select>
-                            </li>
-                        </ul>
                     </div>
                 </div>
             </div>

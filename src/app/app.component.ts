@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { ThemeService } from './services/theme/theme.service';
 import { SocketIoService } from './services/socket-io/socket-io.service';
 import { UserService } from './services/user/user.service';
 import { User } from './shared/interface/user.interface';
@@ -18,7 +17,6 @@ export class AppComponent implements OnInit {
     userData?: User | null;
     isLoading: boolean = false;
     constructor(
-        private themeService: ThemeService,
         private socketIO: SocketIoService,
         private userService: UserService,
         private loaderService: LoaderService,
@@ -33,7 +31,6 @@ export class AppComponent implements OnInit {
     }
 
     async initzation() {
-        this.setTheme();
         this.getDataUser();
         this.loaderStatus();
         setTimeout(() => {
@@ -45,13 +42,6 @@ export class AppComponent implements OnInit {
         this.userService.getDataUser().subscribe((res: User | null) => {
             this.userData = res;
         });
-    }
-
-    setTheme() {
-        const savedTheme = this.themeService.getSavedTheme();
-        if (savedTheme) {
-            this.themeService.setThemeVariables(savedTheme.primaryColor, savedTheme.primaryActiveColor);
-        }
     }
 
     login() {

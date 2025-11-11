@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, tap, throwError } from 'rxjs';
 import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
-import { CalendarEventService } from 'src/app/services/calendar-event/calendar-event.service';
 import { LoginService } from 'src/app/services/login/login.service';
 import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
 import { TokenService } from 'src/app/services/token/token.service';
@@ -18,7 +16,6 @@ export class LogoutComponent implements OnInit {
     userData?: User | null;
 
     constructor(
-        private calendarService: CalendarEventService,
         private userService: UserService,
         private tokenService: TokenService,
         private loginService: LoginService,
@@ -49,7 +46,6 @@ export class LogoutComponent implements OnInit {
             this.loginService.logout(this.userData).subscribe();
         }
         this.auditLogService.log('', 'Authen', 'Logout', '', `Success`);
-        this.calendarService.clearDataCalendar()
         this.userService.clearDataUser();
         this.tokenService.clearDataToken();
         this.router.navigate(['/login']);

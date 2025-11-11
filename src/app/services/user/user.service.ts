@@ -2,7 +2,6 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { config } from 'src/app/config/config';
-import { Group } from 'src/app/shared/interface/group.interface';
 import { User } from 'src/app/shared/interface/user.interface';
 import { environment } from 'src/environments/environment';
 
@@ -11,7 +10,6 @@ import { environment } from 'src/environments/environment';
 })
 export class UserService {
     private userDataSubject = new BehaviorSubject<User | null>(null);
-    private groupSubject = new BehaviorSubject<void>(undefined);
     private memberSubject = new BehaviorSubject<void>(undefined);
     private storageKey = 'userData';
 
@@ -72,18 +70,6 @@ export class UserService {
         return this.http.get(`${this.baseUrl}${config.api.path.user.findAllRoles}`);
     }
 
-    findAllGroups(): Observable<any> {
-        return this.http.get<Group[]>(`${this.baseUrl}${config.api.path.user.findAllGroups}`).pipe(
-            tap((res: Group[]) => {
-                res.forEach((group: Group) => {
-                    group.members.forEach((member: User) => {
-                        member.profile = member.profile ? `${environment.api.url}${member.profile}` : '';
-                    });
-                });
-            }),
-        );
-    }
-
     uploadProfileImage(file: File, filename: string, userId: string, createdAt: string, createdById: string): Observable<any> {
         const formData = new FormData();
         formData.append('file', file);
@@ -117,22 +103,6 @@ export class UserService {
         return this.http.post(`${this.baseUrl}${config.api.path.user.updatePassword}`, body);
     }
 
-    addGroup(form: Group): Observable<any> {
-        return this.http.post(`${this.baseUrl}${config.api.path.user.addGroup}`, form).pipe(
-            tap(() => {
-                this.groupSubject.next();
-            }),
-        );
-    }
-
-    updateGroup(form: Group): Observable<any> {
-        return this.http.post(`${this.baseUrl}${config.api.path.user.updateGroup}`, form).pipe(
-            tap(() => {
-                this.groupSubject.next();
-            }),
-        );
-    }
-
     deleteUser(userId: string): Observable<any> {
         return this.http.post(`${this.baseUrl}${config.api.path.user.deleteUser}`, { userId: userId }).pipe(
             tap(() => {
@@ -141,19 +111,7 @@ export class UserService {
         );
     }
 
-    deleteGroup(groupId: string): Observable<any> {
-        return this.http.post(`${this.baseUrl}${config.api.path.user.deleteGroup}`, { groupId: groupId }).pipe(
-            tap(() => {
-                this.groupSubject.next();
-            }),
-        );
-    }
-
     getMemberOnRefrash(): Observable<void> {
         return this.memberSubject.asObservable();
-    }
-
-    getGroupOnRefrash(): Observable<void> {
-        return this.groupSubject.asObservable();
     }
 }
