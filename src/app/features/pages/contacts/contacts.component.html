@@ -46,31 +46,6 @@
                 </div>
             </div>
         </div>
-        <div *ngIf="checkedValues.length > 0">
-            <div class="d-flex p-3 bg-body-tertiary">
-                <button
-                    class="d-flex align-items-center d-md-none d-lg-flex rounded p-2 text-white btn btn-success"
-                    (click)="sendEmailSideBar()"
-                    placement="top"
-                    ngbTooltip="ส่งแบบฟอร์มสำรวจ"
-                    data-bs-toggle="offcanvas"
-                    data-bs-target="#offcanvasRight"
-                    aria-controls="offcanvasRight"
-                    scope="row"
-                >
-                    <i class="fa-solid fa-envelope"></i>
-                </button>
-                <button
-                    class="d-flex align-items-center d-md-none d-lg-flex rounded p-2 text-white btn btn-danger"
-                    (click)="deleteSelectcontacts()"
-                    placement="top"
-                    ngbTooltip="ลบ"
-                    style="margin-left: 8px"
-                >
-                    <i class="fa-solid fa-trash"></i>
-                </button>
-            </div>
-        </div>
         <div>
             <div class="table-responsive">
                 <table class="table">
@@ -79,30 +54,15 @@
                             <th class="text-center" *ngIf="checkRole()">
                                 <input type="checkbox" name="all" [checked]="isAllChecked()" (change)="checkAll($event)" />
                             </th>
-                            <th style="width: 12.5%" scope="col">
+                            <th scope="col">
                                 <a (click)="sort('fullname')">ชื่อ </a><i *ngIf="sortId == 'fullname'" class="{{ sortIcon }}"></i>
                             </th>
-                            <th style="width: 12.5%" scope="col">
-                                <a (click)="sort('a.identification')">เลขประจำตัว/เลขนิติบุคคล</a
-                                ><i *ngIf="sortId == 'a.identification'" class="{{ sortIcon }}"></i>
+                            <th scope="col">
+                                <a (click)="sort('organization')">บริษัท</a><i *ngIf="sortId == 'organization'" class="{{ sortIcon }}"></i>
                             </th>
-                            <th style="width: 12.5%" scope="col">
-                                <a (click)="sort('contact_type')">ประเภทผู้ประกอบการ</a
-                                ><i *ngIf="sortId == 'contact_type'" class="{{ sortIcon }}"></i>
-                            </th>
-                            <th style="width: 12.5%" scope="col">
-                                <a (click)="sort('organization')">ร้านค้า/บริษัท</a
-                                ><i *ngIf="sortId == 'organization'" class="{{ sortIcon }}"></i>
-                            </th>
-                            <th style="width: 12.5%" scope="col">
-                                <a (click)="sort('email')">อีเมล</a><i *ngIf="sortId == 'email'" class="{{ sortIcon }}"></i>
-                            </th>
-                            <th style="width: 12.5%" scope="col">
+                            <th scope="col">
                                 <a (click)="sort('contactNumber')">เบอร์ติดต่อ</a
                                 ><i *ngIf="sortId == 'contactNumber'" class="{{ sortIcon }}"></i>
-                            </th>
-                            <th style="width: 12.5%" scope="col">
-                                <a (click)="sort('province')">จังหวัด</a><i *ngIf="sortId == 'province'" class="{{ sortIcon }}"></i>
                             </th>
                             <th scope="col" *ngIf="checkRole()"><a>จัดการ</a></th>
                         </tr>
@@ -136,12 +96,8 @@
                                         {{ contacts.fullname }}
                                     </div>
                                 </td>
-                                <td scope="row">{{ contacts.iden }}</td>
-                                <td scope="row">{{ contacts.contact_type }}</td>
                                 <td scope="row">{{ contacts.organization }}</td>
-                                <td scope="row">{{ contacts.email }}</td>
                                 <td scope="row">{{ contacts.contactNumber }}</td>
-                                <td scope="row">{{ contacts.province }}</td>
                                 <td class="text-center" scope="row" *ngIf="checkRole()">
                                     <div class="d-flex flex-row flex-nowrap">
                                         <div class="me-3 color-blue-dark" placement="top" ngbTooltip="แก้ไข" (click)="edit(contacts)">
@@ -161,7 +117,7 @@
                         </ng-container>
                         <ng-template #noDataTemplate>
                             <tr>
-                                <td colspan="10" class="text-center">ไม่มีข้อมูล</td>
+                                <td colspan="5" class="text-center">ไม่มีข้อมูล</td>
                             </tr>
                         </ng-template>
                     </tbody>
@@ -264,10 +220,6 @@
                             <div class="col">
                                 <h5>ร้านค้า/บริษัท</h5>
                                 <p class="m-0">{{ detailItem?.organization || emptyItem }}</p>
-                            </div>
-                            <div class="col">
-                                <h5>ประเภทผู้ประกอบการ</h5>
-                                <p class="m-0">{{ detailItem?.contact_type || emptyItem }}</p>
                             </div>
                         </div>
                         <div class="row row-side">

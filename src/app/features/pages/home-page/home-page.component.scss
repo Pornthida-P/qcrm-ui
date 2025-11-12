@@ -9,3 +9,122 @@
 .btn:hover {
     opacity: 0.5;
 }
+
+.home-card {
+    background: var(--color-blue-dark);
+    border-radius: 16px;
+    padding: 1rem;
+    min-height: 200px;
+    position: relative;
+    overflow: hidden;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+}
+
+.card-shapes {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.8;
+}
+
+.shape-orange {
+    background: var(--primary);
+}
+
+.shape-yellow {
+    background: #ffd700;
+}
+
+.shape-purple {
+    background: #9b59b6;
+}
+
+.shape-top-left {
+    width: 100px;
+    height: 100px;
+    top: -30px;
+    left: -30px;
+    border-radius: 50% 0 50% 50%;
+    transform: rotate(-10deg);
+}
+
+.shape-bottom-right {
+    width: 80px;
+    height: 80px;
+    bottom: -25px;
+    right: -25px;
+    border-radius: 50% 0 50% 50%;
+    transform: rotate(15deg);
+}
+
+.shape-bottom-left {
+    width: 90px;
+    height: 90px;
+    bottom: -30px;
+    left: -30px;
+    border-radius: 50% 50% 0 50%;
+    transform: rotate(10deg);
+}
+
+.shape-top-right {
+    width: 95px;
+    height: 95px;
+    top: -30px;
+    right: -30px;
+    border-radius: 0 50% 50% 50%;
+    transform: rotate(-15deg);
+}
+
+.card-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+}
+
+.card-icon {
+    position: relative;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-number {
+    color: var(--color-white);
+    font-size: 4rem;
+    font-weight: 700;
+    line-height: 1;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.card-title {
+    color: var(--color-white);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.4;
+}

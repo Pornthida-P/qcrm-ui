@@ -78,21 +78,6 @@
                         [disabled]="!checkRole()"
                     />
                 </div>
-                <div class="col-md-6">
-                    <label for="inputContactType" class="form-label">ประเภทผู้ประกอบการ</label>
-                    <select
-                        class="form-select"
-                        [(ngModel)]="contactType"
-                        name="contactType"
-                        id="inputContactType"
-                        [disabled]="!checkRole()"
-                    >
-                        <option value="" disabled>-</option>
-                        <option value="นิติบุคคล">นิติบุคคล</option>
-                        <option value="บุคคลธรรมดา">บุคคลธรรมดา</option>
-                        <!-- Add more options as needed -->
-                    </select>
-                </div>
 
                 <div class="col-md-6">
                     <div class="d-flex">

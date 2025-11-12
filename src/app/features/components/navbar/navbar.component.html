@@ -11,8 +11,8 @@
                 >
                     <fa-icon [icon]="faBars"></fa-icon>
                 </button>
-                <img src="./assets/qcrm-ui/image/logo_roddonjai.svg" class="nav-img cursor-pointer" [routerLink]="'home'" />
-                <!-- <img src="./assets/qcrm-ui/image/logo_CRM.svg" class="nav-img cursor-pointer" [routerLink]="'home'" /> -->
+                <!-- <img src="./assets/qcrm-ui/image/logo_roddonjai.svg" class="nav-img cursor-pointer" [routerLink]="'home'" /> -->
+                <img src="./assets/qcrm-ui/image/logo_crm.png" class="nav-img cursor-pointer" [routerLink]="'home'" />
             </div>
             <div class="flex-lg-none d-flex flex-row align-items-center gap-4">
                 <div class="dropdown">
@@ -107,25 +107,6 @@
             <div class="p-4 w-100 overflow-scroll">
                 <router-outlet></router-outlet>
             </div>
-        </div>
-    </div>
-</div>
-<div *ngIf="searchSidebarVisible">
-    <div class="vw-100 vh-100 bg-white d-flex flex-column p-3 gap-2">
-        <div class="text-end">
-            <i class="fa-solid fa-xmark" (click)="closeSearchSideBar()"></i>
-        </div>
-        <div class="input-group">
-            <span class="input-group-text bg-white border border-end-0 color-primary" id="basic-addon1">
-                <i class="fa-solid fa-magnifying-glass"></i>
-            </span>
-            <input
-                type="text"
-                class="form-control w-100 border border-start-0 shadow-none"
-                [(ngModel)]="value"
-                placeholder="ค้นหา..."
-                aria-describedby="basic-addon1"
-            />
         </div>
     </div>
 </div>
