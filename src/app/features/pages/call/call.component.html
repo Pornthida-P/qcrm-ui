@@ -118,7 +118,7 @@
         </div>
         <div>
             <div class="d-flex align-items-center">
-                <table class="table">
+                <table class="table table-hover">
                     <thead>
                         <tr>
                             <th scope="col" style="width: 1%" scope="row">
@@ -129,16 +129,16 @@
                                     (change)="checkAll($event)"
                                 />
                             </th>
-                            <th scope="col" style="width: 12%">เวลา</th>
-                            <th scope="col" style="width: 8%">เบอร์โทร</th>
-                            <th scope="col" style="width: 6%">อีเมล</th>
-                            <th scope="col" style="width: 14%">ผู้ติดต่อ</th>
-                            <th scope="col" style="width: 14%">ประเภท</th>
-                            <th scope="col" style="width: 8%">ประเภทสาย</th>
-                            <th scope="col" style="width: 16%">เรื่องที่ติดต่อ</th>
-                            <th scope="col" style="width: 16%">รายละเอียด</th>
-                            <th scope="col" style="width: 16%">แนวทางการแก้ไข</th>
-                            <th scope="col" style="width: 20%">ผู้ที่รับผิดชอบ</th>
+                            <th scope="col">เวลา</th>
+                            <th scope="col">เบอร์โทร</th>
+                            <th scope="col">อีเมล</th>
+                            <th scope="col">ผู้ติดต่อ</th>
+                            <th scope="col">ประเภท</th>
+                            <th scope="col">ประเภทสาย</th>
+                            <th scope="col">เรื่องที่ติดต่อ</th>
+                            <th scope="col">รายละเอียด</th>
+                            <th scope="col">แนวทางการแก้ไข</th>
+                            <th scope="col">ผู้ที่รับผิดชอบ</th>
                             <th scope="col">จัดการ</th>
                         </tr>
                     </thead>
@@ -241,7 +241,7 @@
                         </ng-container>
                         <ng-template #noDataTemplate>
                             <tr>
-                                <td colspan="9" class="text-center"><span class="color-gray">ไม่มีข้อมูล</span></td>
+                                <td colspan="13" class="text-center"><span class="color-gray">ไม่มีข้อมูล</span></td>
                             </tr>
                         </ng-template>
                     </tbody>

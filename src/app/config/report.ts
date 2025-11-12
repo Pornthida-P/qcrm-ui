@@ -35,7 +35,6 @@ export const report = {
         channel: 'ช่องทาง',
         contact: 'ผู้ติดต่อ',
         org: 'ร้านค้า/บริษัท',
-        contacttype: 'ประเภทผู้ประกอบการ',
         email: 'อีเมล',
         caller: 'เบอร์ติดต่อ',
         activityname: 'ประเภทกิจกรรม',
