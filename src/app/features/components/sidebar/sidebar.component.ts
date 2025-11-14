@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { faChartPie, faFileLines, faFilePen, faHouse, faPhoneVolume } from '@fortawesome/free-solid-svg-icons';
+import { faChartPie, faFileLines, faFilePen, faGear, faHouse, faPhoneVolume } from '@fortawesome/free-solid-svg-icons';
 import { UserService } from 'src/app/services/user/user.service';
 import { User } from 'src/app/shared/interface/user.interface';
 
@@ -41,6 +41,12 @@ export class SidebarComponent implements OnInit {
                 icon: faChartPie,
                 routerLink: '/report-page',
                 roles: [1,2]
+            },
+            {
+                label: 'manage-page',
+                icon: faGear,
+                routerLink: '/manage-page',
+                roles: [2]
             },
             // {
             //     label: 'หลักสูตร E-Learning',

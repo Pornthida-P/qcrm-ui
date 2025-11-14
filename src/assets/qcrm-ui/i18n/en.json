@@ -77,7 +77,8 @@
         "home": "Home",
         "contacts": "Contacts",
         "call": "Call History",
-        "report-page": "Reports"
+        "report-page": "Reports",
+        "manage-page": "Manage Page"
     },
     "menuSetting": {
         "menagement-account": "Account Management",

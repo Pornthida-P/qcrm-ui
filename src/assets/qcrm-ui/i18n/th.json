@@ -77,7 +77,8 @@
         "home": "หน้าหลัก",
         "contacts": "ฐานข้อมูลผู้ใช้บริการและประวัติผู้ติดต่อ",
         "call": "ประวัติการติดต่อ",
-        "report-page": "รายงาน"
+        "report-page": "รายงาน",
+        "manage-page": "จัดการข้อมูล"
     },
     "menuSetting": {
         "menagement-account": "จัดการบัญชี",

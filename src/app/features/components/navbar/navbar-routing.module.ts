@@ -72,6 +72,11 @@ const routes: Routes = [
                 path: 'setting',
                 loadChildren: () => import('../../pages/setting/setting.module').then((m) => m.SettingModule),
                 title: 'Setting',
+          },
+            {
+                path: 'manage-page',
+                loadChildren: () => import('../../pages/manage-page/manage-page.module').then((m) => m.ManagePageModule),
+                title: 'Manage Page',
             },
             {
                 path: '',
