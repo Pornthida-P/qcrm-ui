@@ -50,12 +50,12 @@
                                 [multiple]="true"
                             >
                                 <ng-option *ngFor="let casetopic of casetopics" [value]="casetopic.caseTopicId">
-                                    {{ casetopic.name }}
+                                  {{casetopic.code}} - {{ casetopic.name }}
                                 </ng-option>
                             </ng-select>
                         </div>
 
-                        <div class="col-md-5">
+                        <div class="col-md-6">
                             <label [ngClass]="{ 'display-none': i != 1 }" for="inputCaseSubject" class="form-label">เรื่องที่ติดต่อ</label>
                             <ng-select
                                 id="inputCaseSubject"
@@ -74,7 +74,7 @@
                             </ng-select>
                         </div>
                         <div class="col-md-1">
-                            <span *ngIf="selectSubject == i && selectSubject != 5">
+                            <!-- <span *ngIf="selectSubject == i && selectSubject != 5">
                                 <button
                                     (click)="addTopicAndSubject()"
                                     type="button"
@@ -83,7 +83,7 @@
                                 >
                                     +
                                 </button>
-                            </span>
+                            </span> -->
                             <span *ngIf="selectSubject == i && selectSubject != 1">
                                 <button
                                     (click)="removeTopicAndSubject()"
@@ -169,37 +169,6 @@
                         ></ngb-timepicker>
                     </div>
                 </div>
-                <div class="col-6">
-                    <p class="mg-b">ประเภทกิจกรรม</p>
-                    <div class="div-form-check pd-l-50">
-                        <div *ngFor="let activityType of activitiestype" class="form-check">
-                            <input
-                                class="form-check-input"
-                                type="checkbox"
-                                [value]="activityType.activityTypeId"
-                                id="{{ activityType.activityTypeId }}"
-                                (change)="onCheckboxChange($event, activityType.activityTypeId)"
-                            />
-                            <label class="form-check-label" [for]="activityType.activityTypeId">{{ activityType.name }}</label>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6">
-                    <p class="mg-b">ช่องทางการรับข้อมูลข่าวสาร</p>
-                    <div class="div-form-check pd-l-50">
-                        <div class="form-check">
-                            <input
-                                class="form-check-input"
-                                type="checkbox"
-                                value="1"
-                                id="flexCheckChecked"
-                                [checked]="isEmailSubscribed === 1"
-                                (change)="toggleEmailSubscription($event)"
-                            />
-                            <label class="form-check-label" for="flexCheckChecked"> รับข้อมูลทางอีเมล </label>
-                        </div>
-                    </div>
-                </div>
 
                 <div class="col-12">
                     <label class="form-check-label" for="gridCheck"> รายละเอียด </label>
@@ -209,16 +178,6 @@
                         id="floatingTextarea"
                         name="description"
                         [(ngModel)]="description"
-                    ></textarea>
-                </div>
-                <div class="col-12">
-                    <label class="form-check-label" for="gridCheck"> แนวทางการแก้ไข </label>
-                    <textarea
-                        class="form-control"
-                        placeholder="กรุณากรอกข้อมูล"
-                        id="floatingTextarea"
-                        name="solutions"
-                        [(ngModel)]="solutions"
                     ></textarea>
                 </div>
                 <div class="col-6">
