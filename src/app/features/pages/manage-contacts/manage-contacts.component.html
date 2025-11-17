@@ -68,6 +68,21 @@
                     />
                 </div>
                 <div class="col-md-6">
+                    <label for="inputContactGender" class="form-label">เพศ</label>
+                    <select
+                        id="inputContactGender"
+                        class="form-select"
+                        [(ngModel)]="contactGender"
+                        name="contactGender"
+                        [disabled]="!checkRole()"
+                    >
+                        <option value="unknown">ไม่ระบุ</option>
+                        <option value="male">ชาย</option>
+                        <option value="female">หญิง</option>
+                        <option value="other">อื่นๆ</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
                     <label for="inputContactOrg" class="form-label">บริษัท</label>
                     <input
                         type="text"
@@ -77,44 +92,6 @@
                         id="inputContactOrg"
                         [disabled]="!checkRole()"
                     />
-                </div>
-
-                <div class="col-md-6">
-                    <div class="d-flex">
-                        <label for="inputContactEmail" class="form-label">อีเมล</label>
-                        <div
-                            class="mb-2 p-1 btn-primary text-white rounded-2 cursor-pointer add-number ms-2"
-                            (click)="inputAddEmail()"
-                            ngbTooltip="เพิ่มอีเมล"
-                            *ngIf="TableShowing"
-                        >
-                            <i class="fa-solid fa-plus fs-icon"></i>
-                        </div>
-                    </div>
-                    <input
-                        *ngIf="!contactId"
-                        type="text"
-                        class="form-control"
-                        [(ngModel)]="contactEmail"
-                        name="contactEmail"
-                        id="inputContactEmail"
-                        [disabled]="!checkRole()"
-                    />
-                    <input
-                        #emailInput
-                        *ngIf="isInputVisibleMail"
-                        type="text"
-                        class="form-control mt-2"
-                        placeholder="เพิ่มอีเมล"
-                        [(ngModel)]="contactEmailNew"
-                        name="contactEmailNew"
-                        id="inputContactEmailNew"
-                        [disabled]="!checkRole()"
-                    />
-
-                    <div *ngFor="let email of emailById; let i = index">
-                        <input type="text" class="form-control mt-2" [(ngModel)]="email.email" name="email{{ i }}" id="inputemail{{ i }}" />
-                    </div>
                 </div>
                 <div class="col-md-6">
                     <div class="d-flex">
@@ -167,15 +144,41 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <label for="inputContactProvince" class="form-label">จังหวัด</label>
+                    <div class="d-flex">
+                        <label for="inputContactEmail" class="form-label">อีเมล</label>
+                        <div
+                            class="mb-2 p-1 btn-primary text-white rounded-2 cursor-pointer add-number ms-2"
+                            (click)="inputAddEmail()"
+                            ngbTooltip="เพิ่มอีเมล"
+                            *ngIf="TableShowing"
+                        >
+                            <i class="fa-solid fa-plus fs-icon"></i>
+                        </div>
+                    </div>
                     <input
+                        *ngIf="!contactId"
                         type="text"
                         class="form-control"
-                        [(ngModel)]="contactProvince"
-                        name="contactProvince"
-                        id="inputContactProvince"
+                        [(ngModel)]="contactEmail"
+                        name="contactEmail"
+                        id="inputContactEmail"
                         [disabled]="!checkRole()"
                     />
+                    <input
+                        #emailInput
+                        *ngIf="isInputVisibleMail"
+                        type="text"
+                        class="form-control mt-2"
+                        placeholder="เพิ่มอีเมล"
+                        [(ngModel)]="contactEmailNew"
+                        name="contactEmailNew"
+                        id="inputContactEmailNew"
+                        [disabled]="!checkRole()"
+                    />
+
+                    <div *ngFor="let email of emailById; let i = index">
+                        <input type="text" class="form-control mt-2" [(ngModel)]="email.email" name="email{{ i }}" id="inputemail{{ i }}" />
+                    </div>
                 </div>
                 <div class="col-md-6" *ngIf="MultiNumber == true">
                     <label for="inputContactNum" class="form-label">เบอร์ติดต่อ (ใหม่)</label>
@@ -307,7 +310,7 @@
                             </ng-select>
                         </div>
 
-                        <div class="col-md-5">
+                        <div class="col-md-6">
                             <label [ngClass]="{ 'display-none': i != 1 }" for="inputCaseSubject" class="form-label">เรื่องที่ติดต่อ</label>
                             <ng-select
                                 id="inputCaseSubject"
@@ -324,28 +327,6 @@
                                     </ng-option>
                                 </ng-container>
                             </ng-select>
-                        </div>
-                        <div class="col-md-1" *ngIf="cType != 'case'">
-                            <span *ngIf="selectSubject == i && selectSubject != 5">
-                                <button
-                                    (click)="addTopicAndSubject()"
-                                    type="button"
-                                    class="btn btn-outline-primary btn-block d-flex justify-content-center align-items-center"
-                                    style="width: 90%; margin-bottom: 10px"
-                                >
-                                    +
-                                </button>
-                            </span>
-                            <span *ngIf="selectSubject == i && selectSubject != 1">
-                                <button
-                                    (click)="removeTopicAndSubject()"
-                                    type="button"
-                                    class="btn btn-outline-danger btn-block d-flex justify-content-center align-items-center"
-                                    style="width: 90%"
-                                >
-                                    -
-                                </button>
-                            </span>
                         </div>
                     </div>
                 </div>
@@ -406,18 +387,6 @@
                             </option>
                         </select>
                     </div>
-
-                    <div class="form-check" style="margin-top: 17px">
-                        <input
-                            class="form-check-input"
-                            type="checkbox"
-                            value="1"
-                            id="flexCheckChecked"
-                            [checked]="isEmailSubscribed === 1"
-                            (change)="toggleEmailSubscription($event)"
-                        />
-                        <label class="form-check-label" for="flexCheckChecked"> รับข้อมูลทางอีเมล </label>
-                    </div>
                 </div>
 
                 <div class="col-md-6">
@@ -452,22 +421,6 @@
                 </div>
 
                 <div class="col-12">
-                    <p class="mg-b">ประเภทกิจกรรม</p>
-                    <div class="pd-l-30">
-                        <div *ngFor="let activityType of activitiestype" class="form-check">
-                            <input
-                                class="form-check-input"
-                                type="checkbox"
-                                [value]="activityType.activityTypeId"
-                                id="{{ activityType.activityTypeId }}"
-                                (change)="onCheckboxChange($event, activityType.activityTypeId)"
-                            />
-                            <label class="form-check-label" [for]="activityType.activityTypeId">{{ activityType.name }}</label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-12">
                     <label class="form-check-label" for="gridCheck"> รายละเอียด </label>
                     <textarea
                         class="form-control"
@@ -475,16 +428,6 @@
                         id="floatingTextarea"
                         name="description"
                         [(ngModel)]="description"
-                    ></textarea>
-                </div>
-                <div class="col-12">
-                    <label class="form-check-label" for="gridCheck"> แนวทางการแก้ไข </label>
-                    <textarea
-                        class="form-control"
-                        placeholder="กรุณากรอกข้อมูล"
-                        id="floatingTextarea"
-                        name="solutions"
-                        [(ngModel)]="solutions"
                     ></textarea>
                 </div>
                 <div class="col-6" *ngIf="attachmentShowing">

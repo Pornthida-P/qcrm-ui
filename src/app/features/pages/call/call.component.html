@@ -106,14 +106,6 @@
                 >
                     <i class="fa-solid fa-file"></i>
                 </button>
-                <!-- <button
-                    class="d-flex align-items-center d-md-none d-lg-flex rounded p-2 text-white btn btn-danger"
-                    (click)="deleteSelectForm()"
-                    placement="top"
-                    ngbTooltip="ลบ"
-                >
-                    <i class="fa-solid fa-trash"></i>
-                </button> -->
             </div>
         </div>
         <div>
@@ -157,11 +149,6 @@
                                 <td>
                                     {{ calls.createdAt | date : 'dd/MM/yyyy HH:mm' }}
                                 </td>
-                                <!-- <td class="sidebar cursor-pointer" (click)="createCallFideId(calls, calls.contactId, calls.caller)">
-                                    <div class="" ngbTooltip="คลิกเพื่อไปที่หน้าการโทร" placement="bottom">
-                                        {{ calls.caller }}
-                                    </div>
-                                </td> -->
                                 <td
                                     (click)="createCallFideId(calls, calls.contactId, calls.caller)"
                                     class="sidebar cursor-pointer"
@@ -179,17 +166,6 @@
                                         {{ calls.caller }}
                                     </div>
                                 </td>
-                                <!-- <td
-                                    (click)="showSideBar(i, calls.callId)"
-                                    class="sidebar cursor-pointer"
-                                    data-bs-toggle="offcanvas"
-                                    data-bs-target="#offcanvasRight"
-                                    aria-controls="offcanvasRight"
-                                >
-                                    <div class="" ngbTooltip="คลิกดูรายละเอียด" placement="bottom">
-                                        {{ calls.caller }}
-                                    </div>
-                                </td> -->
                                 <td style="width: 10px">{{ calls.email }}</td>
                                 <td>{{ calls.contact }}</td>
                                 <td>{{ calls.channel }}</td>
@@ -521,22 +497,6 @@
                                             onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                                             disabled
                                         />
-                                        <!-- <select
-                                            id="inputContactNumber"
-                                            class="form-select"
-                                            name="selectedContactNumber"
-                                            [(ngModel)]="selectedContactNumber"
-                                        >
-                                            <option
-                                                *ngFor="let contactNumbers of contactNumber"
-                                                [ngValue]="{
-                                                    contactNumber: contactNumbers.contactNumber,
-                                                    contactNumberId: contactNumbers.contactNumberId
-                                                }"
-                                            >
-                                                {{ contactNumbers.contactNumber }}
-                                            </option>
-                                        </select> -->
                                     </div>
 
                                     <div class="col-6" *ngIf="selectedChannels === '3'">
@@ -549,11 +509,6 @@
                                             id="inputEmail"
                                             disabled
                                         />
-                                        <!-- <select id="inputEmail" class="form-select" name="selectedEmail" [(ngModel)]="selectedEmail">
-                                            <option *ngFor="let emails of email" [value]="emails.emailId">
-                                                {{ emails.email }}
-                                            </option>
-                                        </select> -->
                                     </div>
                                     <div class="form-check" style="margin-top: 17px">
                                         <input
@@ -661,97 +616,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
-                <div class="offcanvas-body">
-                    <div class="d-flex flex-wrap justify-content-between">
-                        <div class="d-flex">
-                            <div class="p-2 flex-grow-1" type="button" placement="bottom" ngbTooltip="ปิด">
-                                <fa-icon class="" [icon]="faCircleXmark" size="lg" data-bs-dismiss="offcanvas"></fa-icon>
-                            </div>
-                        </div>
-                        <div class="d-flex">
-                            <div *ngIf="visibleLeftSideBar" class="p-2" type="button" (click)="changeSideBar('left')">
-                                <fa-icon [icon]="faArrowLeft" size="lg" placement="bottom" ngbTooltip="ย้อนกลับ"></fa-icon>
-                            </div>
-                            <div
-                                *ngIf="visibleRightSideBar"
-                                class="p-2"
-                                type="button"
-                                (click)="changeSideBar('right')"
-                                placement="bottom"
-                                ngbTooltip="ถัดไป"
-                            >
-                                <fa-icon [icon]="faArrowRight" size="lg"></fa-icon>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="p-5 shadow call-side-detail">
-                        <div class="d-flex justify-content-end">
-                            <div class="d-flex flex-wrap">
-                                <div class="flex-grow-1" type="button" placement="bottom" ngbTooltip="แก้ไข">
-                                    <fa-icon class="color-primary cursor-pointer" [icon]="faPenToSquare" size="lg"></fa-icon>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <h4>เบอร์โทร</h4>
-                            <h5 class="font-b">{{ detailItem?.caller || emptyItem }}</h5>
-                        </div>
-                        <div class="row row-side">
-                            <div class="col">
-                                <h5>เวลา</h5>
-                                <div class="font-b">{{ detailItem?.createdAt | date : 'dd/MM/yyyy HH:mm' || emptyItem }}</div>
-                            </div>
-                            <div class="col">
-                                <h5>ประเภทสาย</h5>
-                                <div class="font-b">{{ detailItem?.type || emptyItem }}</div>
-                            </div>
-                        </div>
-                        <div class="grid pt-2">
-                            <div class="col row-side">
-                                <h5>ผู้ที่รับผิดชอบ</h5>
-                                <div class="font-b">{{ detailItem?.agent || emptyItem }}</div>
-                            </div>
-                            <div class="col row-side">
-                                <h5>เรื่องที่ติดต่อ</h5>
-                                <div *ngIf="detailItem && detailItem.casesub" class="font-b">
-                                    <div *ngFor="let topic of detailItem.casesub.split(',')" class="font-b">{{ topic }}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="grid pt-2 row-side">
-                            <div class="col row-side">
-                                <h5>แนวทางการแก้ไข</h5>
-                                <div class="font-b">{{ detailItem?.solution || emptyItem }}</div>
-                            </div>
-                            <div class="col row-side">
-                                <h5>รายละเอียด</h5>
-                                <div class="font-b">{{ detailItem?.description || emptyItem }}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="p-5 shadow call-side-change-by">
-                        <div class="row row-side">
-                            <div class="col">
-                                <h5>สร้างโดยผู้ใช้</h5>
-                                <div class="font-b">{{ detailItem?.agent || emptyItem }}</div>
-                            </div>
-                            <div class="col">
-                                <h5>แก้ไขล่าสุดโดยผู้ใช้</h5>
-                                <div class="font-b">{{ detailItem?.modifiedByUsername || emptyItem }}</div>
-                            </div>
-                        </div>
-                        <div class="row row-side">
-                            <div class="col">
-                                <h5>เวลาที่แก้ไขล่าสุด</h5>
-                                <div class="font-b">{{ detailItem?.modifiedAt | date : 'dd/MM/yyyy HH:mm' || emptyItem }}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
         </div>
     </div>
 </div>
