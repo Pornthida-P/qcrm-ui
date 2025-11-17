@@ -39,6 +39,7 @@ export class ManageContactsComponent implements OnInit {
     contactNum: string = '';
     contactNum2: string = '';
     contactProvince: string = '';
+    contactGender: string = 'unknown';
     contactCreatedByID: string = '';
     contactCreatedAt: string = '';
     contactModifiedByID: string = '';
@@ -272,6 +273,7 @@ export class ManageContactsComponent implements OnInit {
             this.detailItem = res[0];
             this.contactFirstName = this.detailItem.firstName;
             this.contactLastName = this.detailItem.lastName;
+            this.contactGender = this.detailItem.gender || 'unknown';
             this.contactIden = this.detailItem.iden;
             this.oldIden = this.detailItem.iden;
             this.contactOrg = this.detailItem.organization_id;
@@ -372,6 +374,7 @@ export class ManageContactsComponent implements OnInit {
             contactNumber: this.contactNum,
             contactNumber2: this.contactNum2,
             province: this.contactProvince,
+            gender: this.contactGender || 'unknown',
             modifiedById: userData.userId,
             oldIdentification: this.oldIden,
             contactNumNew: this.contactNumNew,
@@ -444,6 +447,7 @@ export class ManageContactsComponent implements OnInit {
             email: this.contactEmail,
             contactNumber: this.contactNum,
             province: this.contactProvince,
+            gender: this.contactGender || 'unknown',
             createdById: userData.userId,
             contactNumber2: this.contactNum2,
         };
