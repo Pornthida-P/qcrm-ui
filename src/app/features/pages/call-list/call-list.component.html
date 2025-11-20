@@ -1,0 +1,85 @@
+<div class="h-full">
+  <div class="bg-white rounded shadow w-100 h-100 d-flex flex-column p-4 overflow-auto">
+      <div class="p-4">
+          <p class="m-0 d-flex fs-5">รายการติดต่อ</p>
+      </div>
+
+      <div>
+          <div class="table-responsive">
+              <table class="table table-hover">
+                  <thead>
+                      <tr>
+                          <th scope="col">เวลา</th>
+                          <th scope="col">เบอร์โทร</th>
+                          <th scope="col">ผู้ติดต่อ</th>
+                          <th scope="col">ประเภท</th>
+                          <th scope="col">ประเภทสาย</th>
+                          <th scope="col">เรื่องที่ติดต่อ</th>
+                          <th scope="col">สคริปต์</th>
+                          <th scope="col">รายละเอียด</th>
+                          <th scope="col">สถานะ</th>
+                          <th scope="col">ผู้ที่รับผิดชอบ</th>
+                          <th scope="col">จัดการ</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <ng-container *ngIf="paginatedCalls.length > 0; else noDataTemplate">
+                          <tr *ngFor="let call of paginatedCalls; let i = index">
+                              <td>{{ call.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
+                              <td>{{ call.caller || '-' }}</td>
+                              <td>{{ call.email || '-' }}</td>
+                              <td>{{ call.contact || '-' }}</td>
+                              <td>{{ call.channel || '-' }}</td>
+                              <td>{{ call.type || '-' }}</td>
+                              <td>{{ call.casesub || '-' }}</td>
+                              <td>{{ call.description || '-' }}</td>
+                              <td>{{ call.solution || '-' }}</td>
+                              <td>{{ call.agent || '-' }}</td>
+                              <td class="text-center">
+                                  <div class="d-flex flex-row flex-nowrap justify-content-center">
+                                      <!-- Actions can be added here -->
+                                  </div>
+                              </td>
+                          </tr>
+                      </ng-container>
+                      <ng-template #noDataTemplate>
+                          <tr>
+                              <td colspan="11" class="text-center"><span class="color-gray">ไม่มีข้อมูล</span></td>
+                          </tr>
+                      </ng-template>
+                  </tbody>
+              </table>
+          </div>
+          <ul class="pagination sidebar justify-content-center">
+              <li class="page-item" [class.disabled]="currentPage == 1">
+                  <a class="page-link custom-link preBtn" (click)="pageChange(1)" aria-label="Previous">
+                      <i class="fa-solid fa-angles-left"></i>
+                  </a>
+              </li>
+              <li class="page-item" [class.disabled]="currentPage == 1">
+                  <a class="page-link custom-link" (click)="pageChange(currentPage - 1)" aria-label="Previous">
+                      <i class="fa-solid fa-angle-left"></i>
+                  </a>
+              </li>
+              <li *ngFor="let page of pages" class="page-item" [class.active]="currentPage == page">
+                  <a class="page-link custom-link" (click)="pageChange(page)">{{ page }}</a>
+              </li>
+              <li class="page-item" [class.disabled]="currentPage == totalPages">
+                  <a class="page-link custom-link" (click)="pageChange(currentPage + 1)" aria-label="Next">
+                      <i class="fa-solid fa-angle-right"></i>
+                  </a>
+              </li>
+              <li class="page-item" [class.disabled]="currentPage == totalPages">
+                  <a class="page-link custom-link nextBtn" (click)="pageChange(totalPages)" aria-label="Next">
+                      <i class="fa-solid fa-angles-right"></i>
+                  </a>
+              </li>
+              <li class="page-item ms-3">
+                  <select class="form-select" aria-label="Default select example" [(ngModel)]="pageSize" (change)="pageSizeChange()">
+                      <option class="dropdown-item" *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}</option>
+                  </select>
+              </li>
+          </ul>
+      </div>
+  </div>
+</div>

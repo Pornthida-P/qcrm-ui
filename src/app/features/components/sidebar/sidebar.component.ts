@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { faChartPie, faFileLines, faFilePen, faGear, faHouse, faPhoneVolume } from '@fortawesome/free-solid-svg-icons';
+import { faChartPie, faClipboardList, faFileLines, faFilePen, faGear, faHouse, faPhoneVolume } from '@fortawesome/free-solid-svg-icons';
 import { UserService } from 'src/app/services/user/user.service';
 import { User } from 'src/app/shared/interface/user.interface';
 
@@ -22,32 +22,39 @@ export class SidebarComponent implements OnInit {
                 label: 'home',
                 icon: faHouse,
                 routerLink: '/home',
-                roles: [1,2,3]
+                roles: [1, 2, 3],
+            },
+            {
+                label: 'call-list',
+                icon: faClipboardList,
+                routerLink: '/call-list',
+                roles: [1, 2, 3],
             },
             {
                 label: 'contacts',
                 icon: faFileLines,
                 routerLink: '/contacts',
-                roles: [1,2,3]
+                roles: [1, 2, 3],
             },
             {
                 label: 'call',
                 icon: faPhoneVolume,
                 routerLink: '/call',
-                roles: [1,2,3]
+                roles: [1, 2, 3],
             },
             {
                 label: 'report-page',
                 icon: faChartPie,
                 routerLink: '/report-page',
-                roles: [1,2]
+                roles: [1, 2],
             },
             {
                 label: 'manage-page',
                 icon: faGear,
                 routerLink: '/manage-page',
-                roles: [2]
+                roles: [2],
             },
+
             // {
             //     label: 'หลักสูตร E-Learning',
             //     icon: faBookOpen,
