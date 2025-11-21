@@ -78,7 +78,8 @@
         "contacts": "Contacts",
         "call": "Call History",
         "report-page": "Reports",
-        "manage-page": "Manage Page"
+        "manage-page": "Manage Page",
+        "call-list": "Call List"
     },
     "menuSetting": {
         "menagement-account": "Account Management",

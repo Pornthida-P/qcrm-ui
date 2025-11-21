@@ -78,7 +78,8 @@
         "contacts": "ฐานข้อมูลผู้ใช้บริการและประวัติผู้ติดต่อ",
         "call": "ประวัติการติดต่อ",
         "report-page": "รายงาน",
-        "manage-page": "จัดการข้อมูล"
+        "manage-page": "จัดการข้อมูล",
+        "call-list": "รายการติดต่อ"
     },
     "menuSetting": {
         "menagement-account": "จัดการบัญชี",

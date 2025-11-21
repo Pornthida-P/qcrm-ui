@@ -79,6 +79,11 @@ const routes: Routes = [
                 title: 'Manage Page',
             },
             {
+                path: 'call-list',
+                loadChildren: () => import('../../pages/call-list/call-list.module').then((m) => m.CallListModule),
+                title: 'Call List',
+            },
+            {
                 path: '',
                 redirectTo: '/home',
                 pathMatch: 'full',
