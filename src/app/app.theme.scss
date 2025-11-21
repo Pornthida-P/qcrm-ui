@@ -1,8 +1,8 @@
 :root {
-    --primary: rgb(255, 95, 31);
-    --primary-active-color: rgb(255, 128, 64);
-    --color-blue-dark: rgb(1, 9, 102);
-    --color-light-sky: rgb(32, 160, 255);
+    --primary: #fb5f20;
+    --primary-active-color: #ff8040;
+    --color-blue-dark: #010966;
+    --color-light-sky: #20a0ff;
     --color-lighter-red: #ec5365;
     --color-lighter-green: #53ec62;
     --color-white: #ffffff;
@@ -229,4 +229,8 @@ th[sortable].desc:before {
 
 .loading {
     opacity: 0.5;
+}
+
+.bg-dark-blue {
+    background-color: var(--color-blue-dark);
 }
