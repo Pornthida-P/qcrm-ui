@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { HomePageComponent } from './home-page.component';
+import { HighchartsChartModule } from 'highcharts-angular';
 
 @NgModule({
     declarations: [HomePageComponent],
@@ -17,6 +18,7 @@ import { HomePageComponent } from './home-page.component';
                 component: HomePageComponent,
             },
         ]),
+        HighchartsChartModule,
     ],
     providers: [],
     exports: [],
