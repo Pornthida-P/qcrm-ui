@@ -16,6 +16,7 @@ import { ContactsService } from 'src/app/services/contacts/contacts.service';
 import { AttachmentService } from 'src/app/services/attachment/attachment.service';
 import { Attachment } from 'src/app/shared/interface/attachment.interface';
 import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
+import { CallListService } from 'src/app/services/call-list/call-list.service';
 
 @Pipe({
     name: 'searchFilter',
@@ -178,6 +179,8 @@ export class CallComponent implements OnInit {
     selectedEmail: any[] = [];
     email: any;
     emails: any;
+    statusList: any[] = [];
+    selectedStatus: any;
 
     constructor(
         private callService: CallService,
@@ -189,6 +192,7 @@ export class CallComponent implements OnInit {
         private contactsService: ContactsService,
         private attachmentService: AttachmentService,
         private auditLogService: AuditLogService,
+        private callListService: CallListService,
     ) {
         this.startTime = this.formatDate(new Date());
     }
@@ -251,6 +255,8 @@ export class CallComponent implements OnInit {
             { id: '1', name: this.inbound },
             { id: '2', name: this.outbound },
         ];
+
+        this.getStatusList();
     }
 
     onUserSelectDateFilter(newDateFilterType: string) {
@@ -587,33 +593,45 @@ export class CallComponent implements OnInit {
                 this.selectedEmail = call[0].email;
                 this.selectedContactNumber = call[0].caller_id;
 
-                // Handle caseTopicIds
+                // Handle caseTopicIds - For single select, use first value only
                 if (call[0].caseTopicId && call[0].caseTopicId !== 'null') {
                     let caseTopicIds = call[0].caseTopicId;
                     if (!Array.isArray(caseTopicIds)) {
                         caseTopicIds = JSON.parse(caseTopicIds);
                     }
-                    this.selectSubject = caseTopicIds.length;
+                    this.selectSubject = caseTopicIds.length > 0 ? caseTopicIds.length : 1;
                     for (let i = 0; i < this.selectSubject; i++) {
-                        if (caseTopicIds[i].length != 0) {
-                            this.selectedCaseTopics[i] = caseTopicIds[i].map(String);
+                        if (Array.isArray(caseTopicIds[i]) && caseTopicIds[i].length > 0) {
+                            // If it's array of arrays, get first element
+                            this.selectedCaseTopics[i] = String(caseTopicIds[i][0]);
+                        } else if (caseTopicIds[i]) {
+                            // If it's single value
+                            this.selectedCaseTopics[i] = String(caseTopicIds[i]);
                         } else {
-                            this.selectedCaseTopics[i] = [];
+                            this.selectedCaseTopics[i] = null;
                         }
                     }
                 }
 
-                // Handle caseSubjects
+                // Handle caseSubjects - For single select, use first value only
                 if (call[0].caseSubject && call[0].caseSubject !== 'null') {
                     let caseSubjects = call[0].caseSubject;
                     if (!Array.isArray(caseSubjects)) {
                         caseSubjects = JSON.parse(caseSubjects);
                     }
                     for (let i = 0; i < this.selectSubject; i++) {
-                        if (this.selectedCaseTopics[i].length != 0) {
-                            this.selectedCasesubject[i] = caseSubjects[i].map(String);
+                        if (this.selectedCaseTopics[i]) {
+                            if (Array.isArray(caseSubjects[i]) && caseSubjects[i].length > 0) {
+                                // If it's array of arrays, get first element
+                                this.selectedCasesubject[i] = String(caseSubjects[i][0]);
+                            } else if (caseSubjects[i]) {
+                                // If it's single value
+                                this.selectedCasesubject[i] = String(caseSubjects[i]);
+                            } else {
+                                this.selectedCasesubject[i] = null;
+                            }
                         } else {
-                            this.selectedCaseTopics[i] = [];
+                            this.selectedCasesubject[i] = null;
                         }
                     }
                 }
@@ -643,7 +661,12 @@ export class CallComponent implements OnInit {
                     if (!Array.isArray(caseTopicIds)) {
                         caseTopicIds = JSON.parse(caseTopicIds);
                     }
-                    this.selectedCaseTopics[0] = caseTopicIds.map(String);
+                    // For single select, use first value only
+                    // If caseTopicIds is array of arrays, get first element of first array
+                    if (Array.isArray(caseTopicIds) && caseTopicIds.length > 0) {
+                        const firstTopic = Array.isArray(caseTopicIds[0]) ? caseTopicIds[0][0] : caseTopicIds[0];
+                        this.selectedCaseTopics[0] = firstTopic ? String(firstTopic) : null;
+                    }
                 }
 
                 if (call.caseSubjectIds && call.caseSubjectIds !== 'null') {
@@ -651,7 +674,12 @@ export class CallComponent implements OnInit {
                     if (!Array.isArray(caseSubjects)) {
                         caseSubjects = JSON.parse(caseSubjects);
                     }
-                    this.selectedCasesubject[0] = caseSubjects.map(String);
+                    // For single select, use first value only
+                    // If caseSubjects is array of arrays, get first element of first array
+                    if (Array.isArray(caseSubjects) && caseSubjects.length > 0) {
+                        const firstSubject = Array.isArray(caseSubjects[0]) ? caseSubjects[0][0] : caseSubjects[0];
+                        this.selectedCasesubject[0] = firstSubject ? String(firstSubject) : null;
+                    }
                 }
             });
         }
@@ -846,31 +874,34 @@ export class CallComponent implements OnInit {
         const isChannelOne = this.selectedChannels === '1';
         const selectedCallTypeId = isChannelOne ? this.selectedCallTypeId : null;
 
-        if (this.cType === 'call') {
-            for (let i = 0; i < this.selectSubject; i++) {
-                if (this.selectedCaseTopics[i] == null) {
-                    this.selectedCaseTopics[i] = [];
-                    this.selectedCasesubject[i] = [];
-                } else {
-                    if (this.selectedCasesubject[i] == null) {
-                        this.selectedCasesubject[i] = [];
-                    }
+        // Prepare selectedCaseTopics and selectedCasesubject for single select
+        for (let i = 0; i < this.selectSubject; i++) {
+            if (this.selectedCaseTopics[i] == null) {
+                this.selectedCaseTopics[i] = null;
+                this.selectedCasesubject[i] = null;
+            } else {
+                if (this.selectedCasesubject[i] == null) {
+                    this.selectedCasesubject[i] = null;
                 }
             }
-            if (this.selectedCaseTopics.length > this.selectSubject) {
-                this.selectedCasesubject = this.selectedCasesubject.slice(0, this.selectSubject);
-                this.selectedCaseTopics = this.selectedCaseTopics.slice(0, this.selectSubject);
-            }
+        }
+        if (this.selectedCaseTopics.length > this.selectSubject) {
+            this.selectedCasesubject = this.selectedCasesubject.slice(0, this.selectSubject);
+            this.selectedCaseTopics = this.selectedCaseTopics.slice(0, this.selectSubject);
         }
 
         if (!this.callId) {
-            if (this.selectedCaseTopics.length > 0) {
+            if (this.selectedCaseTopics.length > 0 && this.selectedCaseTopics[0]) {
+                // Convert single select values to array format for backend compatibility
+                const caseTopicIdArray = this.selectedCaseTopics.map((topic: any) => (topic ? [topic] : []));
+                const caseSubjectArray = this.selectedCasesubject.map((subject: any) => (subject ? [subject] : []));
+
                 const data = {
                     contactId: this.contactId,
                     name: userData.userId,
                     organization: this.contactOrg,
-                    caseTopicId: this.selectedCaseTopics,
-                    caseSubject: this.selectedCasesubject,
+                    caseTopicId: caseTopicIdArray,
+                    caseSubject: caseSubjectArray,
                     channel: this.selectedChannels,
                     emailInfo: this.isEmailSubscribed ? 1 : null,
                     activityType: this.activityTypeId,
@@ -915,11 +946,15 @@ export class CallComponent implements OnInit {
             }
         } else if (this.callId && this.cType === 'call') {
             console.log('Edit Call:', this.callId);
-            if (this.selectedCaseTopics.length > 0) {
+            if (this.selectedCaseTopics.length > 0 && this.selectedCaseTopics[0]) {
+                // Convert single select values to array format for backend compatibility
+                const caseTopicIdArray = this.selectedCaseTopics.map((topic: any) => (topic ? [topic] : []));
+                const caseSubjectArray = this.selectedCasesubject.map((subject: any) => (subject ? [subject] : []));
+
                 const data = {
                     callId: this.callId,
-                    caseTopicId: this.selectedCaseTopics,
-                    caseSubject: this.selectedCasesubject,
+                    caseTopicId: caseTopicIdArray,
+                    caseSubject: caseSubjectArray,
                     channel: this.selectedChannels,
                     emailInfo: this.isEmailSubscribed ? 1 : null,
                     activityType: this.activityTypeId,
@@ -1028,6 +1063,11 @@ export class CallComponent implements OnInit {
         console.log(this.selectSubject);
     }
 
+    onCaseTopicChange(event: any, index: number) {
+        // Clear case subject when case topic changes
+        this.selectedCasesubject[index] = null;
+    }
+
     async getContactNumber(contactsId: string) {
         try {
             const contactNumber = (await this.callService.getContactNumbertById(contactsId).toPromise()) as any[];
@@ -1112,5 +1152,12 @@ export class CallComponent implements OnInit {
         } else {
             return false;
         }
+    }
+
+    getStatusList() {
+        this.callListService.getStatusList().subscribe((res: any) => {
+            this.statusList = res;
+            console.log(this.statusList);
+        });
     }
 }

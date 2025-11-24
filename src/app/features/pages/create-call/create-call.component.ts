@@ -13,6 +13,7 @@ import { AttachmentService } from 'src/app/services/attachment/attachment.servic
 import { Attachment } from 'src/app/shared/interface/attachment.interface';
 import Swal from 'sweetalert2';
 import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
+import { CallListService } from 'src/app/services/call-list/call-list.service';
 @Component({
     selector: 'app-create-call',
     templateUrl: './create-call.component.html',
@@ -51,7 +52,7 @@ export class CreateCallComponent {
     selectedCasesubject: any[] = [];
     selectedCaseTopics: any[] = [];
     selectedChannels: any;
-
+    selectedStatus: any;
     numberArray = [1, 2, 3, 4, 5];
     selectSubject = 1;
 
@@ -156,6 +157,7 @@ export class CreateCallComponent {
     selectedContactNumber: { contactNumber: string; contactNumberId: string } | null = null;
     selectedEmail: any[] = [];
     email: any;
+    statusList: any[] = [];
 
     // pageEln: number | undefined = 0;
 
@@ -170,6 +172,7 @@ export class CreateCallComponent {
         private ngSelectConfig: NgSelectConfig,
         private attachmentService: AttachmentService,
         private auditLogService: AuditLogService,
+        private callListService: CallListService,
     ) {
         this.startTime = this.formatDate(new Date());
     }
@@ -294,9 +297,11 @@ export class CreateCallComponent {
             { id: '1', name: this.inbound },
             { id: '2', name: this.outbound },
         ];
+
+        this.getStatusList();
     }
 
-    submit() {
+    submitCall() {
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
         this.attachmentsId = this.attachments.map((attachment) => attachment.attachmentId.toString());
         const selectedDate = this.startTime ? this.formatDate(new Date(this.startTime)) : this.formatDate(new Date());
@@ -308,11 +313,11 @@ export class CreateCallComponent {
 
         for (let i = 0; i < this.selectSubject; i++) {
             if (this.selectedCaseTopics[i] == null) {
-                this.selectedCaseTopics[i] = [];
-                this.selectedCasesubject[i] = [];
+                this.selectedCaseTopics[i] = null;
+                this.selectedCasesubject[i] = null;
             } else {
                 if (this.selectedCasesubject[i] == null) {
-                    this.selectedCasesubject[i] = [];
+                    this.selectedCasesubject[i] = null;
                 }
             }
         }
@@ -325,8 +330,8 @@ export class CreateCallComponent {
             contactId: this.contactIdSelect,
             name: this.contactId,
             organization: this.contactOrg,
-            caseTopicId: this.selectedCaseTopics,
-            caseSubject: this.selectedCasesubject,
+            caseTopicId: this.selectedCaseTopics[0] ? [this.selectedCaseTopics[0]] : [],
+            caseSubject: this.selectedCasesubject[0] ? [this.selectedCasesubject[0]] : [],
             channel: this.selectedChannels,
             emailInfo: this.isEmailSubscribed ? 1 : null,
             // activityType: this.activityTypeId,
@@ -340,6 +345,7 @@ export class CreateCallComponent {
             contactNumberId: this.selectedContactNumber ? this.selectedContactNumber.contactNumberId : null,
             operationType: selectedCallTypeId,
             emails: this.selectedEmail,
+            status: this.selectedStatus,
         };
         console.log('data Call: ', data);
 
@@ -373,6 +379,117 @@ export class CreateCallComponent {
                         ,Caller_id : ${data.caller_id}
                         ,Call_id : ${data.call_id}
                         ,Type : ${data.operationType}`,
+                        `Failed, Error : ${error}`,
+                    );
+                    throw error;
+                }),
+            )
+            .subscribe();
+    }
+
+    submit() {
+        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        this.attachmentsId = this.attachments.map((attachment) => attachment.attachmentId.toString());
+        const selectedDate = this.startTime ? this.formatDate(new Date(this.startTime)) : this.formatDate(new Date());
+        const selectedTime = this.timepickStart ? this.formatTime(this.timepickStart) : this.formatTime(new Date());
+
+        const isChannelOne = this.selectedChannels === '1' || this.selectedChannels === '2' || this.selectedChannels === '3';
+
+        const selectedCallTypeId = isChannelOne ? this.selectedCallTypeId : null;
+
+        for (let i = 0; i < this.selectSubject; i++) {
+            if (this.selectedCaseTopics[i] == null) {
+                this.selectedCaseTopics[i] = null;
+                this.selectedCasesubject[i] = null;
+            } else {
+                if (this.selectedCasesubject[i] == null) {
+                    this.selectedCasesubject[i] = null;
+                }
+            }
+        }
+        if (this.selectedCaseTopics.length > this.selectSubject) {
+            this.selectedCasesubject = this.selectedCasesubject.slice(0, this.selectSubject);
+            this.selectedCaseTopics = this.selectedCaseTopics.slice(0, this.selectSubject);
+        }
+
+        // Extract caseTopicId and caseTopicCode from first selected topic
+        // selectedCaseTopics is now a single value (single select)
+        const firstCaseTopicId = this.selectedCaseTopics && this.selectedCaseTopics.length > 0 ? this.selectedCaseTopics[0] : null;
+        const caseTopicId = firstCaseTopicId;
+
+        // Find caseTopicCode from casetopics array
+        const caseTopicCode =
+            firstCaseTopicId && this.casetopics
+                ? this.casetopics.find((topic: any) => topic.caseTopicId === firstCaseTopicId)?.code || null
+                : null;
+
+        // Extract caseSubjectId from first selected subject
+        // selectedCasesubject is now a single value (single select)
+        const caseSubjectId = this.selectedCasesubject && this.selectedCasesubject.length > 0 ? this.selectedCasesubject[0] : null;
+
+        // Format requestDateTime
+        const requestDateTime = `${selectedDate} ${selectedTime}`;
+
+        // Get current timestamp for createdAt and modifiedAt
+        const now = new Date().toISOString();
+
+        // Extract email - selectedEmail might be emailId (single) or array, need to find email string from email array
+        const emailId = Array.isArray(this.selectedEmail) && this.selectedEmail.length > 0 ? this.selectedEmail[0] : this.selectedEmail;
+        const email = emailId && this.email ? this.email.find((e: any) => e.emailId === emailId)?.email || null : null;
+
+        const dataForm = {
+            caseId: this.callIdEdit || null,
+            contactId: this.contactIdSelect,
+            channelId: this.selectedChannels,
+            requestDateTime: requestDateTime,
+            description: this.description,
+            caseTopicId: caseTopicId,
+            caseTopicCode: caseTopicCode,
+            caseSubjectId: caseSubjectId,
+            operationType: selectedCallTypeId,
+            priority: null, // Add if you have priority field in form
+            status: this.selectedStatus,
+            solution: this.solutions,
+            contactNumber: this.selectedContactNumber ? this.selectedContactNumber.contactNumber : null,
+            email: email,
+            source: null, // Add if you have source field in form
+            assignedAt: null, // Add if you have assignedAt field in form
+            createdAt: now,
+            createdById: userData.userId,
+            modifiedAt: now,
+            modifiedById: null,
+            isDeleted: 0,
+            assignedUserId: null, // Add if you have assignedUserId field in form
+            attachment: this.attachmentsId,
+        };
+        console.log('dataForm Call: ', dataForm);
+
+        this.callServive
+            .createCase(dataForm)
+            .pipe(
+                tap((res) => {
+                    this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '/contacts');
+                    this.auditLogService.log(
+                        '',
+                        'Create Call',
+                        'Create Case Call',
+                        `Detail Create call : ContactID : ${dataForm.contactId}
+                      ,RequestDateTime : ${dataForm.requestDateTime}
+                      ,ChannelId : ${dataForm.channelId}
+                      ,Type : ${dataForm.operationType}`,
+                        `Success`,
+                    );
+                }),
+                catchError((error) => {
+                    this.sweetalertServices.handleError(error);
+                    this.auditLogService.log(
+                        '',
+                        'Create Call',
+                        'Create Case Call',
+                        `Detail Create call : ContactID : ${dataForm.contactId}
+                      ,RequestDateTime : ${dataForm.requestDateTime}
+                      ,ChannelId : ${dataForm.channelId}
+                      ,Type : ${dataForm.operationType}`,
                         `Failed, Error : ${error}`,
                     );
                     throw error;
@@ -673,5 +790,17 @@ export class CreateCallComponent {
     removeTopicAndSubject() {
         if (this.selectSubject > 0) this.selectSubject--;
         console.log(this.selectSubject);
+    }
+
+    onCaseTopicChange(event: any, index: number) {
+        // Clear case subject when case topic changes
+        this.selectedCasesubject[index] = null;
+    }
+
+    getStatusList() {
+        this.callListService.getStatusList().subscribe((res: any) => {
+            this.statusList = res;
+            console.log('Status List:', this.statusList);
+        });
     }
 }

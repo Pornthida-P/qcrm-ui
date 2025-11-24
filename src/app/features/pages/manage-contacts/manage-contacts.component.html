@@ -143,43 +143,6 @@
                         />
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="d-flex">
-                        <label for="inputContactEmail" class="form-label">อีเมล</label>
-                        <div
-                            class="mb-2 p-1 btn-primary text-white rounded-2 cursor-pointer add-number ms-2"
-                            (click)="inputAddEmail()"
-                            ngbTooltip="เพิ่มอีเมล"
-                            *ngIf="TableShowing"
-                        >
-                            <i class="fa-solid fa-plus fs-icon"></i>
-                        </div>
-                    </div>
-                    <input
-                        *ngIf="!contactId"
-                        type="text"
-                        class="form-control"
-                        [(ngModel)]="contactEmail"
-                        name="contactEmail"
-                        id="inputContactEmail"
-                        [disabled]="!checkRole()"
-                    />
-                    <input
-                        #emailInput
-                        *ngIf="isInputVisibleMail"
-                        type="text"
-                        class="form-control mt-2"
-                        placeholder="เพิ่มอีเมล"
-                        [(ngModel)]="contactEmailNew"
-                        name="contactEmailNew"
-                        id="inputContactEmailNew"
-                        [disabled]="!checkRole()"
-                    />
-
-                    <div *ngFor="let email of emailById; let i = index">
-                        <input type="text" class="form-control mt-2" [(ngModel)]="email.email" name="email{{ i }}" id="inputemail{{ i }}" />
-                    </div>
-                </div>
                 <div class="col-md-6" *ngIf="MultiNumber == true">
                     <label for="inputContactNum" class="form-label">เบอร์ติดต่อ (ใหม่)</label>
                     <input
@@ -298,39 +261,48 @@
                             <label [ngClass]="{ 'display-none': i != 1 }" for="inputTopic" class="form-label"
                                 >หัวข้อที่ติดต่อ<span class="color-red">*</span></label
                             >
-                            <ng-select
+                            <select
                                 id="inputTopic"
+                                class="form-select"
+                                [name]="'selectedCaseTopics' + i"
                                 [(ngModel)]="selectedCaseTopics[i - 1]"
-                                name="selectedCaseTopics{{ i }}"
-                                [multiple]="true"
+                                (change)="onCaseTopicChange($event, i - 1)"
                             >
-                                <ng-option *ngFor="let casetopic of casetopics" [value]="casetopic.caseTopicId">
+                                <option disabled value="">กรุณาเลือกข้อมูล</option>
+                                <option *ngFor="let casetopic of casetopics" [value]="casetopic.caseTopicId">
                                     {{ casetopic.name }}
-                                </ng-option>
-                            </ng-select>
+                                </option>
+                            </select>
                         </div>
 
                         <div class="col-md-6">
                             <label [ngClass]="{ 'display-none': i != 1 }" for="inputCaseSubject" class="form-label">เรื่องที่ติดต่อ</label>
-                            <ng-select
+                            <select
                                 id="inputCaseSubject"
+                                class="form-select"
+                                [name]="'selectedCasesubject' + i"
                                 [(ngModel)]="selectedCasesubject[i - 1]"
-                                name="selectedCasesubject{{ i }}"
-                                [multiple]="true"
                             >
+                                <option disabled value="">กรุณาเลือกข้อมูล</option>
                                 <ng-container *ngFor="let casesubject of casesubjects">
-                                    <ng-option
+                                    <option
+                                        *ngIf="selectedCaseTopics[i - 1] && selectedCaseTopics[i - 1] == casesubject.caseTopicId"
                                         [value]="casesubject.caseSubjectId"
-                                        *ngIf="selectedCaseTopics[i - 1]?.includes(casesubject.caseTopicId)"
                                     >
                                         {{ casesubject.name }}
-                                    </ng-option>
+                                    </option>
                                 </ng-container>
-                            </ng-select>
+                            </select>
                         </div>
                     </div>
                 </div>
-
+                <div class="col-6">
+                    <label for="inputStatus" class="form-label">สถานะ</label>
+                    <select id="inputStatus" class="form-select" name="selectedStatus" [(ngModel)]="selectedStatus">
+                        <option disabled value="">กรุณาเลือกข้อมูล</option>
+                        <option *ngFor="let status of statusList" [value]="status.id">{{ status.status }}</option>
+                    </select>
+                </div>
                 <div class="col-6">
                     <label for="inputChannel" class="form-label">ช่องทางติดต่อ</label>
                     <select

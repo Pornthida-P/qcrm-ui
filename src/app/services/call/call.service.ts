@@ -163,4 +163,8 @@ export class CallService {
     getAllStatus() {
         return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.allStatus}`);
     }
+
+    createCase(data: any) {
+        return this.http.post(`${this.baseUrl}${config.api.path.callList.baseUrl}`, data);
+    }
 }

@@ -57,8 +57,9 @@ export const config = {
                 getAgent: '/report/getAgent',
             },
             callList: {
-                baseUrl: '/case',
-            },
+              baseUrl: '/case',
+              status: '/status',
+              },
         },
     },
     strapi: {

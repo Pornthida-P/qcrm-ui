@@ -16,6 +16,7 @@ import * as moment from 'moment';
 import { WebSocketSubject } from 'rxjs/webSocket';
 import { TranslateService } from '@ngx-translate/core';
 declare var bootstrap: any;
+import { CallListService } from 'src/app/services/call-list/call-list.service';
 
 @Component({
     selector: 'app-manage-contacts',
@@ -172,6 +173,8 @@ export class ManageContactsComponent implements OnInit {
     isInputVisibleMail: boolean = false;
     @ViewChild('emailInput') emailInputRef!: ElementRef;
 
+    statusList: any[] = [];
+    selectedStatus: any;
     phoneNumbers: string[] = [''];
     constructor(
         private _location: Location,
@@ -184,6 +187,7 @@ export class ManageContactsComponent implements OnInit {
         private attachmentService: AttachmentService,
         private callServive: CallService,
         private translate: TranslateService,
+        private callListService: CallListService,
     ) {
         this.contact = { components: [] };
         this.startTime = this.formatDate(new Date());
@@ -254,6 +258,15 @@ export class ManageContactsComponent implements OnInit {
             { id: '1', name: this.inbound },
             { id: '2', name: this.outbound },
         ];
+
+        this.getStatusList();
+    }
+
+    getStatusList() {
+        this.callListService.getStatusList().subscribe((res: any) => {
+            this.statusList = res;
+            console.log('Status List:', this.statusList);
+        });
     }
 
     checkRole(): boolean {
@@ -665,11 +678,10 @@ export class ManageContactsComponent implements OnInit {
     editCall(callId: string, type: string) {
         this.currentChannel = '';
         this.attachmentShowing = false;
-        console.log('Edit Call:', callId);
+        console.log('Edit Case:', callId);
         console.log('Type:', type);
         this.cType = '';
         this.callId = '';
-        // this.selectedCasesubject = [];
         this.selectedChannels = '';
         this.isEmailSubscribed = 0;
         this.activityTypeId = '';
@@ -677,6 +689,9 @@ export class ManageContactsComponent implements OnInit {
         this.description = '';
         this.solutions = '';
         this.selectedCallTypeId = '';
+        this.selectedStatus = null;
+        this.selectedContactNumber = null;
+        this.selectedEmail = [];
         const date = new Date();
         this.timepickStart = {
             hour: date.getHours(),
@@ -687,66 +702,16 @@ export class ManageContactsComponent implements OnInit {
         this.selectedCasesubject = [];
         this.selectedActivityTopicId = [];
 
-        if (type === 'call') {
-            this.callServive.getCallById(callId).subscribe((call: any) => {
-                console.log('Call:', call);
-                this.cType = 'call';
-                this.callId = call[0].callId;
-                // this.selectedCasesubject = call[0].caseSubject;
-                this.selectedChannels = call[0].channel;
-                this.currentChannel = call[0].channel;
-                this.isEmailSubscribed = call[0].emailInfo;
-                this.activityTypeId = call[0].activityType;
-                this.startTime = call[0].startTime;
-                this.description = call[0].description;
-                this.solutions = call[0].solution;
-                this.selectedCallTypeId = call[0].operationType;
-                this.selectedContactNumber = call[0].caller_id;
-                this.selectedEmail = call[0].emails;
-                const date = new Date(call[0].startTime);
-                this.timepickStart = {
-                    hour: date.getHours(),
-                    minute: date.getMinutes(),
-                    second: date.getSeconds(),
-                };
-                // Handle caseTopicIds
-                if (call[0].caseTopicId && call[0].caseTopicId !== 'null') {
-                    let caseTopicIds = call[0].caseTopicId;
-                    if (!Array.isArray(caseTopicIds)) {
-                        caseTopicIds = JSON.parse(caseTopicIds);
-                    }
-                    this.selectSubject = caseTopicIds.length;
-                    for (let i = 0; i < this.selectSubject; i++) {
-                        if (caseTopicIds[i].length != 0) {
-                            this.selectedCaseTopics[i] = caseTopicIds[i].map(String);
-                        } else {
-                            this.selectedCaseTopics[i] = [];
-                        }
-                    }
-                }
-
-                // Handle caseSubjects
-                if (call[0].caseSubject && call[0].caseSubject !== 'null') {
-                    let caseSubjects = call[0].caseSubject;
-                    if (!Array.isArray(caseSubjects)) {
-                        caseSubjects = JSON.parse(caseSubjects);
-                    }
-                    for (let i = 0; i < this.selectSubject; i++) {
-                        if (this.selectedCaseTopics[i].length != 0) {
-                            this.selectedCasesubject[i] = caseSubjects[i].map(String);
-                        } else {
-                            this.selectedCaseTopics[i] = [];
-                        }
-                    }
-                }
-            });
-        } else if (type === 'case') {
+        // Only handle case type
+        if (type === 'case') {
             this.callServive.getCaseById(callId).subscribe((call: any) => {
                 this.selectSubject = 1;
                 console.log('Case:', call);
                 this.cType = 'case';
                 this.callId = call.caseId;
                 this.description = call.description;
+                this.solutions = call.solution || '';
+                this.selectedStatus = call.status;
                 this.startTime = call.requestDateTime;
                 const date = new Date(call.requestDateTime);
                 this.timepickStart = {
@@ -758,20 +723,35 @@ export class ManageContactsComponent implements OnInit {
                 this.currentChannel = call.channelId;
                 this.selectedCallTypeId = call.operationType;
 
+                // Handle contactNumber
+                if (call.contactNumber) {
+                    this.selectedContactNumber = {
+                        contactNumber: call.contactNumber,
+                        contactNumberId: call.contactNumberId || null,
+                    };
+                }
+
+                // Handle email
+                if (call.email) {
+                    this.selectedEmail = call.email;
+                }
+
+                // Handle caseTopicIds - For single select, use first value only
                 if (call.caseTopicIds && call.caseTopicIds !== 'null') {
                     let caseTopicIds = call.caseTopicIds;
                     if (!Array.isArray(caseTopicIds)) {
                         caseTopicIds = JSON.parse(caseTopicIds);
                     }
-                    this.selectedCaseTopics[0] = caseTopicIds.map(String);
+                    this.selectedCaseTopics[0] = caseTopicIds && caseTopicIds.length > 0 ? String(caseTopicIds[0]) : null;
                 }
 
+                // Handle caseSubjectIds - For single select, use first value only
                 if (call.caseSubjectIds && call.caseSubjectIds !== 'null') {
                     let caseSubjects = call.caseSubjectIds;
                     if (!Array.isArray(caseSubjects)) {
                         caseSubjects = JSON.parse(caseSubjects);
                     }
-                    this.selectedCasesubject[0] = caseSubjects.map(String);
+                    this.selectedCasesubject[0] = caseSubjects && caseSubjects.length > 0 ? String(caseSubjects[0]) : null;
                 }
             });
         }
@@ -831,60 +811,87 @@ export class ManageContactsComponent implements OnInit {
         const isChannelOne = this.selectedChannels === '1' || this.selectedChannels === '2' || this.selectedChannels === '3';
         const selectedCallTypeId = isChannelOne ? this.selectedCallTypeId : null;
 
-        if (this.selectedChannels === '3') {
-            this.contactNumParams = null;
-        }
-
-        if (this.cType === 'call') {
-            for (let i = 0; i < this.selectSubject; i++) {
-                if (this.selectedCaseTopics[i] == null) {
-                    this.selectedCaseTopics[i] = [];
-                    this.selectedCasesubject[i] = [];
-                } else {
-                    if (this.selectedCasesubject[i] == null) {
-                        this.selectedCasesubject[i] = [];
-                    }
+        // Prepare selectedCaseTopics and selectedCasesubject
+        for (let i = 0; i < this.selectSubject; i++) {
+            if (this.selectedCaseTopics[i] == null) {
+                this.selectedCaseTopics[i] = null;
+                this.selectedCasesubject[i] = null;
+            } else {
+                if (this.selectedCasesubject[i] == null) {
+                    this.selectedCasesubject[i] = null;
                 }
             }
-            if (this.selectedCaseTopics.length > this.selectSubject) {
-                this.selectedCasesubject = this.selectedCasesubject.slice(0, this.selectSubject);
-                this.selectedCaseTopics = this.selectedCaseTopics.slice(0, this.selectSubject);
-            }
+        }
+        if (this.selectedCaseTopics.length > this.selectSubject) {
+            this.selectedCasesubject = this.selectedCasesubject.slice(0, this.selectSubject);
+            this.selectedCaseTopics = this.selectedCaseTopics.slice(0, this.selectSubject);
         }
 
         if (!this.callId) {
-            if (this.selectedCaseTopics.length > 0) {
-                const data = {
+            // Create new case
+            if (this.selectedCaseTopics.length > 0 && this.selectedCaseTopics[0]) {
+                // Extract caseTopicId and caseTopicCode from first selected topic
+                // selectedCaseTopics is now a single value (single select)
+                const firstCaseTopicId = this.selectedCaseTopics[0];
+                const caseTopicId = firstCaseTopicId;
+
+                // Find caseTopicCode from casetopics array
+                const caseTopicCode =
+                    firstCaseTopicId && this.casetopics
+                        ? this.casetopics.find((topic: any) => topic.caseTopicId === firstCaseTopicId)?.code || null
+                        : null;
+
+                // Extract caseSubjectId from first selected subject
+                // selectedCasesubject is now a single value (single select)
+                const caseSubjectId = this.selectedCasesubject && this.selectedCasesubject.length > 0 ? this.selectedCasesubject[0] : null;
+
+                // Format requestDateTime
+                const requestDateTime = `${selectedDate} ${selectedTime}`;
+
+                // Get current timestamp for createdAt and modifiedAt
+                const nowISO = new Date().toISOString();
+
+                // Extract email - selectedEmail might be emailId (single) or array, need to find email string from email array
+                const emailId = Array.isArray(this.selectedEmail) && this.selectedEmail.length > 0 ? this.selectedEmail[0] : this.selectedEmail;
+                const email = emailId && this.email ? this.email.find((e: any) => e.emailId === emailId)?.email || null : null;
+
+                const dataForm = {
+                    caseId: null,
                     contactId: this.contactId,
-                    name: userData.userId,
-                    organization: this.contactOrg,
-                    caseTopicId: this.selectedCaseTopics,
-                    caseSubject: this.selectedCasesubject,
-                    channel: this.selectedChannels,
-                    emailInfo: this.isEmailSubscribed ? 1 : null,
-                    activityType: this.activityTypeId,
+                    channelId: this.selectedChannels,
+                    requestDateTime: requestDateTime,
                     description: this.description,
-                    startTime: `${selectedDate} ${selectedTime}`,
+                    caseTopicId: caseTopicId,
+                    caseTopicCode: caseTopicCode,
+                    caseSubjectId: caseSubjectId,
+                    operationType: selectedCallTypeId,
+                    priority: null,
+                    status: this.selectedStatus,
                     solution: this.solutions,
+                    contactNumber: this.selectedContactNumber ? this.selectedContactNumber.contactNumber : null,
+                    email: email,
+                    source: null,
+                    assignedAt: null,
+                    createdAt: nowISO,
                     createdById: userData.userId,
+                    modifiedAt: nowISO,
+                    modifiedById: null,
+                    isDeleted: 0,
+                    assignedUserId: null,
                     attachment: this.attachmentsId,
-                    call_id: this.contactNumParams || this.selectedContactNumber ? this.selectedContactNumber?.contactNumber : null,
-                    contactNumberId: this.selectedContactNumber ? this.selectedContactNumber.contactNumberId : null,
-                    caller_id: this.caller_id,
-                    operationType: selectedCallTypeId,
-                    emails: this.selectedEmail,
                 };
-                console.log('Data: ', data);
+                console.log('Create Case Data: ', dataForm);
+
                 this.callServive
-                    .createCalls(data)
+                    .createCase(dataForm)
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
                             this.auditLogService.log(
                                 '',
-                                'Contact Create Call',
-                                'Contact Create Case Call',
-                                JSON.stringify(data),
+                                'Contact Create Case',
+                                'Contact Create Case',
+                                JSON.stringify(dataForm),
                                 `Success`,
                             );
                             window.location.reload();
@@ -893,58 +900,9 @@ export class ManageContactsComponent implements OnInit {
                             this.sweetalertServices.handleError(error);
                             this.auditLogService.log(
                                 '',
-                                'Contact Create Call',
-                                'Contact Create Case Call',
-                                JSON.stringify(data),
-                                `Failed, Error : ${error}`,
-                            );
-                            throw error;
-                        }),
-                    )
-                    .subscribe();
-            } else {
-                this.sweetalertServices.getSwal('error', 'โปรดกรอกหัวข้อที่ติดต่อ', '', false, '');
-            }
-        } else if (this.callId && this.cType === 'call') {
-            console.log('Edit Call:', this.callId);
-            if (this.selectedCaseTopics.length > 0) {
-                const data = {
-                    callId: this.callId,
-                    caseTopicId: this.selectedCaseTopics,
-                    caseSubject: this.selectedCasesubject,
-                    channel: this.selectedChannels,
-                    emailInfo: this.isEmailSubscribed ? 1 : null,
-                    activityType: this.activityTypeId,
-                    description: this.description,
-                    startTime: `${selectedDate} ${selectedTime}`,
-                    solution: this.solutions,
-                    modifiedById: userData.userId,
-                    operationType: selectedCallTypeId,
-                    contactId: this.contactId,
-                    callerId: this.selectedContactNumber ? this.selectedContactNumber.contactNumber : null,
-                };
-                console.log('Data: ', data);
-                this.contactsService
-                    .updateCalls(data)
-                    .pipe(
-                        tap((res) => {
-                            this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
-                            this.auditLogService.log(
-                                '',
-                                'Contact Update Call',
-                                'Contact Update Case Call',
-                                JSON.stringify(data),
-                                `Success`,
-                            );
-                            window.location.reload();
-                        }),
-                        catchError((error) => {
-                            this.sweetalertServices.handleError(error);
-                            this.auditLogService.log(
-                                '',
-                                'Contact Update Call',
-                                'Contact Update Case Call',
-                                JSON.stringify(data),
+                                'Contact Create Case',
+                                'Contact Create Case',
+                                JSON.stringify(dataForm),
                                 `Failed, Error : ${error}`,
                             );
                             throw error;
@@ -955,6 +913,7 @@ export class ManageContactsComponent implements OnInit {
                 this.sweetalertServices.getSwal('error', 'โปรดกรอกหัวข้อที่ติดต่อ', '', false, '');
             }
         } else if (this.callId && this.cType === 'case') {
+            // Update existing case
             console.log('Edit Case:', this.callId);
             if (this.selectedCaseTopics.length > 0) {
                 const data = {
@@ -968,7 +927,7 @@ export class ManageContactsComponent implements OnInit {
                     operationType: selectedCallTypeId,
                     contactId: this.contactId,
                 };
-                console.log('Data: ', data);
+                console.log('Update Case Data: ', data);
                 this.contactsService
                     .updateCase(data)
                     .pipe(
@@ -1161,5 +1120,10 @@ export class ManageContactsComponent implements OnInit {
                 this.emailInputRef.nativeElement.focus();
             });
         });
+    }
+
+    onCaseTopicChange(event: any, index: number) {
+        // Clear case subject when case topic changes
+        this.selectedCasesubject[index] = null;
     }
 }
