@@ -480,7 +480,7 @@ export class HomePageComponent implements OnInit {
     }
 
     getAllContactCount() {
-        this.callService.countContact('', this.createdById).subscribe((res: any) => {
+        this.callService.countContact('', this.createdById == 'all' ? '' : this.createdById).subscribe((res: any) => {
             this.allContactCount = res.count ?? 0;
         });
     }
