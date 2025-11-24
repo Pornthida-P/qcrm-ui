@@ -23,7 +23,7 @@
                 </div>
 
                 <div class="col-md-6">
-                    <label for="inputContactOrg" class="form-label">ร้านค้า/บริษัท</label>
+                    <label for="inputContactOrg" class="form-label">บริษัท</label>
                     <div class="col-md-6">
                         <div
                             class="form-control"
@@ -43,35 +43,38 @@
                             <label [ngClass]="{ 'display-none': i != 1 }" for="inputTopic" class="form-label"
                                 >หัวข้อที่ติดต่อ<span class="color-red">*</span></label
                             >
-                            <ng-select
+                            <select
                                 id="inputTopic"
+                                class="form-select"
+                                [name]="'selectedCaseTopics' + i"
                                 [(ngModel)]="selectedCaseTopics[i - 1]"
-                                name="selectedCaseTopics{{ i }}"
-                                [multiple]="true"
+                                (change)="onCaseTopicChange($event, i - 1)"
                             >
-                                <ng-option *ngFor="let casetopic of casetopics" [value]="casetopic.caseTopicId">
-                                  {{casetopic.code}} - {{ casetopic.name }}
-                                </ng-option>
-                            </ng-select>
+                                <option disabled value="">กรุณาเลือกข้อมูล</option>
+                                <option *ngFor="let casetopic of casetopics" [value]="casetopic.caseTopicId">
+                                    {{ casetopic.code }} - {{ casetopic.name }}
+                                </option>
+                            </select>
                         </div>
 
                         <div class="col-md-6">
                             <label [ngClass]="{ 'display-none': i != 1 }" for="inputCaseSubject" class="form-label">เรื่องที่ติดต่อ</label>
-                            <ng-select
+                            <select
                                 id="inputCaseSubject"
+                                class="form-select"
+                                [name]="'selectedCasesubject' + i"
                                 [(ngModel)]="selectedCasesubject[i - 1]"
-                                name="selectedCasesubject{{ i }}"
-                                [multiple]="true"
                             >
+                                <option disabled value="">กรุณาเลือกข้อมูล</option>
                                 <ng-container *ngFor="let casesubject of casesubjects">
-                                    <ng-option
+                                    <option
+                                        *ngIf="selectedCaseTopics[i - 1] && selectedCaseTopics[i - 1] == casesubject.caseTopicId"
                                         [value]="casesubject.caseSubjectId"
-                                        *ngIf="selectedCaseTopics[i - 1]?.includes(casesubject.caseTopicId)"
                                     >
                                         {{ casesubject.name }}
-                                    </ng-option>
+                                    </option>
                                 </ng-container>
-                            </ng-select>
+                            </select>
                         </div>
                         <div class="col-md-1">
                             <!-- <span *ngIf="selectSubject == i && selectSubject != 5">
@@ -97,7 +100,13 @@
                         </div>
                     </div>
                 </div>
-
+                <div class="col-6">
+                    <label for="inputStatus" class="form-label">สถานะ</label>
+                    <select id="inputStatus" class="form-select" name="selectedStatus" [(ngModel)]="selectedStatus">
+                        <option disabled value="">กรุณาเลือกข้อมูล</option>
+                        <option *ngFor="let status of statusList" [value]="status.id">{{ status.status }}</option>
+                    </select>
+                </div>
                 <div class="col-6">
                     <label for="inputChannel" class="form-label">ช่องทางติดต่อ</label>
                     <select id="inputChannel" class="form-select" name="selectedChannels" [(ngModel)]="selectedChannels">
@@ -169,17 +178,6 @@
                         ></ngb-timepicker>
                     </div>
                 </div>
-
-                <div class="col-12">
-                    <label class="form-check-label" for="gridCheck"> รายละเอียด </label>
-                    <textarea
-                        class="form-control"
-                        placeholder="กรุณากรอกข้อมูล"
-                        id="floatingTextarea"
-                        name="description"
-                        [(ngModel)]="description"
-                    ></textarea>
-                </div>
                 <div class="col-6">
                     <label for="formFileSm" class="form-label">ไฟล์แนบ</label>
                     <div class="mb-3">
@@ -193,6 +191,17 @@
                             />
                         </div>
                     </div>
+                </div>
+
+                <div class="col-12">
+                    <label class="form-check-label" for="gridCheck"> รายละเอียด </label>
+                    <textarea
+                        class="form-control"
+                        placeholder="กรุณากรอกข้อมูล"
+                        id="floatingTextarea"
+                        name="description"
+                        [(ngModel)]="description"
+                    ></textarea>
                 </div>
             </form>
 

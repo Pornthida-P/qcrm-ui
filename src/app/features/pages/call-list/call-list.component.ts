@@ -19,6 +19,7 @@ export class CallListComponent implements OnInit {
     pages: number[] = [];
     userData: any = JSON.parse(localStorage.getItem('userData') || '{}');
     userId: string = '';
+    statusList: any[] = [];
 
     constructor(private callListService: CallListService) {}
 
@@ -27,8 +28,8 @@ export class CallListComponent implements OnInit {
         this.getAllCaseList();
         // localStorage.setItem('userData', JSON.stringify(this.userData));
 
-      this.userId = this.userData.userId;
-      this.getCaseListByUserId(this.userId);
+        this.userId = this.userData.userId;
+        this.getCaseListByUserId(this.userId);
     }
 
     pageChange(page: number) {
@@ -73,8 +74,8 @@ export class CallListComponent implements OnInit {
         });
     }
 
-  getCaseListByUserId(userId: string) {
-      console.log('user:', userId);
+    getCaseListByUserId(userId: string) {
+        console.log('user:', userId);
         this.callListService.getCaseListByUserId(this.userId).subscribe((res: any) => {
             this.caseListByUserId = res;
             this.calculatePages();
@@ -86,5 +87,12 @@ export class CallListComponent implements OnInit {
 
     editCall(callId: string) {
         console.log('Edit Call:', callId);
+    }
+
+    getStatusList() {
+        this.callListService.getStatusList().subscribe((res: any) => {
+            this.statusList = res;
+            console.log(this.statusList);
+        });
     }
 }
