@@ -47,6 +47,7 @@ export const config = {
                 caseById: '/case-id',
                 contactNumberById: '/contacts-number',
                 emailById: '/email-id',
+                allStatus: '/all-status',
             },
             report: {
                 channelByAgent: '/report/channelByAgent',
