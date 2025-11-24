@@ -13,16 +13,17 @@ import * as Highcharts from 'highcharts';
 })
 export class HomePageComponent implements OnInit {
     cases: any[] = [];
+    allCases: any[] = []; // เก็บข้อมูลทั้งหมดสำหรับคำนวณตัวเลข
     filteredCases: any[] = [];
     searchText: string = '';
     selectedStatus: string = '';
     userData: User | null = null;
-    pageSizeOptions = [15, 50, 100];
-    pageSize = 15;
+    pageSizeOptions = [5, 10, 15];
+    pageSize = 5;
+    pages: number[] = [];
     currentPage = 1;
-    totalItems = 0;
-    totalPages = 0;
-    pagesToShow = 3;
+    totalPages = 1;
+    totalCount = 0;
     createdById = '';
     selectedCaseTopic = '';
     selectedCaseChannel = '';
@@ -34,6 +35,9 @@ export class HomePageComponent implements OnInit {
     caseChannelCount: number = 0;
     caseTopicCount: number = 0;
     channelPercentage: any[] = [];
+    statusList: any[] = [];
+    allContactCount: number = 0;
+    statusListLoaded: boolean = false;
 
     private searchTimeout: any;
     updateFlag: boolean = false;
@@ -172,6 +176,7 @@ export class HomePageComponent implements OnInit {
         this.getCaseTopic();
         this.getCaseChannel();
         this.initChart(this.caseChannel, this.caseTopic);
+        this.getAllContactCount();
     }
 
     initChart(caseChannelCount: any[], caseTopicCount: any[]) {
@@ -184,61 +189,32 @@ export class HomePageComponent implements OnInit {
     getDataUser() {
         this.userService.getDataUser().subscribe((res: User | null) => {
             this.userData = res;
-            this.createdById = res?.role.roleTitle.toLowerCase() === 'super admin' ? 'all' : res?.username ?? '';
+            this.createdById = res?.role.roleTitle.toLowerCase() === 'super admin' ? 'all' : res?.userId ?? '';
             if (this.createdById) {
-                this.loadTodayCases(0, this.pageSize);
+                this.currentPage = 1;
+                this.loadTodayCases();
             }
         });
     }
 
-    loadTodayCases(page: number, pageSize: number): void {
+    loadTodayCases(): void {
+        const page = this.currentPage - 1; // Convert to 0-based index for API
+        const pageSize = this.pageSize;
         const sortId = 'createdAt,DESC';
         const searchTextParam = this.searchText && this.searchText.trim() ? this.searchText.trim() : 'undefined';
         const dateFilterType = 'toDay';
         const startDate = '';
         const endDate = '';
 
+        // ดึงข้อมูลทั้งหมดสำหรับคำนวณตัวเลข (ไม่มี pagination)
         this.callService
-            .getCallsPage(page, pageSize, sortId, searchTextParam, this.createdById, dateFilterType, startDate, endDate)
+            .getCallsAllWithoutPagination(sortId, searchTextParam, this.createdById, dateFilterType, startDate, endDate)
             .subscribe({
                 next: (response: any) => {
-                    console.log('response', response);
-                    let data = response;
-                    if (typeof response === 'string') {
-                        data = JSON.parse(response);
-                    }
-                    if (Array.isArray(data)) {
-                        this.cases = data.map((item: any) => ({
-                            ...item,
-                            type:
-                                item.type === 'I'
-                                    ? 'I'
-                                    : item.type === 'O'
-                                    ? 'O'
-                                    : item.type === 'Inbound'
-                                    ? 'I'
-                                    : item.type === 'Outbound'
-                                    ? 'O'
-                                    : item.type,
-                        }));
-                    } else if (data && Array.isArray(data.data)) {
-                        this.cases = data.data.map((item: any) => ({
-                            ...item,
-                            type:
-                                item.type === 'I'
-                                    ? 'I'
-                                    : item.type === 'O'
-                                    ? 'O'
-                                    : item.type === 'Inbound'
-                                    ? 'I'
-                                    : item.type === 'Outbound'
-                                    ? 'O'
-                                    : item.type,
-                        }));
-                    }
-                    // Calculate and store channel counts
+                    this.allCases = typeof response === 'string' ? JSON.parse(response) : response;
+
                     this.caseChannel = Object.values(
-                        this.cases.reduce((acc, item) => {
+                        this.allCases.reduce((acc, item) => {
                             const channel = item.channel;
 
                             if (channel) {
@@ -254,12 +230,12 @@ export class HomePageComponent implements OnInit {
                     this.caseChannelCount = this.caseChannel.length;
                     this.channelPercentage = this.caseChannel.map((item) => ({
                         name: item.name,
-                        value: (item.value / this.cases.length) * 100,
+                        value: (item.value / this.allCases.length) * 100,
                     }));
-                    console.log('this.channelPercentage', this.channelPercentage);
+
                     // Calculate and store topic counts
                     this.caseTopic = Object.values(
-                        this.cases.reduce((acc, item) => {
+                        this.allCases.reduce((acc, item) => {
                             const topic = item.casetype;
 
                             if (topic) {
@@ -273,32 +249,26 @@ export class HomePageComponent implements OnInit {
                         }, {}),
                     );
                     this.caseTopicCount = this.caseTopic.length;
-                    this.contactCount = [...new Set(this.cases.map((item) => item.contactId))].length;
+                    this.contactCount = [...new Set(this.allCases.map((item) => item.contactId))].length;
 
-                    // Update pagination info if available
-                    if (data && typeof data === 'object' && !Array.isArray(data)) {
-                        this.totalItems = data.totalElements || data.total || this.cases.length;
-                        this.totalPages = data.totalPages || Math.ceil(this.totalItems / this.pageSize);
-                    } else {
-                        this.totalItems = this.cases.length;
-                        this.totalPages = Math.ceil(this.totalItems / this.pageSize);
-                    }
-
+                    // เรียก filterCases เพื่อ filter และ paginate จาก allCases
                     this.filterCases();
                 },
                 error: (error) => {
-                    console.error('Error loading cases:', error);
+                    console.error('Error loading all cases:', error);
                 },
             });
     }
 
-    filterCases(): void {
-        this.filteredCases = this.cases.filter((caseItem) => {
-            const matchesStatus =
-                !this.selectedStatus ||
-                caseItem.type === this.selectedStatus ||
-                (this.selectedStatus === 'I' && caseItem.type === 'Inbound') ||
-                (this.selectedStatus === 'O' && caseItem.type === 'Outbound');
+    filterCases(resetPage: boolean = true): void {
+        // Reset หน้าเป็น 1 เมื่อ filter เปลี่ยน (แต่ไม่ reset เมื่อเปลี่ยนหน้า)
+        if (resetPage) {
+            this.currentPage = 1;
+        }
+
+        // Filter จากข้อมูลทั้งหมด (allCases) ก่อน
+        const filteredAllCases = this.allCases.filter((caseItem) => {
+            const matchesStatus = !this.selectedStatus || caseItem.status === this.selectedStatus;
 
             const matchesChannel = !this.selectedCaseChannel || caseItem.channel === this.selectedCaseChannel;
 
@@ -327,8 +297,21 @@ export class HomePageComponent implements OnInit {
             return matches;
         });
 
+        this.totalCount = filteredAllCases.length;
+        this.totalPages = Math.ceil(this.totalCount / this.pageSize);
+        this.calculatePages();
+
+        if (this.selectedStatus && !this.selectedCaseChannel && !this.selectedCaseTopic) {
+            this.getStatusList(this.allCases);
+        } else {
+            this.getStatusList(filteredAllCases);
+        }
+        const start = (this.currentPage - 1) * this.pageSize;
+        const end = start + this.pageSize;
+        this.filteredCases = filteredAllCases.slice(start, end);
+
         let caseChannel = Object.values(
-            this.filteredCases.reduce((acc, item) => {
+            filteredAllCases.reduce((acc, item) => {
                 const channel = item.channel;
 
                 if (channel) {
@@ -344,12 +327,11 @@ export class HomePageComponent implements OnInit {
         this.caseChannelCount = caseChannel.length;
         this.channelPercentage = caseChannel.map((item: any) => ({
             name: item.name,
-            value: (item.value / this.filteredCases.length) * 100,
+            value: filteredAllCases.length > 0 ? (item.value / filteredAllCases.length) * 100 : 0,
         }));
-        console.log('this.channelPercentage', this.channelPercentage);
 
         let caseTopic = Object.values(
-            this.filteredCases.reduce((acc, item) => {
+            filteredAllCases.reduce((acc, item) => {
                 const topic = item.casetype;
 
                 if (topic) {
@@ -363,7 +345,7 @@ export class HomePageComponent implements OnInit {
             }, {}),
         );
         this.caseTopicCount = caseTopic.length;
-        this.contactCount = [...new Set(this.filteredCases.map((item) => item.contactId))].length;
+        this.contactCount = [...new Set(filteredAllCases.map((item) => item.contactId))].length;
         this.initChart(caseChannel, caseTopic);
     }
 
@@ -375,38 +357,13 @@ export class HomePageComponent implements OnInit {
         return hoursDiff > 24;
     }
 
-    async pageChange(page: number) {
-        if (page != this.currentPage) {
-            if (page >= 1 && page <= this.totalPages) {
-                this.currentPage = page;
-                await this.loadTodayCases((this.currentPage - 1) * this.pageSize, this.pageSize);
-            }
-        }
-    }
-
-    pageSizeChange() {
-        this.currentPage = 1;
-        this.loadTodayCases((this.currentPage - 1) * this.pageSize, this.pageSize);
-    }
-
-    get pages(): number[] {
-        var page: number[] = [];
-        this.totalPages = Math.ceil(this.totalItems / this.pageSize);
-        for (var i = -this.pagesToShow; i <= this.pagesToShow; i++) {
-            if (this.currentPage + i > 0 && this.currentPage + i <= this.totalPages) {
-                page.push(this.currentPage + i);
-            }
-        }
-        return page;
-    }
-
     onSearchInput(): void {
         if (this.searchTimeout) {
             clearTimeout(this.searchTimeout);
         }
         this.searchTimeout = setTimeout(() => {
             this.currentPage = 1;
-            this.loadTodayCases(0, this.pageSize);
+            this.loadTodayCases();
         }, 300);
     }
 
@@ -435,5 +392,96 @@ export class HomePageComponent implements OnInit {
     getChannelColor(index: number): string {
         const colors = ['#FB5F20', '#010966', '#ffd700'];
         return colors[index % colors.length];
+    }
+
+    calculatePages(): void {
+        this.pages = [];
+        const maxPagesToShow = 5;
+        let startPage = Math.max(1, this.currentPage - Math.floor(maxPagesToShow / 2));
+        let endPage = Math.min(this.totalPages, startPage + maxPagesToShow - 1);
+
+        if (endPage - startPage < maxPagesToShow - 1) {
+            startPage = Math.max(1, endPage - maxPagesToShow + 1);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            this.pages.push(i);
+        }
+    }
+
+    pageChange(page: number): void {
+        if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
+            this.currentPage = page;
+            this.filterCases(false);
+        }
+    }
+
+    pageSizeChange(): void {
+        this.currentPage = 1;
+        this.filterCases();
+    }
+
+    getStatusList(filteredCases?: any[]) {
+        // ถ้า statusList ยังไม่โหลด ให้เรียก API
+        if (!this.statusListLoaded) {
+            this.callService.getAllStatus().subscribe((res: any) => {
+                this.statusList = res.map((item: any) => ({
+                    id: item.id,
+                    name: item.status,
+                    caseCount: 0,
+                }));
+                this.statusListLoaded = true;
+
+                // นับ caseCount จาก filteredCases ถ้ามี
+                if (filteredCases) {
+                    this.statusList.forEach((status) => {
+                        status.caseCount = filteredCases.filter((item) => item.status === status.name).length;
+                    });
+                }
+            });
+        } else if (filteredCases) {
+            // statusList โหลดแล้ว ใช้ filteredCases อัปเดต caseCount
+            this.statusList.forEach((status) => {
+                status.caseCount = filteredCases.filter((item) => item.status === status.name).length;
+            });
+        }
+    }
+
+    getStatusColorAndIcon(id: number) {
+        const colors = ['#FB5F20', '#010966', '#006400'];
+        const icons = ['<i class="fas fa-phone"></i>', '<i class="fa-solid fa-hourglass-end"></i>', '<i class="fas fa-comment"></i>'];
+        return { color: colors[id % colors.length], icon: icons[id % icons.length] } as any;
+    }
+
+    getStatusColor(statusName: string): string {
+        if (!statusName) return '#6c757d';
+        const statusIndex = this.statusList.findIndex((s) => s.name === statusName);
+        if (statusIndex >= 0) {
+            return this.getStatusColorAndIcon(statusIndex).color;
+        }
+        // Default colors based on common status names
+        const statusColors: { [key: string]: string } = {
+            รอรับ: '#FB5F20',
+            กำลังดำเนินการ: '#010966',
+            เสร็จสิ้น: '#006400',
+            ยกเลิก: '#6c757d',
+        };
+        return statusColors[statusName] || '#6c757d';
+    }
+
+    filterByStatus(statusName: string): void {
+        // ถ้าคลิกที่ status เดิมอีกครั้ง ให้ clear filter
+        if (this.selectedStatus === statusName) {
+            this.selectedStatus = '';
+        } else {
+            this.selectedStatus = statusName;
+        }
+        this.filterCases();
+    }
+
+    getAllContactCount() {
+        this.callService.countContact('', this.createdById).subscribe((res: any) => {
+            this.allContactCount = res.count ?? 0;
+        });
     }
 }

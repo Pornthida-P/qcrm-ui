@@ -1,36 +1,37 @@
-<div class="bg-white rounded shadow d-flex flex-column p-4 overflow-auto">
-    <div class="row g-4">
-        <div class="col">
-            <div class="row">
-                <div class="col-6"></div>
-                <div class="col-6">
-                    <div class="row">
-                        <div class="col">
-                            <label class="fw-bold" for="selectedCaseChannel">ช่องทาง</label>
-                            <select class="form-select shadow-none" [(ngModel)]="selectedCaseChannel" (change)="filterCases()">
-                                <option value="">ทั้งหมด</option>
-                                <option *ngFor="let caseChannel of caseChannelList" [value]="caseChannel.value">
-                                    {{ caseChannel.name }}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="col">
-                            <label class="fw-bold" for="selectedCaseTopic">หัวข้อเคส</label>
-                            <select class="form-select shadow-none" [(ngModel)]="selectedCaseTopic" (change)="filterCases()">
-                                <option value="">ทั้งหมด</option>
-                                <option *ngFor="let caseTopic of caseTopicList" [value]="caseTopic.value">{{ caseTopic.name }}</option>
-                            </select>
-                        </div>
-                    </div>
+<div class="d-flex flex-column p-2 p-md-4 overflow-auto">
+    <!-- Filter Section -->
+    <div class="row g-3 g-md-4 mb-3 mb-md-4">
+        <div class="col-12 col-xl-6">
+            <h2 class="fw-bold mb-0">แดชบอร์ด</h2>
+        </div>
+        <div class="col-12 col-xl-6">
+            <div class="row g-3">
+                <div class="col-12 col-sm-6 col-lg-4 col-xl-6">
+                    <label class="fw-bold mb-2" for="selectedCaseChannel">ช่องทาง</label>
+                    <select class="form-select shadow-none" [(ngModel)]="selectedCaseChannel" (change)="filterCases()">
+                        <option value="">ทั้งหมด</option>
+                        <option *ngFor="let caseChannel of caseChannelList" [value]="caseChannel.value">
+                            {{ caseChannel.name }}
+                        </option>
+                    </select>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-4 col-xl-6">
+                    <label class="fw-bold mb-2" for="selectedCaseTopic">หัวข้อเคส</label>
+                    <select class="form-select shadow-none" [(ngModel)]="selectedCaseTopic" (change)="filterCases()">
+                        <option value="">ทั้งหมด</option>
+                        <option *ngFor="let caseTopic of caseTopicList" [value]="caseTopic.value">{{ caseTopic.name }}</option>
+                    </select>
                 </div>
             </div>
         </div>
     </div>
-    <div class="row g-4 mt-2">
+
+    <!-- Charts Section -->
+    <div class="row g-3 g-md-4 mb-3 mb-md-4">
         <div class="col-12 col-xl-6">
-            <div class="bg-white rounded shadow p-4 h-100">
-                <div class="row h-100">
-                    <div class="col-4 h-100">
+            <div class="bg-white rounded shadow p-3 p-md-4 h-100">
+                <div class="row g-3 g-md-4 h-100">
+                    <div class="col-12 col-md-4">
                         <div class="statistics-card h-100">
                             <div class="stat-item">
                                 <div class="stat-number">{{ caseTopicCount }}</div>
@@ -51,12 +52,12 @@
                             </div>
                             <div class="stat-divider"></div>
                             <div class="stat-item">
-                                <div class="stat-number">1285</div>
+                                <div class="stat-number">{{ allContactCount }}</div>
                                 <div class="stat-label">ผู้ติดต่อทั้งหมด</div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-8 d-flex justify-content-center align-items-center">
+                    <div class="col-12 col-md-8 d-flex justify-content-center align-items-center min-height-chart">
                         <highcharts-chart
                             *ngIf="hasContactChartData; else contactChartNoData"
                             [Highcharts]="Highcharts"
@@ -74,8 +75,8 @@
             </div>
         </div>
         <div class="col-12 col-xl-6">
-            <div class="bg-white rounded shadow p-4 h-100">
-                <p class="mb-4 fw-bold text-left">ช่องทาง</p>
+            <div class="bg-white rounded shadow p-3 p-md-4 h-100">
+                <p class="mb-3 mb-md-4 fw-bold text-left">ช่องทาง</p>
 
                 <highcharts-chart
                     *ngIf="hasCaseChartData; else caseChartNoData"
@@ -84,7 +85,7 @@
                     [(update)]="updateFlag"
                     style="width: 100%; display: block"
                 ></highcharts-chart>
-                <div class="channel-legend d-flex flex-wrap gap-3 mt-3 justify-content-center">
+                <div class="channel-legend d-flex flex-wrap gap-2 gap-md-3 mt-3 justify-content-center">
                     <div *ngFor="let item of channelPercentage; let i = index" class="channel-item">
                         <div class="channel-indicator" [style.background-color]="getChannelColor(i)"></div>
                         <div class="channel-info">
@@ -101,73 +102,77 @@
             </div>
         </div>
     </div>
-</div>
-<div class="row mt-4">
-    <div class="col-12">
-        <div class="bg-white rounded shadow p-4">
-            <h5 class="mb-4">เคสของวันนี้</h5>
-            <div class="d-flex flex-column flex-row gap-3 mb-3">
-                <div class="input-group flex-grow-1">
-                    <span class="input-group-text bg-white border border-end-0 color-primary">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </span>
-                    <input
-                        type="text"
-                        class="form-control border border-start-0 shadow-none"
-                        [(ngModel)]="searchText"
-                        placeholder="ค้นหา..."
-                        (input)="onSearchInput()"
-                    />
-                </div>
-                <select class="form-select shadow-none" style="min-width: 200px" [(ngModel)]="selectedStatus" (change)="filterCases()">
-                    <option value="">ทั้งหมด</option>
-                    <option value="I">Inbound</option>
-                    <option value="O">Outbound</option>
-                </select>
+
+    <!-- Status and Cases Section -->
+    <div class="row g-3 g-md-4">
+        <div class="col-12 col-md-4 col-lg-3 col-xl-2 mb-3 mb-md-0">
+            <div class="bg-white rounded shadow p-3 p-md-4 h-100">
+                <p class="mb-3 mb-md-4 fw-bold text-left">สถานะเคส</p>
+                <ol class="timeline">
+                    <li
+                        *ngFor="let status of statusList"
+                        (click)="filterByStatus(status.name)"
+                        [class.active]="selectedStatus === status.name"
+                    >
+                        <div class="circle" [style.background-color]="getStatusColorAndIcon(status.id - 1).color">
+                            <span [innerHTML]="getStatusColorAndIcon(status.id - 1).icon"></span>
+                        </div>
+                        <div class="content">
+                            <p>{{ status.name }}</p>
+                            <p>{{ status.caseCount }}</p>
+                        </div>
+                    </li>
+                </ol>
             </div>
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th scope="col">วันที่สร้าง</th>
-                            <th scope="col">ช่องทาง</th>
-                            <th scope="col">ผู้ติดต่อ</th>
-                            <th scope="col">ประเภทเคส</th>
-                            <th scope="col">หัวข้อเคส</th>
-                            <th scope="col">รายละเอียด</th>
-                            <th scope="col">ผู้ดูแล</th>
-                            <th scope="col">สถานะ</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <ng-container *ngIf="filteredCases.length > 0; else tableNoData">
-                            <tr *ngFor="let caseItem of filteredCases" [class.table-danger]="isOverOneDay(caseItem.createdAt)">
-                                <td>{{ caseItem.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
-                                <td>{{ caseItem.channel || '-' }}</td>
-                                <td>{{ caseItem.contact || '-' }}</td>
-                                <td>{{ caseItem.casetype || '-' }}</td>
-                                <td>{{ caseItem.casesub || '-' }}</td>
-                                <td>{{ caseItem.description || '-' }}</td>
-                                <td>{{ caseItem.agent || '-' }}</td>
-                                <td>
-                                    <span
-                                        class="badge"
-                                        [class.bg-primary]="caseItem.type === 'I'"
-                                        [class.bg-success]="caseItem.type === 'O'"
-                                    >
-                                        {{ caseItem.type === 'I' ? 'Inbound' : caseItem.type === 'O' ? 'Outbound' : caseItem.type || '-' }}
-                                    </span>
-                                </td>
-                            </tr>
-                        </ng-container>
-                        <ng-template #tableNoData>
+        </div>
+        <div class="col-12 col-md-8 col-lg-9 col-xl-10">
+            <div class="bg-white rounded shadow p-3 p-md-4 h-100">
+                <p class="mb-3 mb-md-4 fw-bold text-left">เคส</p>
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm">
+                        <thead>
                             <tr>
-                                <td colspan="8" class="text-center">ไม่พบข้อมูล</td>
+                                <th scope="col" class="text-nowrap">วันที่สร้าง</th>
+                                <th scope="col" class="text-nowrap">ช่องทาง</th>
+                                <th scope="col" class="text-nowrap">ผู้ติดต่อ</th>
+                                <th scope="col" class="text-nowrap d-none d-md-table-cell">ประเภทเคส</th>
+                                <th scope="col" class="text-nowrap d-none d-lg-table-cell">หัวข้อเคส</th>
+                                <th scope="col" class="text-nowrap d-none d-xl-table-cell">รายละเอียด</th>
+                                <th scope="col" class="text-nowrap d-none d-lg-table-cell">ผู้ดูแล</th>
+                                <th scope="col" class="text-nowrap">สถานะ</th>
                             </tr>
-                        </ng-template>
-                    </tbody>
-                </table>
-                <ul class="pagination sidebar justify-content-center">
+                        </thead>
+                        <tbody>
+                            <ng-container *ngIf="filteredCases.length > 0; else tableNoData">
+                                <tr *ngFor="let caseItem of filteredCases" [class.table-danger]="isOverOneDay(caseItem.createdAt)">
+                                    <td class="text-nowrap">{{ caseItem.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
+                                    <td class="text-nowrap">{{ caseItem.channel || '-' }}</td>
+                                    <td class="text-nowrap">{{ caseItem.contact || '-' }}</td>
+                                    <td class="text-nowrap d-none d-md-table-cell">{{ caseItem.casetype || '-' }}</td>
+                                    <td class="text-nowrap d-none d-lg-table-cell">{{ caseItem.casesub || '-' }}</td>
+                                    <td class="d-none d-xl-table-cell">{{ caseItem.description || '-' }}</td>
+                                    <td class="text-nowrap d-none d-lg-table-cell">{{ caseItem.agent || '-' }}</td>
+                                    <td class="text-nowrap">
+                                        <span
+                                            *ngIf="caseItem.status; else noStatus"
+                                            class="status-badge"
+                                            [style.background-color]="getStatusColor(caseItem.status)"
+                                        >
+                                            {{ caseItem.status }}
+                                        </span>
+                                        <ng-template #noStatus>-</ng-template>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            <ng-template #tableNoData>
+                                <tr>
+                                    <td colspan="8" class="text-center">ไม่พบข้อมูล</td>
+                                </tr>
+                            </ng-template>
+                        </tbody>
+                    </table>
+                </div>
+                <ul class="pagination sidebar justify-content-center mt-3 flex-wrap">
                     <li class="page-item" [class.disabled]="currentPage == 1">
                         <a class="page-link custom-link preBtn" (click)="pageChange(1)" aria-label="Previous">
                             <i class="fa-solid fa-angles-left"></i>
@@ -191,11 +196,14 @@
                             <i class="fa-solid fa-angles-right"></i>
                         </a>
                     </li>
-                    <li class="page-item ms-3">
-                        <select class="form-select" aria-label="Default select example" [(ngModel)]="pageSize" (change)="pageSizeChange()">
-                            <option class="dropdown-item" *ngFor="let option of pageSizeOptions" [value]="option">
-                                {{ option }}
-                            </option>
+                    <li class="page-item mt-2 mt-md-0 ms-md-3">
+                        <select
+                            class="form-select form-select-sm"
+                            aria-label="Default select example"
+                            [(ngModel)]="pageSize"
+                            (change)="pageSizeChange()"
+                        >
+                            <option class="dropdown-item" *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}</option>
                         </select>
                     </li>
                 </ul>

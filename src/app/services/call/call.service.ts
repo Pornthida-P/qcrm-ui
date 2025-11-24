@@ -16,6 +16,31 @@ export class CallService {
         return this.http.get(`${this.baseUrl}${config.api.path.call.url}/${page}/${limit}`);
     }
 
+    getCallsAllWithoutPagination(
+        sortId: string,
+        searchText: string,
+        createdBy: string,
+        dateFilterType: string,
+        startDate: string,
+        endDate: string,
+    ) {
+        if (searchText == '' || searchText == null) {
+            searchText = 'undefined';
+        }
+        if (dateFilterType == '' || dateFilterType == null) {
+            dateFilterType = 'undefined';
+        }
+        if (startDate == '' || startDate == null) {
+            startDate = 'undefined';
+        }
+        if (endDate == '' || endDate == null) {
+            endDate = 'undefined';
+        }
+        return this.http.get(
+            `${this.baseUrl}${config.api.path.call.url}/all/${sortId}/${searchText}/${createdBy}/${dateFilterType}/${startDate}/${endDate}`,
+        );
+    }
+
     getCallsPage(
         page: number,
         limit: number,
@@ -43,8 +68,7 @@ export class CallService {
         );
     }
 
-    getCallsCount(searchText: string, createdById: string, dateFilterType: string, startDate: string,
-      endDate: string,) {
+    getCallsCount(searchText: string, createdById: string, dateFilterType: string, startDate: string, endDate: string) {
         if (searchText == '' || searchText == null) {
             searchText = 'undefined';
         }
@@ -60,7 +84,9 @@ export class CallService {
         if (endDate == '' || endDate == null) {
             endDate = 'undefined';
         }
-        return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.count}/${searchText}/${createdById}/${dateFilterType}/${startDate}/${endDate}`);
+        return this.http.get(
+            `${this.baseUrl}${config.api.path.call.url}${config.api.path.call.count}/${searchText}/${createdById}/${dateFilterType}/${startDate}/${endDate}`,
+        );
     }
 
     getCaseTopic() {
@@ -118,7 +144,6 @@ export class CallService {
         return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.countcontact}${searchText}/${createdById}`);
     }
 
-
     getCallById(id: string) {
         return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.callById}/${id}`);
     }
@@ -128,10 +153,14 @@ export class CallService {
     }
 
     getContactNumbertById(id: string) {
-      return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.contactNumberById}/${id}`);
-  }
+        return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.contactNumberById}/${id}`);
+    }
 
     getEmailById(id: string) {
-      return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.emailById}/${id}`);
-  }
+        return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.emailById}/${id}`);
+    }
+
+    getAllStatus() {
+        return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.allStatus}`);
+    }
 }
