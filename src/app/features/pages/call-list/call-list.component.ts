@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
+import { CallListService } from 'src/app/services/call-list/call-list.service';
 @Component({
     selector: 'app-call-list',
     standalone: true,
@@ -14,11 +14,21 @@ export class CallListComponent implements OnInit {
     totalPages = 1;
     pageSize = 15;
     pageSizeOptions = [10, 15, 20, 25, 50, 100];
-    calls: any[] = [];
+    caseList: any[] = [];
+    caseListByUserId: any[] = [];
     pages: number[] = [];
+    userData: any = JSON.parse(localStorage.getItem('userData') || '{}');
+    userId: string = '';
+
+    constructor(private callListService: CallListService) {}
 
     ngOnInit(): void {
         this.calculatePages();
+        this.getAllCaseList();
+        // localStorage.setItem('userData', JSON.stringify(this.userData));
+
+      this.userId = this.userData.userId;
+      this.getCaseListByUserId(this.userId);
     }
 
     pageChange(page: number) {
@@ -34,7 +44,7 @@ export class CallListComponent implements OnInit {
     }
 
     calculatePages() {
-        this.totalPages = Math.ceil(this.calls.length / this.pageSize) || 1;
+        this.totalPages = Math.ceil(this.caseListByUserId.length / this.pageSize) || 1;
         this.pages = [];
         const maxPagesToShow = 5;
         let startPage = Math.max(1, this.currentPage - Math.floor(maxPagesToShow / 2));
@@ -52,6 +62,29 @@ export class CallListComponent implements OnInit {
     get paginatedCalls(): any[] {
         const start = (this.currentPage - 1) * this.pageSize;
         const end = start + this.pageSize;
-        return this.calls.slice(start, end);
+        return this.caseListByUserId.slice(start, end);
+    }
+
+    getAllCaseList() {
+        this.callListService.getAllCallList().subscribe((res: any) => {
+            this.caseList = res;
+            this.calculatePages();
+            console.log(this.caseList);
+        });
+    }
+
+  getCaseListByUserId(userId: string) {
+      console.log('user:', userId);
+        this.callListService.getCaseListByUserId(this.userId).subscribe((res: any) => {
+            this.caseListByUserId = res;
+            this.calculatePages();
+            console.log(this.caseListByUserId);
+        });
+    }
+
+    deleteCall(callId: string) {}
+
+    editCall(callId: string) {
+        console.log('Edit Call:', callId);
     }
 }
