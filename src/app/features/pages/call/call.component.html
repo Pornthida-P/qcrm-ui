@@ -123,13 +123,11 @@
                             </th>
                             <th scope="col">เวลา</th>
                             <th scope="col">เบอร์โทร</th>
-                            <th scope="col">อีเมล</th>
                             <th scope="col">ผู้ติดต่อ</th>
                             <th scope="col">ประเภท</th>
                             <th scope="col">ประเภทสาย</th>
                             <th scope="col">เรื่องที่ติดต่อ</th>
                             <th scope="col">รายละเอียด</th>
-                            <th scope="col">แนวทางการแก้ไข</th>
                             <th scope="col">ผู้ที่รับผิดชอบ</th>
                             <th scope="col">จัดการ</th>
                         </tr>
@@ -166,23 +164,17 @@
                                         {{ calls.caller }}
                                     </div>
                                 </td>
-                                <td style="width: 10px">{{ calls.email }}</td>
                                 <td>{{ calls.contact }}</td>
                                 <td>{{ calls.channel }}</td>
                                 <td>{{ calls.type }}</td>
                                 <td class="w-max-ellipsis">
-                                    <div [ngbTooltip]="calls.casesub" placement="bottom" class="text-ellipsis">
-                                        {{ calls.casesub }}
+                                    <div [ngbTooltip]="calls.topic" placement="bottom" class="text-ellipsis">
+                                        {{ calls.topic }}
                                     </div>
                                 </td>
                                 <td class="w-max-ellipsis">
                                     <div [ngbTooltip]="calls.description" placement="bottom" class="text-ellipsis">
                                         {{ calls.description }}
-                                    </div>
-                                </td>
-                                <td class="w-max-ellipsis">
-                                    <div [ngbTooltip]="calls.solution" placement="bottom" class="text-ellipsis">
-                                        {{ calls.solution }}
                                     </div>
                                 </td>
                                 <td>{{ calls.agent }}</td>
@@ -419,7 +411,10 @@
                                                 <option disabled value="">กรุณาเลือกข้อมูล</option>
                                                 <ng-container *ngFor="let casesubject of casesubjects">
                                                     <option
-                                                        *ngIf="selectedCaseTopics[i - 1] && selectedCaseTopics[i - 1] == casesubject.caseTopicId"
+                                                        *ngIf="
+                                                            selectedCaseTopics[i - 1] &&
+                                                            selectedCaseTopics[i - 1] == casesubject.caseTopicId
+                                                        "
                                                         [value]="casesubject.caseSubjectId"
                                                     >
                                                         {{ casesubject.name }}

@@ -208,7 +208,7 @@ export class HomePageComponent implements OnInit {
 
         // ดึงข้อมูลทั้งหมดสำหรับคำนวณตัวเลข (ไม่มี pagination)
         this.callService
-            .getCallsAllWithoutPagination(sortId, searchTextParam, this.createdById, dateFilterType, startDate, endDate)
+            .getCasesAllWithoutPagination(sortId, searchTextParam, this.createdById, dateFilterType, startDate, endDate)
             .subscribe({
                 next: (response: any) => {
                     this.allCases = typeof response === 'string' ? JSON.parse(response) : response;
@@ -236,7 +236,7 @@ export class HomePageComponent implements OnInit {
                     // Calculate and store topic counts
                     this.caseTopic = Object.values(
                         this.allCases.reduce((acc, item) => {
-                            const topic = item.casetype;
+                            const topic = item.topic;
 
                             if (topic) {
                                 if (!acc[topic]) {
@@ -273,8 +273,7 @@ export class HomePageComponent implements OnInit {
             const matchesChannel = !this.selectedCaseChannel || caseItem.channel === this.selectedCaseChannel;
 
             const matchesTopic =
-                !this.selectedCaseTopic ||
-                (caseItem.casetype && caseItem.casetype.toLowerCase().includes(this.selectedCaseTopic.toLowerCase()));
+                !this.selectedCaseTopic || (caseItem.topic && caseItem.topic.toLowerCase().includes(this.selectedCaseTopic.toLowerCase()));
 
             const hasAnyFilter = this.selectedStatus || this.selectedCaseChannel || this.selectedCaseTopic;
 
@@ -332,7 +331,7 @@ export class HomePageComponent implements OnInit {
 
         let caseTopic = Object.values(
             filteredAllCases.reduce((acc, item) => {
-                const topic = item.casetype;
+                const topic = item.topic;
 
                 if (topic) {
                     if (!acc[topic]) {

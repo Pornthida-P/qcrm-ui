@@ -12,11 +12,11 @@ export class CallService {
     constructor(private http: HttpClient) {}
     baseUrl: string = `${environment.api.url}`;
 
-    getCalls(page: number, limit: number) {
-        return this.http.get(`${this.baseUrl}${config.api.path.call.url}/${page}/${limit}`);
+    getCasesAll(page: number, limit: number) {
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}`);
     }
 
-    getCallsAllWithoutPagination(
+    getCasesAllWithoutPagination(
         sortId: string,
         searchText: string,
         createdBy: string,
@@ -37,11 +37,11 @@ export class CallService {
             endDate = 'undefined';
         }
         return this.http.get(
-            `${this.baseUrl}${config.api.path.call.url}/all/${sortId}/${searchText}/${createdBy}/${dateFilterType}/${startDate}/${endDate}`,
+            `${this.baseUrl}${config.api.path.callList.baseUrl}/all/${sortId}/${searchText}/${createdBy}/${dateFilterType}/${startDate}/${endDate}`,
         );
     }
 
-    getCallsPage(
+    getCasesPage(
         page: number,
         limit: number,
         sortId: string,
@@ -64,7 +64,7 @@ export class CallService {
             endDate = 'undefined';
         }
         return this.http.get(
-            `${this.baseUrl}${config.api.path.call.url}/${page}/${limit}/${sortId}/${searchText}/${createdBy}/${dateFilterType}/${startDate}/${endDate}`,
+            `${this.baseUrl}${config.api.path.callList.baseUrl}/${page}/${limit}/${sortId}/${searchText}/${createdBy}/${dateFilterType}/${startDate}/${endDate}`,
         );
     }
 
@@ -90,11 +90,7 @@ export class CallService {
     }
 
     getCaseTopic() {
-        return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.caseTopic}`);
-    }
-
-    getOrganizations() {
-        return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.organizations}`);
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}${config.api.path.callList.caseTopics}`);
     }
 
     getAllContacts() {
@@ -115,23 +111,15 @@ export class CallService {
     }
 
     getAllCaseSubjects() {
-        return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.caseSubjects}`);
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}${config.api.path.callList.caseSubjects}`);
     }
 
     getAllChannels() {
-        return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.channels}`);
-    }
-
-    getActivitiesType() {
-        return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.activitiesType}`);
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}${config.api.path.callList.channels}`);
     }
 
     createCalls(data: any) {
         return this.http.post(`${this.baseUrl}${config.api.path.call.url}`, data);
-    }
-
-    createActivityTopic(data: any) {
-        return this.http.post(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.createActivityTopic}`, data);
     }
 
     countContact(searchText: string, createdById: string) {
@@ -156,12 +144,8 @@ export class CallService {
         return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.contactNumberById}/${id}`);
     }
 
-    getEmailById(id: string) {
-        return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.emailById}/${id}`);
-    }
-
     getAllStatus() {
-        return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.allStatus}`);
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}${config.api.path.callList.allStatus}`);
     }
 
     createCase(data: any) {

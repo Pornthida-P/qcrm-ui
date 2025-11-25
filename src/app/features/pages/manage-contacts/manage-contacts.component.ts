@@ -611,12 +611,6 @@ export class ManageContactsComponent implements OnInit {
             this.selectedChannels = this.currentChannel || '';
         });
 
-        this.callServive.getActivitiesType().subscribe((activitiestype: any) => {
-            this.activitiestype = activitiestype.filter((activityType: any) => [1, 43].includes(parseInt(activityType.activityTypeId)));
-        });
-
-        this.getEmail(this.contactId);
-
         this.getContactNumber(this.contactId);
     }
 
@@ -852,7 +846,8 @@ export class ManageContactsComponent implements OnInit {
                 const nowISO = new Date().toISOString();
 
                 // Extract email - selectedEmail might be emailId (single) or array, need to find email string from email array
-                const emailId = Array.isArray(this.selectedEmail) && this.selectedEmail.length > 0 ? this.selectedEmail[0] : this.selectedEmail;
+                const emailId =
+                    Array.isArray(this.selectedEmail) && this.selectedEmail.length > 0 ? this.selectedEmail[0] : this.selectedEmail;
                 const email = emailId && this.email ? this.email.find((e: any) => e.emailId === emailId)?.email || null : null;
 
                 const dataForm = {
@@ -887,13 +882,7 @@ export class ManageContactsComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
-                            this.auditLogService.log(
-                                '',
-                                'Contact Create Case',
-                                'Contact Create Case',
-                                JSON.stringify(dataForm),
-                                `Success`,
-                            );
+                            this.auditLogService.log('', 'Contact Create Case', 'Contact Create Case', JSON.stringify(dataForm), `Success`);
                             window.location.reload();
                         }),
                         catchError((error) => {
@@ -1074,22 +1063,6 @@ export class ManageContactsComponent implements OnInit {
             this.contactNum = inputValue;
         } else if (index === 'contactNum2') {
             this.contactNum2 = inputValue;
-        }
-    }
-
-    async getEmail(contactId: string) {
-        try {
-            const email = (await this.callServive.getEmailById(contactId).toPromise()) as any[];
-            console.log('Email Res:', email);
-
-            if (email && email.length > 0) {
-                this.email = email;
-                console.log('Email: ', this.email);
-            } else {
-                console.warn('No Email found for this contactId');
-            }
-        } catch (error) {
-            console.error('Error fetching Email', error);
         }
     }
 

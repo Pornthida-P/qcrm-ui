@@ -287,7 +287,7 @@ export class CallComponent implements OnInit {
             userFilter = this.userData.userId;
         }
         await this.callService
-            .getCallsPage(
+            .getCasesPage(
                 page,
                 pageSize,
                 `${this.sortId},${this.sortOrder}`,
@@ -537,10 +537,6 @@ export class CallComponent implements OnInit {
             this.channels = channels;
             this.selectedChannels = this.currentChannel || '';
         });
-
-        this.callService.getActivitiesType().subscribe((activitiestype: any) => {
-            this.activitiestype = activitiestype.filter((activityType: any) => [1, 43].includes(parseInt(activityType.activityTypeId)));
-        });
     }
 
     editCall(callId: string, type: string, contactId: string) {
@@ -686,7 +682,6 @@ export class CallComponent implements OnInit {
 
         this.showAddCall();
         this.getContactNumber(contactId);
-        this.getEmail(contactId);
     }
 
     toggleCheckbox(activityTopicId: number) {
@@ -1081,22 +1076,6 @@ export class CallComponent implements OnInit {
             }
         } catch (error) {
             console.error('Error fetching contact number', error);
-        }
-    }
-
-    async getEmail(contactsId: string) {
-        try {
-            const email = (await this.callService.getEmailById(contactsId).toPromise()) as any[];
-            console.log('Email Res:', email);
-
-            if (email && email.length > 0) {
-                this.email = email;
-                console.log('Email: ', this.email);
-            } else {
-                console.warn('No Email found for this contactId');
-            }
-        } catch (error) {
-            console.error('Error fetching Email', error);
         }
     }
 
