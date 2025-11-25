@@ -4,25 +4,24 @@ import { environment } from 'src/environments/environment';
 import { config } from 'src/app/config/config';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
 export class CallListService {
+    baseUrl: string;
 
-  baseUrl: string;
+    constructor(private http: HttpClient) {
+        this.baseUrl = `${environment.api.url}${config.api.path.callList.baseUrl}`;
+    }
 
-  constructor(private http: HttpClient) {
-    this.baseUrl = `${environment.api.url}${config.api.path.callList.baseUrl}`;
-   }
+    getAllCallList() {
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.all}`);
+    }
 
-   getAllCallList() {
-    return this.http.get(`${this.baseUrl}`);
-   }
+    getCaseListByUserId(userId: string) {
+        return this.http.get(`${this.baseUrl}/${userId}`);
+    }
 
-  getCaseListByUserId(userId: string) {
-    return this.http.get(`${this.baseUrl}/${userId}`);
-  }
-
-  getStatusList() {
-    return this.http.get(`${this.baseUrl}${config.api.path.callList.status}`);
-  }
+    getStatusList() {
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.status}`);
+    }
 }
