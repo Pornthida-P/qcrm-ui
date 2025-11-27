@@ -20,7 +20,7 @@
         <div class="flex flex-column">
             <form class="row g-3 mg-3">
                 <p class="mb-3 fs-5">ข้อมูลทั่วไป</p>
-                <span *ngIf="contactId === ''" class="text-danger"> ผู้ติดต่อใหม่ ({{ contactNum }}) </span>
+                <span *ngIf="contactId === ''" class="text-danger"> ผู้ติดต่อใหม่ ({{ chatId }}) </span>
                 <div class="contact-number" *ngIf="TableShowing">
                     <div class="col-6 me-3">
                         <label for="inputContactNumber" class="form-label">ช่องทางติดต่อ</label>
@@ -109,7 +109,6 @@
                         *ngIf="!contactId"
                         type="text"
                         class="form-control"
-                        [(ngModel)]="contactNum"
                         name="contactNum"
                         id="inputContactNum"
                         pattern="[0-9]*"

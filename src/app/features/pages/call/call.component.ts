@@ -1005,6 +1005,7 @@ export class CallComponent implements OnInit {
                     startTime: `${selectedDate} ${selectedTime}`,
                     modifiedById: userData.userId,
                     operationType: selectedCallTypeId,
+                    status: this.selectedStatus,
                 };
                 console.log('Data: ', data);
                 this.contactsService

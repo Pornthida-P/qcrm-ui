@@ -176,6 +176,10 @@ export class ManageContactsComponent implements OnInit {
     statusList: any[] = [];
     selectedStatus: any;
     phoneNumbers: string[] = [''];
+    chatId: any;
+    chatType: any;
+    displayName: any;
+    issue: any;
     constructor(
         private _location: Location,
         private contactsService: ContactsService,
@@ -205,6 +209,11 @@ export class ManageContactsComponent implements OnInit {
                 this.caller_id = params['caller_id'];
                 this.contactNum = params['call_id'];
                 this.contactNumParams = params['call_id'];
+                this.chatId = params['chatid'];
+                this.chatType = params['chattype'];
+                this.email = params['email'];
+                this.displayName = params['displayName'];
+                this.issue = params['issue'];
 
                 // React to the new contactId
                 if (this.contactId) {
@@ -333,7 +342,7 @@ export class ManageContactsComponent implements OnInit {
     submit() {
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
         // if (userData && this.contactId && this.contactId !== '' && this.contact.components.length > 1) {
-        if (this.contactNum || this.contactNum2 || this.contactEmail || this.contactEmailNew || this.contactNumNew) {
+        if (this.contactNum || this.contactNum2 || this.contactEmail || this.contactEmailNew || this.contactNumNew || this.chatId) {
             if (this.detailItem && this.state != 'copy') {
                 // Create or get organization if organization name is provided
                 let organizationId = this.contactOrg;
@@ -463,6 +472,10 @@ export class ManageContactsComponent implements OnInit {
             gender: this.contactGender || 'unknown',
             createdById: userData.userId,
             contactNumber2: this.contactNum2,
+            chatId: this.chatId,
+            chatType: this.chatType,
+            displayName: this.displayName,
+            issue: this.issue,
         };
 
         this.contactsService
@@ -471,10 +484,36 @@ export class ManageContactsComponent implements OnInit {
                 tap((res: any) => {
                     if (res.success === true) {
                         console.log('phone: ', res.contactNumber);
+                        console.log('chatId: ', res.chatId);
                         const contactId = res.contactId;
                         const contactNumber = data.contactNumber;
-                        this.router.navigate(['/contacts/edit'], { queryParams: { key: contactId, call_id: contactNumber } });
-                        this.auditLogService.log('', 'Contact', 'Create Contact', JSON.stringify(data), `Success`);
+                        const chatId = data.chatId;
+                        const chatType = data.chatType;
+                        const email = data.email;
+                        const displayName = data.displayName;
+                        const issue = data.issue;
+                        this.router.navigate(['/contacts/edit'], {
+                            queryParams: {
+                                key: contactId,
+                                call_id: contactNumber,
+                                chatid: chatId,
+                                chattype: chatType,
+                                email: email,
+                                displayName: displayName,
+                                issue: issue,
+                            },
+                        });
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'บันทึกข้อมูลเรียบร้อยแล้ว',
+                            showConfirmButton: false,
+                            timer: 1000,
+                            timerProgressBar: true,
+                        }).then(() => {
+                            this.auditLogService.log('', 'Contact', 'Create Contact', JSON.stringify(data), `Success`);
+                            location.reload();
+                        });
                     } else if (res.success === false && res.message === 'Duplicate' && this.MultiNumber === false) {
                         if (res.duplicates.length > 0) {
                             const duplicatedFields = [...new Set(res.duplicates.map((dup: any) => dup.duplicateOn))].join(' และ ');
@@ -495,9 +534,10 @@ export class ManageContactsComponent implements OnInit {
                                 tap((res: any) => {
                                     const contactId = res.contactId;
                                     const contactNumber = res.contactNumber;
+                                    const chatId = data.chatId;
                                     console.log('contactNumber: ', contactNumber);
                                     this.router.navigate(['/contacts/edit'], {
-                                        queryParams: { key: contactId, call_id: contactNumber },
+                                        queryParams: { key: contactId, call_id: contactNumber, chatid: chatId },
                                     });
                                     this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), 'Success');
                                 }),
