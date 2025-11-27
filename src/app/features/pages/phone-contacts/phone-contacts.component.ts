@@ -99,37 +99,89 @@ export class PhoneContactsComponent {
     }
 
     ngOnInit(): void {
-      this.route.queryParamMap.subscribe((params) => {
-        this.calls = params.get('phone');
+        this.route.queryParamMap.subscribe((params) => {
+            const chatId = params.get('chatid') || '';
+            const chatType = params.get('chattype') || '';
+            const email = params.get('email') || '';
+            const displayName = params.get('displayName') || '';
+            const issue = params.get('issue') || '';
 
-        if (this.contactId) {
-            this.getContactByPhoneId(this.contactId);
-            this.processParams(this.contactId);
-        } else if (this.calls) {
-            const dataCallArray = this.calls.split(',');
+            this.calls = params.get('phone');
 
-            this.call_id = dataCallArray[0];
-            this.caller_id = dataCallArray[1];
-
-            this.contactNumber = this.call_id;
-
-            this.contactsService.getContactsByParamPhone(this.call_id).subscribe((data: any) => {
-                if (data && data.length > 0) {
-                    this.contact = data[0].contactNumber;
-                    this.contactNumber = this.call_id;
-                    this.contactIdParams = data[0].contactId;
-                    this.getContactByPhoneId(this.contact);
-                } else {
-                    console.log('Data does not exist');
-                    this.contactIdParams = '';
-                }
-                this.processParams(this.contactIdParams);
+            const originalParams: any = {};
+            params.keys.forEach((key: string) => {
+                originalParams[key] = params.get(key);
             });
-        } else {
-            this.processParams('');
-        }
-    });
 
+            if (this.contactId) {
+                this.getContactByPhoneId(this.contactId);
+                this.processParams(this.contactId, originalParams);
+            } else if (chatId || email) {
+                const identifier = chatId || email;
+
+                if (displayName) {
+                    const nameParts = displayName.split(' ');
+                    this.contactFirstName = nameParts[0] || '';
+                    this.contactLastName = nameParts.slice(1).join(' ') || '';
+                }
+                if (email) {
+                    this.contactEmail = email;
+                }
+
+              this.contactsService.getContactsByParamPhone(identifier).subscribe((data: any) => {
+
+                console.log('data: ', data);
+                    if (data && data.length > 0) {
+                        this.contact = data[0].contactNumber;
+                        this.contactIdParams = data[0].contactId;
+
+                        this.contactId = data[0].contactId;
+                        this.contactFirstName = data[0].firstName || this.contactFirstName;
+                        this.contactLastName = data[0].lastName || this.contactLastName;
+                        this.contactEmail = data[0].email || this.contactEmail;
+                        this.contactNumber = data[0].contactNumber;
+                        this.contactIden = data[0].identification;
+                        this.contactOrg = data[0].organization_id;
+                        this.contactType = data[0].contactType;
+                        this.contactProvince = data[0].province;
+
+                        if (this.contactOrg != '' && this.contactOrg != null && this.contactOrg != undefined) {
+                            this.contactsService.getOrganizationById(this.contactOrg).subscribe((res: any) => {
+                                this.contactOrgName = res[0].orgName;
+                            });
+                        }
+
+                        this.getContactByPhoneId(identifier);
+                    } else {
+                        console.log('Data does not exist');
+                        this.contactIdParams = '';
+                    }
+                    this.processParams(this.contactIdParams, originalParams);
+                });
+            } else if (this.calls && this.calls !== 'null') {
+                const dataCallArray = this.calls.split(',');
+
+                this.call_id = dataCallArray[0];
+                this.caller_id = dataCallArray[1];
+
+                this.contactNumber = this.call_id;
+
+                this.contactsService.getContactsByParamPhone(this.call_id).subscribe((data: any) => {
+                    if (data && data.length > 0) {
+                        this.contact = data[0].contactNumber;
+                        this.contactNumber = this.call_id;
+                        this.contactIdParams = data[0].contactId;
+                        this.getContactByPhoneId(this.contact);
+                    } else {
+                        console.log('Data does not exist');
+                        this.contactIdParams = '';
+                    }
+                    this.processParams(this.contactIdParams, originalParams);
+                });
+            } else {
+                this.processParams('', originalParams);
+            }
+        });
 
         this.selectedFilter = 'all';
 
@@ -146,19 +198,32 @@ export class PhoneContactsComponent {
         return true;
     }
 
-    processParams(contactId?: string): void {
-      const queryParams: any = {
-          call_id: this.call_id,
-          caller_id: this.caller_id,
-          key: contactId || ''
-      };
+    processParams(contactId?: string, originalParams?: any): void {
+        const queryParams: any = {
+            key: contactId || ''
+        };
 
-      const navigationExtras: NavigationExtras = {
-          queryParams: queryParams,
-      };
+        if (this.call_id) {
+            queryParams.call_id = this.call_id;
+        }
+        if (this.caller_id) {
+            queryParams.caller_id = this.caller_id;
+        }
 
-      this.router.navigate(['/contacts/edit'], navigationExtras);
-  }
+        if (originalParams) {
+            Object.keys(originalParams).forEach(key => {
+                if (originalParams[key] !== null && originalParams[key] !== undefined && originalParams[key] !== '') {
+                    queryParams[key] = originalParams[key];
+                }
+            });
+        }
+
+        const navigationExtras: NavigationExtras = {
+            queryParams: queryParams,
+        };
+
+        this.router.navigate(['/contacts/edit'], navigationExtras);
+    }
 
     async getContactByPhoneId(contactId: string) {
         try {
@@ -249,7 +314,8 @@ export class PhoneContactsComponent {
                 )
                 .subscribe();
         } else {
-            const data = {
+
+          const data = {
                 firstName: this.contactFirstName,
                 lastName: this.contactLastName,
                 identification: this.contactIden,
