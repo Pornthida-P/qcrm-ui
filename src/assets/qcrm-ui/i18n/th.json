@@ -4,7 +4,9 @@
         "member": "จัดการสมาชิก",
         "menagement-password": "จัดการรหัสผ่าน",
         "menagement-account": "จัดการบัญชี",
-        "menagement-user": "จัดการผู้ใช้"
+        "menagement-user": "จัดการผู้ใช้",
+        "case-topic": "จัดการหัวข้อเคสและสคริปต์",
+        "contact-import": "จัดการนำเข้ารายการติดต่อ"
     },
     "page": {
         "password": {
@@ -23,6 +25,11 @@
         },
         "home": {
             "menuHome": "หน้าหลัก"
+        },
+        "case-topic": {
+            "add": "เพิ่มหัวข้อเคสและสคริปต์",
+            "placeHolder": "ค้นหาหัวข้อเคสและสคริปต์",
+            "save": "บันทึก"
         }
     },
     "table": {
@@ -36,7 +43,19 @@
             "isActive": "สถานะ"
         },
         "Actions": "การกระทำ",
-        "paginatorLabel": "เลือกจำนวนที่แสดง"
+        "paginatorLabel": "เลือกจำนวนที่แสดง",
+        "case-topic": {
+            "code": "รหัส",
+            "name": "ชื่อ",
+            "script": "สคริปต์",
+            "createdAt": "วันที่สร้าง",
+            "modityAt": "วันที่แก้ไข",
+            "modifiedById": "ผู้แก้ไข",
+            "modifiedAt": "วันที่แก้ไข",
+            "createdById": "ผู้สร้าง",
+            "isDeleted": "ลบ",
+            "source": "สร้างจาก"
+        }
     },
     "component": {
         "navbar": {
@@ -87,6 +106,11 @@
         "menagement-member": "จัดการสมาชิก",
         "logout": "ออกจากระบบ"
     },
+    "menuManage": {
+        "user": "ผู้ใช้งาน",
+        "case-topic": "หัวข้อเคสและสคริปต์",
+        "contact-import": "นำเข้ารายการติดต่อ"
+    },
     "mode": {
         "add": "เพิ่ม",
         "edit": "แก้ไข",
@@ -114,5 +138,21 @@
         "loading": "กำลังดาวน์โหลด",
         "data-not-found": "ไม่มีข้อมูล",
         "summary-link": "กราฟสรุปสถิติ"
+    },
+    "form": {
+        "basicInfo": "ข้อมูลพื้นฐาน",
+        "code": "รหัส",
+        "codeRequired": "กรุณากรอกรหัส",
+        "name": "ชื่อ",
+        "nameRequired": "กรุณากรอกชื่อ",
+        "script": "สคริปต์",
+        "scriptRequired": "กรุณากรอกสคริปต์",
+        "subjects": "หัวข้อเคสย่อย",
+        "addSubject": "เพิ่มหัวข้อเคสย่อย",
+        "removeSubject": "ลบหัวข้อเคสย่อย",
+        "noSubjects": "ไม่มีหัวข้อเคสย่อย",
+        "cancel": "ยกเลิก",
+        "save": "บันทึก",
+        "scriptPlaceholder": "กรุณากรอกสคริปต์ที่นี่..."
     }
 }

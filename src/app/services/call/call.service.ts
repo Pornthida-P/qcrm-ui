@@ -151,4 +151,28 @@ export class CallService {
     createCase(data: any) {
         return this.http.post(`${this.baseUrl}${config.api.path.callList.baseUrl}`, data);
     }
+
+    createCaseTopic(data: any) {
+        return this.http.post(`${this.baseUrl}${config.api.path.callList.baseUrl}${config.api.path.callList.caseTopics}`, data);
+    }
+
+    updateCaseTopic(data: any) {
+        return this.http.put(`${this.baseUrl}${config.api.path.callList.baseUrl}${config.api.path.callList.caseTopics}`, data);
+    }
+
+    deleteCaseTopic(id: string) {
+        return this.http.delete(`${this.baseUrl}${config.api.path.callList.baseUrl}${config.api.path.callList.caseTopics}/${id}`);
+    }
+
+    createCaseSubject(data: any) {
+        return this.http.post(`${this.baseUrl}${config.api.path.callList.baseUrl}${config.api.path.callList.caseSubjects}`, data);
+    }
+
+    updateCaseSubject(data: any) {
+        return this.http.put(`${this.baseUrl}${config.api.path.callList.baseUrl}${config.api.path.callList.caseSubjects}`, data);
+    }
+
+    deleteCaseSubject(id: string) {
+        return this.http.delete(`${this.baseUrl}${config.api.path.callList.baseUrl}${config.api.path.callList.caseSubjects}/${id}`);
+    }
 }

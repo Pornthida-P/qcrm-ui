@@ -1,0 +1,33 @@
+.menu-item {
+    color: #333;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+        background-color: #f8f9fa;
+        color: var(--primary, #007bff);
+    }
+
+    &.active {
+        background-color: var(--primary, #007bff);
+        color: white;
+
+        .menu-icon {
+            color: white;
+        }
+
+        .menu-label {
+            font-weight: 600;
+        }
+    }
+}
+
+.menu-icon {
+    width: 1.25rem;
+    color: #6c757d;
+    transition: color 0.2s ease-in-out;
+}
+
+.menu-label {
+    font-size: 0.95rem;
+    transition: font-weight 0.2s ease-in-out;
+}

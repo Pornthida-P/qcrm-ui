@@ -35,6 +35,10 @@
                     <p class="label" [style.color]="element[column]">{{ element[column] }}</p>
                 </ng-container>
 
+                <ng-container *ngSwitchCase="includesScript.includes(column)">
+                    <p class="label" [innerHTML]="formatScript(element[column])"></p>
+                </ng-container>
+
                 <ng-container *ngSwitchDefault>
                     <p class="label">{{ element[column] }}</p>
                 </ng-container>

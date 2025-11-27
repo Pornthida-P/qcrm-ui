@@ -4,7 +4,9 @@
         "member": "Member Management",
         "menagement-password": "Password Management",
         "menagement-account": "Account Management",
-        "menagement-user": "User Management"
+        "menagement-user": "User Management",
+        "case-topic": "Case Topic",
+        "contact-import": "Import Contact List"
     },
     "page": {
         "password": {
@@ -23,6 +25,11 @@
         },
         "home": {
             "menuHome": "Home"
+        },
+        "case-topic": {
+            "add": "Add Case Topic",
+            "placeHolder": "Search Case Topic",
+            "save": "Save"
         }
     },
     "table": {
@@ -36,7 +43,19 @@
             "isActive": "Status"
         },
         "Actions": "Actions",
-        "paginatorLabel": "Rows per page:"
+        "paginatorLabel": "Rows per page:",
+        "case-topic": {
+            "code": "Code",
+            "name": "Name",
+            "script": "Script",
+            "createdAt": "Created At",
+            "modityAt": "Modity At",
+            "modifiedById": "Modified By",
+            "modifiedAt": "Modified At",
+            "createdById": "Created By",
+            "isDeleted": "Deleted",
+            "source": "Source"
+        }
     },
     "component": {
         "navbar": {
@@ -87,6 +106,11 @@
         "menagement-member": "Member Management",
         "logout": "Logout"
     },
+    "menuManage": {
+        "user": "User",
+        "case-topic": "Case Topic",
+        "contact-import": "Import Contact List"
+    },
     "mode": {
         "add": "Add",
         "edit": "Edit",
@@ -114,5 +138,21 @@
         "loading": "Loading",
         "data-not-found": "Data Not Found",
         "summary-link": "Summary Chart"
+    },
+    "form": {
+        "basicInfo": "Basic Information",
+        "code": "Code",
+        "codeRequired": "Please enter code",
+        "name": "Name",
+        "nameRequired": "Please enter name",
+        "script": "Script",
+        "scriptRequired": "Please enter script",
+        "subjects": "Subjects",
+        "addSubject": "Add Subject",
+        "removeSubject": "Remove Subject",
+        "noSubjects": "No subjects found",
+        "cancel": "Cancel",
+        "save": "Save",
+        "scriptPlaceholder": "Please enter script here..."
     }
 }
