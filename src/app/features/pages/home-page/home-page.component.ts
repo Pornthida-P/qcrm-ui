@@ -448,7 +448,11 @@ export class HomePageComponent implements OnInit {
 
     getStatusColorAndIcon(id: number) {
         const colors = ['#FB5F20', '#010966', '#006400'];
-        const icons = ['<i class="fas fa-phone"></i>', '<i class="fa-solid fa-hourglass-end"></i>', '<i class="fas fa-comment"></i>'];
+        const icons = [
+            '<i class="fa-solid fa-folder-open"></i>',
+            '<i class="fa-solid fa-hourglass-end"></i>',
+            '<i class="fa-solid fa-folder-closed"></i>',
+        ];
         return { color: colors[id % colors.length], icon: icons[id % icons.length] } as any;
     }
 

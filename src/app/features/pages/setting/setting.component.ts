@@ -30,11 +30,6 @@ export class SettingComponent implements OnInit, AfterViewInit {
                 routerLink: 'menagement-password',
             },
             {
-                label: 'menagement-member',
-                icon: '',
-                routerLink: 'menagement-member',
-            },
-            {
                 label: 'logout',
                 icon: '',
                 routerLink: '/logout',

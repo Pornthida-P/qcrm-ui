@@ -15,10 +15,7 @@ const routes: Routes = [
                     import('../../components/menagement-account/menagement-account.module').then((m) => m.MenagementAccountModule),
                 title: 'Menagement Account',
             },
-            {
-                path: 'menagement-member',
-                loadChildren: () => import('../../components/member/member.module').then((m) => m.MemberModule),
-            },
+
             {
                 path: 'menagement-password',
                 loadChildren: () =>

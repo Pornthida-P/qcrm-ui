@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild, ChangeDetectorRef, DoCheck } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { faEdit, faEye, faGear, faTrash, faXmark } from '@fortawesome/free-solid-svg-icons';
@@ -10,12 +10,15 @@ import { TranslateService } from '@ngx-translate/core';
     templateUrl: './table-list.component.html',
     styleUrl: './table-list.component.scss',
 })
-export class TableListComponent implements OnInit, OnChanges {
+export class TableListComponent implements OnInit, OnChanges, DoCheck {
     @Input() title: string = '';
     @Input() dataSource: MatTableDataSource<any> = new MatTableDataSource<any>([]);
     @Input() displayedColumns: string[] = [];
     @Input() isAction: boolean = false;
     @Input() isShowTool: boolean = false;
+
+    private previousFilteredLength: number = 0;
+    private previousFilter: string = '';
 
     @Output() view: EventEmitter<any> = new EventEmitter<any>();
     @Output() edit: EventEmitter<any> = new EventEmitter<any>();
@@ -26,6 +29,7 @@ export class TableListComponent implements OnInit, OnChanges {
     includesProfile: string[] = ['profile'];
     includesStatus: string[] = ['isActive'];
     includesColor: string[] = ['color'];
+    includesScript: string[] = ['script'];
 
     newDataSouce: MatTableDataSource<any> = new MatTableDataSource<any>([]);
     currentPage: number = 1;
@@ -41,12 +45,30 @@ export class TableListComponent implements OnInit, OnChanges {
 
     profileError: string = './assets/qcrm-ui/image/profile/user.jpg';
 
-    constructor(private socketIO: SocketIoService) {}
+    constructor(private socketIO: SocketIoService, private cdr: ChangeDetectorRef) {}
 
-    ngOnInit(): void {}
+    ngOnInit(): void {
+        this.updatePages();
+    }
 
     ngOnChanges(): void {
         this.updatePages();
+    }
+
+    ngDoCheck(): void {
+        // Check if filter or filteredData length has changed
+        const currentFilter = this.dataSource.filter || '';
+        const currentFilteredLength = this.dataSource.filteredData?.length || 0;
+
+        if (currentFilter !== this.previousFilter || currentFilteredLength !== this.previousFilteredLength) {
+            // Reset to first page when filter changes
+            if (currentFilter !== this.previousFilter) {
+                this.currentPage = 1;
+            }
+            this.previousFilter = currentFilter;
+            this.previousFilteredLength = currentFilteredLength;
+            this.updatePages();
+        }
     }
 
     onClickView(element: any): void {
@@ -96,5 +118,12 @@ export class TableListComponent implements OnInit, OnChanges {
         this.newDataSouce = new MatTableDataSource(dataToShow);
 
         this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
+    }
+
+    formatScript(script: string): string {
+        if (!script) return '';
+        // Convert **text** to <strong>text</strong> for bold
+        // Preserve line breaks
+        return script.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
     }
 }
