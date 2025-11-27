@@ -1,0 +1,245 @@
+.contact-import-modal {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+}
+
+.modal-header-section {
+    flex-shrink: 0;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+    border-radius: 0.375rem 0.375rem 0 0;
+
+    .modal-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #212529;
+    }
+
+    .btn-close-modal {
+        background: none;
+        border: none;
+        color: #6c757d;
+        font-size: 1.25rem;
+        padding: 0.25rem 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        border-radius: 0.25rem;
+
+        &:hover {
+            background-color: #e9ecef;
+            color: #dc3545;
+        }
+
+        &:focus {
+            outline: none;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+        }
+    }
+}
+
+.modal-content-section {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    overflow-y: auto;
+    min-height: 0;
+
+    @media (max-width: 768px) {
+        padding: 1rem;
+    }
+}
+
+.upload-section {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+
+    .upload-area {
+        padding: 3rem 2rem;
+        background-color: #fff;
+        border-color: #dee2e6;
+        transition: all 0.3s ease-in-out;
+
+        &:hover {
+            border-color: #0d6efd;
+            background-color: #f8f9fa;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: #6c757d;
+        }
+    }
+}
+
+.data-section {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+
+    .section-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .table-responsive {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        max-height: 400px;
+    }
+}
+
+.table {
+    font-size: 0.875rem;
+    margin-bottom: 0;
+
+    thead {
+        th {
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0.75rem 0.5rem;
+            white-space: nowrap;
+        }
+    }
+
+    tbody {
+        td {
+            padding: 0.75rem 0.5rem;
+            vertical-align: middle;
+        }
+    }
+}
+
+.status-badge {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-radius: 0.375rem;
+
+    &.status-found {
+        background-color: #cfe2ff;
+        color: #084298;
+    }
+
+    &.status-create {
+        background-color: #d1e7dd;
+        color: #0f5132;
+    }
+
+    &.status-update {
+        background-color: #fff3cd;
+        color: #664d03;
+    }
+
+    &.status-not-found {
+        background-color: #f8d7da;
+        color: #842029;
+    }
+
+    &.status-pending {
+        background-color: #e2e3e5;
+        color: #41464b;
+    }
+
+    &.status-error {
+        background-color: #f8d7da;
+        color: #842029;
+    }
+}
+
+.summary-section {
+    .summary-card {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 0.375rem;
+        padding: 0.75rem;
+        text-align: center;
+
+        .summary-label {
+            font-size: 0.75rem;
+            color: #6c757d;
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .summary-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #212529;
+        }
+    }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+    .modal-header-section {
+        padding: 1rem;
+
+        .modal-title {
+            font-size: 1.1rem;
+        }
+    }
+
+    .table {
+        font-size: 0.8rem;
+
+        thead th,
+        tbody td {
+            padding: 0.5rem 0.25rem;
+        }
+    }
+
+    .summary-section {
+        .summary-card {
+            padding: 0.5rem;
+
+            .summary-value {
+                font-size: 1.25rem;
+            }
+        }
+    }
+
+    .modal-actions {
+        padding-top: 1rem;
+        border-top: 1px solid #dee2e6;
+
+        .btn {
+            min-width: 120px;
+        }
+
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+            border-width: 0.15em;
+        }
+    }
+}
+
+@media (max-width: 576px) {
+    .table-responsive {
+        font-size: 0.75rem;
+    }
+
+    .summary-section {
+        .row {
+            .col-6 {
+                margin-bottom: 0.5rem;
+            }
+        }
+    }
+}

@@ -1,0 +1,360 @@
+import { Component, OnInit, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
+import { faCloudUploadAlt, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { ContactsService } from 'src/app/services/contacts/contacts.service';
+import * as XLSX from 'xlsx';
+@Component({
+    selector: 'app-contact-import-management',
+    standalone: false,
+    templateUrl: './contact-import-management.component.html',
+    styleUrl: './contact-import-management.component.scss',
+})
+export class ContactImportManagementComponent implements OnInit {
+    faCloudUploadAlt = faCloudUploadAlt;
+    faXmark = faXmark;
+    contactObjects: any[] = [];
+    isProcessing = false;
+    isImporting = false;
+
+    constructor(
+        private contactService: ContactsService,
+        public dialogRef: MatDialogRef<ContactImportManagementComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: any,
+        private translate: TranslateService,
+    ) {}
+
+    ngOnInit() {}
+    readExcelFile(file: File) {
+        const reader = new FileReader();
+        reader.onload = async (event: any) => {
+            const data = new Uint8Array(event.target.result);
+            const workbook = XLSX.read(data, { type: 'array', cellText: false, cellDates: true });
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+
+            // Read with raw option to preserve cell values as they are
+            const json = XLSX.utils.sheet_to_json(worksheet, {
+                header: 1,
+                raw: false, // Get cell values as strings
+                defval: '', // Default value for empty cells
+            });
+
+            // Process the data to fix phone numbers and convert to array of objects
+            const processedData = this.processContactData(json);
+            this.contactObjects = this.convertToContactObjects(processedData);
+            if (this.contactObjects.length > 0) {
+                this.isProcessing = true;
+                await this.checkContactData();
+                this.isProcessing = false;
+            }
+            console.log('Contact Objects:', this.contactObjects);
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
+    private processContactData(data: any[]): any[] {
+        if (!data || data.length === 0) return data;
+
+        // First row is header
+        const headers = data[0];
+        const phoneNumberIndex = headers.findIndex(
+            (h: string) => h && (h.toLowerCase().includes('phone') || h.toLowerCase().includes('number')),
+        );
+
+        if (phoneNumberIndex === -1) {
+            console.warn('Phone number column not found');
+            return data;
+        }
+
+        // Process each row starting from index 1 (skip header)
+        return data.map((row: any[], rowIndex: number) => {
+            if (rowIndex === 0) return row; // Keep header as is
+
+            if (row[phoneNumberIndex] !== undefined && row[phoneNumberIndex] !== null) {
+                let phoneNumber = String(row[phoneNumberIndex]).trim();
+
+                // Remove any non-digit characters except leading +
+                phoneNumber = phoneNumber.replace(/[^\d+]/g, '');
+
+                // If phone number is 9 digits and starts with 6-9, add leading 0 (Thai phone number)
+                if (/^[6-9]\d{8}$/.test(phoneNumber)) {
+                    phoneNumber = '0' + phoneNumber;
+                }
+                // If phone number is 8 digits and starts with 1-9, add leading 0
+                else if (/^[1-9]\d{7}$/.test(phoneNumber)) {
+                    phoneNumber = '0' + phoneNumber;
+                }
+
+                row[phoneNumberIndex] = phoneNumber;
+            }
+
+            return row;
+        });
+    }
+
+    onUploadFile(event: any) {
+        console.log('onUploadFile', event);
+        const file = event.target.files[0];
+        if (file) {
+            const fileType = file.type;
+            if (fileType != 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+                return;
+            }
+
+            this.readExcelFile(file);
+        }
+    }
+
+    private convertToContactObjects(data: any[]): any[] {
+        if (!data || data.length < 2) return [];
+
+        // First row is header - keep original case
+        const headers = data[0].map((h: string) => (h ? String(h).trim() : ''));
+        const contactObjects: any[] = [];
+
+        // Process each row starting from index 1 (skip header)
+        for (let i = 1; i < data.length; i++) {
+            const row = data[i];
+
+            // Skip empty rows
+            if (!row || row.length === 0 || row.every((cell: any) => cell === undefined || cell === null || cell === '')) {
+                continue;
+            }
+
+            const contactObj: any = {};
+
+            headers.forEach((header: string, index: number) => {
+                if (header) {
+                    const value = row[index];
+                    // Keep original value type, only convert to string if needed
+                    if (value === undefined || value === null || value === '') {
+                        contactObj[header] = null;
+                    } else {
+                        // For phone_number, keep as string (already processed)
+                        if (header.toLowerCase().includes('phone') || header.toLowerCase().includes('number')) {
+                            contactObj[header] = String(value).trim();
+                        } else {
+                            // For other fields, keep original type or convert to string
+                            contactObj[header] = typeof value === 'string' ? value.trim() : value;
+                        }
+                    }
+                }
+            });
+
+            // Add name field by combining firstname + lastname
+            const firstName = contactObj['firstname'] || contactObj['firstName'] || '';
+            const lastName = contactObj['lastname'] || contactObj['lastName'] || '';
+            const fullName = [firstName, lastName].filter(Boolean).join(' ').trim();
+            contactObj['name'] = fullName || null;
+
+            contactObjects.push(contactObj);
+        }
+
+        return contactObjects;
+    }
+
+    // Check contact data without calling API (only for status preview)
+    async checkContactData() {
+        for (const contactObject of this.contactObjects) {
+            try {
+                const phone = contactObject['phone_number'];
+                if (phone) {
+                    const phoneRes: any = await this.contactService.getContactsByParamPhone(phone).toPromise();
+                    const phoneContacts = typeof phoneRes === 'string' ? JSON.parse(phoneRes) : phoneRes;
+                    if (phoneContacts && Array.isArray(phoneContacts) && phoneContacts.length > 0) {
+                        contactObject['contact'] = phoneContacts[0];
+                        contactObject['import-status'] = 'found';
+                        continue;
+                    }
+                }
+
+                // If not found by phone, search by name
+                const name = contactObject['name'];
+                if (name) {
+                    const nameContacts = await this.searchContactByName(name);
+                    if (nameContacts && nameContacts.length > 0) {
+                        contactObject['contact'] = nameContacts[0];
+                        if (nameContacts[0].contactNumber !== contactObject['phone_number']) {
+                            contactObject['import-status'] = 'update';
+                        } else {
+                            contactObject['import-status'] = 'found';
+                        }
+                    } else {
+                        contactObject['import-status'] = 'create';
+                    }
+                } else {
+                    contactObject['contact'] = null;
+                    contactObject['import-status'] = 'not-found';
+                }
+            } catch (error) {
+                console.error('Error checking contact data:', error);
+                contactObject['contact'] = null;
+                contactObject['import-status'] = 'not-found';
+            }
+        }
+    }
+
+    // Actually import/update contacts by calling API
+    async onClickConfirm() {
+        if (this.isImporting) return;
+
+        this.isImporting = true;
+        let successCount = 0;
+        let errorCount = 0;
+
+        try {
+            for (const contactObject of this.contactObjects) {
+                let importStatus = contactObject['import-status'];
+                try {
+                    if (importStatus === 'found') {
+                        // Already exists, skip
+                        successCount++;
+                        continue;
+                    }
+
+                    if (importStatus === 'update') {
+                        // Update existing contact
+                        const updated = await this.updateContact(contactObject);
+                        if (updated) {
+                            contactObject['contact'] = updated;
+                            importStatus = 'found';
+                            successCount++;
+                        } else {
+                            importStatus = 'error';
+                            errorCount++;
+                        }
+                    } else if (importStatus === 'create') {
+                        // Create new contact
+                        const created = await this.createContact(contactObject);
+                        if (created) {
+                            contactObject['contact'] = created;
+                            importStatus = 'found';
+                            successCount++;
+                        } else {
+                            importStatus = 'error';
+                            errorCount++;
+                        }
+                    } else {
+                        // not-found or error status
+                        errorCount++;
+                    }
+                } catch (error) {
+                    console.error('Error processing contact:', error);
+                    importStatus = 'error';
+                    errorCount++;
+                }
+            }
+            console.log('contactObjects', this.contactObjects);
+            // Show success message and close modal
+            if (errorCount === 0) {
+                alert(`นำเข้าข้อมูลสำเร็จ ${successCount} รายการ`);
+                this.dialogRef.close({ success: true, imported: successCount });
+            } else {
+                alert(`นำเข้าข้อมูลสำเร็จ ${successCount} รายการ, เกิดข้อผิดพลาด ${errorCount} รายการ`);
+                this.dialogRef.close({ success: true, imported: successCount, errors: errorCount });
+            }
+        } catch (error) {
+            console.error('Error during import:', error);
+            alert('เกิดข้อผิดพลาดในการนำเข้าข้อมูล');
+        } finally {
+            this.isImporting = false;
+        }
+    }
+
+    async getContactByPhone(phone: string) {
+        const res: any = await this.contactService.getContactsByParamPhone(phone).toPromise();
+    }
+
+    async searchContactByName(name: string): Promise<any[]> {
+        if (!name || name.trim() === '') {
+            return [];
+        }
+        try {
+            const res: any = await this.contactService.getContactsByPage(0, 15, 'startTime,DESC', name.trim(), 'all').toPromise();
+            const contacts = typeof res === 'string' ? JSON.parse(res) : res;
+            return Array.isArray(contacts) ? contacts : [];
+        } catch (error) {
+            console.error('Error searching contact by name:', error);
+            return [];
+        }
+    }
+
+    async updateContact(contactObject: any): Promise<any> {
+        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        const data = {
+            contactId: contactObject['contact'].contactId,
+            firstName: contactObject['firstname'] || contactObject['firstName'] || contactObject['contact'].firstName || '',
+            lastName: contactObject['lastname'] || contactObject['lastName'] || contactObject['contact'].lastName || '',
+            contactNumber: contactObject['contact'].contactNumber || '',
+            contactNumNew: contactObject['phone_number'] || contactObject['phoneNumber'] || '',
+            modifiedById: userData.userId || '',
+        };
+
+        try {
+            const res: any = await this.contactService.editContacts(data).toPromise();
+            return typeof res === 'string' ? JSON.parse(res) : res;
+        } catch (error) {
+            console.error('Error updating contact:', error);
+            return null;
+        }
+    }
+
+    async createContact(contactObject: any): Promise<any> {
+        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        const data = {
+            firstName: contactObject['firstname'] || contactObject['firstName'] || '',
+            lastName: contactObject['lastname'] || contactObject['lastName'] || '',
+            contactNumber: contactObject['phone_number'] || contactObject['phoneNumber'] || '',
+            gender: contactObject['gender'] || 'unknown',
+
+            createdById: userData.userId || '',
+        };
+
+        try {
+            const res: any = await this.contactService.createContacts(data).toPromise();
+            const result = typeof res === 'string' ? JSON.parse(res) : res;
+
+            if (result && result.success === true) {
+                const contactId = result.contactId;
+                const contact = await this.findContactById(contactId);
+                return contact;
+            }
+            return null;
+        } catch (error) {
+            console.error('Error creating contact:', error);
+            return null;
+        }
+    }
+
+    async findContactById(id: string): Promise<any> {
+        try {
+            const res: any = await this.contactService.getContactsById(id).toPromise();
+            const contact = typeof res === 'string' ? JSON.parse(res) : res;
+
+            if (Array.isArray(contact) && contact.length > 0) {
+                return contact[0];
+            } else if (contact && !Array.isArray(contact)) {
+                return contact;
+            }
+            return null;
+        } catch (error) {
+            console.error('Error finding contact by id:', error);
+            return null;
+        }
+    }
+
+    onClickClose(): void {
+        this.dialogRef.close();
+    }
+
+    getStatusLabel(status: string): string {
+        const statusKey = `contact-import-management.status.${status}`;
+        const defaultKey = 'contact-import-management.status.pending';
+        return this.translate.instant(statusKey) || this.translate.instant(defaultKey);
+    }
+
+    getStatusCount(status: string): number {
+        return this.contactObjects.filter((contact) => contact['import-status'] === status).length;
+    }
+}

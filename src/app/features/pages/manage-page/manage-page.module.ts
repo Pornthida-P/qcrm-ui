@@ -35,7 +35,10 @@ export function HttpLoaderFactory(http: HttpClient) {
                         path: 'case-topic',
                         loadChildren: () => import('./case-topic/case-topic.module').then((m) => m.CaseTopicModule),
                     },
-                    { path: 'contact-import', component: ContactImportComponent },
+                    {
+                        path: 'contact-import',
+                        loadChildren: () => import('./contact-import/contact-import.module').then((m) => m.ContactImportModule),
+                    },
                 ],
             },
         ]),
