@@ -316,7 +316,7 @@ export class ManageContactsComponent implements OnInit {
         });
 
         await this.contactsService.getContactCall(contactId).subscribe((res: any) => {
-            this.contactCall = res;
+          this.contactCall = res;
         });
 
         await this.contactsService.getContactNumberById(contactId).subscribe((res: any) => {
@@ -709,11 +709,10 @@ export class ManageContactsComponent implements OnInit {
         this.showAddCall();
     }
 
-    editCall(callId: string, type: string) {
+    editCall(caseId: string) {
         this.currentChannel = '';
         this.attachmentShowing = false;
-        console.log('Edit Case:', callId);
-        console.log('Type:', type);
+        console.log('Edit Case:', caseId);
         this.cType = '';
         this.callId = '';
         this.selectedChannels = '';
@@ -736,16 +735,14 @@ export class ManageContactsComponent implements OnInit {
         this.selectedCasesubject = [];
         this.selectedActivityTopicId = [];
 
-        // Only handle case type
-        if (type === 'case') {
-            this.callServive.getCaseById(callId).subscribe((call: any) => {
+        this.callServive.getCaseById(caseId).subscribe(
+            (call: any) => {
                 this.selectSubject = 1;
-                console.log('Case:', call);
                 this.cType = 'case';
                 this.callId = call.caseId;
                 this.description = call.description;
                 this.solutions = call.solution || '';
-                this.selectedStatus = call.status;
+                this.selectedStatus = call.statusId;
                 this.startTime = call.requestDateTime;
                 const date = new Date(call.requestDateTime);
                 this.timepickStart = {
@@ -756,8 +753,8 @@ export class ManageContactsComponent implements OnInit {
                 this.selectedChannels = call.channelId;
                 this.currentChannel = call.channelId;
                 this.selectedCallTypeId = call.operationType;
+                this.selectedStatus = call.statusId;
 
-                // Handle contactNumber
                 if (call.contactNumber) {
                     this.selectedContactNumber = {
                         contactNumber: call.contactNumber,
@@ -765,37 +762,34 @@ export class ManageContactsComponent implements OnInit {
                     };
                 }
 
-                // Handle email
                 if (call.email) {
                     this.selectedEmail = call.email;
                 }
 
-                // Handle caseTopicIds - For single select, use first value only
-                if (call.caseTopicIds && call.caseTopicIds !== 'null') {
-                    let caseTopicIds = call.caseTopicIds;
-                    if (!Array.isArray(caseTopicIds)) {
-                        caseTopicIds = JSON.parse(caseTopicIds);
-                    }
-                    this.selectedCaseTopics[0] = caseTopicIds && caseTopicIds.length > 0 ? String(caseTopicIds[0]) : null;
+                if (call.caseTopicId) {
+                    this.selectedCaseTopics[0] = call.caseTopicId;
+                } else {
+                    this.selectedCaseTopics[0] = null;
                 }
 
-                // Handle caseSubjectIds - For single select, use first value only
-                if (call.caseSubjectIds && call.caseSubjectIds !== 'null') {
-                    let caseSubjects = call.caseSubjectIds;
-                    if (!Array.isArray(caseSubjects)) {
-                        caseSubjects = JSON.parse(caseSubjects);
-                    }
-                    this.selectedCasesubject[0] = caseSubjects && caseSubjects.length > 0 ? String(caseSubjects[0]) : null;
+                if (call.caseSubjectId) {
+                    setTimeout(() => {
+                        this.selectedCasesubject[0] = call.caseSubjectId;
+                    }, 0);
+                } else {
+                    this.selectedCasesubject[0] = null;
                 }
-            });
-        }
+            },
+            (error) => {
+                console.error('Error fetching case:', error);
+            },
+        );
 
         this.showAddCall();
     }
 
-    deleteCall(callId: string, type: string) {
+    deleteCall(callId: string) {
         console.log('Delete Call:', callId);
-        console.log('Type:', type);
         Swal.fire({
             icon: 'warning',
             title: 'คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้?',
@@ -807,14 +801,14 @@ export class ManageContactsComponent implements OnInit {
             width: '50%',
         }).then((result) => {
             if (result.isConfirmed) {
-                this.contactsService.deleteCall(callId, type).subscribe(
+                this.contactsService.deleteCall(callId).subscribe(
                     (res: any) => {
                         this.sweetalertServices.getSwal('success', 'ลบข้อมูลเรียบร้อยแล้ว', '', false, '');
                         this.auditLogService.log(
                             '',
                             'Contact',
                             `Delete Call From ContactID : ${this.contactId}`,
-                            `Call ID : ${callId}, Type : ${type}`,
+                            `Call ID : ${callId}`,
                             `Success`,
                         );
                         window.location.reload();
@@ -825,7 +819,7 @@ export class ManageContactsComponent implements OnInit {
                             '',
                             'Contact',
                             `Delete Call From ContactID : ${this.contactId}`,
-                            `Call ID : ${callId}, Type : ${type}`,
+                            `Call ID : ${callId}`,
                             `Failed, Error : ${error}`,
                         );
                     },

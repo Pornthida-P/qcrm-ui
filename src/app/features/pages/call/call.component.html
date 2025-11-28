@@ -140,8 +140,8 @@
                                         type="checkbox"
                                         [(ngModel)]="calls.state"
                                         name="calls"
-                                        value="calls.callId"
-                                        (change)="selectCheckbox(calls.callId)"
+                                        value="calls.caseId"
+                                        (change)="selectCheckbox(calls.caseId)"
                                     />
                                 </td>
                                 <td>
@@ -188,7 +188,7 @@
                                             data-bs-target="#offcanvasRight"
                                             aria-controls="offcanvasRight"
                                             ngbTooltip="แก้ไข"
-                                            (click)="editCall(calls.callId, calls.table, calls.contactId)"
+                                            (click)="editCall(calls.caseId, calls.contactId)"
                                         >
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </div>
@@ -199,7 +199,7 @@
                                             style="cursor: pointer"
                                             ngbTooltip="ลบ"
                                             *ngIf="checkSupRole()"
-                                            (click)="deleteCall(calls.callId, calls.table)"
+                                            (click)="deleteCall(calls.caseId)"
                                         >
                                             <i class="fa-solid fa-trash"></i>
                                         </div>
