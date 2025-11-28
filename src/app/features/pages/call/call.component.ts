@@ -241,13 +241,13 @@ export class CallComponent implements OnInit {
 
         this.dateRangeForm.get('startDate')!.valueChanges.subscribe((value) => {
             this.startDate = moment(value).format('YYYY-MM-DD');
-            this.getCallsData((this.currentPage - 1) * this.currentPage, this.pageSize);
+            this.getCallsData((this.currentPage - 1) * this.pageSize, this.pageSize);
             this.getPage();
         });
 
         this.dateRangeForm.get('endDate')!.valueChanges.subscribe((value) => {
             this.endDate = moment(value).format('YYYY-MM-DD');
-            this.getCallsData((this.currentPage - 1) * this.currentPage, this.pageSize);
+            this.getCallsData((this.currentPage - 1) * this.pageSize, this.pageSize);
             this.getPage();
         });
 
@@ -297,7 +297,7 @@ export class CallComponent implements OnInit {
                 this.startDate,
                 this.endDate,
             )
-            .subscribe((res: any) => {
+          .subscribe((res: any) => {
                 this.calls = res;
                 this.calls.forEach((call) => {
                     if (call.type === 'I') {
@@ -539,12 +539,11 @@ export class CallComponent implements OnInit {
         });
     }
 
-    editCall(callId: string, type: string, contactId: string) {
+    editCall(callId: string, contactId: string) {
+        console.log('callId: ', callId);
+        console.log('contactId: ', contactId);
         this.currentChannel = '';
-        console.log('contactIdEdit: ', contactId);
         this.attachmentShowing = false;
-        console.log('Edit Call:', callId);
-        console.log('Type:', type);
         this.cType = '';
         this.callId = '';
         this.selectedCasesubject = '';
@@ -555,7 +554,7 @@ export class CallComponent implements OnInit {
         this.description = '';
         this.solutions = '';
         this.selectedCallTypeId = '';
-        const date = new Date('');
+        const date = new Date();
         this.timepickStart = {
             hour: date.getHours(),
             minute: date.getMinutes(),
@@ -565,120 +564,51 @@ export class CallComponent implements OnInit {
         this.selectedCasesubject = [];
         this.selectedActivityTopicId = [];
 
-        if (type === 'call') {
-            this.callService.getCallById(callId).subscribe((call: any) => {
-                console.log('Call:', call);
-                this.cType = 'call';
-                this.callId = call[0].callId;
-                this.selectedCasesubject = [];
-                this.selectedChannels = call[0].channel;
-                this.currentChannel = call[0].channel;
-                this.isEmailSubscribed = call[0].emailInfo;
-                this.activityTypeId = call[0].activityType;
-                this.selectedCallTypeId = call[0].operationType;
-                this.startTime = call[0].startTime;
-                this.description = call[0].description;
-                this.solutions = call[0].solution;
-                this.selectedCallTypeId = call[0].operationType;
-                const date = new Date(call[0].startTime);
-                this.timepickStart = {
-                    hour: date.getHours(),
-                    minute: date.getMinutes(),
-                    second: date.getSeconds(),
-                };
-                this.selectedEmail = call[0].email;
-                this.selectedContactNumber = call[0].caller_id;
+        this.callService.getCaseById(callId).subscribe((call: any) => {
+            if (!call) {
+                console.error('Case not found:', callId);
+                return;
+            }
 
-                // Handle caseTopicIds - For single select, use first value only
-                if (call[0].caseTopicId && call[0].caseTopicId !== 'null') {
-                    let caseTopicIds = call[0].caseTopicId;
-                    if (!Array.isArray(caseTopicIds)) {
-                        caseTopicIds = JSON.parse(caseTopicIds);
-                    }
-                    this.selectSubject = caseTopicIds.length > 0 ? caseTopicIds.length : 1;
-                    for (let i = 0; i < this.selectSubject; i++) {
-                        if (Array.isArray(caseTopicIds[i]) && caseTopicIds[i].length > 0) {
-                            // If it's array of arrays, get first element
-                            this.selectedCaseTopics[i] = String(caseTopicIds[i][0]);
-                        } else if (caseTopicIds[i]) {
-                            // If it's single value
-                            this.selectedCaseTopics[i] = String(caseTopicIds[i]);
-                        } else {
-                            this.selectedCaseTopics[i] = null;
-                        }
-                    }
-                }
+            this.selectSubject = 1;
+            this.cType = 'case';
+            this.callId = call.caseId;
+            this.description = call.description;
+            this.startTime = call.requestDateTime;
+            const date = new Date(call.requestDateTime);
+            this.timepickStart = {
+                hour: date.getHours(),
+                minute: date.getMinutes(),
+                second: date.getSeconds(),
+            };
+            this.selectedChannels = call.channelId;
+            this.currentChannel = call.channelId;
+            this.selectedCallTypeId = call.operationType;
+            this.selectedEmail = call.email;
+            this.selectedContactNumber = call.contactNumber;
+            this.selectedStatus = call.statusId;
 
-                // Handle caseSubjects - For single select, use first value only
-                if (call[0].caseSubject && call[0].caseSubject !== 'null') {
-                    let caseSubjects = call[0].caseSubject;
-                    if (!Array.isArray(caseSubjects)) {
-                        caseSubjects = JSON.parse(caseSubjects);
-                    }
-                    for (let i = 0; i < this.selectSubject; i++) {
-                        if (this.selectedCaseTopics[i]) {
-                            if (Array.isArray(caseSubjects[i]) && caseSubjects[i].length > 0) {
-                                // If it's array of arrays, get first element
-                                this.selectedCasesubject[i] = String(caseSubjects[i][0]);
-                            } else if (caseSubjects[i]) {
-                                // If it's single value
-                                this.selectedCasesubject[i] = String(caseSubjects[i]);
-                            } else {
-                                this.selectedCasesubject[i] = null;
-                            }
-                        } else {
-                            this.selectedCasesubject[i] = null;
-                        }
-                    }
-                }
-            });
-        } else if (type === 'case') {
-            this.callService.getCaseById(callId).subscribe((call: any) => {
-                this.selectSubject = 1;
-                console.log('Case:', call);
-                this.cType = 'case';
-                this.callId = call.caseId;
-                this.description = call.description;
-                this.startTime = call.requestDateTime;
-                const date = new Date(call.requestDateTime);
-                this.timepickStart = {
-                    hour: date.getHours(),
-                    minute: date.getMinutes(),
-                    second: date.getSeconds(),
-                };
-                this.selectedChannels = call.channelId;
-                this.currentChannel = call.channelId;
-                this.selectedCallTypeId = call.operationType;
-                this.selectedEmail = call.email;
-                this.selectedContactNumber = call.contactNumber;
 
-                if (call.caseTopicIds && call.caseTopicIds !== 'null') {
-                    let caseTopicIds = call.caseTopicIds;
-                    if (!Array.isArray(caseTopicIds)) {
-                        caseTopicIds = JSON.parse(caseTopicIds);
-                    }
-                    // For single select, use first value only
-                    // If caseTopicIds is array of arrays, get first element of first array
-                    if (Array.isArray(caseTopicIds) && caseTopicIds.length > 0) {
-                        const firstTopic = Array.isArray(caseTopicIds[0]) ? caseTopicIds[0][0] : caseTopicIds[0];
-                        this.selectedCaseTopics[0] = firstTopic ? String(firstTopic) : null;
-                    }
-                }
+            if (call.caseTopicId) {
+                this.selectedCaseTopics[0] = call.caseTopicId;
+                // console.log('Set selectedCaseTopics[0] to:', this.selectedCaseTopics[0]);
+            } else {
+                this.selectedCaseTopics[0] = null;
+            }
 
-                if (call.caseSubjectIds && call.caseSubjectIds !== 'null') {
-                    let caseSubjects = call.caseSubjectIds;
-                    if (!Array.isArray(caseSubjects)) {
-                        caseSubjects = JSON.parse(caseSubjects);
-                    }
-                    // For single select, use first value only
-                    // If caseSubjects is array of arrays, get first element of first array
-                    if (Array.isArray(caseSubjects) && caseSubjects.length > 0) {
-                        const firstSubject = Array.isArray(caseSubjects[0]) ? caseSubjects[0][0] : caseSubjects[0];
-                        this.selectedCasesubject[0] = firstSubject ? String(firstSubject) : null;
-                    }
-                }
-            });
-        }
+
+            if (call.caseSubjectId) {
+                setTimeout(() => {
+                    this.selectedCasesubject[0] = call.caseSubjectId;
+                    // console.log('Set selectedCasesubject[0] to:', this.selectedCasesubject[0]);
+                }, 0);
+            } else {
+                this.selectedCasesubject[0] = null;
+            }
+        }, (error) => {
+            console.error('Error fetching case:', error);
+            // Handle error appropriately
+        });
 
         this.showAddCall();
         this.getContactNumber(contactId);
