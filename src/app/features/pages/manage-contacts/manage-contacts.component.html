@@ -190,15 +190,15 @@
                         </thead>
                         <tbody>
                             <ng-container *ngIf="contactCall && contactCall.length > 0; else noDataTemplate">
-                                <tr *ngFor="let call of contactCall">
-                                    <td>{{ call.startTime | date : 'dd/MM/yyyy  HH:mm' }}</td>
-                                    <td>{{ call.caller }}</td>
-                                    <td>{{ call.type }}</td>
-                                    <td>{{ call.channel }}</td>
-                                    <td>{{ call.topic }}</td>
-                                    <td>{{ call.description }}</td>
-                                    <td>{{ call.fullname }}</td>
-                                    <td>{{ call.create_by }}</td>
+                                <tr *ngFor="let case of contactCall">
+                                    <td>{{ case.requestDateTime | date : 'dd/MM/yyyy  HH:mm' }}</td>
+                                    <td>{{ case.contactNumber || '-' }}</td>
+                                    <td>{{ case.operationType || '-' }}</td>
+                                    <td>{{ case.channelName }}</td>
+                                    <td>{{ case.caseTopicName }}</td>
+                                    <td>{{ case.description }}</td>
+                                    <td>{{ case.firstName }}</td>
+                                    <td>{{ case.createdById }}</td>
                                     <td class="text-center" scope="row">
                                         <div class="d-flex flex-row flex-nowrap">
                                             <div
@@ -209,17 +209,18 @@
                                                 data-bs-target="#offcanvasRight"
                                                 aria-controls="offcanvasRight"
                                                 ngbTooltip="แก้ไข"
-                                                (click)="editCall(call.callId, call.table_type)"
+                                                (click)="editCall(case.caseId)"
                                             >
                                                 <i class="fa-solid fa-pen-to-square"></i>
                                             </div>
                                             <div
                                                 class="color-primary"
+                                                [style]="{ cursor: 'pointer' }"
                                                 placement="top"
                                                 style="cursor: pointer"
                                                 ngbTooltip="ลบ"
                                                 *ngIf="checkSupRole()"
-                                                (click)="deleteCall(call.callId, call.table_type)"
+                                                (click)="deleteCall(case.caseId)"
                                             >
                                                 <i class="fa-solid fa-trash"></i>
                                             </div>

@@ -1010,9 +1010,8 @@ export class CallComponent implements OnInit {
         }
     }
 
-    deleteCall(callId: string, type: string) {
+    deleteCall(callId: string) {
         console.log('Delete Call:', callId);
-        console.log('Type:', type);
         Swal.fire({
             icon: 'warning',
             title: 'คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้?',
@@ -1024,14 +1023,14 @@ export class CallComponent implements OnInit {
             width: '50%',
         }).then((result) => {
             if (result.isConfirmed) {
-                this.contactsService.deleteCall(callId, type).subscribe(
+                this.contactsService.deleteCall(callId).subscribe(
                     (res: any) => {
                         this.sweetalertServices.getSwal('success', 'ลบข้อมูลเรียบร้อยแล้ว', '', false, '');
                         this.auditLogService.log(
                             '',
                             'Contact',
                             `Delete Call From ContactID : ${this.contactId}`,
-                            `Call ID : ${callId}, Type : ${type}`,
+                            `Call ID : ${callId}`,
                             `Success`,
                         );
                         window.location.reload();
@@ -1042,7 +1041,7 @@ export class CallComponent implements OnInit {
                             '',
                             'Contact',
                             `Delete Call From ContactID : ${this.contactId}`,
-                            `Call ID : ${callId}, Type : ${type}`,
+                            `Call ID : ${callId}`,
                             `Failed, Error : ${error}`,
                         );
                     },
