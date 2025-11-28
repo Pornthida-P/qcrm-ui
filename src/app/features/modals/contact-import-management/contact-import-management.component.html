@@ -3,9 +3,7 @@
     <div class="modal-header-section">
         <div class="row align-items-center">
             <div class="col-12 col-md-8">
-                <h5 class="modal-title mb-0">
-                    {{ 'title.contact-import' | translate }}
-                </h5>
+                <h5 class="modal-title mb-0">{{ 'title.contact-import' | translate }} ({{ 'mode.' + mode | translate }})</h5>
             </div>
             <div class="col-12 col-md-4 text-end mt-2 mt-md-0">
                 <button type="button" class="btn-close-modal" (click)="onClickClose()" aria-label="Close">
@@ -16,7 +14,7 @@
     </div>
 
     <!-- Content -->
-    <div class="modal-content-section position-relative">
+    <div class="modal-content-section position-relative" *ngIf="mode === 'add'">
         <!-- Upload Section -->
         <app-loader *ngIf="isLoading"></app-loader>
         <div *ngIf="contactObjects.length === 0" class="upload-section">
@@ -148,5 +146,83 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <div class="modal-content-section position-relative view-mode" *ngIf="mode === 'view'">
+        <!-- Assignment Info Section -->
+        <div class="assignment-info">
+            <p class="text-muted small mb-0">
+                {{ 'contact-import-management.assignUser' | translate }}: {{ assignUser || '-' }} |
+                {{ 'contact-import-management.assignedAt' | translate }}: {{ assignAt || '-' }}
+            </p>
+        </div>
+
+        <!-- Form Section -->
+        <form [formGroup]="form" class="view-form">
+            <div class="row g-3 g-md-4">
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label for="firstname" class="form-label">
+                            {{ 'contact-import-management.name' | translate }}
+                        </label>
+                        <input type="text" class="form-control" id="firstname" formControlName="firstname" readonly />
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label for="lastname" class="form-label">
+                            {{ 'contact-import-management.lastname' | translate }}
+                        </label>
+                        <input type="text" class="form-control" id="lastname" formControlName="lastname" readonly />
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label for="phoneNumber" class="form-label">
+                            {{ 'contact-import-management.phone-number' | translate }}
+                        </label>
+                        <input type="text" class="form-control font-monospace" id="phoneNumber" formControlName="phoneNumber" readonly />
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label for="topic" class="form-label">
+                            {{ 'contact-import-management.topic' | translate }}
+                        </label>
+                        <input type="text" class="form-control" id="topic" formControlName="topic" readonly />
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label for="subject" class="form-label">
+                            {{ 'contact-import-management.subject' | translate }}
+                        </label>
+                        <input type="text" class="form-control" id="subject" formControlName="subject" readonly />
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label for="status" class="form-label">
+                            {{ 'contact-import-management.status-text' | translate }}
+                        </label>
+                        <input type="text" class="form-control" id="status" formControlName="status" readonly />
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="form-group">
+                        <label for="description" class="form-label">
+                            {{ 'contact-import-management.description' | translate }}
+                        </label>
+                        <textarea class="form-control" id="description" formControlName="description" rows="3" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
