@@ -9,6 +9,7 @@ import { CallService } from 'src/app/services/call/call.service';
 import { firstValueFrom, forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 @Component({
     selector: 'app-contact-import-management',
     standalone: false,
@@ -24,6 +25,10 @@ export class ContactImportManagementComponent implements OnInit {
     agentAll: any[] = [];
     caseList: any[] = [];
     isLoading = false;
+    mode: string = '';
+    form!: FormGroup;
+    assignUser: string = '';
+    assignAt: string = '';
 
     constructor(
         private contactService: ContactsService,
@@ -35,7 +40,28 @@ export class ContactImportManagementComponent implements OnInit {
         private sweetAlertService: SweetAlertService,
     ) {}
 
-    ngOnInit() {}
+    ngOnInit() {
+        this.mode = this.data.mode;
+        this.buildForm();
+        if (this.mode === 'view') {
+            console.log('data: ', this.data);
+            // this.form.patchValue(this.data.contactListImport);
+            this.form.disable();
+        }
+    }
+
+    buildForm() {
+        this.form = new FormGroup({
+            firstname: new FormControl('', Validators.required),
+            lastname: new FormControl('', Validators.required),
+            phoneNumber: new FormControl('', Validators.required),
+            topic: new FormControl('', Validators.required),
+            subject: new FormControl('', Validators.required),
+            description: new FormControl('', Validators.required),
+            status: new FormControl('', Validators.required),
+        });
+    }
+
     readExcelFile(file: File) {
         this.isLoading = true;
         const reader = new FileReader();

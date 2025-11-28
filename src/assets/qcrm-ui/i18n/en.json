@@ -60,6 +60,18 @@
             "createdById": "Created By",
             "isDeleted": "Deleted",
             "source": "Source"
+        },
+        "contact-import": {
+            "requestDateTime": "Request Date Time",
+            "fullname": "Fullname",
+            "contactNumber": "Contact Number",
+            "channel": "Channel",
+            "topic": "Topic",
+            "subject": "Subject",
+            "script": "Script",
+            "description": "Description",
+            "status": "Status",
+            "assignUser": "Assign User"
         }
     },
     "component": {
@@ -188,9 +200,15 @@
             "pending": "Pending",
             "error": "Error"
         },
+        "status-text": "Status",
         "success": "Success",
         "success-message": "Successfully imported {{count}} records",
         "error": "Error",
-        "error-message": "Successfully imported {{count}} records, error {{errors}} records"
+        "error-message": "Successfully imported {{count}} records, error {{errors}} records",
+        "assignUser": "Assign User",
+        "assignedAt": "Assigned At",
+        "topic": "Topic",
+        "subject": "Subject",
+        "description": "Description"
     }
 }

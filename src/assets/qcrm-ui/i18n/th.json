@@ -60,6 +60,18 @@
             "createdById": "ผู้สร้าง",
             "isDeleted": "ลบ",
             "source": "สร้างจาก"
+        },
+        "contact-import": {
+            "requestDateTime": "เวลา",
+            "fullname": "ผู้ติดต่อ",
+            "contactNumber": "เบอร์โทร",
+            "channel": "ประเภท",
+            "topic": "เรื่องที่ติดต่อ",
+            "subject": "หัวข้อ",
+            "script": "สคริปต์",
+            "description": "รายละเอียด",
+            "status": "สถานะ",
+            "assignUser": "ผู้ที่รับผิดชอบ"
         }
     },
     "component": {
@@ -188,9 +200,15 @@
             "pending": "รอตรวจสอบ",
             "error": "เกิดข้อผิดพลาด"
         },
+        "status-text": "สถานะ",
         "success": "นำเข้าข้อมูลสำเร็จ",
         "success-message": "นำเข้าข้อมูลสำเร็จ {{count}} รายการ",
         "error": "นำเข้าข้อมูลล้มเหลว",
-        "error-message": "นำเข้าข้อมูลสำเร็จ {{count}} รายการ, เกิดข้อผิดพลาด {{errors}} รายการ"
+        "error-message": "นำเข้าข้อมูลสำเร็จ {{count}} รายการ, เกิดข้อผิดพลาด {{errors}} รายการ",
+        "assignUser": "ผู้ที่รับผิดชอบ",
+        "assignedAt": "วันที่รับผิดชอบ",
+        "topic": "หัวข้อ",
+        "subject": "เรื่องที่ติดต่อ",
+        "description": "รายละเอียด"
     }
 }
