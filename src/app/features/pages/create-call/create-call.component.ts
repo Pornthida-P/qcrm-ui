@@ -446,7 +446,7 @@ export class CreateCallComponent {
             priority: null, // Add if you have priority field in form
             status: this.selectedStatus,
             solution: this.solutions,
-            contactNumber: this.selectedContactNumber ? this.selectedContactNumber.contactNumber : null,
+            contactNumber: this.selectedContactNumber ? this.selectedContactNumber.contactNumberId : null,
             email: email,
             source: null, // Add if you have source field in form
             assignedAt: null, // Add if you have assignedAt field in form

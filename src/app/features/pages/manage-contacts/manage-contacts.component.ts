@@ -903,7 +903,7 @@ export class ManageContactsComponent implements OnInit {
                     priority: null,
                     status: this.selectedStatus,
                     solution: this.solutions,
-                    contactNumber: this.selectedContactNumber ? this.selectedContactNumber.contactNumber : null,
+                    contactNumber: this.selectedContactNumber ? this.selectedContactNumber.contactNumberId : null,
                     email: email,
                     source: null,
                     assignedAt: null,
