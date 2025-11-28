@@ -30,6 +30,11 @@
             "add": "Add Case Topic",
             "placeHolder": "Search Case Topic",
             "save": "Save"
+        },
+        "contact-import": {
+            "add": "Import Contact List",
+            "placeHolder": "Search Contact List",
+            "save": "Save"
         }
     },
     "table": {
@@ -154,5 +159,38 @@
         "cancel": "Cancel",
         "save": "Save",
         "scriptPlaceholder": "Please enter script here..."
+    },
+    "contact-import-management": {
+        "choose-file": "Please select file",
+        "or-drag-drop": "or drag and drop file here",
+        "supported-file": "Supported file",
+        "supported-file-type": "File type: .xlsx, .xls",
+        "imported-data": "Imported Data",
+        "total": "Total",
+        "found": "Found",
+        "created": "Created",
+        "updated": "Updated",
+        "clear": "Clear",
+        "name": "Name",
+        "lastname": "Lastname",
+        "phone-number": "Phone Number",
+        "case-topic-code": "Case Topic Code",
+        "case-subject-code": "Case Subject Code",
+        "case-id": "Case ID",
+        "import-status": "Import Status",
+        "confirm": "Confirm Import",
+        "processing": "Processing data...",
+        "status": {
+            "found": "Found",
+            "create": "Create New",
+            "update": "Update",
+            "not-found": "Not Found",
+            "pending": "Pending",
+            "error": "Error"
+        },
+        "success": "Success",
+        "success-message": "Successfully imported {{count}} records",
+        "error": "Error",
+        "error-message": "Successfully imported {{count}} records, error {{errors}} records"
     }
 }

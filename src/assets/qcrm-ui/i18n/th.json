@@ -30,6 +30,11 @@
             "add": "เพิ่มหัวข้อเคสและสคริปต์",
             "placeHolder": "ค้นหาหัวข้อเคสและสคริปต์",
             "save": "บันทึก"
+        },
+        "contact-import": {
+            "add": "นำเข้ารายการติดต่อ",
+            "placeHolder": "ค้นหารายการติดต่อ",
+            "save": "บันทึก"
         }
     },
     "table": {
@@ -154,5 +159,38 @@
         "cancel": "ยกเลิก",
         "save": "บันทึก",
         "scriptPlaceholder": "กรุณากรอกสคริปต์ที่นี่..."
+    },
+    "contact-import-management": {
+        "choose-file": "กรุณาเลือกไฟล์",
+        "or-drag-drop": "หรือลากและวางไฟล์ที่นี่",
+        "supported-file": "รองรับไฟล์",
+        "supported-file-type": "รูปแบบไฟล์: .xlsx, .xls",
+        "imported-data": "ข้อมูลที่นำเข้า",
+        "total": "ทั้งหมด",
+        "found": "พบแล้ว",
+        "created": "สร้างใหม่",
+        "updated": "อัพเดท",
+        "clear": "ล้างข้อมูล",
+        "name": "ชื่อ",
+        "lastname": "นามสกุล",
+        "phone-number": "เบอร์โทรศัพท์",
+        "case-topic-code": "รหัสหัวข้อเคส",
+        "case-subject-code": "รหัสหัวข้อเคสย่อย",
+        "case-id": "รหัสเคส",
+        "import-status": "สถานะการนำเข้า",
+        "confirm": "ยืนยันการนำเข้า",
+        "processing": "กำลังตรวจสอบข้อมูล...",
+        "status": {
+            "found": "พบแล้ว",
+            "create": "สร้างใหม่",
+            "update": "อัพเดท",
+            "not-found": "ไม่พบ",
+            "pending": "รอตรวจสอบ",
+            "error": "เกิดข้อผิดพลาด"
+        },
+        "success": "นำเข้าข้อมูลสำเร็จ",
+        "success-message": "นำเข้าข้อมูลสำเร็จ {{count}} รายการ",
+        "error": "นำเข้าข้อมูลล้มเหลว",
+        "error-message": "นำเข้าข้อมูลสำเร็จ {{count}} รายการ, เกิดข้อผิดพลาด {{errors}} รายการ"
     }
 }

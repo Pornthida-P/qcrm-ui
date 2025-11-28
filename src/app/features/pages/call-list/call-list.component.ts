@@ -25,11 +25,13 @@ export class CallListComponent implements OnInit {
 
     ngOnInit(): void {
         this.calculatePages();
-        this.getAllCaseList();
+        // this.getAllCaseList();
         // localStorage.setItem('userData', JSON.stringify(this.userData));
-
-        this.userId = this.userData.userId;
-        this.getCaseListByUserId(this.userId);
+        if (this.userData.role.roleTitle.toLowerCase() === 'super admin' || this.userData.role.roleTitle.toLowerCase() === 'admin') {
+            this.getCaseListByUserId('all');
+        } else {
+            this.getCaseListByUserId(this.userData.userId);
+        }
     }
 
     pageChange(page: number) {
@@ -75,11 +77,9 @@ export class CallListComponent implements OnInit {
     }
 
     getCaseListByUserId(userId: string) {
-        console.log('user:', userId);
-        this.callListService.getCaseListByUserId(this.userId).subscribe((res: any) => {
+        this.callListService.getCaseListByUserId(userId).subscribe((res: any) => {
             this.caseListByUserId = res;
             this.calculatePages();
-            console.log(this.caseListByUserId);
         });
     }
 

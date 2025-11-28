@@ -1,0 +1,152 @@
+<div class="contact-import-modal">
+    <!-- Header -->
+    <div class="modal-header-section">
+        <div class="row align-items-center">
+            <div class="col-12 col-md-8">
+                <h5 class="modal-title mb-0">
+                    {{ 'title.contact-import' | translate }}
+                </h5>
+            </div>
+            <div class="col-12 col-md-4 text-end mt-2 mt-md-0">
+                <button type="button" class="btn-close-modal" (click)="onClickClose()" aria-label="Close">
+                    <fa-icon [icon]="faXmark"></fa-icon>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="modal-content-section position-relative">
+        <!-- Upload Section -->
+        <app-loader *ngIf="isLoading"></app-loader>
+        <div *ngIf="contactObjects.length === 0" class="upload-section">
+            <label
+                for="dropzone-file"
+                class="upload-area d-flex flex-column align-items-center justify-content-center w-100 border-2 border-dashed rounded-lg cursor-pointer"
+            >
+                <div class="d-flex flex-column align-items-center justify-content-center py-5">
+                    <fa-icon [icon]="faCloudUploadAlt" class="upload-icon mb-3"></fa-icon>
+                    <p class="mb-2 text-center">
+                        <span class="fw-semibold">
+                            {{ 'contact-import-management.choose-file' | translate }}
+                        </span>
+                        {{ 'contact-import-management.or-drag-drop' | translate }}
+                    </p>
+                    <p class="text-muted small text-center">
+                        <span class="fw-semibold">
+                            {{ 'contact-import-management.supported-file' | translate }}
+                        </span>
+                        {{ 'contact-import-management.supported-file-type' | translate }}
+                    </p>
+                </div>
+                <input id="dropzone-file" type="file" class="d-none" (change)="onUploadFile($event)" accept=".xlsx,.xls" />
+            </label>
+        </div>
+
+        <!-- Data Table Section -->
+        <div *ngIf="contactObjects.length > 0" class="data-section">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="section-title mb-0">
+                    {{ 'contact-import-management.imported-data' | translate }} ({{ contactObjects.length }})
+                    <span *ngIf="isProcessing" class="ms-2">
+                        <span class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></span>
+                        <small class="text-muted ms-2">{{ 'contact-import-management.processing' | translate }}</small>
+                    </span>
+                </h6>
+                <button
+                    type="button"
+                    class="btn btn-sm btn-outline-secondary"
+                    (click)="contactObjects = []"
+                    [disabled]="isProcessing || isImporting"
+                >
+                    {{ 'contact-import-management.clear' | translate }}
+                </button>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover table-sm">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col" class="text-nowrap">{{ 'contact-import-management.name' | translate }}</th>
+                            <th scope="col" class="text-nowrap">{{ 'contact-import-management.lastname' | translate }}</th>
+                            <th scope="col" class="text-nowrap">{{ 'contact-import-management.phone-number' | translate }}</th>
+                            <th scope="col" class="text-nowrap">{{ 'contact-import-management.case-topic-code' | translate }}</th>
+                            <th scope="col" class="text-nowrap">{{ 'contact-import-management.case-subject-code' | translate }}</th>
+                            <th scope="col" class="text-nowrap">{{ 'contact-import-management.case-id' | translate }}</th>
+                            <th scope="col" class="text-nowrap text-center">{{ 'contact-import-management.import-status' | translate }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let contact of contactObjects; let i = index">
+                            <td>{{ contact['firstname'] || contact['firstName'] || '-' }}</td>
+                            <td>{{ contact['lastname'] || contact['lastName'] || '-' }}</td>
+                            <td class="font-monospace">{{ contact['phone_number'] || contact['phoneNumber'] || '-' }}</td>
+                            <td>{{ contact['caseTopicCode'] || '-' }}</td>
+                            <td>{{ contact['caseSubjectCode'] || '-' }}</td>
+                            <td class="font-monospace small">{{ contact['caseId'] || '-' }}</td>
+                            <td class="text-center">
+                                <span [class]="'badge status-badge status-' + (contact['import-status'] || 'pending')">
+                                    {{ getStatusLabel(contact['import-status']) }}
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Summary -->
+            <div class="summary-section mt-3">
+                <div class="row g-2">
+                    <div class="col-6 col-md-3">
+                        <div class="summary-card">
+                            <div class="summary-label">{{ 'contact-import-management.total' | translate }}</div>
+                            <div class="summary-value">{{ contactObjects.length }}</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="summary-card">
+                            <div class="summary-label">{{ 'contact-import-management.found' | translate }}</div>
+                            <div class="summary-value text-info">
+                                {{ getStatusCount('found') }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="summary-card">
+                            <div class="summary-label">{{ 'contact-import-management.created' | translate }}</div>
+                            <div class="summary-value text-success">
+                                {{ getStatusCount('create') }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="summary-card">
+                            <div class="summary-label">{{ 'contact-import-management.updated' | translate }}</div>
+                            <div class="summary-value text-warning">
+                                {{ getStatusCount('update') }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="modal-actions mt-4">
+                <div class="d-flex justify-content-end gap-2">
+                    <button type="button" class="btn btn-secondary" (click)="onClickClose()" [disabled]="isImporting">
+                        {{ 'form.cancel' | translate }}
+                    </button>
+                    <button
+                        type="button"
+                        class="btn btn-primary"
+                        (click)="onClickConfirm()"
+                        [disabled]="isImporting || isProcessing || contactObjects.length === 0"
+                    >
+                        <span *ngIf="isImporting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        {{ 'contact-import-management.confirm' | translate }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
