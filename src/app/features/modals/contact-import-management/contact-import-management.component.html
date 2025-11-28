@@ -16,8 +16,9 @@
     </div>
 
     <!-- Content -->
-    <div class="modal-content-section">
+    <div class="modal-content-section position-relative">
         <!-- Upload Section -->
+        <app-loader *ngIf="isLoading"></app-loader>
         <div *ngIf="contactObjects.length === 0" class="upload-section">
             <label
                 for="dropzone-file"

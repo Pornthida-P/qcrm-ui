@@ -93,6 +93,10 @@ export class CallService {
         return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}${config.api.path.callList.caseTopics}`);
     }
 
+    getCaseTopicByCode(code: string) {
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}${config.api.path.callList.caseTopics}/${code}`);
+    }
+
     getAllContacts() {
         return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.contacts}`);
     }
@@ -112,6 +116,10 @@ export class CallService {
 
     getAllCaseSubjects() {
         return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}${config.api.path.callList.caseSubjects}`);
+    }
+
+    getCaseSubjectByCode(code: string) {
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}${config.api.path.callList.caseSubjects}/${code}`);
     }
 
     getAllChannels() {

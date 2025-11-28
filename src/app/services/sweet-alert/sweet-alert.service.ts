@@ -14,7 +14,7 @@ export class SweetAlertService {
             title: title,
             text: text,
             showConfirmButton: showButton,
-            confirmButtonColor: '#0a6ebd',
+            confirmButtonColor: '#fb5f20',
             timer: 1000,
             timerProgressBar: true,
         }).then(() => {
@@ -22,7 +22,7 @@ export class SweetAlertService {
                 if (queryParams) {
                     setTimeout(() => this.router.navigate([`/${route}`], { queryParams }), 500);
                 } else {
-                   setTimeout(() => this.router.navigate([`/${route}`]), 500); 
+                    setTimeout(() => this.router.navigate([`/${route}`]), 500);
                 }
             }
         });
@@ -34,18 +34,18 @@ export class SweetAlertService {
             title: title,
             text: text,
             showCancelButton: true,
-            confirmButtonColor: '#0a6ebd',
+            confirmButtonColor: '#fb5f20',
             confirmButtonText: confirmButtonText,
             cancelButtonText: cancelButtonText,
         });
     }
 
-  contactSwal(icon: any, title: string, contacts: any, ): any {
-    const contactNum = (localStorage.getItem('contactNum') || '{}');
-    console.log('contactNum: ' ,contactNum)
+    contactSwal(icon: any, title: string, contacts: any): any {
+        const contactNum = localStorage.getItem('contactNum') || '{}';
+        console.log('contactNum: ', contactNum);
         let contactList = '';
-      contacts.forEach((contact: any) => {
-          console.log('contact: ', contact)
+        contacts.forEach((contact: any) => {
+            console.log('contact: ', contact);
             contactList += `<a href="contacts/edit?key=${contact.contactId}&call_id=${contactNum}">${contact.fullname}</a><br>`;
         });
         return Swal.fire({

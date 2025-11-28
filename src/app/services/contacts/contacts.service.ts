@@ -74,6 +74,15 @@ export class ContactsService {
         );
     }
 
+    countByAssignedUserId(assignedUserId: string) {
+        if (assignedUserId == '' || assignedUserId == null) {
+            assignedUserId = 'undefined';
+        }
+        return this.http.get(
+            `${this.baseUrl}${config.api.path.contacts.baseUrl}${config.api.path.contacts.countByAssignedUserId}/${assignedUserId}`,
+        );
+    }
+
     saveContactsData(data: any) {
         return this.http.post(`${this.baseUrl}${config.api.path.contacts.baseUrl}`, data);
     }
@@ -94,7 +103,9 @@ export class ContactsService {
         if (searchText == '' || searchText == null) {
             searchText = 'undefined';
         }
-        return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}/organization/${page}/${limit}/${sortId}/${searchText}/${createdBy}`);
+        return this.http.get(
+            `${this.baseUrl}${config.api.path.contacts.baseUrl}/organization/${page}/${limit}/${sortId}/${searchText}/${createdBy}`,
+        );
     }
 
     createOrg(data: any) {
@@ -122,11 +133,16 @@ export class ContactsService {
     }
 
     getEmailById(id: string) {
-      return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}${config.api.path.contacts.findEmailByContact}/${id}`);
-  }
+        return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}${config.api.path.contacts.findEmailByContact}/${id}`);
+    }
 
     deleteCall(id: string, type: string) {
         return this.http.delete(`${this.baseUrl}${config.api.path.contacts.baseUrl}/call/${id}/${type}`);
     }
 
+    getContactNumberIdByPhone(phone: string) {
+        return this.http.get(
+            `${this.baseUrl}${config.api.path.contacts.baseUrl}${config.api.path.contacts.contactNumberIdByPhone}/${phone}`,
+        );
+    }
 }

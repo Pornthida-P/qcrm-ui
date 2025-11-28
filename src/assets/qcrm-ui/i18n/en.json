@@ -187,6 +187,10 @@
             "not-found": "Not Found",
             "pending": "Pending",
             "error": "Error"
-        }
+        },
+        "success": "Success",
+        "success-message": "Successfully imported {{count}} records",
+        "error": "Error",
+        "error-message": "Successfully imported {{count}} records, error {{errors}} records"
     }
 }

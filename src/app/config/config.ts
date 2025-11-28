@@ -24,10 +24,12 @@ export const config = {
                 baseUrl: '/contact',
                 find: '/find',
                 count: '/count',
+                countByAssignedUserId: '/count-by-assigned-user-id',
                 paramsFide: '/params-fide',
                 call: '/call',
                 contactNumberFide: '/contact-number',
                 findEmailByContact: '/contact-email',
+                contactNumberIdByPhone: '/contact-number-id',
             },
             call: {
                 url: '/call',

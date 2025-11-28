@@ -4,6 +4,11 @@ import { TranslateService } from '@ngx-translate/core';
 import { faCloudUploadAlt, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { ContactsService } from 'src/app/services/contacts/contacts.service';
 import * as XLSX from 'xlsx';
+import { UserService } from 'src/app/services/user/user.service';
+import { CallService } from 'src/app/services/call/call.service';
+import { firstValueFrom, forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 @Component({
     selector: 'app-contact-import-management',
     standalone: false,
@@ -16,16 +21,23 @@ export class ContactImportManagementComponent implements OnInit {
     contactObjects: any[] = [];
     isProcessing = false;
     isImporting = false;
+    agentAll: any[] = [];
+    caseList: any[] = [];
+    isLoading = false;
 
     constructor(
         private contactService: ContactsService,
         public dialogRef: MatDialogRef<ContactImportManagementComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         private translate: TranslateService,
+        private userService: UserService,
+        private callService: CallService,
+        private sweetAlertService: SweetAlertService,
     ) {}
 
     ngOnInit() {}
     readExcelFile(file: File) {
+        this.isLoading = true;
         const reader = new FileReader();
         reader.onload = async (event: any) => {
             const data = new Uint8Array(event.target.result);
@@ -94,7 +106,6 @@ export class ContactImportManagementComponent implements OnInit {
     }
 
     onUploadFile(event: any) {
-        console.log('onUploadFile', event);
         const file = event.target.files[0];
         if (file) {
             const fileType = file.type;
@@ -193,6 +204,7 @@ export class ContactImportManagementComponent implements OnInit {
                 contactObject['import-status'] = 'not-found';
             }
         }
+        this.isLoading = false;
     }
 
     // Actually import/update contacts by calling API
@@ -245,27 +257,15 @@ export class ContactImportManagementComponent implements OnInit {
                     errorCount++;
                 }
             }
-            console.log('contactObjects', this.contactObjects);
-            // Show success message and close modal
             if (errorCount === 0) {
-                alert(`นำเข้าข้อมูลสำเร็จ ${successCount} รายการ`);
-                this.dialogRef.close({ success: true, imported: successCount });
-            } else {
-                alert(`นำเข้าข้อมูลสำเร็จ ${successCount} รายการ, เกิดข้อผิดพลาด ${errorCount} รายการ`);
-                this.dialogRef.close({ success: true, imported: successCount, errors: errorCount });
+                this.leadManagement(this.contactObjects);
             }
         } catch (error) {
-            console.error('Error during import:', error);
-            alert('เกิดข้อผิดพลาดในการนำเข้าข้อมูล');
+            this.dialogRef.close({ success: false, imported: 0, errors: 0 });
         } finally {
             this.isImporting = false;
         }
     }
-
-    async getContactByPhone(phone: string) {
-        const res: any = await this.contactService.getContactsByParamPhone(phone).toPromise();
-    }
-
     async searchContactByName(name: string): Promise<any[]> {
         if (!name || name.trim() === '') {
             return [];
@@ -356,5 +356,192 @@ export class ContactImportManagementComponent implements OnInit {
 
     getStatusCount(status: string): number {
         return this.contactObjects.filter((contact) => contact['import-status'] === status).length;
+    }
+
+    getAgentAll() {
+        return new Promise<void>((resolve) => {
+            this.userService.getAllUser().subscribe((res: any) => {
+                if (res && Array.isArray(res)) {
+                    this.agentAll = res.filter((agent: any) => agent.role.roleTitle.toLowerCase() === 'agent');
+                }
+                resolve();
+            });
+        });
+    }
+
+    getCaseTopicByCode(code: string): Promise<any[]> {
+        return new Promise((resolve) => {
+            if (!code) {
+                resolve([]);
+                return;
+            }
+            this.callService.getCaseTopicByCode(code).subscribe((res: any) => {
+                const parsedRes = typeof res === 'string' ? JSON.parse(res) : res;
+                if (parsedRes && Array.isArray(parsedRes) && parsedRes.length > 0) {
+                    resolve(parsedRes);
+                } else {
+                    resolve([]);
+                }
+            });
+        });
+    }
+
+    getCaseSubjectByCode(code: string): Promise<any[]> {
+        return new Promise((resolve) => {
+            if (!code) {
+                resolve([]);
+                return;
+            }
+            this.callService.getCaseSubjectByCode(code).subscribe((res: any) => {
+                const parsedRes = typeof res === 'string' ? JSON.parse(res) : res;
+                if (parsedRes && Array.isArray(parsedRes) && parsedRes.length > 0) {
+                    resolve(parsedRes);
+                } else {
+                    resolve([]);
+                }
+            });
+        });
+    }
+
+    // Round Robin distribution of leads to agents
+    async leadManagement(contactObjects: any[]) {
+        if (!contactObjects || contactObjects.length === 0) {
+            console.warn('No contact objects to distribute');
+            return;
+        }
+
+        // Get all agents first
+        await this.getAgentAll();
+
+        if (this.agentAll.length === 0) {
+            console.error('No agents available for lead distribution');
+            return;
+        }
+
+        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        const nowISO = new Date().toISOString();
+        const casePromises: any[] = [];
+
+        // Filter only contacts that have been successfully imported (have contactId)
+        const validContacts = contactObjects.filter((contactObj: any) => {
+            const contact = contactObj['contact'] || contactObj;
+            return contact && contact.contactId;
+        });
+
+        if (validContacts.length === 0) {
+            console.warn('No valid contacts with contactId found');
+            return;
+        }
+
+        // Round Robin: distribute leads to agents in rotation
+        await Promise.all(
+            validContacts.map(async (contactObj: any, index: number) => {
+                const contact = contactObj['contact'] || contactObj;
+
+                // Round Robin: cycle through agents
+                const agentIndex = index % this.agentAll.length;
+                const assignedAgent = this.agentAll[agentIndex];
+
+                // Map contact data to case data
+                const caseTopic: any[] = await this.getCaseTopicByCode(contactObj['caseTopicCode'] || contact['caseTopicCode'] || null);
+                const caseSubject: any[] = await this.getCaseSubjectByCode(
+                    contactObj['caseSubjectCode'] || contact['caseSubjectCode'] || null,
+                );
+                const result = await firstValueFrom(
+                    this.contactService.getContactNumberIdByPhone(contactObj['phone_number'] || contact['phone_number'] || null),
+                );
+                console.log('result', result);
+                const contactNumberId = (result as any[])[0]?.contactNumberId ?? null;
+
+                const caseData = {
+                    caseId: null,
+                    contactId: contact.contactId,
+                    channelId: contactObj['channelId'] || contact['channelId'] || 1,
+                    requestDateTime: contactObj['requestDateTime'] || contact['requestDateTime'] || nowISO,
+                    description: contactObj['description'] || contact['description'] || '',
+                    caseTopicId: caseTopic && caseTopic.length > 0 ? caseTopic[0].caseTopicId : null,
+                    caseTopicCode: contactObj['caseTopicCode'] || contact['caseTopicCode'] || contactObj['caseTopicCode'] || null,
+                    caseSubjectId: caseSubject && caseSubject.length > 0 ? caseSubject[0].caseSubjectId : null,
+                    operationType: contactObj['operationType'] || contact['operationType'] || null,
+                    priority: contactObj['priority'] || contact['priority'] || null,
+                    status: contactObj['status'] || contact['status'] || 1,
+                    solution: contactObj['solution'] || contact['solution'] || null,
+                    contactNumber: contactNumberId,
+                    email: contact.email || contactObj['email'] || null,
+                    source: contactObj['source'] || contact['source'] || null,
+                    assignedAt: nowISO,
+                    createdAt: nowISO,
+                    createdById: userData.userId,
+                    modifiedAt: nowISO,
+                    modifiedById: userData.userId,
+                    isDeleted: 0,
+                    assignedUserId: assignedAgent.userId,
+                    attachment: contactObj['attachment'] || contact['attachment'] || null,
+                };
+
+                // Add to case list for tracking
+                this.caseList.push(caseData);
+
+                // Create case via API
+                casePromises.push(
+                    this.callService.createCase(caseData).pipe(
+                        catchError((error) => {
+                            console.error(`Error creating case for contact ${contact.contactId}:`, error);
+                            return of({ error: true, contactId: contact.contactId });
+                        }),
+                    ),
+                );
+            }),
+        );
+
+        // Execute all case creation requests
+        try {
+            const results = await forkJoin(casePromises).toPromise();
+            const successCount = results?.filter((r: any) => !r?.error).length || 0;
+            const errorCount = results?.filter((r: any) => r?.error).length || 0;
+
+            if (errorCount === 0) {
+                this.sweetAlertService.getSwal(
+                    'success',
+                    this.translate.instant('contact-import-management.success'),
+                    this.translate.instant('contact-import-management.success-message', { count: successCount }),
+                    true,
+                    '',
+                    {
+                        success: true,
+                        imported: successCount,
+                    },
+                );
+                this.dialogRef.close({ success: true, imported: successCount });
+            } else {
+                this.sweetAlertService.getSwal(
+                    'error',
+                    this.translate.instant('contact-import-management.error'),
+                    this.translate.instant('contact-import-management.error-message', { count: successCount, errors: errorCount }),
+                    true,
+                    '',
+                    {
+                        success: false,
+                        imported: successCount,
+                        errors: errorCount,
+                    },
+                );
+                this.dialogRef.close({ success: false, imported: successCount, errors: errorCount });
+            }
+        } catch (error) {
+            console.error('Error during lead distribution:', error);
+            this.sweetAlertService.getSwal(
+                'error',
+                this.translate.instant('contact-import-management.error'),
+                this.translate.instant('contact-import-management.error-message', { count: 0, errors: 0 }),
+                true,
+                '',
+                {
+                    success: false,
+                    imported: 0,
+                    errors: 0,
+                },
+            );
+        }
     }
 }
