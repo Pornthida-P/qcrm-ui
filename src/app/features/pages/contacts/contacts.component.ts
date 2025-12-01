@@ -65,8 +65,6 @@ export class ContactsComponent implements OnInit {
     url: string = '';
 
     invalid = 0;
-    AllEmail!: any[];
-    availableEmail: any[] = [];
 
     constructor(
         private router: Router,
@@ -105,27 +103,11 @@ export class ContactsComponent implements OnInit {
         return true;
     }
 
-    updateCheckedValues(contactId: string, Email: string): void {
-        if (Email) {
-            if (this.checkedValues.includes(contactId)) {
-                this.checkedValues = this.checkedValues.filter((id) => id !== contactId);
-            } else {
-                this.checkedValues.push(contactId);
-            }
-        } else if (!Email) {
-            if (this.checkedValues.includes(contactId)) {
-                this.checkedValues = this.checkedValues.filter((id) => id !== contactId);
-                this.invalid--;
-            } else {
-                this.checkedValues.push(contactId);
-                this.invalid++;
-            }
-        }
-
-        if (this.invalid > 0) {
-            this.sidebarShowing = false;
+    updateCheckedValues(contactId: string): void {
+        if (this.checkedValues.includes(contactId)) {
+            this.checkedValues = this.checkedValues.filter((id) => id !== contactId);
         } else {
-            this.sidebarShowing = true;
+            this.checkedValues.push(contactId);
         }
     }
 
@@ -134,18 +116,10 @@ export class ContactsComponent implements OnInit {
             x.state = ev.target.checked;
             if (ev.target.checked) {
                 this.checkedValues.push(x.contactId);
-                if (!x.email) this.invalid++;
             } else {
                 this.checkedValues = [];
-                this.invalid = 0;
             }
         });
-
-        if (this.invalid > 0) {
-            this.sidebarShowing = false;
-        } else {
-            this.sidebarShowing = true;
-        }
     }
 
     isAllChecked() {
@@ -343,15 +317,6 @@ export class ContactsComponent implements OnInit {
                         }),
                     )
                     .subscribe();
-            }
-        });
-    }
-
-    sendEmailSideBar() {
-        this.contactsService.checkEmail(this.checkedValues).subscribe((res: any) => {
-            if (res.length > 0) {
-                this.sidebarShowing = false;
-                this.sweetalertServices.getSwal('warning', `ผู้ใช้ ${res} ไม่ได้ลงทะเบียนอีเมล`, '', false, '');
             }
         });
     }

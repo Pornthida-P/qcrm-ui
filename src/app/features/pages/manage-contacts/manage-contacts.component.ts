@@ -24,19 +24,14 @@ import { CallListService } from 'src/app/services/call-list/call-list.service';
     styleUrls: ['./manage-contacts.component.scss'],
 })
 export class ManageContactsComponent implements OnInit {
-    availableEmail: any[] = [];
-    AllEmail: any[] = [];
     MultiNumber: boolean = false;
     contactCall: any[] = [];
     contact: any = {};
     contactFirstName: string = '';
     contactLastName: string = '';
-    contactIden: string = '';
-    oldIden: string = '';
     contactOrg: string = '';
     contactOrgName: string = '';
     contactType: string = '';
-    contactEmail: string = '';
     contactNum: string = '';
     contactNum2: string = '';
     contactProvince: string = '';
@@ -71,7 +66,6 @@ export class ManageContactsComponent implements OnInit {
     selectedChannels: any;
     currentChannel: any;
     channels: any;
-    isEmailSubscribed: number = 0;
     activitiestype: any;
     solutions: string = '';
     description: string = '';
@@ -162,16 +156,10 @@ export class ManageContactsComponent implements OnInit {
     contactNumber: any;
     contactNumbers: { contactNumber: string }[] = [];
     selectedContactNumber: { contactNumber: string; contactNumberId: string } | null = null;
-    selectedEmail: any[] = [];
-    email: any;
-    emailById: { email: string }[] = [];
-    contactEmailNew: string = '';
 
     contactNumNew: string = '';
 
     isInputVisible: boolean = false;
-    isInputVisibleMail: boolean = false;
-    @ViewChild('emailInput') emailInputRef!: ElementRef;
 
     statusList: any[] = [];
     selectedStatus: any;
@@ -211,7 +199,6 @@ export class ManageContactsComponent implements OnInit {
                 this.contactNumParams = params['call_id'];
                 this.chatId = params['chatid'];
                 this.chatType = params['chattype'];
-                this.email = params['email'];
                 this.displayName = params['displayName'];
                 this.issue = params['issue'];
 
@@ -296,11 +283,8 @@ export class ManageContactsComponent implements OnInit {
             this.contactFirstName = this.detailItem.firstName;
             this.contactLastName = this.detailItem.lastName;
             this.contactGender = this.detailItem.gender || 'unknown';
-            this.contactIden = this.detailItem.iden;
-            this.oldIden = this.detailItem.iden;
             this.contactOrg = this.detailItem.organization_id;
             this.contactType = this.detailItem.contact_type;
-            this.contactEmail = this.detailItem.email;
             this.contactNum = this.detailItem.contactNumber;
             this.contactProvince = this.detailItem.province;
             this.contactCreatedByID = this.detailItem.create_by;
@@ -316,20 +300,13 @@ export class ManageContactsComponent implements OnInit {
         });
 
         await this.contactsService.getContactCall(contactId).subscribe((res: any) => {
-          this.contactCall = res;
+            this.contactCall = res;
         });
 
-        await this.contactsService.getContactNumberById(contactId).subscribe((res: any) => {
-            // this.contactNumbers = res;
+        await this.callServive.getContactNumbertById(contactId).subscribe((res: any) => {
             this.contactNumbers = res.map((item: any) => ({
-                contactNumber: item.contactNumber || item,
-            }));
-        });
-
-        await this.contactsService.getEmailById(contactId).subscribe((res: any) => {
-            console.log('emailId: ', res);
-            this.emailById = res.map((item: any) => ({
-                email: item.email || item,
+                contactNumber: item.contactNumber,
+                contactNumberId: item.contactNumberId,
             }));
         });
     }
@@ -342,7 +319,7 @@ export class ManageContactsComponent implements OnInit {
     submit() {
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
         // if (userData && this.contactId && this.contactId !== '' && this.contact.components.length > 1) {
-        if (this.contactNum || this.contactNum2 || this.contactEmail || this.contactEmailNew || this.contactNumNew || this.chatId) {
+        if (this.contactNum || this.contactNum2 || this.contactNumNew || this.chatId) {
             if (this.detailItem && this.state != 'copy') {
                 // Create or get organization if organization name is provided
                 let organizationId = this.contactOrg;
@@ -388,85 +365,43 @@ export class ManageContactsComponent implements OnInit {
             contactId: this.contactId,
             firstName: this.contactFirstName,
             lastName: this.contactLastName,
-            identification: this.contactIden,
             organizationId: organizationId,
             contactType: this.contactType,
-            email: this.contactEmail,
-            emailNew: this.contactEmailNew,
             contactNumber: this.contactNum,
             contactNumber2: this.contactNum2,
             province: this.contactProvince,
             gender: this.contactGender || 'unknown',
             modifiedById: userData.userId,
-            oldIdentification: this.oldIden,
             contactNumNew: this.contactNumNew,
         };
         console.log('data: ', data);
-        if (this.contactIden !== this.oldIden && this.oldIden != null && this.oldIden != undefined && this.oldIden != '') {
-            console.log('oldIden: ', this.oldIden);
-            console.log('contactIden: ', this.contactIden);
-            this.sweetalertServices
-                .confirmSwal('warning', 'Warning', `ทำการบันทึกลงในผู้ใช้ที่มีเลขประจำตัว ${this.contactIden}`, 'Yes', 'No')
-                .then((result: { isConfirmed: any }) => {
-                    if (result.isConfirmed) {
-                        this.contactsService
-                            .editContacts(data)
-                            .pipe(
-                                tap((res: any) => {
-                                    this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/contacts/edit', {
-                                        key: res.contactId,
-                                    });
-                                    this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), 'Success');
-                                    if (this.contactId === res.contactId) {
-                                        location.reload();
-                                    }
-                                }),
-                                catchError((error) => {
-                                    this.sweetalertServices.handleError(error);
-                                    this.auditLogService.log(
-                                        '',
-                                        'Contact',
-                                        'Edit Contact',
-                                        JSON.stringify(data),
-                                        `Failed, Error : ${error}`,
-                                    );
-                                    throw error;
-                                }),
-                            )
-                            .subscribe();
+        this.contactsService
+            .editContacts(data)
+            .pipe(
+                tap((res: any) => {
+                    this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/contacts/edit', {
+                        key: res.contactId,
+                    });
+                    this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), 'Success');
+                    if (this.contactId === res.contactId) {
+                        location.reload();
                     }
-                });
-        } else {
-            this.contactsService
-                .editContacts(data)
-                .pipe(
-                    tap((res: any) => {
-                        this.sweetalertServices.getSwal('success', 'Save data success.', '', false, 'contacts/edit/${contactId}', {
-                            key: res.contactId,
-                        });
-                        this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), 'Success');
-                        if (this.contactId === res.contactId) {
-                            location.reload();
-                        }
-                    }),
-                    catchError((error) => {
-                        this.sweetalertServices.handleError(error);
-                        this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), `Failed, Error : ${error}`);
-                        throw error;
-                    }),
-                )
-                .subscribe();
-        }
+                }),
+                catchError((error) => {
+                    this.sweetalertServices.handleError(error);
+                    this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), `Failed, Error : ${error}`);
+                    throw error;
+                }),
+            )
+            .subscribe();
     }
 
     submitContact(organizationId: string, userData: any) {
         const data = {
             firstName: this.contactFirstName,
             lastName: this.contactLastName,
-            identification: this.contactIden,
             organizationId: organizationId,
             contactType: this.contactType,
-            email: this.contactEmail,
             contactNumber: this.contactNum,
             province: this.contactProvince,
             gender: this.contactGender || 'unknown',
@@ -489,7 +424,6 @@ export class ManageContactsComponent implements OnInit {
                         const contactNumber = data.contactNumber;
                         const chatId = data.chatId;
                         const chatType = data.chatType;
-                        const email = data.email;
                         const displayName = data.displayName;
                         const issue = data.issue;
                         this.router.navigate(['/contacts/edit'], {
@@ -498,7 +432,6 @@ export class ManageContactsComponent implements OnInit {
                                 call_id: contactNumber,
                                 chatid: chatId,
                                 chattype: chatType,
-                                email: email,
                                 displayName: displayName,
                                 issue: issue,
                             },
@@ -528,32 +461,50 @@ export class ManageContactsComponent implements OnInit {
                             `Failed, Error Duplicate: ${res.duplicates}`,
                         );
                     } else if (res.success === false && res.message === 'Duplicate' && this.MultiNumber === true) {
-                        this.contactsService
-                            .editContacts2(data)
-                            .pipe(
-                                tap((res: any) => {
-                                    const contactId = res.contactId;
-                                    const contactNumber = res.contactNumber;
-                                    const chatId = data.chatId;
-                                    console.log('contactNumber: ', contactNumber);
-                                    this.router.navigate(['/contacts/edit'], {
-                                        queryParams: { key: contactId, call_id: contactNumber, chatid: chatId },
-                                    });
-                                    this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), 'Success');
-                                }),
-                                catchError((error) => {
-                                    this.sweetalertServices.handleError(error);
-                                    this.auditLogService.log(
-                                        '',
-                                        'Contact',
-                                        'Edit Contact',
-                                        JSON.stringify(data),
-                                        `Failed, Error : ${error}`,
-                                    );
-                                    throw error;
-                                }),
-                            )
-                            .subscribe();
+                        // Find existing contact by phone number or name
+                        const existingContact = res.duplicates && res.duplicates.length > 0 ? res.duplicates[0] : null;
+                        if (existingContact && existingContact.contactId) {
+                            const updateData: any = {
+                                contactId: existingContact.contactId,
+                                firstName: data.firstName,
+                                lastName: data.lastName,
+                                gender: data.gender,
+                                organizationId: data.organizationId,
+                                contactType: data.contactType,
+                                contactNumber: data.contactNumber,
+                                contactNumber2: data.contactNumber2,
+                                province: data.province,
+                                modifiedById: data.createdById, // Use createdById as modifiedById for duplicate case
+                                contactNumNew: '', // Empty for duplicate case
+                                allowDuplicate: true,
+                            };
+                            this.contactsService
+                                .editContacts(updateData)
+                                .pipe(
+                                    tap((res: any) => {
+                                        const contactId = res.contactId;
+                                        const contactNumber = updateData.contactNumber;
+                                        const chatId = data.chatId;
+                                        console.log('contactNumber: ', contactNumber);
+                                        this.router.navigate(['/contacts/edit'], {
+                                            queryParams: { key: contactId, call_id: contactNumber, chatid: chatId },
+                                        });
+                                        this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(updateData), 'Success');
+                                    }),
+                                    catchError((error) => {
+                                        this.sweetalertServices.handleError(error);
+                                        this.auditLogService.log(
+                                            '',
+                                            'Contact',
+                                            'Edit Contact',
+                                            JSON.stringify(updateData),
+                                            `Failed, Error : ${error}`,
+                                        );
+                                        throw error;
+                                    }),
+                                )
+                                .subscribe();
+                        }
                     }
                 }),
                 catchError((error) => {
@@ -618,11 +569,6 @@ export class ManageContactsComponent implements OnInit {
         } else {
             this.newDateTime = this.formatDate(new Date());
         }
-    }
-
-    toggleEmailSubscription(event: any) {
-        this.isEmailSubscribed = event.target.checked ? 1 : 0;
-        console.log('email:', this.isEmailSubscribed);
     }
 
     onCheckboxChange(event: any, activityTypeId: number) {
@@ -691,7 +637,6 @@ export class ManageContactsComponent implements OnInit {
         this.callId = '';
         // this.selectedCasesubject = [];
         this.selectedChannels = '';
-        this.isEmailSubscribed = 0;
         this.activityTypeId = '';
         const date = new Date();
         this.startTime = date.toISOString().split('T')[0];
@@ -716,7 +661,6 @@ export class ManageContactsComponent implements OnInit {
         this.cType = '';
         this.callId = '';
         this.selectedChannels = '';
-        this.isEmailSubscribed = 0;
         this.activityTypeId = '';
         this.startTime = '';
         this.description = '';
@@ -724,7 +668,6 @@ export class ManageContactsComponent implements OnInit {
         this.selectedCallTypeId = '';
         this.selectedStatus = null;
         this.selectedContactNumber = null;
-        this.selectedEmail = [];
         const date = new Date();
         this.timepickStart = {
             hour: date.getHours(),
@@ -760,10 +703,6 @@ export class ManageContactsComponent implements OnInit {
                         contactNumber: call.contactNumber,
                         contactNumberId: call.contactNumberId || null,
                     };
-                }
-
-                if (call.email) {
-                    this.selectedEmail = call.email;
                 }
 
                 if (call.caseTopicId) {
@@ -879,11 +818,6 @@ export class ManageContactsComponent implements OnInit {
                 // Get current timestamp for createdAt and modifiedAt
                 const nowISO = new Date().toISOString();
 
-                // Extract email - selectedEmail might be emailId (single) or array, need to find email string from email array
-                const emailId =
-                    Array.isArray(this.selectedEmail) && this.selectedEmail.length > 0 ? this.selectedEmail[0] : this.selectedEmail;
-                const email = emailId && this.email ? this.email.find((e: any) => e.emailId === emailId)?.email || null : null;
-
                 const dataForm = {
                     caseId: null,
                     contactId: this.contactId,
@@ -898,7 +832,6 @@ export class ManageContactsComponent implements OnInit {
                     status: this.selectedStatus,
                     solution: this.solutions,
                     contactNumber: this.selectedContactNumber ? this.selectedContactNumber.contactNumberId : null,
-                    email: email,
                     source: null,
                     assignedAt: null,
                     createdAt: nowISO,
@@ -951,7 +884,7 @@ export class ManageContactsComponent implements OnInit {
                     contactId: this.contactId,
                 };
                 console.log('Update Case Data: ', data);
-                this.contactsService
+                this.callServive
                     .updateCase(data)
                     .pipe(
                         tap((res) => {
@@ -1118,15 +1051,6 @@ export class ManageContactsComponent implements OnInit {
 
     inputAddPhone() {
         this.isInputVisible = !this.isInputVisible;
-    }
-
-    inputAddEmail() {
-        this.isInputVisibleMail = !this.isInputVisibleMail;
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                this.emailInputRef.nativeElement.focus();
-            });
-        });
     }
 
     onCaseTopicChange(event: any, index: number) {

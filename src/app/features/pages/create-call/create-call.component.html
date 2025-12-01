@@ -139,16 +139,6 @@
                     </select>
                 </div>
 
-                <div class="col-6" *ngIf="selectedChannels === '3'">
-                    <label for="inputEmail" class="form-label">อีเมล<span class="color-red">*</span></label>
-                    <select id="inputEmail" class="form-select" name="selectedEmail" [(ngModel)]="selectedEmail">
-                        <!-- <option disabled value="">กรุณาเลือกข้อมูล</option> -->
-                        <option *ngFor="let emails of email" [value]="emails.emailId">
-                            {{ emails.email }}
-                        </option>
-                    </select>
-                </div>
-
                 <div class="col-6">
                     <label for="inputAddress" class="form-label">กรุณาเลือกวันที่</label>
                     <div class="date-pik">

@@ -45,8 +45,10 @@ export class ContactImportManagementComponent implements OnInit {
         this.buildForm();
         if (this.mode === 'view') {
             console.log('data: ', this.data);
-            // this.form.patchValue(this.data.contactListImport);
+            this.form.patchValue(this.data.contactListImport);
             this.form.disable();
+            this.assignUser = this.data.contactListImport.contact.assignedUser;
+            this.assignAt = this.data.contactListImport.contact.assignedAt;
         }
     }
 
@@ -54,7 +56,7 @@ export class ContactImportManagementComponent implements OnInit {
         this.form = new FormGroup({
             firstname: new FormControl('', Validators.required),
             lastname: new FormControl('', Validators.required),
-            phoneNumber: new FormControl('', Validators.required),
+            contactNumber: new FormControl('', Validators.required),
             topic: new FormControl('', Validators.required),
             subject: new FormControl('', Validators.required),
             description: new FormControl('', Validators.required),
@@ -493,7 +495,6 @@ export class ContactImportManagementComponent implements OnInit {
                     status: contactObj['status'] || contact['status'] || 1,
                     solution: contactObj['solution'] || contact['solution'] || null,
                     contactNumber: contactNumberId,
-                    email: contact.email || contactObj['email'] || null,
                     source: contactObj['source'] || contact['source'] || null,
                     assignedAt: nowISO,
                     createdAt: nowISO,

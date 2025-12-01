@@ -108,7 +108,6 @@ export class CallComponent implements OnInit {
     selectedChannels: any;
     currentChannel: any;
     channels: any;
-    isEmailSubscribed: number = 0;
     activitiestype: any;
     timepickStart: { hour: number; minute: number; second: number } = { hour: 0, minute: 0, second: 0 };
     activityTypeId: any;
@@ -176,9 +175,6 @@ export class CallComponent implements OnInit {
 
     selectedContactNumber: { contactNumber: string; contactNumberId: string } | null = null;
     contactNumber: any;
-    selectedEmail: any[] = [];
-    email: any;
-    emails: any;
     statusList: any[] = [];
     selectedStatus: any;
 
@@ -297,7 +293,7 @@ export class CallComponent implements OnInit {
                 this.startDate,
                 this.endDate,
             )
-          .subscribe((res: any) => {
+            .subscribe((res: any) => {
                 this.calls = res;
                 this.calls.forEach((call) => {
                     if (call.type === 'I') {
@@ -548,7 +544,6 @@ export class CallComponent implements OnInit {
         this.callId = '';
         this.selectedCasesubject = '';
         this.selectedChannels = '';
-        this.isEmailSubscribed = 0;
         this.activityTypeId = '';
         this.startTime = '';
         this.description = '';
@@ -564,51 +559,56 @@ export class CallComponent implements OnInit {
         this.selectedCasesubject = [];
         this.selectedActivityTopicId = [];
 
-        this.callService.getCaseById(callId).subscribe((call: any) => {
-            if (!call) {
-                console.error('Case not found:', callId);
-                return;
-            }
+        this.callService.getCaseById(callId).subscribe(
+            (call: any) => {
+                if (!call) {
+                    console.error('Case not found:', callId);
+                    return;
+                }
 
-            this.selectSubject = 1;
-            this.cType = 'case';
-            this.callId = call.caseId;
-            this.description = call.description;
-            this.startTime = call.requestDateTime;
-            const date = new Date(call.requestDateTime);
-            this.timepickStart = {
-                hour: date.getHours(),
-                minute: date.getMinutes(),
-                second: date.getSeconds(),
-            };
-            this.selectedChannels = call.channelId;
-            this.currentChannel = call.channelId;
-            this.selectedCallTypeId = call.operationType;
-            this.selectedEmail = call.email;
-            this.selectedContactNumber = call.contactNumber;
-            this.selectedStatus = call.statusId;
+                this.selectSubject = 1;
+                this.cType = 'case';
+                this.callId = call.caseId;
+                this.description = call.description;
+                this.startTime = call.requestDateTime;
+                const date = new Date(call.requestDateTime);
+                this.timepickStart = {
+                    hour: date.getHours(),
+                    minute: date.getMinutes(),
+                    second: date.getSeconds(),
+                };
+                this.selectedChannels = call.channelId;
+                this.currentChannel = call.channelId;
+                this.selectedCallTypeId = call.operationType;
+                if (call.contactNumber) {
+                    this.selectedContactNumber = {
+                        contactNumber: call.contactNumber,
+                        contactNumberId: call.contactNumberId || null,
+                    };
+                }
+                this.selectedStatus = call.statusId;
 
+                if (call.caseTopicId) {
+                    this.selectedCaseTopics[0] = call.caseTopicId;
+                    // console.log('Set selectedCaseTopics[0] to:', this.selectedCaseTopics[0]);
+                } else {
+                    this.selectedCaseTopics[0] = null;
+                }
 
-            if (call.caseTopicId) {
-                this.selectedCaseTopics[0] = call.caseTopicId;
-                // console.log('Set selectedCaseTopics[0] to:', this.selectedCaseTopics[0]);
-            } else {
-                this.selectedCaseTopics[0] = null;
-            }
-
-
-            if (call.caseSubjectId) {
-                setTimeout(() => {
-                    this.selectedCasesubject[0] = call.caseSubjectId;
-                    // console.log('Set selectedCasesubject[0] to:', this.selectedCasesubject[0]);
-                }, 0);
-            } else {
-                this.selectedCasesubject[0] = null;
-            }
-        }, (error) => {
-            console.error('Error fetching case:', error);
-            // Handle error appropriately
-        });
+                if (call.caseSubjectId) {
+                    setTimeout(() => {
+                        this.selectedCasesubject[0] = call.caseSubjectId;
+                        // console.log('Set selectedCasesubject[0] to:', this.selectedCasesubject[0]);
+                    }, 0);
+                } else {
+                    this.selectedCasesubject[0] = null;
+                }
+            },
+            (error) => {
+                console.error('Error fetching case:', error);
+                // Handle error appropriately
+            },
+        );
 
         this.showAddCall();
         this.getContactNumber(contactId);
@@ -714,11 +714,6 @@ export class CallComponent implements OnInit {
         this.SearchOrgShowing = true;
         this.AddOrgShowing = false;
         this.AddCallShowing = false;
-    }
-
-    toggleEmailSubscription(event: any) {
-        this.isEmailSubscribed = event.target.checked ? 1 : 0;
-        console.log('email:', this.isEmailSubscribed);
     }
 
     formatTimepickStart() {
@@ -828,7 +823,6 @@ export class CallComponent implements OnInit {
                     caseTopicId: caseTopicIdArray,
                     caseSubject: caseSubjectArray,
                     channel: this.selectedChannels,
-                    emailInfo: this.isEmailSubscribed ? 1 : null,
                     activityType: this.activityTypeId,
                     description: this.description,
                     startTime: `${selectedDate} ${selectedTime}`,
@@ -881,7 +875,6 @@ export class CallComponent implements OnInit {
                     caseTopicId: caseTopicIdArray,
                     caseSubject: caseSubjectArray,
                     channel: this.selectedChannels,
-                    emailInfo: this.isEmailSubscribed ? 1 : null,
                     activityType: this.activityTypeId,
                     description: this.description,
                     startTime: `${selectedDate} ${selectedTime}`,
@@ -889,7 +882,6 @@ export class CallComponent implements OnInit {
                     modifiedById: userData.userId,
                     operationType: selectedCallTypeId,
                     call_id: this.selectedContactNumber ? this.selectedContactNumber.contactNumber : null,
-                    emails: this.selectedEmail,
                     contactNumberId: this.selectedContactNumber ? this.selectedContactNumber.contactNumberId : null,
                 };
                 console.log('Data: ', data);
@@ -938,7 +930,7 @@ export class CallComponent implements OnInit {
                     status: this.selectedStatus,
                 };
                 console.log('Data: ', data);
-                this.contactsService
+                this.callService
                     .updateCase(data)
                     .pipe(
                         tap((res) => {

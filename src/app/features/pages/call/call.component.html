@@ -493,24 +493,12 @@
                                         <input
                                             type="text"
                                             class="form-control"
-                                            [(ngModel)]="selectedContactNumber"
+                                            [value]="selectedContactNumber?.contactNumber || ''"
                                             name="selectedContactNumber"
                                             id="inputContactNumber"
                                             pattern="[0-9]*"
                                             inputmode="numeric"
                                             onkeypress="return event.charCode >= 48 && event.charCode <= 57"
-                                            disabled
-                                        />
-                                    </div>
-
-                                    <div class="col-6" *ngIf="selectedChannels === '3'">
-                                        <label for="inputEmail" class="form-label">อีเมล<span class="color-red">*</span></label>
-                                        <input
-                                            type="text"
-                                            class="form-control"
-                                            [(ngModel)]="selectedEmail"
-                                            name="selectedEmail"
-                                            id="inputEmail"
                                             disabled
                                         />
                                     </div>
