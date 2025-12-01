@@ -121,7 +121,6 @@ export class CreateCallComponent {
     userData: any = JSON.parse(localStorage.getItem('userData') || '{}');
     userId: any;
     activitiestype: any;
-    isEmailSubscribed: number = 0;
     contactIdSelect: string = '';
     activityTypeId: any;
     newDateTime: any;
@@ -155,8 +154,6 @@ export class CreateCallComponent {
     contactNumber: any;
     contactNumbers: any;
     selectedContactNumber: { contactNumber: string; contactNumberId: string } | null = null;
-    selectedEmail: any[] = [];
-    email: any;
     statusList: any[] = [];
 
     // pageEln: number | undefined = 0;
@@ -329,7 +326,6 @@ export class CreateCallComponent {
             caseTopicId: this.selectedCaseTopics[0] ? [this.selectedCaseTopics[0]] : [],
             caseSubject: this.selectedCasesubject[0] ? [this.selectedCasesubject[0]] : [],
             channel: this.selectedChannels,
-            emailInfo: this.isEmailSubscribed ? 1 : null,
             // activityType: this.activityTypeId,
             description: this.description,
             startTime: `${selectedDate} ${selectedTime}`,
@@ -340,7 +336,6 @@ export class CreateCallComponent {
             call_id: this.selectedContactNumber ? this.selectedContactNumber.contactNumber : null,
             contactNumberId: this.selectedContactNumber ? this.selectedContactNumber.contactNumberId : null,
             operationType: selectedCallTypeId,
-            emails: this.selectedEmail,
             status: this.selectedStatus,
         };
         console.log('data Call: ', data);
@@ -429,10 +424,6 @@ export class CreateCallComponent {
         // Get current timestamp for createdAt and modifiedAt
         const now = new Date().toISOString();
 
-        // Extract email - selectedEmail might be emailId (single) or array, need to find email string from email array
-        const emailId = Array.isArray(this.selectedEmail) && this.selectedEmail.length > 0 ? this.selectedEmail[0] : this.selectedEmail;
-        const email = emailId && this.email ? this.email.find((e: any) => e.emailId === emailId)?.email || null : null;
-
         const dataForm = {
             caseId: this.callIdEdit || null,
             contactId: this.contactIdSelect,
@@ -447,7 +438,6 @@ export class CreateCallComponent {
             status: this.selectedStatus,
             solution: this.solutions,
             contactNumber: this.selectedContactNumber ? this.selectedContactNumber.contactNumberId : null,
-            email: email,
             source: null, // Add if you have source field in form
             assignedAt: null, // Add if you have assignedAt field in form
             createdAt: now,
@@ -591,10 +581,6 @@ export class CreateCallComponent {
 
     onCheckboxChange(event: any, activityTypeId: number) {
         this.isCheckboxSelected[activityTypeId] = event.target.checked;
-    }
-
-    toggleEmailSubscription(event: any) {
-        this.isEmailSubscribed = event.target.checked ? 1 : 0;
     }
 
     chooseOrg(orgId: string) {

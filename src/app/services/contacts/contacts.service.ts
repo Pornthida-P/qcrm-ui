@@ -23,10 +23,6 @@ export class ContactsService {
         return this.http.put(`${this.baseUrl}${config.api.path.contacts.baseUrl}`, data);
     }
 
-    editContacts2(data: any) {
-        return this.http.put(`${this.baseUrl}${config.api.path.contacts.baseUrl}/edit2`, data);
-    }
-
     deleteContacts(data: any) {
         return this.http.delete(`${this.baseUrl}${config.api.path.contacts.baseUrl}`, data);
     }
@@ -58,9 +54,6 @@ export class ContactsService {
         return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}/organization/${id}`);
     }
 
-    getContactNumberById(id: string) {
-        return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}${config.api.path.contacts.contactNumberFide}/${id}`);
-    }
 
     countContacts(searchText: string, createdById: string) {
         if (searchText == '' || searchText == null) {
@@ -112,29 +105,11 @@ export class ContactsService {
         return this.http.post(`${this.baseUrl}${config.api.path.contacts.baseUrl}/organization`, data);
     }
 
-    checkEmail(data: any) {
-        return this.http.post(`${this.baseUrl}${config.api.path.contacts.baseUrl}/email`, data);
-    }
-
-    checkEmailSend(data: any) {
-        return this.http.post(`${this.baseUrl}${config.api.path.contacts.baseUrl}/email/check`, data);
-    }
-
-    getEmail(data: any) {
-        return this.http.post(`${this.baseUrl}${config.api.path.contacts.baseUrl}/email/get`, data);
-    }
 
     updateCalls(data: any) {
         return this.http.post(`${this.baseUrl}${config.api.path.contacts.baseUrl}/update-call`, data);
     }
 
-    updateCase(data: any) {
-        return this.http.post(`${this.baseUrl}${config.api.path.contacts.baseUrl}/update-case`, data);
-    }
-
-    getEmailById(id: string) {
-        return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}${config.api.path.contacts.findEmailByContact}/${id}`);
-    }
 
     deleteCall(id: string) {
         return this.http.delete(`${this.baseUrl}${config.api.path.contacts.baseUrl}/call/${id}`);

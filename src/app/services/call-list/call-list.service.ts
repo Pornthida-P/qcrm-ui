@@ -18,7 +18,7 @@ export class CallListService {
     }
 
     getCaseListByUserId(userId: string) {
-        return this.http.get(`${this.baseUrl}/${userId}`);
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.agent}/${userId}`);
     }
 
     getStatusList() {

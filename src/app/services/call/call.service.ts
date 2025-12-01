@@ -85,7 +85,7 @@ export class CallService {
             endDate = 'undefined';
         }
         return this.http.get(
-            `${this.baseUrl}${config.api.path.call.url}${config.api.path.call.count}/${searchText}/${createdById}/${dateFilterType}/${startDate}/${endDate}`,
+            `${this.baseUrl}${config.api.path.callList.baseUrl}/count/${searchText}/${createdById}/${dateFilterType}/${startDate}/${endDate}`,
         );
     }
 
@@ -98,20 +98,18 @@ export class CallService {
     }
 
     getAllContacts() {
-        return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.contacts}`);
+        return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}/all`);
     }
 
     getContactById(id: string) {
-        return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.contactid}/${id}`);
+        return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}/find/${id}`);
     }
 
     getContactByPage(page: number, limit: number, sortId: string, searchText: string, createdBy: string) {
         if (searchText == '' || searchText == null) {
             searchText = 'undefined';
         }
-        return this.http.get(
-            `${this.baseUrl}${config.api.path.call.url}${config.api.path.call.contactbypage}/${page}/${limit}/${sortId}/${searchText}/${createdBy}`,
-        );
+        return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}/${page}/${limit}/${sortId}/${searchText}/${createdBy}`);
     }
 
     getAllCaseSubjects() {
@@ -127,7 +125,7 @@ export class CallService {
     }
 
     createCalls(data: any) {
-        return this.http.post(`${this.baseUrl}${config.api.path.call.url}`, data);
+        return this.http.post(`${this.baseUrl}${config.api.path.callList.baseUrl}`, data);
     }
 
     countContact(searchText: string, createdById: string) {
@@ -137,23 +135,25 @@ export class CallService {
         if (createdById == '' || createdById == null) {
             createdById = 'undefined';
         }
-        return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.countcontact}${searchText}/${createdById}`);
-    }
-
-    getCallById(id: string) {
-        return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.callById}/${id}`);
+        return this.http.get(
+            `${this.baseUrl}${config.api.path.contacts.baseUrl}${config.api.path.contacts.count}/${searchText}/${createdById}`,
+        );
     }
 
     getCaseById(id: string) {
-        return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.caseById}/${id}`);
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-id/${id}`);
+    }
+
+    updateCase(data: any) {
+        return this.http.put(`${this.baseUrl}${config.api.path.callList.baseUrl}`, data);
     }
 
     getContactNumbertById(id: string) {
-        return this.http.get(`${this.baseUrl}${config.api.path.call.url}${config.api.path.call.contactNumberById}/${id}`);
+        return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}/contact-numbers/${id}`);
     }
 
     getAllStatus() {
-        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}${config.api.path.callList.allStatus}`);
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}${config.api.path.callList.status}`);
     }
 
     createCase(data: any) {

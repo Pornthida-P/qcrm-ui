@@ -21,9 +21,7 @@ export class PhoneContactsComponent {
     detadetailItemByPhoneilItem: any;
     detailItemByPhone: any;
     contactFirstName: any;
-    contactIden: any;
     contactType: any;
-    contactEmail: any;
     contactNumber: any;
     contactLastName: any;
     organizations: any;
@@ -102,7 +100,6 @@ export class PhoneContactsComponent {
         this.route.queryParamMap.subscribe((params) => {
             const chatId = params.get('chatid') || '';
             const chatType = params.get('chattype') || '';
-            const email = params.get('email') || '';
             const displayName = params.get('displayName') || '';
             const issue = params.get('issue') || '';
 
@@ -116,21 +113,17 @@ export class PhoneContactsComponent {
             if (this.contactId) {
                 this.getContactByPhoneId(this.contactId);
                 this.processParams(this.contactId, originalParams);
-            } else if (chatId || email) {
-                const identifier = chatId || email;
+            } else if (chatId) {
+                const identifier = chatId;
 
                 if (displayName) {
                     const nameParts = displayName.split(' ');
                     this.contactFirstName = nameParts[0] || '';
                     this.contactLastName = nameParts.slice(1).join(' ') || '';
                 }
-                if (email) {
-                    this.contactEmail = email;
-                }
 
-              this.contactsService.getContactsByParamPhone(identifier).subscribe((data: any) => {
-
-                console.log('data: ', data);
+                this.contactsService.getContactsByParamPhone(identifier).subscribe((data: any) => {
+                    console.log('data: ', data);
                     if (data && data.length > 0) {
                         this.contact = data[0].contactNumber;
                         this.contactIdParams = data[0].contactId;
@@ -138,9 +131,7 @@ export class PhoneContactsComponent {
                         this.contactId = data[0].contactId;
                         this.contactFirstName = data[0].firstName || this.contactFirstName;
                         this.contactLastName = data[0].lastName || this.contactLastName;
-                        this.contactEmail = data[0].email || this.contactEmail;
                         this.contactNumber = data[0].contactNumber;
-                        this.contactIden = data[0].identification;
                         this.contactOrg = data[0].organization_id;
                         this.contactType = data[0].contactType;
                         this.contactProvince = data[0].province;
@@ -200,7 +191,7 @@ export class PhoneContactsComponent {
 
     processParams(contactId?: string, originalParams?: any): void {
         const queryParams: any = {
-            key: contactId || ''
+            key: contactId || '',
         };
 
         if (this.call_id) {
@@ -211,7 +202,7 @@ export class PhoneContactsComponent {
         }
 
         if (originalParams) {
-            Object.keys(originalParams).forEach(key => {
+            Object.keys(originalParams).forEach((key) => {
                 if (originalParams[key] !== null && originalParams[key] !== undefined && originalParams[key] !== '') {
                     queryParams[key] = originalParams[key];
                 }
@@ -234,10 +225,8 @@ export class PhoneContactsComponent {
                 this.contactId = detailItemByPhone.contactId;
                 this.contactFirstName = detailItemByPhone.firstName;
                 this.contactLastName = detailItemByPhone.lastName;
-                this.contactIden = detailItemByPhone.identification;
                 this.contactOrg = detailItemByPhone.organization_id;
                 this.contactType = detailItemByPhone.contactType;
-                this.contactEmail = detailItemByPhone.email;
                 this.contactNumber = detailItemByPhone.contactNumber;
                 this.contactProvince = detailItemByPhone.province;
 
@@ -268,10 +257,8 @@ export class PhoneContactsComponent {
                 caller_id: this.caller_id,
                 firstName: this.contactFirstName,
                 lastName: this.contactLastName,
-                identification: this.contactIden,
                 organizationId: this.contactOrg,
                 contactType: this.contactType,
-                email: this.contactEmail,
                 contactNumber: this.contactNumber,
                 province: this.contactProvince,
                 modifiedById: userData.userId,
@@ -296,7 +283,7 @@ export class PhoneContactsComponent {
                             '',
                             'Phone Contact',
                             'Edit Phone Contact',
-                            `Detail Phone Contact : ContactID : ${data.contactId}, call_id : ${data.call_id}, caller_id : ${data.caller_id}, Email : ${data.email}, Contact Number : ${data.contactNumber}, FirstName : ${data.firstName}, LastName : ${data.lastName}, Identification : ${data.identification} `,
+                            `Detail Phone Contact : ContactID : ${data.contactId}, call_id : ${data.call_id}, caller_id : ${data.caller_id}, Contact Number : ${data.contactNumber}, FirstName : ${data.firstName}, LastName : ${data.lastName} `,
                             `Success`,
                         );
                     }),
@@ -306,7 +293,7 @@ export class PhoneContactsComponent {
                             '',
                             'Phone Contact',
                             'Edit Phone Contact',
-                            `Detail Phone Contact : ContactID : ${data.contactId}, call_id : ${data.call_id}, caller_id : ${data.caller_id}, Email : ${data.email}, Contact Number : ${data.contactNumber}, FirstName : ${data.firstName}, LastName : ${data.lastName}, Identification : ${data.identification} `,
+                            `Detail Phone Contact : ContactID : ${data.contactId}, call_id : ${data.call_id}, caller_id : ${data.caller_id}, Contact Number : ${data.contactNumber}, FirstName : ${data.firstName}, LastName : ${data.lastName} `,
                             `Failed, Error : ${error}`,
                         );
                         throw error;
@@ -314,14 +301,11 @@ export class PhoneContactsComponent {
                 )
                 .subscribe();
         } else {
-
-          const data = {
+            const data = {
                 firstName: this.contactFirstName,
                 lastName: this.contactLastName,
-                identification: this.contactIden,
                 organizationId: this.contactOrg,
                 contactType: this.contactType,
-                email: this.contactEmail,
                 contactNumber: this.contactNumber,
                 province: this.contactProvince,
                 createdById: userData.userId,
@@ -338,7 +322,7 @@ export class PhoneContactsComponent {
                             '',
                             'Phone Contact',
                             'Create Phone Contact',
-                            `Detail Phone Contact : Email : ${data.email},Contact Number : ${data.contactNumber},FirstName : ${data.firstName},LastName : ${data.lastName},Identification : ${data.identification},Create By : ${data.createdById}`,
+                            `Detail Phone Contact : Contact Number : ${data.contactNumber},FirstName : ${data.firstName},LastName : ${data.lastName},Create By : ${data.createdById}`,
                             `Success`,
                         );
                     }),
@@ -348,7 +332,7 @@ export class PhoneContactsComponent {
                             '',
                             'Phone Contact',
                             'Create Phone Contact',
-                            `Detail Phone Contact : Email : ${data.email},Contact Number : ${data.contactNumber},FirstName : ${data.firstName},LastName : ${data.lastName},Identification : ${data.identification},Create By : ${data.createdById}`,
+                            `Detail Phone Contact : Contact Number : ${data.contactNumber},FirstName : ${data.firstName},LastName : ${data.lastName},Create By : ${data.createdById}`,
                             `Failed, Error : ${error}`,
                         );
                         throw error;
