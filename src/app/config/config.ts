@@ -4,15 +4,12 @@ export const config = {
             login: '/login',
             logout: '/logout',
             attachment: {
-                find: '/attachment/find',
                 upload: '/attachment/upload',
-                download: '/attachment/download',
                 delete: '/attachment/delete/',
             },
             user: {
                 findAll: '/user',
                 findById: '/user/id/',
-                findByRole: '/user/role/',
                 findAllRoles: '/user/roles',
                 add: '/user/add',
                 update: '/user/update',
