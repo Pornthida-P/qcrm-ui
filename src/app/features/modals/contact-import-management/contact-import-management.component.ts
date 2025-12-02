@@ -44,7 +44,6 @@ export class ContactImportManagementComponent implements OnInit {
         this.mode = this.data.mode;
         this.buildForm();
         if (this.mode === 'view') {
-            console.log('data: ', this.data);
             this.form.patchValue(this.data.contactListImport);
             this.form.disable();
             this.assignUser = this.data.contactListImport.contact.assignedUser;
@@ -88,7 +87,6 @@ export class ContactImportManagementComponent implements OnInit {
                 await this.checkContactData();
                 this.isProcessing = false;
             }
-            console.log('Contact Objects:', this.contactObjects);
         };
         reader.readAsArrayBuffer(file);
     }
@@ -478,7 +476,6 @@ export class ContactImportManagementComponent implements OnInit {
                 const result = await firstValueFrom(
                     this.contactService.getContactNumberIdByPhone(contactObj['phone_number'] || contact['phone_number'] || null),
                 );
-                console.log('result', result);
                 const contactNumberId = (result as any[])[0]?.contactNumberId ?? null;
 
                 const caseData = {
