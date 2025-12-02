@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { faGear, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
+import { TranslateService } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { CaseTopicManagementComponent } from 'src/app/features/modals/case-topic-management/case-topic-management.component';
@@ -29,7 +30,12 @@ export class CaseTopicComponent {
     get columnVisibilityKeys(): string[] {
         return Object.keys(this.columnVisibility);
     }
-    constructor(private callService: CallService, private sweetalertService: SweetAlertService, private dialog: MatDialog) {}
+    constructor(
+        private callService: CallService,
+        private sweetalertService: SweetAlertService,
+        private dialog: MatDialog,
+        private translateService: TranslateService,
+    ) {}
 
     ngOnInit(): void {
         this.findAllCaseTopic();
@@ -44,7 +50,25 @@ export class CaseTopicComponent {
     }
 
     onClickDelete(data: any) {
-        console.log(data);
+        this.sweetalertService
+            .confirmSwal('warning', 'Warning', 'Are you sure you want to delete this case topic?', 'Yes', 'No')
+            .then((result: { isConfirmed: any }) => {
+                if (result.isConfirmed) {
+                    this.callService
+                        .deleteCaseTopic(data.caseTopicId)
+                        .pipe(
+                            tap(() => {
+                                this.sweetalertService.getSwal('success', 'Success', 'Delete case topic successfully.', false, '');
+                                this.findAllCaseTopic();
+                            }),
+                            catchError((error) => {
+                                this.sweetalertService.handleError(error);
+                                throw error;
+                            }),
+                        )
+                        .subscribe();
+                }
+            });
     }
 
     onClickAdd() {
@@ -52,7 +76,6 @@ export class CaseTopicComponent {
     }
 
     onSearch(text: string) {
-        console.log('text: ', text);
         this.dataSource.filter = text.trim().toLowerCase();
     }
 

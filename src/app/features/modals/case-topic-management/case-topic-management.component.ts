@@ -66,7 +66,6 @@ export class CaseTopicManagementComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        console.log('data: ', this.data);
         switch (this.data.mode) {
             case 'add':
                 this.caseTopicForm.patchValue({
@@ -157,23 +156,17 @@ export class CaseTopicManagementComponent implements OnInit {
     saveCaseTopic(): void {
         if (this.caseTopicForm.valid) {
             const formValue = this.caseTopicForm.value;
-            // Close dialog and return the form value
-            console.log('formValue: ', formValue);
-            console.log('subjects: ', this.subjects.value);
             const data = {
                 code: formValue.code,
                 name: formValue.name,
                 script: formValue.script,
                 subjects: this.subjects.value,
             };
-            console.log('data: ', data);
             if (this.data.mode === 'add') {
                 this.callService.createCaseTopic(data).subscribe((res: any) => {
-                    console.log('res: ', res);
                     if (res.success) {
                         if (data.subjects.length > 0) {
                             this.callService.createCaseSubject(data.subjects).subscribe((res: any) => {
-                                console.log('res: ', res);
                                 if (res.success) {
                                     this.dialogRef.close(res);
                                 } else {
@@ -200,10 +193,7 @@ export class CaseTopicManagementComponent implements OnInit {
                     name: subject.name,
                     code: subject.code,
                 }));
-                console.log('caseTopicData: ', caseTopicData);
-                console.log('caseSubjectData: ', caseSubjectData);
                 this.callService.updateCaseTopic(caseTopicData).subscribe((res: any) => {
-                    console.log('res: ', res);
                     if (res.success) {
                         if (caseSubjectData.length > 0) {
                             caseSubjectData.forEach((subject: any) => {
