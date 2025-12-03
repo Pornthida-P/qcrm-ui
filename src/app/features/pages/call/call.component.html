@@ -128,8 +128,9 @@
                             <th scope="col">ประเภทสาย</th>
                             <th scope="col">เรื่องที่ติดต่อ</th>
                             <th scope="col">รายละเอียด</th>
+                            <th scope="col">สถานะ</th>
                             <th scope="col">ผู้ที่รับผิดชอบ</th>
-                            <th scope="col">จัดการ</th>
+                            <th scope="col" *ngIf="checkSupRole()">จัดการ</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -177,6 +178,7 @@
                                         {{ calls.description }}
                                     </div>
                                 </td>
+                                <td>{{ calls.status }}</td>
                                 <td>{{ calls.agent }}</td>
                                 <td class="text-center" scope="row">
                                     <div class="d-flex flex-row flex-nowrap">
@@ -189,10 +191,11 @@
                                             aria-controls="offcanvasRight"
                                             ngbTooltip="แก้ไข"
                                             (click)="editCall(calls.caseId, calls.contactId)"
+                                            *ngIf="checkSupRole()"
                                         >
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </div>
-                                        <div
+                                        <!-- <div
                                             class="color-primary"
                                             [style]="{ cursor: 'pointer' }"
                                             placement="top"
@@ -202,7 +205,7 @@
                                             (click)="deleteCall(calls.caseId)"
                                         >
                                             <i class="fa-solid fa-trash"></i>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </td>
                             </tr>
