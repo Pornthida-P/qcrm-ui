@@ -6,16 +6,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgbPaginationModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { ReportChannelByAgentComponent } from '../../components/report-channel-by-agent/report-channel-by-agent.component';
-import { ReportCaseTypeByAgentComponent } from '../../components/report-case-type-by-agent/report-case-type-by-agent.component';
-import { ReportChannelByAgentModule } from '../../components/report-channel-by-agent/report-channel-by-agent.module';
-import { ReportCaseTypeByAgentModule } from '../../components/report-case-type-by-agent/report-case-type-by-agent.module';
-import { ReportSummaryByMonthComponent } from '../../components/report-summary-by-month/report-summary-by-month.component';
-import { ReportSummaryByMonthModule } from '../../components/report-summary-by-month/report-summary-by-month.module';
-import { ReportCaseDetailModule } from '../../components/report-case-detail/report-case-detail.module';
-import { ReportCaseDetailComponent } from '../../components/report-case-detail/report-case-detail.component';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { SafeUrlPipe } from 'src/app/shared/pipe/safe-url.pipe';
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/qcrm-ui/i18n/', '.json');
@@ -32,33 +25,11 @@ export function HttpLoaderFactory(http: HttpClient) {
             {
                 path: '',
                 component: ReportPageComponent,
-                children: [
-                    {
-                        path: 'channel-by-agent',
-                        component: ReportChannelByAgentComponent,
-                    },
-                    {
-                        path: 'case-type-by-agent',
-                        component: ReportCaseTypeByAgentComponent,
-                    },
-                    {
-                        path: 'case-detail',
-                        component: ReportCaseDetailComponent,
-                    },
-                    {
-                        path: 'summary-by-month',
-                        component: ReportSummaryByMonthComponent,
-                    },
-                ],
             },
         ]),
         NgbPaginationModule,
         HttpClientModule,
         NgbTooltipModule,
-        ReportChannelByAgentModule,
-        ReportCaseTypeByAgentModule,
-        ReportSummaryByMonthModule,
-        ReportCaseDetailModule,
         TranslateModule.forChild({
             loader: {
                 provide: TranslateLoader,
@@ -66,6 +37,7 @@ export function HttpLoaderFactory(http: HttpClient) {
                 deps: [HttpClient],
             },
         }),
+        SafeUrlPipe,
     ],
 })
 export class ReportPageModule {}
