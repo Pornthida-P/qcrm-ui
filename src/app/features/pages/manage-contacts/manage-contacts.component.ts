@@ -3,7 +3,7 @@ import { Location } from '@angular/common';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ContactsService } from 'src/app/services/contacts/contacts.service';
 import { faArrowLeft, faArrowRight, faPenToSquare, faTrashCan, faCircleXmark, faEye, faClipboard } from '@fortawesome/free-solid-svg-icons';
-import { catchError, finalize, tap } from 'rxjs';
+import { catchError, finalize, tap, switchMap } from 'rxjs';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { CallService } from 'src/app/services/call/call.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -139,6 +139,15 @@ export class ManageContactsComponent implements OnInit {
 
     attachmentShowing: boolean = false;
 
+    isTopicDisabled: boolean = false;
+    isSubjectDisabled: boolean = false;
+    isStatusDisabled: boolean = false;
+    isChannelDisabled: boolean = false;
+    isCallTypeDisabled: boolean = false;
+    isContactNumberDisabled: boolean = false;
+    isDateDisabled: boolean = false;
+    isDescriptionDisabled: boolean = false;
+
     selectedActivityTopicId: string[] = [];
     searchContactShowing: boolean = false;
 
@@ -168,6 +177,7 @@ export class ManageContactsComponent implements OnInit {
     chatType: any;
     displayName: any;
     issue: any;
+    caseId: any;
     constructor(
         private _location: Location,
         private contactsService: ContactsService,
@@ -201,6 +211,7 @@ export class ManageContactsComponent implements OnInit {
                 this.chatType = params['chattype'];
                 this.displayName = params['displayName'];
                 this.issue = params['issue'];
+                this.caseId = params['caseId'];
 
                 // React to the new contactId
                 if (this.contactId) {
@@ -228,6 +239,17 @@ export class ManageContactsComponent implements OnInit {
                 console.log('contactNumParams: ', this.contactNumParams);
                 localStorage.setItem('contactNum', this.contactNum);
             });
+
+            if (this.caseId) {
+                setTimeout(() => {
+                    const offcanvasElement = document.getElementById('offcanvasRight');
+                    if (offcanvasElement) {
+                        const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
+                        offcanvas.show();
+                        this.editCall(this.caseId);
+                    }
+                }, 500);
+            }
         }
 
         if (this.contactId) {
@@ -651,10 +673,20 @@ export class ManageContactsComponent implements OnInit {
         this.selectedCaseTopics = [];
         this.selectedCasesubject = [];
         this.selectedActivityTopicId = [];
+
+        this.isTopicDisabled = false;
+        this.isSubjectDisabled = false;
+        this.isStatusDisabled = false;
+        this.isChannelDisabled = false;
+        this.isCallTypeDisabled = false;
+        this.isContactNumberDisabled = false;
+        this.isDateDisabled = false;
+        this.isDescriptionDisabled = false;
+
         this.showAddCall();
     }
 
-    editCall(caseId: string) {
+    editCall(caseId: string, openOffcanvas: boolean = false) {
         this.currentChannel = '';
         this.attachmentShowing = false;
         console.log('Edit Case:', caseId);
@@ -678,53 +710,79 @@ export class ManageContactsComponent implements OnInit {
         this.selectedCasesubject = [];
         this.selectedActivityTopicId = [];
 
-        this.callServive.getCaseById(caseId).subscribe(
-            (call: any) => {
-                this.selectSubject = 1;
-                this.cType = 'case';
-                this.callId = call.caseId;
-                this.description = call.description;
-                this.solutions = call.solution || '';
-                this.selectedStatus = call.statusId;
-                this.startTime = call.requestDateTime;
-                const date = new Date(call.requestDateTime);
-                this.timepickStart = {
-                    hour: date.getHours(),
-                    minute: date.getMinutes(),
-                    second: date.getSeconds(),
-                };
-                this.selectedChannels = call.channelId;
-                this.currentChannel = call.channelId;
-                this.selectedCallTypeId = call.operationType;
-                this.selectedStatus = call.statusId;
+        this.isTopicDisabled = true;
+        this.isSubjectDisabled = true;
+        this.isStatusDisabled = false;
+        this.isChannelDisabled = true;
+        this.isCallTypeDisabled = true;
+        this.isContactNumberDisabled = true;
+        this.isDateDisabled = true;
+        this.isDescriptionDisabled = true;
 
-                if (call.contactNumber) {
-                    this.selectedContactNumber = {
-                        contactNumber: call.contactNumber,
-                        contactNumberId: call.contactNumberId || null,
+        this.callServive.getContactNumbertById(this.contactId).subscribe((contactNumbers: any) => {
+            if (contactNumbers && Array.isArray(contactNumbers) && contactNumbers.length > 0) {
+                this.contactNumber = contactNumbers;
+            }
+
+            this.callServive.getCaseById(caseId).subscribe(
+                (call: any) => {
+                    console.log('Edit Call: ', call);
+                    this.selectSubject = 1;
+                    this.cType = 'case';
+                    this.callId = call.caseId;
+                    this.description = call.description;
+                    this.solutions = call.solution || '';
+                    this.selectedStatus = call.statusId;
+                    this.startTime = call.requestDateTime;
+                    const date = new Date(call.requestDateTime);
+                    this.timepickStart = {
+                        hour: date.getHours(),
+                        minute: date.getMinutes(),
+                        second: date.getSeconds(),
                     };
-                }
+                    this.selectedChannels = call.channelId;
+                    this.currentChannel = call.channelId;
+                    this.selectedCallTypeId = call.operationType;
+                    this.selectedStatus = call.statusId;
 
-                if (call.caseTopicId) {
-                    this.selectedCaseTopics[0] = call.caseTopicId;
-                } else {
-                    this.selectedCaseTopics[0] = null;
-                }
+                    if (call.contactNumber && call.contactNumberId) {
+                        this.selectedContactNumber = {
+                            contactNumber: call.contactNumber,
+                            contactNumberId: call.contactNumberId,
+                        };
+                    }
 
-                if (call.caseSubjectId) {
-                    setTimeout(() => {
-                        this.selectedCasesubject[0] = call.caseSubjectId;
-                    }, 0);
-                } else {
-                    this.selectedCasesubject[0] = null;
-                }
-            },
-            (error) => {
-                console.error('Error fetching case:', error);
-            },
-        );
+                    if (call.caseTopicId) {
+                        this.selectedCaseTopics[0] = call.caseTopicId;
+                    } else {
+                        this.selectedCaseTopics[0] = null;
+                    }
+
+                    if (call.caseSubjectId) {
+                        setTimeout(() => {
+                            this.selectedCasesubject[0] = call.caseSubjectId;
+                        }, 0);
+                    } else {
+                        this.selectedCasesubject[0] = null;
+                    }
+                },
+                (error) => {
+                    console.error('Error fetching case:', error);
+                },
+            );
+        });
 
         this.showAddCall();
+
+        if (openOffcanvas) {
+            setTimeout(() => {
+                const offcanvasElement = document.getElementById('offcanvasRight');
+                if (offcanvasElement) {
+                    const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
+                    offcanvas.show();
+                }
+            }, 500);
+        }
     }
 
     deleteCall(callId: string) {
@@ -870,7 +928,7 @@ export class ManageContactsComponent implements OnInit {
             }
         } else if (this.callId && this.cType === 'case') {
             // Update existing case
-            console.log('Edit Case:', this.callId);
+            // console.log('iiiiiiiiiiiiiiiiii Edit Case:', this.callId);
             if (this.selectedCaseTopics.length > 0) {
                 const data = {
                     callId: this.callId,
@@ -882,6 +940,7 @@ export class ManageContactsComponent implements OnInit {
                     modifiedById: userData.userId,
                     operationType: selectedCallTypeId,
                     contactId: this.contactId,
+                    status: this.selectedStatus,
                 };
                 console.log('Update Case Data: ', data);
                 this.callServive

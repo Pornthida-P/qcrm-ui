@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CallListService } from 'src/app/services/call-list/call-list.service';
+import { Router } from '@angular/router';
 @Component({
     selector: 'app-call-list',
     standalone: true,
@@ -21,7 +22,7 @@ export class CallListComponent implements OnInit {
     userId: string = '';
     statusList: any[] = [];
 
-    constructor(private callListService: CallListService) {}
+    constructor(private callListService: CallListService, private router: Router) {}
 
     ngOnInit(): void {
         this.calculatePages();
@@ -78,15 +79,16 @@ export class CallListComponent implements OnInit {
 
     getCaseListByUserId(userId: string) {
         this.callListService.getCaseListByUserId(userId).subscribe((res: any) => {
+            console.log(res);
             this.caseListByUserId = res;
             this.calculatePages();
         });
+        console.log(this.caseListByUserId);
     }
 
-    deleteCall(callId: string) {}
-
-    editCall(callId: string) {
-        console.log('Edit Call:', callId);
+    clickCall(caseId: string, contactId: string) {
+        console.log('Click Call:', caseId, contactId);
+        this.router.navigate(['/contacts/edit'], { queryParams: { caseId: caseId, key: contactId } });
     }
 
     getStatusList() {

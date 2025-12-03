@@ -183,6 +183,7 @@
                                 <th style="width: 10%">ช่องทางการติดต่อ</th>
                                 <th style="width: 10%">เรื่องที่ติดต่อ</th>
                                 <th style="width: 10%">รายละเอียด</th>
+                                <th style="width: 10%">สถานะ</th>
                                 <th style="width: 10%">ผู้ติดต่อ</th>
                                 <th style="width: 10%">ผู้รับผิดชอบ</th>
                                 <th style="width: 10%">จัดการ</th>
@@ -194,9 +195,10 @@
                                     <td>{{ case.requestDateTime | date : 'dd/MM/yyyy  HH:mm' }}</td>
                                     <td>{{ case.contactNumber || '-' }}</td>
                                     <td>{{ case.operationType || '-' }}</td>
-                                    <td>{{ case.channelName }}</td>
+                                    <td>{{ case.channel }}</td>
                                     <td>{{ case.caseTopicName }}</td>
                                     <td>{{ case.description }}</td>
+                                    <td>{{ case.status }}</td>
                                     <td>{{ case.firstName }}</td>
                                     <td>{{ case.responsibleUser || case.createdById }}</td>
                                     <td class="text-center" scope="row">
@@ -213,7 +215,7 @@
                                             >
                                                 <i class="fa-solid fa-pen-to-square"></i>
                                             </div>
-                                            <div
+                                            <!-- <div
                                                 class="color-primary"
                                                 [style]="{ cursor: 'pointer' }"
                                                 placement="top"
@@ -223,7 +225,7 @@
                                                 (click)="deleteCall(case.caseId)"
                                             >
                                                 <i class="fa-solid fa-trash"></i>
-                                            </div>
+                                            </div> -->
                                         </div>
                                     </td>
                                 </tr>
@@ -265,6 +267,7 @@
                                 [name]="'selectedCaseTopics' + i"
                                 [(ngModel)]="selectedCaseTopics[i - 1]"
                                 (change)="onCaseTopicChange($event, i - 1)"
+                                [disabled]="isTopicDisabled"
                             >
                                 <option disabled value="">กรุณาเลือกข้อมูล</option>
                                 <option *ngFor="let casetopic of casetopics" [value]="casetopic.caseTopicId">
@@ -280,6 +283,7 @@
                                 class="form-select"
                                 [name]="'selectedCasesubject' + i"
                                 [(ngModel)]="selectedCasesubject[i - 1]"
+                                [disabled]="isSubjectDisabled"
                             >
                                 <option disabled value="">กรุณาเลือกข้อมูล</option>
                                 <ng-container *ngFor="let casesubject of casesubjects">
@@ -296,7 +300,13 @@
                 </div>
                 <div class="col-6">
                     <label for="inputStatus" class="form-label">สถานะ</label>
-                    <select id="inputStatus" class="form-select" name="selectedStatus" [(ngModel)]="selectedStatus">
+                    <select
+                        id="inputStatus"
+                        class="form-select"
+                        name="selectedStatus"
+                        [(ngModel)]="selectedStatus"
+                        [disabled]="isStatusDisabled"
+                    >
                         <option disabled value="">กรุณาเลือกข้อมูล</option>
                         <option *ngFor="let status of statusList" [value]="status.id">{{ status.status }}</option>
                     </select>
@@ -309,6 +319,7 @@
                         name="selectedChannels"
                         [(ngModel)]="selectedChannels"
                         (ngModelChange)="onChannelChange($event)"
+                        [disabled]="isChannelDisabled"
                     >
                         <option disabled value="">กรุณาเลือกข้อมูล</option>
                         <option *ngFor="let channel of channels" [value]="channel.channelId">{{ channel.name }}</option>
@@ -321,7 +332,13 @@
                             >ประเภทสาย</label
                         >
                         <label *ngIf="selectedChannels === '3'" for="inputCallType" class="form-label">ประเภทอีเมล</label>
-                        <select id="inputCallType" class="form-select" name="selectedCallTypeId" [(ngModel)]="selectedCallTypeId">
+                        <select
+                            id="inputCallType"
+                            class="form-select"
+                            name="selectedCallTypeId"
+                            [(ngModel)]="selectedCallTypeId"
+                            [disabled]="isCallTypeDisabled"
+                        >
                             <option disabled value="">กรุณาเลือกข้อมูล</option>
                             <option *ngFor="let callType of callTypes" [value]="callType.name">{{ callType.name }}</option>
                         </select>
@@ -334,6 +351,7 @@
                             class="form-select"
                             name="selectedContactNumber"
                             [(ngModel)]="selectedContactNumber"
+                            [disabled]="isContactNumberDisabled"
                         >
                             <option disabled value="">กรุณาเลือกเบอร์ติดต่อ</option>
                             <option
@@ -361,6 +379,7 @@
                                     [(ngModel)]="startTime"
                                     required
                                     class="input-date form-control"
+                                    [disabled]="isDateDisabled"
                                 />
                                 <span class="input-group-text">
                                     <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
@@ -376,6 +395,7 @@
                             (dateInput)="(formatTimepickStart)"
                             class="tpk"
                             (ngModelChange)="onTimepickStartChange($event)"
+                            [disabled]="isDateDisabled"
                         ></ngb-timepicker>
                     </div>
                 </div>
@@ -388,6 +408,7 @@
                         id="floatingTextarea"
                         name="description"
                         [(ngModel)]="description"
+                        [disabled]="isDescriptionDisabled"
                     ></textarea>
                 </div>
                 <div class="col-6" *ngIf="attachmentShowing">
