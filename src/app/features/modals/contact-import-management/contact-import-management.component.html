@@ -149,12 +149,16 @@
     </div>
 
     <div class="modal-content-section position-relative view-mode" *ngIf="mode === 'view'">
-        <!-- Assignment Info Section -->
-        <div class="assignment-info">
-            <p class="text-muted small mb-0">
-                {{ 'contact-import-management.assignUser' | translate }}: {{ assignUser || '-' }} |
-                {{ 'contact-import-management.assignedAt' | translate }}: {{ assignAt || '-' }}
-            </p>
+        <div>
+            <!-- Assignment Info Section -->
+            <div class="assignment-info d-flex justify-content-between align-items-center gap-3">
+                <span class="badge status-badge" [style.background-color]="getStatusColor(status)">{{ status }}</span>
+
+                <p class="text-muted small mb-0">
+                    {{ 'contact-import-management.assignUser' | translate }}: {{ assignUser || '-' }} |
+                    {{ 'contact-import-management.assignedAt' | translate }}: {{ (assignAt | date : 'dd/MM/yyyy HH:mm') || '-' }}
+                </p>
+            </div>
         </div>
 
         <!-- Form Section -->
@@ -162,19 +166,10 @@
             <div class="row g-3 g-md-4">
                 <div class="col-12 col-md-6">
                     <div class="form-group">
-                        <label for="firstname" class="form-label">
+                        <label for="fullname" class="form-label">
                             {{ 'contact-import-management.name' | translate }}
                         </label>
-                        <input type="text" class="form-control" id="firstname" formControlName="firstname" readonly />
-                    </div>
-                </div>
-
-                <div class="col-12 col-md-6">
-                    <div class="form-group">
-                        <label for="lastname" class="form-label">
-                            {{ 'contact-import-management.lastname' | translate }}
-                        </label>
-                        <input type="text" class="form-control" id="lastname" formControlName="lastname" readonly />
+                        <input type="text" class="form-control" id="fullname" formControlName="fullname" readonly />
                     </div>
                 </div>
 
@@ -208,15 +203,6 @@
                             {{ 'contact-import-management.subject' | translate }}
                         </label>
                         <input type="text" class="form-control" id="subject" formControlName="subject" readonly />
-                    </div>
-                </div>
-
-                <div class="col-12 col-md-6">
-                    <div class="form-group">
-                        <label for="status" class="form-label">
-                            {{ 'contact-import-management.status-text' | translate }}
-                        </label>
-                        <input type="text" class="form-control" id="status" formControlName="status" readonly />
                     </div>
                 </div>
 
