@@ -19,7 +19,7 @@
                             <th scope="col">รายละเอียด</th>
                             <th scope="col">สถานะ</th>
                             <th scope="col">ผู้ที่รับผิดชอบ</th>
-                            <th scope="col">จัดการ</th>
+                            <th scope="col">การดำเนินการ</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -44,11 +44,12 @@
                                             data-bs-toggle="offcanvas"
                                             data-bs-target="#offcanvasRight"
                                             aria-controls="offcanvasRight"
-                                            ngbTooltip="แก้ไข"
+                                            ngbTooltip="ติดต่อ"
+                                            (click)="clickCall(caseList.caseId, caseList.contactId)"
                                         >
-                                            <i class="fa-solid fa-pen-to-square"></i>
+                                            <i class="fa-solid fa-phone"></i>
                                         </div>
-                                        <div
+                                        <!-- <div
                                             class="color-primary"
                                             [style]="{ cursor: 'pointer' }"
                                             placement="top"
@@ -56,7 +57,7 @@
                                             ngbTooltip="ลบ"
                                         >
                                             <i class="fa-solid fa-trash"></i>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </td>
                             </tr>
