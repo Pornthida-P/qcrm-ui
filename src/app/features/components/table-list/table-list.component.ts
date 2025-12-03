@@ -24,7 +24,7 @@ export class TableListComponent implements OnInit, OnChanges, DoCheck {
     @Output() edit: EventEmitter<any> = new EventEmitter<any>();
     @Output() delete: EventEmitter<any> = new EventEmitter<any>();
 
-    includesDate: string[] = ['createdAt', 'modityAt', 'lastLogin', 'startDate', 'endDate'];
+    includesDate: string[] = ['createdAt', 'modityAt', 'lastLogin', 'startDate', 'endDate', 'requestDateTime', 'assignedAt'];
     includesRole: string[] = ['role'];
     includesProfile: string[] = ['profile'];
     includesStatus: string[] = ['isActive'];

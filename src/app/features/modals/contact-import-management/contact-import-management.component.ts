@@ -29,6 +29,8 @@ export class ContactImportManagementComponent implements OnInit {
     form!: FormGroup;
     assignUser: string = '';
     assignAt: string = '';
+    status: string = '';
+    statusList: any[] = [];
 
     constructor(
         private contactService: ContactsService,
@@ -44,22 +46,23 @@ export class ContactImportManagementComponent implements OnInit {
         this.mode = this.data.mode;
         this.buildForm();
         if (this.mode === 'view') {
+            console.log('data: ', this.data);
             this.form.patchValue(this.data.contactListImport);
             this.form.disable();
-            this.assignUser = this.data.contactListImport.contact.assignedUser;
-            this.assignAt = this.data.contactListImport.contact.assignedAt;
+            this.assignUser = this.data.contactListImport.assignUser;
+            this.assignAt = this.data.contactListImport.requestDateTime;
+            this.status = this.data.contactListImport.status;
         }
+        this.getStatusList();
     }
 
     buildForm() {
         this.form = new FormGroup({
-            firstname: new FormControl('', Validators.required),
-            lastname: new FormControl('', Validators.required),
+            fullname: new FormControl('', Validators.required),
             contactNumber: new FormControl('', Validators.required),
             topic: new FormControl('', Validators.required),
             subject: new FormControl('', Validators.required),
             description: new FormControl('', Validators.required),
-            status: new FormControl('', Validators.required),
         });
     }
 
@@ -374,10 +377,44 @@ export class ContactImportManagementComponent implements OnInit {
         this.dialogRef.close();
     }
 
+    getStatusList() {
+        this.callService.getAllStatus().subscribe((res: any) => {
+            this.statusList = res.map((item: any) => ({
+                id: item.id,
+                name: item.status,
+            }));
+        });
+    }
     getStatusLabel(status: string): string {
         const statusKey = `contact-import-management.status.${status}`;
         const defaultKey = 'contact-import-management.status.pending';
         return this.translate.instant(statusKey) || this.translate.instant(defaultKey);
+    }
+
+    getStatusColorAndIcon(id: number) {
+        const colors = ['#FB5F20', '#010966', '#006400'];
+        const icons = [
+            '<i class="fa-solid fa-folder-open"></i>',
+            '<i class="fa-solid fa-hourglass-end"></i>',
+            '<i class="fa-solid fa-folder-closed"></i>',
+        ];
+        return { color: colors[id % colors.length], icon: icons[id % icons.length] } as any;
+    }
+
+    getStatusColor(statusName: string): string {
+        if (!statusName) return '#6c757d';
+        const statusIndex = this.statusList.findIndex((s) => s.name === statusName);
+        if (statusIndex >= 0) {
+            return this.getStatusColorAndIcon(statusIndex).color;
+        }
+        // Default colors based on common status names
+        const statusColors: { [key: string]: string } = {
+            open: '#FB5F20',
+            pending: '#010966',
+            closed: '#006400',
+            cancelled: '#6c757d',
+        };
+        return statusColors[statusName] || '#6c757d';
     }
 
     getStatusCount(status: string): number {

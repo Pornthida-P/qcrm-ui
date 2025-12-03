@@ -464,10 +464,10 @@ export class HomePageComponent implements OnInit {
         }
         // Default colors based on common status names
         const statusColors: { [key: string]: string } = {
-            รอรับ: '#FB5F20',
-            กำลังดำเนินการ: '#010966',
-            เสร็จสิ้น: '#006400',
-            ยกเลิก: '#6c757d',
+            open: '#FB5F20',
+            pending: '#010966',
+            closed: '#006400',
+            cancelled: '#6c757d',
         };
         return statusColors[statusName] || '#6c757d';
     }
