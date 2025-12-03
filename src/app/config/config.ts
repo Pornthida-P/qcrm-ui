@@ -31,11 +31,8 @@ export const config = {
                 uploadFile: '/upload',
             },
             report: {
-                channelByAgent: '/report/channelByAgent',
-                caseTypeByAgent: '/report/caseTypeByAgent',
-                summaryByMonth: '/report/summaryByMonth',
-                caseDetail: '/report/caseDetail',
-                getAgent: '/report/getAgent',
+                baseUrl: '/report',
+                list: '/list',
             },
             callList: {
                 baseUrl: '/case',

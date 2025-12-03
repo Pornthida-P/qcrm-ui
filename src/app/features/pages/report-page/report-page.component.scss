@@ -1,3 +1,32 @@
-.button-active {
-    background-color: var(--primary-active-color) !important;
+.item-report {
+    color: #333;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+        background-color: #f8f9fa;
+        color: var(--primary, #007bff);
+    }
+
+    &.active {
+        background-color: var(--primary, #007bff);
+        color: white;
+    }
+}
+
+.label-report {
+    font-size: 0.875rem;
+    transition: font-weight 0.2s ease-in-out;
+    cursor: pointer;
+    font-weight: 600;
+
+    @media (min-width: 768px) {
+        font-size: 0.95rem;
+    }
+}
+
+// Responsive adjustments
+@media (max-width: 767.98px) {
+    .item-report {
+        padding: 0.75rem !important;
+    }
 }

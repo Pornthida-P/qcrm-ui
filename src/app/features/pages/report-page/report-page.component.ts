@@ -1,7 +1,8 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { config } from 'src/app/config/config';
-import * as XLSX from 'xlsx';
+import { ReportService } from 'src/app/services/report/report.service';
+import { TranslateService } from 'src/app/services/translate/translate.service';
 
 @Component({
     selector: 'app-report-page',
@@ -9,56 +10,29 @@ import * as XLSX from 'xlsx';
     styleUrl: './report-page.component.scss',
 })
 export class ReportPageComponent implements OnInit {
-    reportTable!: any;
-    onSelectReport: any = '';
-
-    filterOption!: any[];
-
-    fileType: string = config.file.type;
-
-    userData: any = JSON.parse(localStorage.getItem('userData') || '{}');
-    userRole: string = '';
-    userId: string = '';
-    roleCanAccessCUDForm: string[] = config.roleCanAccessCUDForm;
-    url: string = '';
-
-    constructor(private router: Router) {}
+    reportList: any[] = [];
+    selectedReportLink: string = '';
+    language: string = 'th';
+    constructor(
+        private router: Router,
+        private http: HttpClient,
+        private reportService: ReportService,
+        private translateService: TranslateService,
+    ) {}
 
     ngOnInit() {
-        this.userRole = this.userData.role.roleTitle.toLocaleLowerCase();
-        this.filterOption = [
-            { name: 'ทั้งหมด', code: 'all' },
-            { name: 'Only My', code: this.userData.username },
-        ];
-        this.onChangeReport('');
+        this.language = this.translateService.getCurrentLanguage();
+        this.getReportList();
     }
 
-    checkRole(): boolean {
-        return this.roleCanAccessCUDForm.includes(this.userRole);
+    getReportList() {
+        this.reportService.getReportList().subscribe((res: any) => {
+            this.reportList = res;
+            this.selectedReportLink = this.reportList[0].link;
+        });
     }
 
-    onChannelByAgentReport() {
-        this.onSelectReport = 'ChannelByAgentReport';
-        this.router.navigate(['/report-page/channel-by-agent']);
-    }
-
-    onCaseTypeByAgentReport() {
-        this.onSelectReport = 'CaseTypeByAgentReport';
-        this.router.navigate(['/report-page/case-type-by-agent']);
-    }
-
-    onCaseDetail() {
-        this.onSelectReport = 'CaseDetail';
-        this.router.navigate(['/report-page']);
-    }
-
-    onSummaryByAgent() {
-        this.onSelectReport = 'SummaryByAgent';
-        this.router.navigate(['/report-page']);
-    }
-
-    onChangeReport(report: string) {
-        this.onSelectReport = report;
-        this.router.navigate(['/report-page/' + report]);
+    onSelectReport(name: string) {
+        this.selectedReportLink = this.reportList.find((rp: { nameTH: string }) => rp.nameTH === name).link;
     }
 }
