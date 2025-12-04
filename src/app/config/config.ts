@@ -42,6 +42,7 @@ export const config = {
                 caseSubjects: '/subjects',
                 channels: '/channels',
                 agent: '/agent',
+                comment: '/comments',
             },
         },
     },

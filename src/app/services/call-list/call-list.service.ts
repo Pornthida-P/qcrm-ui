@@ -24,4 +24,8 @@ export class CallListService {
     getStatusList() {
         return this.http.get(`${this.baseUrl}${config.api.path.callList.status}`);
     }
+
+  createComment(data: any) {
+    return this.http.post(`${this.baseUrl}${config.api.path.callList.comment}`, data);
+  }
 }

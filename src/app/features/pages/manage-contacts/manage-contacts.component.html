@@ -411,6 +411,16 @@
                         [disabled]="isDescriptionDisabled"
                     ></textarea>
                 </div>
+                <div class="col-12" *ngIf="attachmentShowing == false">
+                  <label class="form-check-label" for="gridCheck"> ความคิดเห็น </label>
+                  <textarea
+                      class="form-control"
+                      placeholder="กรุณากรอกข้อมูล"
+                      id="floatingTextareaComment"
+                      name="comment"
+                      [(ngModel)]="comment"
+                  ></textarea>
+              </div>
                 <div class="col-6" *ngIf="attachmentShowing">
                     <label for="formFileSm" class="form-label">ไฟล์แนบ</label>
                     <div class="mb-3">

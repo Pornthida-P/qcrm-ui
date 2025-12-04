@@ -178,6 +178,8 @@ export class ManageContactsComponent implements OnInit {
     displayName: any;
     issue: any;
     caseId: any;
+  comment: any;
+  
     constructor(
         private _location: Location,
         private contactsService: ContactsService,
@@ -899,6 +901,7 @@ export class ManageContactsComponent implements OnInit {
                     isDeleted: 0,
                     assignedUserId: null,
                     attachment: this.attachmentsId,
+                    comment: this.comment,
                 };
                 console.log('Create Case Data: ', dataForm);
 
@@ -941,6 +944,7 @@ export class ManageContactsComponent implements OnInit {
                     operationType: selectedCallTypeId,
                     contactId: this.contactId,
                     status: this.selectedStatus,
+                    comment: this.comment,
                 };
                 console.log('Update Case Data: ', data);
                 this.callServive
