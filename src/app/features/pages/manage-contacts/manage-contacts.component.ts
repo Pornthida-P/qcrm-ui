@@ -179,6 +179,7 @@ export class ManageContactsComponent implements OnInit {
     issue: any;
     caseId: any;
     comment: any;
+    comments: any[] = [];
 
     constructor(
         private _location: Location,
@@ -299,6 +300,12 @@ export class ManageContactsComponent implements OnInit {
         } else {
             return false;
         }
+    }
+
+    getComment(caseId: string) {
+        this.callListService.getComment(caseId).subscribe((res: any) => {
+            this.comments = res;
+        });
     }
 
     async getContactById(contactId: string) {
@@ -769,6 +776,7 @@ export class ManageContactsComponent implements OnInit {
                     } else {
                         this.selectedCasesubject[0] = null;
                     }
+                    this.getComment(caseId);
                 },
                 (error) => {
                     console.error('Error fetching case:', error);

@@ -25,7 +25,11 @@ export class CallListService {
         return this.http.get(`${this.baseUrl}${config.api.path.callList.status}`);
     }
 
-  createComment(data: any) {
-    return this.http.post(`${this.baseUrl}${config.api.path.callList.comment}`, data);
-  }
+    createComment(data: any) {
+        return this.http.post(`${this.baseUrl}${config.api.path.callList.comment}`, data);
+    }
+
+    getComment(caseId: string) {
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.comment}/${caseId}`);
+    }
 }
