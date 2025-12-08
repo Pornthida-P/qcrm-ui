@@ -64,7 +64,7 @@ export class MenagementPasswordComponent implements OnInit {
         const { newPassword, verifyPassword, currentPassword } = this.passwordForm.value;
         if (newPassword !== verifyPassword) {
             this.sweetalertService.getSwal('error', 'Warning', 'Password does not match.', false, '');
-            this.auditLogService.log('', 'Account', 'Change Password', ``, `Failed, Password does not match`);
+            this.auditLogService.log('', 'Account', '', 'Change Password', ``, `Failed, Password does not match`);
             this.passwordForm.reset();
             return;
         }
@@ -80,7 +80,7 @@ export class MenagementPasswordComponent implements OnInit {
             .subscribe(() => {
                 this.sweetalertService.getSwal('success', 'Success', 'Password has been updated.', false, '');
                 this.passwordForm.reset();
-                this.auditLogService.log('', 'Account', 'Change Password', ``, `Success`);
+                this.auditLogService.log('', 'Account', '', 'Change Password', ``, `Success`);
                 this.router.navigate(['/logout']);
             });
     }

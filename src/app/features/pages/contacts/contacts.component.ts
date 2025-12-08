@@ -257,7 +257,7 @@ export class ContactsComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.getSwal('success', 'Delete data success.', '', false, '');
-                            this.auditLogService.log('', 'Contact', 'Delete Contact', `Contact ID : ${contactId}`, `Success`);
+                            this.auditLogService.log('', 'Contact', contactId, 'Delete Contact', `Contact ID : ${contactId}`, `Success`);
                             window.location.reload();
                         }),
                         catchError((error) => {
@@ -265,6 +265,7 @@ export class ContactsComponent implements OnInit {
                             this.auditLogService.log(
                                 '',
                                 'Contact',
+                                contactId,
                                 'Delete Contact',
                                 `Contact ID : ${contactId}`,
                                 `Failed, Error : ${error}`,
@@ -298,6 +299,7 @@ export class ContactsComponent implements OnInit {
                             this.auditLogService.log(
                                 '',
                                 'Contact',
+                                '',
                                 'Delete Contact',
                                 `Contact ID : ${this.checkedValues.join(', ')}`,
                                 `Success`,
@@ -309,6 +311,7 @@ export class ContactsComponent implements OnInit {
                             this.auditLogService.log(
                                 '',
                                 'Contact',
+                                '',
                                 'Delete Contact',
                                 `Contact ID : ${this.checkedValues.join(', ')}`,
                                 `Failed, Error : ${error}`,

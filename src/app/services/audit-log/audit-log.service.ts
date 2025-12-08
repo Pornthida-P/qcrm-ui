@@ -13,16 +13,16 @@ export class AuditLogService {
         this.http = new HttpClient(httpBackend);
     }
 
-    async log(username: string, menu: string, action: string, detail: string, status: string) {
+    async log(username: string, menu: string, caseId: string = '', action: string, detail: string, status: string) {
         const userData = localStorage.getItem('userData');
         if (userData && username == '') username = this.getJson(userData).username;
-
         if (userData || username != '') {
             const apiUrl = `${config.strapi.url}${config.strapi.path.auditlog}`;
             const body = {
                 data: {
                     user: username,
                     menu,
+                    case_id: caseId,
                     action,
                     detail,
                     status,

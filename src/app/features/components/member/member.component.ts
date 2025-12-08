@@ -130,10 +130,10 @@ export class MemberComponent implements OnInit {
                             tap(() => {
                                 this.sweetalertService.getSwal('success', 'Success', 'Delete user successfully.', false, '');
                                 this.findAllMember();
-                                this.auditLogService.log('', 'Account', 'Delete', `User : ${member.username}, Email: ${member.email}`, `Success`);
+                                this.auditLogService.log('', 'Account', '', 'Delete', `User : ${member.username}, Email: ${member.email}`, `Success`);
                             }),
                             catchError((error) => {
-                                this.auditLogService.log('', 'Account', 'Delete', `User : ${member.username}, Email: ${member.email}`, `Failed, Error ${error}`);
+                                this.auditLogService.log('', 'Account', '', 'Delete', `User : ${member.username}, Email: ${member.email}`, `Failed, Error ${error}`);
                                 this.sweetalertService.handleError(error);
                                 throw error;
                             }),
