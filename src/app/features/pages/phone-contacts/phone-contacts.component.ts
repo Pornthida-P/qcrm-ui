@@ -282,6 +282,7 @@ export class PhoneContactsComponent {
                         this.auditLogService.log(
                             '',
                             'Phone Contact',
+                            '',
                             'Edit Phone Contact',
                             `Detail Phone Contact : ContactID : ${data.contactId}, call_id : ${data.call_id}, caller_id : ${data.caller_id}, Contact Number : ${data.contactNumber}, FirstName : ${data.firstName}, LastName : ${data.lastName} `,
                             `Success`,
@@ -292,6 +293,7 @@ export class PhoneContactsComponent {
                         this.auditLogService.log(
                             '',
                             'Phone Contact',
+                            '',
                             'Edit Phone Contact',
                             `Detail Phone Contact : ContactID : ${data.contactId}, call_id : ${data.call_id}, caller_id : ${data.caller_id}, Contact Number : ${data.contactNumber}, FirstName : ${data.firstName}, LastName : ${data.lastName} `,
                             `Failed, Error : ${error}`,
@@ -321,6 +323,7 @@ export class PhoneContactsComponent {
                         this.auditLogService.log(
                             '',
                             'Phone Contact',
+                            '',
                             'Create Phone Contact',
                             `Detail Phone Contact : Contact Number : ${data.contactNumber},FirstName : ${data.firstName},LastName : ${data.lastName},Create By : ${data.createdById}`,
                             `Success`,
@@ -331,6 +334,7 @@ export class PhoneContactsComponent {
                         this.auditLogService.log(
                             '',
                             'Phone Contact',
+                            '',
                             'Create Phone Contact',
                             `Detail Phone Contact : Contact Number : ${data.contactNumber},FirstName : ${data.firstName},LastName : ${data.lastName},Create By : ${data.createdById}`,
                             `Failed, Error : ${error}`,

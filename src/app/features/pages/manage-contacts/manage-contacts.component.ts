@@ -178,8 +178,8 @@ export class ManageContactsComponent implements OnInit {
     displayName: any;
     issue: any;
     caseId: any;
-  comment: any;
-  
+    comment: any;
+
     constructor(
         private _location: Location,
         private contactsService: ContactsService,
@@ -406,14 +406,14 @@ export class ManageContactsComponent implements OnInit {
                     this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/contacts/edit', {
                         key: res.contactId,
                     });
-                    this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), 'Success');
+                    this.auditLogService.log('', 'Contact', '', 'Edit Contact', JSON.stringify(data), 'Success');
                     if (this.contactId === res.contactId) {
                         location.reload();
                     }
                 }),
                 catchError((error) => {
                     this.sweetalertServices.handleError(error);
-                    this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(data), `Failed, Error : ${error}`);
+                    this.auditLogService.log('', 'Contact', '', 'Edit Contact', JSON.stringify(data), `Failed, Error : ${error}`);
                     throw error;
                 }),
             )
@@ -468,7 +468,7 @@ export class ManageContactsComponent implements OnInit {
                             timer: 1000,
                             timerProgressBar: true,
                         }).then(() => {
-                            this.auditLogService.log('', 'Contact', 'Create Contact', JSON.stringify(data), `Success`);
+                            this.auditLogService.log('', 'Contact', '', 'Create Contact', JSON.stringify(data), `Success`);
                             location.reload();
                         });
                     } else if (res.success === false && res.message === 'Duplicate' && this.MultiNumber === false) {
@@ -480,6 +480,7 @@ export class ManageContactsComponent implements OnInit {
                         this.auditLogService.log(
                             '',
                             'Contact',
+                            '',
                             'Create Contact',
                             JSON.stringify(data),
                             `Failed, Error Duplicate: ${res.duplicates}`,
@@ -513,13 +514,14 @@ export class ManageContactsComponent implements OnInit {
                                         this.router.navigate(['/contacts/edit'], {
                                             queryParams: { key: contactId, call_id: contactNumber, chatid: chatId },
                                         });
-                                        this.auditLogService.log('', 'Contact', 'Edit Contact', JSON.stringify(updateData), 'Success');
+                                        this.auditLogService.log('', 'Contact', '', 'Edit Contact', JSON.stringify(updateData), 'Success');
                                     }),
                                     catchError((error) => {
                                         this.sweetalertServices.handleError(error);
                                         this.auditLogService.log(
                                             '',
                                             'Contact',
+                                            '',
                                             'Edit Contact',
                                             JSON.stringify(updateData),
                                             `Failed, Error : ${error}`,
@@ -533,7 +535,7 @@ export class ManageContactsComponent implements OnInit {
                 }),
                 catchError((error) => {
                     this.sweetalertServices.handleError(error);
-                    this.auditLogService.log('', 'Contact', 'Create Contact', JSON.stringify(data), `Failed, Error : ${error}`);
+                    this.auditLogService.log('', 'Contact', '', 'Create Contact', JSON.stringify(data), `Failed, Error : ${error}`);
                     throw error;
                 }),
             )
@@ -806,6 +808,7 @@ export class ManageContactsComponent implements OnInit {
                         this.auditLogService.log(
                             '',
                             'Contact',
+                            callId,
                             `Delete Call From ContactID : ${this.contactId}`,
                             `Call ID : ${callId}`,
                             `Success`,
@@ -817,6 +820,7 @@ export class ManageContactsComponent implements OnInit {
                         this.auditLogService.log(
                             '',
                             'Contact',
+                            callId,
                             `Delete Call From ContactID : ${this.contactId}`,
                             `Call ID : ${callId}`,
                             `Failed, Error : ${error}`,
@@ -910,7 +914,14 @@ export class ManageContactsComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
-                            this.auditLogService.log('', 'Contact Create Case', 'Contact Create Case', JSON.stringify(dataForm), `Success`);
+                            this.auditLogService.log(
+                                '',
+                                'Contact Create Case',
+                                this.caseId,
+                                'Contact Create Case',
+                                JSON.stringify(dataForm),
+                                `Success`,
+                            );
                             window.location.reload();
                         }),
                         catchError((error) => {
@@ -918,6 +929,7 @@ export class ManageContactsComponent implements OnInit {
                             this.auditLogService.log(
                                 '',
                                 'Contact Create Case',
+                                this.caseId,
                                 'Contact Create Case',
                                 JSON.stringify(dataForm),
                                 `Failed, Error : ${error}`,
@@ -952,7 +964,14 @@ export class ManageContactsComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
-                            this.auditLogService.log('', 'Contact Update Case', 'Contact Update Case ', JSON.stringify(data), `Success`);
+                            this.auditLogService.log(
+                                '',
+                                'Contact Update Case',
+                                this.callId,
+                                'Contact Update Case ',
+                                JSON.stringify(data),
+                                `Success`,
+                            );
                             window.location.reload();
                         }),
                         catchError((error) => {
@@ -960,6 +979,7 @@ export class ManageContactsComponent implements OnInit {
                             this.auditLogService.log(
                                 '',
                                 'Contact Update Case',
+                                this.callId,
                                 'Contact Update Case',
                                 JSON.stringify(data),
                                 `Failed, Error : ${error}`,

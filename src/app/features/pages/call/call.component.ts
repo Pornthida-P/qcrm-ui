@@ -841,6 +841,7 @@ export class CallComponent implements OnInit {
                             this.auditLogService.log(
                                 '',
                                 'Contact Create Call',
+                                '',
                                 'Contact Create Case Call',
                                 JSON.stringify(data),
                                 `Success`,
@@ -852,6 +853,7 @@ export class CallComponent implements OnInit {
                             this.auditLogService.log(
                                 '',
                                 'Contact Create Call',
+                                '',
                                 'Contact Create Case Call',
                                 JSON.stringify(data),
                                 `Failed, Error : ${error}`,
@@ -893,6 +895,7 @@ export class CallComponent implements OnInit {
                             this.auditLogService.log(
                                 '',
                                 'Contact Update Call',
+                                this.callId,
                                 'Contact Update Case Call',
                                 JSON.stringify(data),
                                 `Success`,
@@ -904,6 +907,7 @@ export class CallComponent implements OnInit {
                             this.auditLogService.log(
                                 '',
                                 'Contact Update Call',
+                                this.callId,
                                 'Contact Update Case Call',
                                 JSON.stringify(data),
                                 `Failed, Error : ${error}`,
@@ -935,7 +939,14 @@ export class CallComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
-                            this.auditLogService.log('', 'Contact Update Case', 'Contact Update Case ', JSON.stringify(data), `Success`);
+                            this.auditLogService.log(
+                                '',
+                                'Contact Update Case',
+                                this.callId,
+                                'Contact Update Case ',
+                                JSON.stringify(data),
+                                `Success`,
+                            );
                             window.location.reload();
                         }),
                         catchError((error) => {
@@ -943,6 +954,7 @@ export class CallComponent implements OnInit {
                             this.auditLogService.log(
                                 '',
                                 'Contact Update Case',
+                                this.callId,
                                 'Contact Update Case',
                                 JSON.stringify(data),
                                 `Failed, Error : ${error}`,
@@ -1021,6 +1033,7 @@ export class CallComponent implements OnInit {
                         this.auditLogService.log(
                             '',
                             'Contact',
+                            callId,
                             `Delete Call From ContactID : ${this.contactId}`,
                             `Call ID : ${callId}`,
                             `Success`,
@@ -1032,6 +1045,7 @@ export class CallComponent implements OnInit {
                         this.auditLogService.log(
                             '',
                             'Contact',
+                            callId,
                             `Delete Call From ContactID : ${this.contactId}`,
                             `Call ID : ${callId}`,
                             `Failed, Error : ${error}`,

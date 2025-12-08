@@ -348,6 +348,7 @@ export class CreateCallComponent {
                     this.auditLogService.log(
                         '',
                         'Create Call',
+                        data.call_id || '',
                         'Create Case Call',
                         `Detail Create call : ContactID : ${data.contactId}
                         ,Name : ${data.name}
@@ -363,6 +364,7 @@ export class CreateCallComponent {
                     this.auditLogService.log(
                         '',
                         'Create Call',
+                        data.call_id || '',
                         'Create Case Call',
                         `Detail Create call : ContactID : ${data.contactId}
                         ,Name : ${data.name}
@@ -458,6 +460,7 @@ export class CreateCallComponent {
                     this.auditLogService.log(
                         '',
                         'Create Call',
+                        dataForm.caseId || '',
                         'Create Case Call',
                         `Detail Create call : ContactID : ${dataForm.contactId}
                       ,RequestDateTime : ${dataForm.requestDateTime}
@@ -471,6 +474,7 @@ export class CreateCallComponent {
                     this.auditLogService.log(
                         '',
                         'Create Call',
+                        dataForm.caseId || '',
                         'Create Case Call',
                         `Detail Create call : ContactID : ${dataForm.contactId}
                       ,RequestDateTime : ${dataForm.requestDateTime}

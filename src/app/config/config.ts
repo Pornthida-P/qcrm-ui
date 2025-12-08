@@ -47,11 +47,12 @@ export const config = {
         },
     },
     strapi: {
-        url: 'https://devel.convtech.dev/qcrm-strapi/api',
+        url: 'https://devel.convtech .dev/qcrm-strapi/api',
+        // url: 'http://localhost:1337/api',
         path: {
             auditlog: '/auditlogs',
         },
-        key: '8c8cb1eb42112e450ac048f4e70878e4becdfc27544d14a8b65c942b9a9fab9333596d26aeedeeb1b65322ffe5e380eee7fe8d1b61c91d0f2427b972015f744c35ebd634f4d28cdd750dd2fd37088173eb7cf85d615ff6dacaa1eec1dfa87b751590302093fed23336e67691e8afb78032e9cf19b4e169a04faeb481b8d612a7',
+        key: '60ee667509833c204e120371481686a2d5b43035c480750ce1641defc8ca6a0c84f00845634048bc13bed34caf6a10ca5d1399e7e2ae4ad5a8e7b864b447f50156cf0bb0670208ca3073a53f2917a4380b0465ef3190d8822ad66250189cf82357cff832626335cd6de1b5758f2d59625fbbbc0e6f5c1f7f92f4aad6c0b10b66',
     },
     file: {
         maxSize: 2 * 1024 * 1024,
