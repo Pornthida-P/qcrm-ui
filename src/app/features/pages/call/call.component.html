@@ -378,8 +378,11 @@
                         </button>
 
                         <div class="flex flex-column" *ngIf="AddCallShowing">
-                            <h4 *ngIf="attachmentShowing == true">เพิ่มข้อมูลการติดต่อ</h4>
-                            <h4 *ngIf="attachmentShowing == false">แก้ไขข้อมูลการติดต่อ</h4>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h4 class="mb-0" *ngIf="attachmentShowing == true">เพิ่มข้อมูลการติดต่อ</h4>
+                                <h4 class="mb-0" *ngIf="attachmentShowing == false">แก้ไขข้อมูลการติดต่อ</h4>
+                                <button class="btn btn-primary" type="button" (click)="submitCall()">บันทึก</button>
+                            </div>
                             <form class="row g-3 mg-3">
                                 <div *ngFor="let i of numberArray">
                                     <div class="row" [ngClass]="{ 'display-none': selectSubject < i }">
@@ -548,6 +551,29 @@
                                         [(ngModel)]="description"
                                     ></textarea>
                                 </div>
+                                <div class="col-12">
+                                    <label class="form-check-label" for="gridCheck"> ความคิดเห็น </label>
+                                    <textarea
+                                        class="form-control"
+                                        placeholder="กรุณากรอกข้อมูล"
+                                        id="floatingTextareaComment"
+                                        name="comment"
+                                        [(ngModel)]="comment"
+                                    ></textarea>
+                                </div>
+                                <div class="col-12" *ngIf="comments && comments.length > 0">
+                                    <label class="form-label">ประวัติความคิดเห็น</label>
+                                    <div class="border rounded p-2 bg-light" style="max-height: 200px; overflow-y: auto">
+                                        <div class="card mb-2" *ngFor="let comment of comments">
+                                            <div class="card-body py-2 px-3">
+                                                <p class="card-text mb-1">{{ comment.comment }}</p>
+                                                <small class="text-muted">
+                                                    โดย {{ comment.username }} | {{ comment.createdAt | date : 'dd/MM/yyyy HH:mm' }}
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="col-6" *ngIf="attachmentShowing">
                                     <label for="formFileSm" class="form-label">ไฟล์แนบ</label>
                                     <div class="mb-3">
@@ -563,11 +589,6 @@
                                     </div>
                                 </div>
                             </form>
-                            <div class="col-md-3">
-                                <button class="btn btn-primary" type="button" (click)="submitCall()" style="height: 38px; margin-top: 20%">
-                                    บันทึก
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </div>

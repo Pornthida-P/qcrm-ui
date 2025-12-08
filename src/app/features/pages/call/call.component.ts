@@ -178,6 +178,9 @@ export class CallComponent implements OnInit {
     statusList: any[] = [];
     selectedStatus: any;
 
+    comment: any;
+    comments: any[] = [];
+
     constructor(
         private callService: CallService,
         private router: Router,
@@ -253,6 +256,12 @@ export class CallComponent implements OnInit {
         ];
 
         this.getStatusList();
+    }
+
+    getComment(caseId: string) {
+        this.callListService.getComment(caseId).subscribe((res: any) => {
+            this.comments = res;
+        });
     }
 
     onUserSelectDateFilter(newDateFilterType: string) {
@@ -603,6 +612,8 @@ export class CallComponent implements OnInit {
                 } else {
                     this.selectedCasesubject[0] = null;
                 }
+
+                this.getComment(call.caseId);
             },
             (error) => {
                 console.error('Error fetching case:', error);
@@ -831,6 +842,7 @@ export class CallComponent implements OnInit {
                     attachment: this.attachmentsId,
                     call_id: this.phoneCall,
                     operationType: selectedCallTypeId,
+                    comment: this.comment,
                 };
                 console.log('Data: ', data);
                 this.callService
@@ -885,6 +897,7 @@ export class CallComponent implements OnInit {
                     operationType: selectedCallTypeId,
                     call_id: this.selectedContactNumber ? this.selectedContactNumber.contactNumber : null,
                     contactNumberId: this.selectedContactNumber ? this.selectedContactNumber.contactNumberId : null,
+                    comment: this.comment,
                 };
                 console.log('Data: ', data);
                 this.contactsService
@@ -932,6 +945,7 @@ export class CallComponent implements OnInit {
                     modifiedById: userData.userId,
                     operationType: selectedCallTypeId,
                     status: this.selectedStatus,
+                    comment: this.comment,
                 };
                 console.log('Data: ', data);
                 this.callService
