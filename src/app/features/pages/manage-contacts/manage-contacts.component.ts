@@ -182,6 +182,9 @@ export class ManageContactsComponent implements OnInit {
     caseId: any;
     comment: any;
     comments: any[] = [];
+    caseTopicId: any;
+
+    selectedCaseTopicObject: any = null;
 
     constructor(
         private _location: Location,
@@ -319,6 +322,12 @@ export class ManageContactsComponent implements OnInit {
     getComment(caseId: string) {
         this.callListService.getComment(caseId).subscribe((res: any) => {
             this.comments = res;
+        });
+    }
+
+    getCaseTopicId(caseId: string) {
+        this.callListService.getCaseTopicId(caseId).subscribe((res: any) => {
+            this.caseTopicId = res;
         });
     }
 
@@ -791,8 +800,13 @@ export class ManageContactsComponent implements OnInit {
 
                     if (call.caseTopicId) {
                         this.selectedCaseTopics[0] = call.caseTopicId;
+                        // หา caseTopic object
+                        this.selectedCaseTopicObject = this.casetopics.find(
+                            (topic: any) => topic.caseTopicId == call.caseTopicId
+                        );
                     } else {
                         this.selectedCaseTopics[0] = null;
+                        this.selectedCaseTopicObject = null;
                     }
 
                     if (call.caseSubjectId) {
@@ -803,6 +817,7 @@ export class ManageContactsComponent implements OnInit {
                         this.selectedCasesubject[0] = null;
                     }
                     this.getComment(caseId);
+                    this.getCaseTopicId(call.caseTopicId);
                 },
                 (error) => {
                     console.error('Error fetching case:', error);
@@ -1174,5 +1189,15 @@ export class ManageContactsComponent implements OnInit {
     onCaseTopicChange(event: any, index: number) {
         // Clear case subject when case topic changes
         this.selectedCasesubject[index] = null;
+        
+        // หา caseTopic object จาก casetopics และ set selectedCaseTopicObject
+        const selectedTopicId = this.selectedCaseTopics[index];
+        if (selectedTopicId && this.casetopics) {
+            this.selectedCaseTopicObject = this.casetopics.find(
+                (topic: any) => topic.caseTopicId == selectedTopicId
+            );
+        } else {
+            this.selectedCaseTopicObject = null;
+        }
     }
 }

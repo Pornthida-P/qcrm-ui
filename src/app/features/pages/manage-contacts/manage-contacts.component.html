@@ -242,7 +242,7 @@
         </div>
     </div>
 </div>
-<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+<div class="offcanvas offcanvas-end w-75" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
     <div class="offcanvas-body">
         <div class="d-flex flex-wrap justify-content-between">
             <div class="d-flex">
@@ -437,6 +437,10 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="col-12" *ngIf="selectedCaseTopicObject && selectedCaseTopicObject.script">
+                    <label class="form-label">Script</label>
+                    <div class="border rounded p-2 bg-light" [innerHTML]="selectedCaseTopicObject.script"></div>
                 </div>
                 <div class="col-6" *ngIf="attachmentShowing">
                     <label for="formFileSm" class="form-label">ไฟล์แนบ</label>

@@ -43,6 +43,7 @@ export const config = {
                 channels: '/channels',
                 agent: '/agent',
                 comment: '/comments',
+                caseTopicId: '/topic-id',
             },
         },
     },
