@@ -148,6 +148,8 @@ export class ManageContactsComponent implements OnInit {
     isDateDisabled: boolean = false;
     isDescriptionDisabled: boolean = false;
 
+    isCommentsHistoryShowing: boolean = false;
+
     selectedActivityTopicId: string[] = [];
     searchContactShowing: boolean = false;
 
@@ -241,18 +243,30 @@ export class ManageContactsComponent implements OnInit {
 
                 console.log('contactNumParams: ', this.contactNumParams);
                 localStorage.setItem('contactNum', this.contactNum);
-            });
+                if (this.caseId) {
+                    setTimeout(() => {
+                        const offcanvasElement = document.getElementById('offcanvasRight');
+                        if (offcanvasElement) {
+                            const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
+                            offcanvas.show();
+                            this.editCall(this.caseId);
+                        }
+                    }, 500);
+                }
 
-            if (this.caseId) {
-                setTimeout(() => {
-                    const offcanvasElement = document.getElementById('offcanvasRight');
-                    if (offcanvasElement) {
-                        const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
-                        offcanvas.show();
-                        this.editCall(this.caseId);
-                    }
-                }, 500);
-            }
+                if (this.contactId && (this.chatType || this.chatId)) {
+                    setTimeout(() => {
+                        this.createCall();
+                        setTimeout(() => {
+                            const offcanvasElement = document.getElementById('offcanvasRight');
+                            if (offcanvasElement) {
+                                const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
+                                offcanvas.show();
+                            }
+                        }, 100);
+                    }, 500);
+                }
+            });
         }
 
         if (this.contactId) {
@@ -457,16 +471,6 @@ export class ManageContactsComponent implements OnInit {
                         const chatType = data.chatType;
                         const displayName = data.displayName;
                         const issue = data.issue;
-                        this.router.navigate(['/contacts/edit'], {
-                            queryParams: {
-                                key: contactId,
-                                call_id: contactNumber,
-                                chatid: chatId,
-                                chattype: chatType,
-                                displayName: displayName,
-                                issue: issue,
-                            },
-                        });
 
                         Swal.fire({
                             icon: 'success',
@@ -476,7 +480,15 @@ export class ManageContactsComponent implements OnInit {
                             timerProgressBar: true,
                         }).then(() => {
                             this.auditLogService.log('', 'Contact', '', 'Create Contact', JSON.stringify(data), `Success`);
-                            location.reload();
+                            const params = new URLSearchParams({
+                                key: contactId,
+                                call_id: contactNumber || '',
+                                chatid: chatId || '',
+                                chattype: chatType || '',
+                                displayName: displayName || '',
+                                issue: issue || '',
+                            });
+                            window.location.href = `/contacts/edit?${params.toString()}`;
                         });
                     } else if (res.success === false && res.message === 'Duplicate' && this.MultiNumber === false) {
                         if (res.duplicates.length > 0) {
@@ -628,6 +640,18 @@ export class ManageContactsComponent implements OnInit {
         this.callServive.getAllChannels().subscribe((channels: any) => {
             this.channels = channels;
             this.selectedChannels = this.currentChannel || '';
+            if (this.chatType) {
+                const chatTypeLower = this.chatType.toLowerCase().trim();
+                const matchedChannel = channels.find((channel: any) => channel.name.toLowerCase().includes(chatTypeLower));
+                if (matchedChannel) {
+                    this.selectedChannels = matchedChannel.channelId;
+                    this.currentChannel = matchedChannel.channelId;
+                } else {
+                    this.selectedChannels = this.currentChannel || '';
+                }
+            } else {
+                this.selectedChannels = this.currentChannel || '';
+            }
         });
 
         this.getContactNumber(this.contactId);
@@ -693,6 +717,7 @@ export class ManageContactsComponent implements OnInit {
         this.isContactNumberDisabled = false;
         this.isDateDisabled = false;
         this.isDescriptionDisabled = false;
+        this.isCommentsHistoryShowing = false;
 
         this.showAddCall();
     }
@@ -729,6 +754,7 @@ export class ManageContactsComponent implements OnInit {
         this.isContactNumberDisabled = true;
         this.isDateDisabled = true;
         this.isDescriptionDisabled = true;
+        this.isCommentsHistoryShowing = true;
 
         this.callServive.getContactNumbertById(this.contactId).subscribe((contactNumbers: any) => {
             if (contactNumbers && Array.isArray(contactNumbers) && contactNumbers.length > 0) {
@@ -914,6 +940,7 @@ export class ManageContactsComponent implements OnInit {
                     assignedUserId: null,
                     attachment: this.attachmentsId,
                     comment: this.comment,
+                    chatId: this.chatId,
                 };
                 console.log('Create Case Data: ', dataForm);
 
@@ -930,7 +957,7 @@ export class ManageContactsComponent implements OnInit {
                                 JSON.stringify(dataForm),
                                 `Success`,
                             );
-                            window.location.reload();
+                            window.location.href = `/contacts/edit?key=${this.contactId}`;
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
