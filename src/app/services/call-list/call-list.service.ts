@@ -32,4 +32,8 @@ export class CallListService {
     getComment(caseId: string) {
         return this.http.get(`${this.baseUrl}${config.api.path.callList.comment}/${caseId}`);
     }
+
+    getCaseTopicId(caseId: string) {
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.caseTopicId}/${caseId}`);
+    }
 }
