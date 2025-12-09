@@ -258,205 +258,221 @@
                 <button class="btn btn-primary" type="button" (click)="submitCall()">บันทึก</button>
             </div>
 
-            <form class="row g-3 mg-3">
-                <div *ngFor="let i of numberArray">
-                    <div class="row" [ngClass]="{ 'display-none': selectSubject < i }">
-                        <div class="col-md-6">
-                            <label [ngClass]="{ 'display-none': i != 1 }" for="inputTopic" class="form-label"
-                                >หัวข้อที่ติดต่อ<span class="color-red">*</span></label
-                            >
-                            <select
-                                id="inputTopic"
-                                class="form-select"
-                                [name]="'selectedCaseTopics' + i"
-                                [(ngModel)]="selectedCaseTopics[i - 1]"
-                                (change)="onCaseTopicChange($event, i - 1)"
-                                [disabled]="isTopicDisabled"
-                            >
-                                <option disabled value="">กรุณาเลือกข้อมูล</option>
-                                <option *ngFor="let casetopic of casetopics" [value]="casetopic.caseTopicId">
-                                    {{ casetopic.name }}
-                                </option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label [ngClass]="{ 'display-none': i != 1 }" for="inputCaseSubject" class="form-label">เรื่องที่ติดต่อ</label>
-                            <select
-                                id="inputCaseSubject"
-                                class="form-select"
-                                [name]="'selectedCasesubject' + i"
-                                [(ngModel)]="selectedCasesubject[i - 1]"
-                                [disabled]="isSubjectDisabled"
-                            >
-                                <option disabled value="">กรุณาเลือกข้อมูล</option>
-                                <ng-container *ngFor="let casesubject of casesubjects">
-                                    <option
-                                        *ngIf="selectedCaseTopics[i - 1] && selectedCaseTopics[i - 1] == casesubject.caseTopicId"
-                                        [value]="casesubject.caseSubjectId"
+            <div class="row">
+                <div [ngClass]="{'col-md-6': !attachmentShowing && selectedCaseTopicObject?.script, 'col-12': attachmentShowing || !selectedCaseTopicObject?.script}">
+                    <form class="row g-3 mg-3">
+                        <div *ngFor="let i of numberArray">
+                            <div class="row" [ngClass]="{ 'display-none': selectSubject < i }">
+                                <div class="col-md-6">
+                                    <label [ngClass]="{ 'display-none': i != 1 }" for="inputTopic" class="form-label"
+                                        >หัวข้อที่ติดต่อ<span class="color-red">*</span></label
                                     >
-                                        {{ casesubject.name }}
-                                    </option>
-                                </ng-container>
+                                    <select
+                                        id="inputTopic"
+                                        class="form-select"
+                                        [name]="'selectedCaseTopics' + i"
+                                        [(ngModel)]="selectedCaseTopics[i - 1]"
+                                        (change)="onCaseTopicChange($event, i - 1)"
+                                        [disabled]="isTopicDisabled"
+                                    >
+                                        <option disabled value="">กรุณาเลือกข้อมูล</option>
+                                        <option *ngFor="let casetopic of casetopics" [value]="casetopic.caseTopicId">
+                                            {{ casetopic.name }}
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label [ngClass]="{ 'display-none': i != 1 }" for="inputCaseSubject" class="form-label">เรื่องที่ติดต่อ</label>
+                                    <select
+                                        id="inputCaseSubject"
+                                        class="form-select"
+                                        [name]="'selectedCasesubject' + i"
+                                        [(ngModel)]="selectedCasesubject[i - 1]"
+                                        [disabled]="isSubjectDisabled"
+                                    >
+                                        <option disabled value="">กรุณาเลือกข้อมูล</option>
+                                        <ng-container *ngFor="let casesubject of casesubjects">
+                                            <option
+                                                *ngIf="selectedCaseTopics[i - 1] && selectedCaseTopics[i - 1] == casesubject.caseTopicId"
+                                                [value]="casesubject.caseSubjectId"
+                                            >
+                                                {{ casesubject.name }}
+                                            </option>
+                                        </ng-container>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <label for="inputStatus" class="form-label">สถานะ</label>
+                            <select
+                                id="inputStatus"
+                                class="form-select"
+                                name="selectedStatus"
+                                [(ngModel)]="selectedStatus"
+                                [disabled]="isStatusDisabled"
+                            >
+                                <option disabled value="">กรุณาเลือกข้อมูล</option>
+                                <option *ngFor="let status of statusList" [value]="status.id">{{ status.status }}</option>
                             </select>
                         </div>
-                    </div>
-                </div>
-                <div class="col-6">
-                    <label for="inputStatus" class="form-label">สถานะ</label>
-                    <select
-                        id="inputStatus"
-                        class="form-select"
-                        name="selectedStatus"
-                        [(ngModel)]="selectedStatus"
-                        [disabled]="isStatusDisabled"
-                    >
-                        <option disabled value="">กรุณาเลือกข้อมูล</option>
-                        <option *ngFor="let status of statusList" [value]="status.id">{{ status.status }}</option>
-                    </select>
-                </div>
-                <div class="col-6">
-                    <label for="inputChannel" class="form-label">ช่องทางติดต่อ</label>
-                    <select
-                        id="inputChannel"
-                        class="form-select"
-                        name="selectedChannels"
-                        [(ngModel)]="selectedChannels"
-                        (ngModelChange)="onChannelChange($event)"
-                        [disabled]="isChannelDisabled"
-                    >
-                        <option disabled value="">กรุณาเลือกข้อมูล</option>
-                        <option *ngFor="let channel of channels" [value]="channel.channelId">{{ channel.name }}</option>
-                    </select>
-                    <div
-                        class="col-6 w-100 pd-t-20"
-                        *ngIf="selectedChannels === '1' || selectedChannels === '2' || selectedChannels === '3'"
-                    >
-                        <label *ngIf="selectedChannels === '1' || selectedChannels === '2'" for="inputCallType" class="form-label"
-                            >ประเภทสาย</label
-                        >
-                        <label *ngIf="selectedChannels === '3'" for="inputCallType" class="form-label">ประเภทอีเมล</label>
-                        <select
-                            id="inputCallType"
-                            class="form-select"
-                            name="selectedCallTypeId"
-                            [(ngModel)]="selectedCallTypeId"
-                            [disabled]="isCallTypeDisabled"
-                        >
-                            <option disabled value="">กรุณาเลือกข้อมูล</option>
-                            <option *ngFor="let callType of callTypes" [value]="callType.name">{{ callType.name }}</option>
-                        </select>
-                    </div>
-
-                    <div class="col-6" *ngIf="selectedChannels === '1' || selectedChannels === '2'">
-                        <label for="inputContactNumber" class="form-label">เบอร์ติดต่อ<span class="color-red">*</span></label>
-                        <select
-                            id="inputContactNumber"
-                            class="form-select"
-                            name="selectedContactNumber"
-                            [(ngModel)]="selectedContactNumber"
-                            [disabled]="isContactNumberDisabled"
-                        >
-                            <option disabled value="">กรุณาเลือกเบอร์ติดต่อ</option>
-                            <option
-                                *ngFor="let contactNumbers of contactNumber"
-                                [ngValue]="{
-                                    contactNumber: contactNumbers.contactNumber,
-                                    contactNumberId: contactNumbers.contactNumberId
-                                }"
+                        <div class="col-6">
+                            <label for="inputChannel" class="form-label">ช่องทางติดต่อ</label>
+                            <select
+                                id="inputChannel"
+                                class="form-select"
+                                name="selectedChannels"
+                                [(ngModel)]="selectedChannels"
+                                (ngModelChange)="onChannelChange($event)"
+                                [disabled]="isChannelDisabled"
                             >
-                                {{ contactNumbers.contactNumber }}
-                            </option>
-                        </select>
-                    </div>
-                </div>
+                                <option disabled value="">กรุณาเลือกข้อมูล</option>
+                                <option *ngFor="let channel of channels" [value]="channel.channelId">{{ channel.name }}</option>
+                            </select>
+                            <div
+                                class="col-6 w-100 pd-t-20"
+                                *ngIf="selectedChannels === '1' || selectedChannels === '2' || selectedChannels === '3'"
+                            >
+                                <label *ngIf="selectedChannels === '1' || selectedChannels === '2'" for="inputCallType" class="form-label"
+                                    >ประเภทสาย</label
+                                >
+                                <label *ngIf="selectedChannels === '3'" for="inputCallType" class="form-label">ประเภทอีเมล</label>
+                                <select
+                                    id="inputCallType"
+                                    class="form-select"
+                                    name="selectedCallTypeId"
+                                    [(ngModel)]="selectedCallTypeId"
+                                    [disabled]="isCallTypeDisabled"
+                                >
+                                    <option disabled value="">กรุณาเลือกข้อมูล</option>
+                                    <option *ngFor="let callType of callTypes" [value]="callType.name">{{ callType.name }}</option>
+                                </select>
+                            </div>
 
-                <div class="col-md-6">
-                    <label for="inputAddress" class="form-label">กรุณาเลือกวันที่</label>
-                    <div class="date-pik">
-                        <div class="col-auto">
-                            <div class="input-group start-date">
-                                <input
-                                    matInput
-                                    [matDatepicker]="picker1"
-                                    name="startTime"
-                                    [(ngModel)]="startTime"
-                                    required
-                                    class="input-date form-control"
+                            <div class="col-6" *ngIf="selectedChannels === '1' || selectedChannels === '2'">
+                                <label for="inputContactNumber" class="form-label">เบอร์ติดต่อ<span class="color-red">*</span></label>
+                                <select
+                                    id="inputContactNumber"
+                                    class="form-select"
+                                    name="selectedContactNumber"
+                                    [(ngModel)]="selectedContactNumber"
+                                    [disabled]="isContactNumberDisabled"
+                                >
+                                    <option disabled value="">กรุณาเลือกเบอร์ติดต่อ</option>
+                                    <option
+                                        *ngFor="let contactNumbers of contactNumber"
+                                        [ngValue]="{
+                                            contactNumber: contactNumbers.contactNumber,
+                                            contactNumberId: contactNumbers.contactNumberId
+                                        }"
+                                    >
+                                        {{ contactNumbers.contactNumber }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="inputAddress" class="form-label">กรุณาเลือกวันที่</label>
+                            <div class="date-pik">
+                                <div class="col-auto">
+                                    <div class="input-group start-date">
+                                        <input
+                                            matInput
+                                            [matDatepicker]="picker1"
+                                            name="startTime"
+                                            [(ngModel)]="startTime"
+                                            required
+                                            class="input-date form-control"
+                                            [disabled]="isDateDisabled"
+                                        />
+                                        <span class="input-group-text">
+                                            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                                            <mat-datepicker #picker1></mat-datepicker>
+                                        </span>
+                                    </div>
+                                </div>
+                                <ngb-timepicker
+                                    name="timepickStart"
+                                    [(ngModel)]="timepickStart"
+                                    [seconds]="seconds"
+                                    [ngModelOptions]="{ standalone: true }"
+                                    (dateInput)="(formatTimepickStart)"
+                                    class="tpk"
+                                    (ngModelChange)="onTimepickStartChange($event)"
                                     [disabled]="isDateDisabled"
-                                />
-                                <span class="input-group-text">
-                                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-                                    <mat-datepicker #picker1></mat-datepicker>
-                                </span>
+                                ></ngb-timepicker>
                             </div>
                         </div>
-                        <ngb-timepicker
-                            name="timepickStart"
-                            [(ngModel)]="timepickStart"
-                            [seconds]="seconds"
-                            [ngModelOptions]="{ standalone: true }"
-                            (dateInput)="(formatTimepickStart)"
-                            class="tpk"
-                            (ngModelChange)="onTimepickStartChange($event)"
-                            [disabled]="isDateDisabled"
-                        ></ngb-timepicker>
-                    </div>
+
+                        <div class="col-12">
+                            <label class="form-check-label" for="gridCheck"> รายละเอียด </label>
+                            <textarea
+                                class="form-control"
+                                placeholder="กรุณากรอกข้อมูล"
+                                id="floatingTextarea"
+                                name="description"
+                                [(ngModel)]="description"
+                                [disabled]="isDescriptionDisabled"
+                            ></textarea>
+                        </div>
+                        <div class="col-12" *ngIf="attachmentShowing == false">
+                            <label class="form-check-label" for="gridCheck"> ความคิดเห็น </label>
+                            <textarea
+                                class="form-control"
+                                placeholder="กรุณากรอกข้อมูล"
+                                id="floatingTextareaComment"
+                                name="comment"
+                                [(ngModel)]="comment"
+                            ></textarea>
+                        </div>
+                        <div class="col-12" *ngIf="comments && comments.length > 0">
+                            <label class="form-label">ประวัติความคิดเห็น</label>
+                            <div class="border rounded p-2 bg-light" style="max-height: 200px; overflow-y: auto">
+                                <div class="card mb-2" *ngFor="let comment of comments">
+                                    <div class="card-body py-2 px-3">
+                                        <p class="card-text mb-1">{{ comment.comment }}</p>
+                                        <small class="text-muted">
+                                            โดย {{ comment.username }} | {{ comment.createdAt | date : 'dd/MM/yyyy HH:mm' }}
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="col-12" *ngIf="selectedCaseTopicObject && selectedCaseTopicObject.script">
+                            <label class="form-label">Script</label>
+                            <div class="border rounded p-2 bg-light" [innerHTML]="selectedCaseTopicObject.script"></div>
+                        </div> -->
+                        <div class="col-6" *ngIf="attachmentShowing">
+                            <label for="formFileSm" class="form-label">ไฟล์แนบ</label>
+                            <div class="mb-3">
+                                <div class="form-input-file">
+                                    <input
+                                        class="form-control form-control-sm"
+                                        id="formFileSm"
+                                        type="file"
+                                        multiple
+                                        (change)="onFileSelected($event)"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
 
-                <div class="col-12">
-                    <label class="form-check-label" for="gridCheck"> รายละเอียด </label>
-                    <textarea
-                        class="form-control"
-                        placeholder="กรุณากรอกข้อมูล"
-                        id="floatingTextarea"
-                        name="description"
-                        [(ngModel)]="description"
-                        [disabled]="isDescriptionDisabled"
-                    ></textarea>
-                </div>
-                <div class="col-12" *ngIf="attachmentShowing == false">
-                    <label class="form-check-label" for="gridCheck"> ความคิดเห็น </label>
-                    <textarea
-                        class="form-control"
-                        placeholder="กรุณากรอกข้อมูล"
-                        id="floatingTextareaComment"
-                        name="comment"
-                        [(ngModel)]="comment"
-                    ></textarea>
-                </div>
-                <div class="col-12" *ngIf="comments && comments.length > 0">
-                    <label class="form-label">ประวัติความคิดเห็น</label>
-                    <div class="border rounded p-2 bg-light" style="max-height: 200px; overflow-y: auto">
-                        <div class="card mb-2" *ngFor="let comment of comments">
-                            <div class="card-body py-2 px-3">
-                                <p class="card-text mb-1">{{ comment.comment }}</p>
-                                <small class="text-muted">
-                                    โดย {{ comment.username }} | {{ comment.createdAt | date : 'dd/MM/yyyy HH:mm' }}
-                                </small>
-                            </div>
+                <div class="col-md-6" *ngIf="!attachmentShowing && selectedCaseTopicObject?.script">
+                    <div class="card h-100">
+                        <div class="card-header text-sm text-white" [ngStyle]="{'background-color': '#010966'}">
+                            <p class="mb-0"><i class="fa-solid fa-file-lines me-2"></i>สคริปต์</p>
+                        </div>
+                        <div class="card-body" style="max-height: 70vh; overflow-y: auto;">
+                            <div [innerHTML]="selectedCaseTopicObject.script"></div>
                         </div>
                     </div>
                 </div>
-                <div class="col-12" *ngIf="selectedCaseTopicObject && selectedCaseTopicObject.script">
-                    <label class="form-label">Script</label>
-                    <div class="border rounded p-2 bg-light" [innerHTML]="selectedCaseTopicObject.script"></div>
-                </div>
-                <div class="col-6" *ngIf="attachmentShowing">
-                    <label for="formFileSm" class="form-label">ไฟล์แนบ</label>
-                    <div class="mb-3">
-                        <div class="form-input-file">
-                            <input
-                                class="form-control form-control-sm"
-                                id="formFileSm"
-                                type="file"
-                                multiple
-                                (change)="onFileSelected($event)"
-                            />
-                        </div>
-                    </div>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
