@@ -261,18 +261,18 @@
             <div class="row">
                 <div [ngClass]="{'col-md-6': !attachmentShowing && selectedCaseTopicObject?.script, 'col-12': attachmentShowing || !selectedCaseTopicObject?.script}">
                     <form class="row g-3 mg-3">
-                        <div *ngFor="let i of numberArray">
-                            <div class="row" [ngClass]="{ 'display-none': selectSubject < i }">
+                        <div>
+                            <div class="row">
                                 <div class="col-md-6">
-                                    <label [ngClass]="{ 'display-none': i != 1 }" for="inputTopic" class="form-label"
+                                    <label for="inputTopic" class="form-label"
                                         >หัวข้อที่ติดต่อ<span class="color-red">*</span></label
                                     >
                                     <select
                                         id="inputTopic"
                                         class="form-select"
-                                        [name]="'selectedCaseTopics' + i"
-                                        [(ngModel)]="selectedCaseTopics[i - 1]"
-                                        (change)="onCaseTopicChange($event, i - 1)"
+                                        [name]="'selectedCaseTopics'"
+                                        [(ngModel)]="selectedCaseTopics"
+                                        (change)="onCaseTopicChange($event)"
                                         [disabled]="isTopicDisabled"
                                     >
                                         <option disabled value="">กรุณาเลือกข้อมูล</option>
@@ -283,18 +283,18 @@
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label [ngClass]="{ 'display-none': i != 1 }" for="inputCaseSubject" class="form-label">เรื่องที่ติดต่อ</label>
+                                    <label for="inputCaseSubject" class="form-label">เรื่องที่ติดต่อ</label>
                                     <select
                                         id="inputCaseSubject"
                                         class="form-select"
-                                        [name]="'selectedCasesubject' + i"
-                                        [(ngModel)]="selectedCasesubject[i - 1]"
+                                        name="selectedCasesubject"
+                                        [(ngModel)]="selectedCasesubject"
                                         [disabled]="isSubjectDisabled"
                                     >
                                         <option disabled value="">กรุณาเลือกข้อมูล</option>
                                         <ng-container *ngFor="let casesubject of casesubjects">
                                             <option
-                                                *ngIf="selectedCaseTopics[i - 1] && selectedCaseTopics[i - 1] == casesubject.caseTopicId"
+                                                *ngIf="selectedCaseTopics && selectedCaseTopics == casesubject.caseTopicId"
                                                 [value]="casesubject.caseSubjectId"
                                             >
                                                 {{ casesubject.name }}

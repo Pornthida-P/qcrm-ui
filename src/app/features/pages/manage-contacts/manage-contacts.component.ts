@@ -61,8 +61,8 @@ export class ManageContactsComponent implements OnInit {
     selectedTopics: any;
     casetopics: any[] = [];
     casesubjects: any[] = [];
-    selectedCasesubject: any;
-    selectedCaseTopics: any[] = [];
+    selectedCasesubject: any = null;
+    selectedCaseTopics: any = null;
     selectedChannels: any;
     currentChannel: any;
     channels: any;
@@ -77,8 +77,6 @@ export class ManageContactsComponent implements OnInit {
     startTime: string = '';
     myForm: FormGroup | any;
 
-    numberArray = [1, 2, 3, 4, 5];
-    selectSubject = 1;
 
     timepickEnd = true;
     meridian = true;
@@ -714,8 +712,8 @@ export class ManageContactsComponent implements OnInit {
             minute: date.getMinutes(),
             second: date.getSeconds(),
         };
-        this.selectedCaseTopics = [];
-        this.selectedCasesubject = [];
+        this.selectedCaseTopics = null;
+        this.selectedCasesubject = null;
         this.selectedActivityTopicId = [];
 
         this.isTopicDisabled = false;
@@ -751,8 +749,8 @@ export class ManageContactsComponent implements OnInit {
             minute: date.getMinutes(),
             second: date.getSeconds(),
         };
-        this.selectedCaseTopics = [];
-        this.selectedCasesubject = [];
+        this.selectedCaseTopics = null;
+        this.selectedCasesubject = null;
         this.selectedActivityTopicId = [];
 
         this.isTopicDisabled = true;
@@ -773,7 +771,6 @@ export class ManageContactsComponent implements OnInit {
             this.callServive.getCaseById(caseId).subscribe(
                 (call: any) => {
                     console.log('Edit Call: ', call);
-                    this.selectSubject = 1;
                     this.cType = 'case';
                     this.callId = call.caseId;
                     this.description = call.description;
@@ -799,22 +796,22 @@ export class ManageContactsComponent implements OnInit {
                     }
 
                     if (call.caseTopicId) {
-                        this.selectedCaseTopics[0] = call.caseTopicId;
+                        this.selectedCaseTopics = call.caseTopicId;
                         // หา caseTopic object
                         this.selectedCaseTopicObject = this.casetopics.find(
                             (topic: any) => topic.caseTopicId == call.caseTopicId
                         );
                     } else {
-                        this.selectedCaseTopics[0] = null;
+                        this.selectedCaseTopics = null;
                         this.selectedCaseTopicObject = null;
                     }
 
                     if (call.caseSubjectId) {
                         setTimeout(() => {
-                            this.selectedCasesubject[0] = call.caseSubjectId;
+                            this.selectedCasesubject = call.caseSubjectId;
                         }, 0);
                     } else {
-                        this.selectedCasesubject[0] = null;
+                        this.selectedCasesubject = null;
                     }
                     this.getComment(caseId);
                     this.getCaseTopicId(call.caseTopicId);
@@ -891,39 +888,18 @@ export class ManageContactsComponent implements OnInit {
         const isChannelOne = this.selectedChannels === '1' || this.selectedChannels === '2' || this.selectedChannels === '3';
         const selectedCallTypeId = isChannelOne ? this.selectedCallTypeId : null;
 
-        // Prepare selectedCaseTopics and selectedCasesubject
-        for (let i = 0; i < this.selectSubject; i++) {
-            if (this.selectedCaseTopics[i] == null) {
-                this.selectedCaseTopics[i] = null;
-                this.selectedCasesubject[i] = null;
-            } else {
-                if (this.selectedCasesubject[i] == null) {
-                    this.selectedCasesubject[i] = null;
-                }
-            }
-        }
-        if (this.selectedCaseTopics.length > this.selectSubject) {
-            this.selectedCasesubject = this.selectedCasesubject.slice(0, this.selectSubject);
-            this.selectedCaseTopics = this.selectedCaseTopics.slice(0, this.selectSubject);
-        }
-
         if (!this.callId) {
             // Create new case
-            if (this.selectedCaseTopics.length > 0 && this.selectedCaseTopics[0]) {
-                // Extract caseTopicId and caseTopicCode from first selected topic
-                // selectedCaseTopics is now a single value (single select)
-                const firstCaseTopicId = this.selectedCaseTopics[0];
-                const caseTopicId = firstCaseTopicId;
+            if (this.selectedCaseTopics) {
+                const caseTopicId = this.selectedCaseTopics;
 
                 // Find caseTopicCode from casetopics array
                 const caseTopicCode =
-                    firstCaseTopicId && this.casetopics
-                        ? this.casetopics.find((topic: any) => topic.caseTopicId === firstCaseTopicId)?.code || null
+                    caseTopicId && this.casetopics
+                        ? this.casetopics.find((topic: any) => topic.caseTopicId === caseTopicId)?.code || null
                         : null;
 
-                // Extract caseSubjectId from first selected subject
-                // selectedCasesubject is now a single value (single select)
-                const caseSubjectId = this.selectedCasesubject && this.selectedCasesubject.length > 0 ? this.selectedCasesubject[0] : null;
+                const caseSubjectId = this.selectedCasesubject || null;
 
                 // Format requestDateTime
                 const requestDateTime = `${selectedDate} ${selectedTime}`;
@@ -994,11 +970,11 @@ export class ManageContactsComponent implements OnInit {
         } else if (this.callId && this.cType === 'case') {
             // Update existing case
             // console.log('iiiiiiiiiiiiiiiiii Edit Case:', this.callId);
-            if (this.selectedCaseTopics.length > 0) {
+            if (this.selectedCaseTopics) {
                 const data = {
                     callId: this.callId,
-                    caseTopicId: this.selectedCaseTopics[0],
-                    caseSubject: this.selectedCasesubject[0],
+                    caseTopicId: this.selectedCaseTopics,
+                    caseSubject: this.selectedCasesubject,
                     channel: this.selectedChannels,
                     description: this.description,
                     startTime: `${selectedDate} ${selectedTime}`,
@@ -1146,14 +1122,6 @@ export class ManageContactsComponent implements OnInit {
         }
     }
 
-    addTopicAndSubject() {
-        if (this.selectSubject < 5) this.selectSubject++;
-    }
-    removeTopicAndSubject() {
-        if (this.selectSubject > 0) this.selectSubject--;
-        console.log(this.selectSubject);
-    }
-
     onInputChange(event: any, index: string) {
         let inputValue = event.target.value;
 
@@ -1186,15 +1154,12 @@ export class ManageContactsComponent implements OnInit {
         this.isInputVisible = !this.isInputVisible;
     }
 
-    onCaseTopicChange(event: any, index: number) {
-        // Clear case subject when case topic changes
-        this.selectedCasesubject[index] = null;
-        
-        // หา caseTopic object จาก casetopics และ set selectedCaseTopicObject
-        const selectedTopicId = this.selectedCaseTopics[index];
-        if (selectedTopicId && this.casetopics) {
+    onCaseTopicChange(event: any) {
+        this.selectedCasesubject = null;
+
+        if (this.selectedCaseTopics && this.casetopics) {
             this.selectedCaseTopicObject = this.casetopics.find(
-                (topic: any) => topic.caseTopicId == selectedTopicId
+                (topic: any) => topic.caseTopicId == this.selectedCaseTopics
             );
         } else {
             this.selectedCaseTopicObject = null;
