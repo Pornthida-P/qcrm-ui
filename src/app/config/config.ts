@@ -45,6 +45,7 @@ export const config = {
                 comment: '/comments',
                 caseTopicId: '/topic-id',
             },
+            chatHistory: '/chathistory/getchat',
         },
     },
     strapi: {

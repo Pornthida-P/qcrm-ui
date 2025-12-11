@@ -36,4 +36,8 @@ export class CallListService {
     getCaseTopicId(caseId: string) {
         return this.http.get(`${this.baseUrl}${config.api.path.callList.caseTopicId}/${caseId}`);
     }
+
+    getChatHistory(chatId: string) {
+        return this.http.post(`${environment.api.urlQIM}${config.api.path.chatHistory}`, { chat_room_id: chatId });
+    }
 }

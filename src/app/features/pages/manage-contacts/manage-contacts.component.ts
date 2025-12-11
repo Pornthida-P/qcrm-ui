@@ -17,6 +17,7 @@ import { WebSocketSubject } from 'rxjs/webSocket';
 import { TranslateService } from '@ngx-translate/core';
 declare var bootstrap: any;
 import { CallListService } from 'src/app/services/call-list/call-list.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
     selector: 'app-manage-contacts',
@@ -76,7 +77,6 @@ export class ManageContactsComponent implements OnInit {
     newDateTime: any;
     startTime: string = '';
     myForm: FormGroup | any;
-
 
     timepickEnd = true;
     meridian = true;
@@ -181,8 +181,10 @@ export class ManageContactsComponent implements OnInit {
     comment: any;
     comments: any[] = [];
     caseTopicId: any;
-
     selectedCaseTopicObject: any = null;
+
+    chatHistory: any[] = [];
+    activeScriptTab: 'script' | 'chat' = 'script';
 
     constructor(
         private _location: Location,
@@ -495,7 +497,7 @@ export class ManageContactsComponent implements OnInit {
                                 displayName: displayName || '',
                                 issue: issue || '',
                             });
-                            window.location.href = `/contacts/edit?${params.toString()}`;
+                            window.location.href = `${environment.subPath}/contacts/edit?${params.toString()}`;
                         });
                     } else if (res.success === false && res.message === 'Duplicate' && this.MultiNumber === false) {
                         if (res.duplicates.length > 0) {
@@ -798,9 +800,7 @@ export class ManageContactsComponent implements OnInit {
                     if (call.caseTopicId) {
                         this.selectedCaseTopics = call.caseTopicId;
                         // หา caseTopic object
-                        this.selectedCaseTopicObject = this.casetopics.find(
-                            (topic: any) => topic.caseTopicId == call.caseTopicId
-                        );
+                        this.selectedCaseTopicObject = this.casetopics.find((topic: any) => topic.caseTopicId == call.caseTopicId);
                     } else {
                         this.selectedCaseTopics = null;
                         this.selectedCaseTopicObject = null;
@@ -815,6 +815,8 @@ export class ManageContactsComponent implements OnInit {
                     }
                     this.getComment(caseId);
                     this.getCaseTopicId(call.caseTopicId);
+                    this.getChatHistory(call.chatId);
+                    console.log('Chat ID:', call);
                 },
                 (error) => {
                     console.error('Error fetching case:', error);
@@ -948,7 +950,7 @@ export class ManageContactsComponent implements OnInit {
                                 JSON.stringify(dataForm),
                                 `Success`,
                             );
-                            window.location.href = `/contacts/edit?key=${this.contactId}`;
+                            window.location.href = `${environment.subPath}/contacts/edit?key=${this.contactId}`;
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
@@ -1158,11 +1160,16 @@ export class ManageContactsComponent implements OnInit {
         this.selectedCasesubject = null;
 
         if (this.selectedCaseTopics && this.casetopics) {
-            this.selectedCaseTopicObject = this.casetopics.find(
-                (topic: any) => topic.caseTopicId == this.selectedCaseTopics
-            );
+            this.selectedCaseTopicObject = this.casetopics.find((topic: any) => topic.caseTopicId == this.selectedCaseTopics);
         } else {
             this.selectedCaseTopicObject = null;
         }
+    }
+
+    getChatHistory(chatId: string) {
+        this.callListService.getChatHistory(chatId).subscribe((res: any) => {
+            this.chatHistory = res;
+            console.log('Chat History:', res);
+        });
     }
 }
