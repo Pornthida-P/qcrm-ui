@@ -10,6 +10,7 @@ export const environment = {
                 countAllItem: '/contact/countAllItem',
             },
         },
+        urlQIM: 'https://devel.convtech.dev/roddonjai/server',
     },
     subPath: '/roddonjai-qcrm',
     socket: {
