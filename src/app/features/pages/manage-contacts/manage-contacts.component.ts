@@ -172,6 +172,7 @@ export class ManageContactsComponent implements OnInit {
 
     statusList: any[] = [];
     selectedStatus: any;
+    originalStatus: any;
     phoneNumbers: string[] = [''];
     chatId: any;
     chatType: any;
@@ -782,6 +783,7 @@ export class ManageContactsComponent implements OnInit {
                     this.description = call.description;
                     this.solutions = call.solution || '';
                     this.selectedStatus = call.statusId;
+                    this.originalStatus = call.statusId;
                     this.selectedCallStatusId = call.callStatus;
                     this.startTime = call.requestDateTime;
                     const date = new Date(call.requestDateTime);
@@ -991,6 +993,12 @@ export class ManageContactsComponent implements OnInit {
                     status: this.selectedStatus,
                     comment: this.comment,
                     callStatus: this.selectedCallStatusId,
+                    statusChange: {
+                        from: this.statusList.find((s: any) => s.id === this.originalStatus)?.status || this.originalStatus,
+                        to: this.statusList.find((s: any) => s.id === this.selectedStatus)?.status || this.selectedStatus,
+                        changedAt: new Date().toISOString(),
+                        changedBy: userData.userId,
+                    },
                 };
                 console.log('Update Case Data: ', data);
                 this.callServive
