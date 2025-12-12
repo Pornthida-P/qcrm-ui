@@ -40,4 +40,12 @@ export class CallListService {
     getChatHistory(chatId: string) {
         return this.http.post(`${environment.api.urlQIM}${config.api.path.chatHistory}`, { chat_room_id: chatId });
     }
+
+    getCallStatus() {
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.callStatus}`);
+    }
+
+    getCallStatusId(callStatusId: string) {
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.callStatusId}/${callStatusId}`);
+    }
 }
