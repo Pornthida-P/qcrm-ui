@@ -34,6 +34,7 @@ export class CreateCallComponent {
     direction: string = '';
     duration: string = '';
     description: string = '';
+    comment: string = '';
     timepickStart: { hour: number; minute: number; second: number } = { hour: 0, minute: 0, second: 0 };
     hour: any;
     solutions: string = '';
@@ -48,13 +49,10 @@ export class CreateCallComponent {
     combinedDateTimeStart: string = '';
     combinedDateTimeEnd: string = '';
     contactOrg: any;
-    selectedTopics: any;
-    selectedCasesubject: any[] = [];
-    selectedCaseTopics: any[] = [];
+    selectedCasesubject: any;
+    selectedCaseTopics: string | null = null;
     selectedChannels: any;
     selectedStatus: any;
-    numberArray = [1, 2, 3, 4, 5];
-    selectSubject = 1;
 
     parent: any = null;
 
@@ -64,13 +62,8 @@ export class CreateCallComponent {
     myForm: FormGroup | any;
     channels: any;
 
-    visibleRightSideBar: boolean = true;
-    visibleLeftSideBar: boolean = true;
-    FormShowing: boolean = false;
-    SearchFormShowing: boolean = true;
     searchContactShowing: boolean = false;
-    AddContactShowing: boolean = false;
-    thanks: boolean = false;
+    showContactSidebar: boolean = false;
 
     pageSizeOptionContact = [5, 10, 20];
     currentPageCt = 1;
@@ -85,22 +78,6 @@ export class CreateCallComponent {
     totalItems = 0;
     totalPages = 0;
     pagesToShow = 3;
-
-    pageSizeOptionOrgs = [5, 10, 20];
-    currentPageOganization = 1;
-    currentPageOrg = 1;
-    totalItemOrgs = 0;
-    totalPageOrgs = 0;
-    pagesToShowOrg = 3;
-    pageSizeOrg = 5;
-
-    SearchOrgShowing: boolean = false;
-    valueSearchOrg!: string;
-
-    sortIdOrg: string = 'createdAt';
-    sortOrderOrg: string = 'DESC';
-    checkedValueOrgs: string[] = [];
-    AddOrgShowing: boolean = false;
 
     sortIdContact: string = 'createdAt';
     sortOrderContact: string = 'DESC';
@@ -125,9 +102,6 @@ export class CreateCallComponent {
     activityTypeId: any;
     newDateTime: any;
     selectedOrganizationId: string | null = null;
-
-    showOrgSidebar: boolean = false;
-    showContactSidebar: boolean = false;
 
     files: File[] = [];
     fileNames: any;
@@ -155,6 +129,7 @@ export class CreateCallComponent {
     contactNumbers: any;
     selectedContactNumber: { contactNumber: string; contactNumberId: string } | null = null;
     statusList: any[] = [];
+    selectedCaseTopicObject: any = null;
 
     // pageEln: number | undefined = 0;
 
@@ -275,13 +250,10 @@ export class CreateCallComponent {
 
         if (this.selectedFilter !== 'all') {
             this.userId = this.userData.userId;
-            console.log('user: ', this.userData.userId);
         }
 
         this.getFormContact((this.currentPageContact - 1) * this.pageSizeContact, this.pageSizeContact);
         this.getPageContact();
-        this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
-        this.getPageOrg();
 
         const now = new Date();
         this.timepickStart = { hour: now.getHours(), minute: now.getMinutes(), second: now.getSeconds() };
@@ -294,92 +266,6 @@ export class CreateCallComponent {
         this.getStatusList();
     }
 
-    submitCall() {
-        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-        this.attachmentsId = this.attachments.map((attachment) => attachment.attachmentId.toString());
-        const selectedDate = this.startTime ? this.formatDate(new Date(this.startTime)) : this.formatDate(new Date());
-        const selectedTime = this.timepickStart ? this.formatTime(this.timepickStart) : this.formatTime(new Date());
-
-        const isChannelOne = this.selectedChannels === '1' || this.selectedChannels === '2' || this.selectedChannels === '3';
-
-        const selectedCallTypeId = isChannelOne ? this.selectedCallTypeId : null;
-
-        for (let i = 0; i < this.selectSubject; i++) {
-            if (this.selectedCaseTopics[i] == null) {
-                this.selectedCaseTopics[i] = null;
-                this.selectedCasesubject[i] = null;
-            } else {
-                if (this.selectedCasesubject[i] == null) {
-                    this.selectedCasesubject[i] = null;
-                }
-            }
-        }
-        if (this.selectedCaseTopics.length > this.selectSubject) {
-            this.selectedCasesubject = this.selectedCasesubject.slice(0, this.selectSubject);
-            this.selectedCaseTopics = this.selectedCaseTopics.slice(0, this.selectSubject);
-        }
-
-        const data = {
-            contactId: this.contactIdSelect,
-            name: this.contactId,
-            organization: this.contactOrg,
-            caseTopicId: this.selectedCaseTopics[0] ? [this.selectedCaseTopics[0]] : [],
-            caseSubject: this.selectedCasesubject[0] ? [this.selectedCasesubject[0]] : [],
-            channel: this.selectedChannels,
-            // activityType: this.activityTypeId,
-            description: this.description,
-            startTime: `${selectedDate} ${selectedTime}`,
-            solution: this.solutions,
-            createdById: userData.userId,
-            attachment: this.attachmentsId,
-            caller_id: this.caller_id,
-            call_id: this.selectedContactNumber ? this.selectedContactNumber.contactNumber : null,
-            contactNumberId: this.selectedContactNumber ? this.selectedContactNumber.contactNumberId : null,
-            operationType: selectedCallTypeId,
-            status: this.selectedStatus,
-        };
-        console.log('data Call: ', data);
-
-        this.callServive
-            .createCalls(data)
-            .pipe(
-                tap((res) => {
-                    this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '/contacts');
-                    this.auditLogService.log(
-                        '',
-                        'Create Call',
-                        data.call_id || '',
-                        'Create Case Call',
-                        `Detail Create call : ContactID : ${data.contactId}
-                        ,Name : ${data.name}
-                        ,StartTime : ${data.startTime}
-                        ,Caller_id : ${data.caller_id}
-                        ,Call_id : ${data.call_id}
-                        ,Type : ${data.operationType}`,
-                        `Success`,
-                    );
-                }),
-                catchError((error) => {
-                    this.sweetalertServices.handleError(error);
-                    this.auditLogService.log(
-                        '',
-                        'Create Call',
-                        data.call_id || '',
-                        'Create Case Call',
-                        `Detail Create call : ContactID : ${data.contactId}
-                        ,Name : ${data.name}
-                        ,StartTime : ${data.startTime}
-                        ,Caller_id : ${data.caller_id}
-                        ,Call_id : ${data.call_id}
-                        ,Type : ${data.operationType}`,
-                        `Failed, Error : ${error}`,
-                    );
-                    throw error;
-                }),
-            )
-            .subscribe();
-    }
-
     submit() {
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
         this.attachmentsId = this.attachments.map((attachment) => attachment.attachmentId.toString());
@@ -390,114 +276,93 @@ export class CreateCallComponent {
 
         const selectedCallTypeId = isChannelOne ? this.selectedCallTypeId : null;
 
-        for (let i = 0; i < this.selectSubject; i++) {
-            if (this.selectedCaseTopics[i] == null) {
-                this.selectedCaseTopics[i] = null;
-                this.selectedCasesubject[i] = null;
-            } else {
-                if (this.selectedCasesubject[i] == null) {
-                    this.selectedCasesubject[i] = null;
-                }
-            }
-        }
-        if (this.selectedCaseTopics.length > this.selectSubject) {
-            this.selectedCasesubject = this.selectedCasesubject.slice(0, this.selectSubject);
-            this.selectedCaseTopics = this.selectedCaseTopics.slice(0, this.selectSubject);
-        }
+        if (this.selectedCaseTopics) {
+            const caseTopicId = this.selectedCaseTopics;
 
-        // Extract caseTopicId and caseTopicCode from first selected topic
-        // selectedCaseTopics is now a single value (single select)
-        const firstCaseTopicId = this.selectedCaseTopics && this.selectedCaseTopics.length > 0 ? this.selectedCaseTopics[0] : null;
-        const caseTopicId = firstCaseTopicId;
+            const caseTopicCode =
+                caseTopicId && this.casetopics
+                    ? this.casetopics.find((topic: any) => topic.caseTopicId === caseTopicId)?.code || null
+                    : null;
 
-        // Find caseTopicCode from casetopics array
-        const caseTopicCode =
-            firstCaseTopicId && this.casetopics
-                ? this.casetopics.find((topic: any) => topic.caseTopicId === firstCaseTopicId)?.code || null
-                : null;
+            const caseSubjectId = this.selectedCasesubject || null;
 
-        // Extract caseSubjectId from first selected subject
-        // selectedCasesubject is now a single value (single select)
-        const caseSubjectId = this.selectedCasesubject && this.selectedCasesubject.length > 0 ? this.selectedCasesubject[0] : null;
+            // Format requestDateTime
+            const requestDateTime = `${selectedDate} ${selectedTime}`;
 
-        // Format requestDateTime
-        const requestDateTime = `${selectedDate} ${selectedTime}`;
+            // Get current timestamp for createdAt and modifiedAt
+            const now = new Date().toISOString();
 
-        // Get current timestamp for createdAt and modifiedAt
-        const now = new Date().toISOString();
+            const dataForm = {
+                caseId: this.callIdEdit || null,
+                contactId: this.contactIdSelect,
+                channelId: this.selectedChannels,
+                requestDateTime: requestDateTime,
+                description: this.description,
+                caseTopicId: caseTopicId,
+                caseTopicCode: caseTopicCode,
+                caseSubjectId: caseSubjectId,
+                operationType: selectedCallTypeId,
+                priority: null, // Add if you have priority field in form
+                status: this.selectedStatus,
+                solution: this.solutions,
+                contactNumber: this.selectedContactNumber ? this.selectedContactNumber.contactNumberId : null,
+                source: null, // Add if you have source field in form
+                assignedAt: null, // Add if you have assignedAt field in form
+                createdAt: now,
+                createdById: userData.userId,
+                modifiedAt: now,
+                modifiedById: null,
+                isDeleted: 0,
+                assignedUserId: null, // Add if you have assignedUserId field in form
+                attachment: this.attachmentsId,
+                comment: this.comment,
+            };
 
-        const dataForm = {
-            caseId: this.callIdEdit || null,
-            contactId: this.contactIdSelect,
-            channelId: this.selectedChannels,
-            requestDateTime: requestDateTime,
-            description: this.description,
-            caseTopicId: caseTopicId,
-            caseTopicCode: caseTopicCode,
-            caseSubjectId: caseSubjectId,
-            operationType: selectedCallTypeId,
-            priority: null, // Add if you have priority field in form
-            status: this.selectedStatus,
-            solution: this.solutions,
-            contactNumber: this.selectedContactNumber ? this.selectedContactNumber.contactNumberId : null,
-            source: null, // Add if you have source field in form
-            assignedAt: null, // Add if you have assignedAt field in form
-            createdAt: now,
-            createdById: userData.userId,
-            modifiedAt: now,
-            modifiedById: null,
-            isDeleted: 0,
-            assignedUserId: null, // Add if you have assignedUserId field in form
-            attachment: this.attachmentsId,
-        };
-        console.log('dataForm Call: ', dataForm);
-
-        this.callServive
-            .createCase(dataForm)
-            .pipe(
-                tap((res) => {
-                    this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '/contacts');
-                    this.auditLogService.log(
-                        '',
-                        'Create Call',
-                        dataForm.caseId || '',
-                        'Create Case Call',
-                        `Detail Create call : ContactID : ${dataForm.contactId}
+            this.callServive
+                .createCase(dataForm)
+                .pipe(
+                    tap((res) => {
+                        this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '/contacts');
+                        this.auditLogService.log(
+                            '',
+                            'Create Call',
+                            dataForm.caseId || '',
+                            'Create Case Call',
+                            `Detail Create call : ContactID : ${dataForm.contactId}
                       ,RequestDateTime : ${dataForm.requestDateTime}
                       ,ChannelId : ${dataForm.channelId}
                       ,Type : ${dataForm.operationType}`,
-                        `Success`,
-                    );
-                }),
-                catchError((error) => {
-                    this.sweetalertServices.handleError(error);
-                    this.auditLogService.log(
-                        '',
-                        'Create Call',
-                        dataForm.caseId || '',
-                        'Create Case Call',
-                        `Detail Create call : ContactID : ${dataForm.contactId}
+                            `Success`,
+                        );
+                    }),
+                    catchError((error) => {
+                        this.sweetalertServices.handleError(error);
+                        this.auditLogService.log(
+                            '',
+                            'Create Call',
+                            dataForm.caseId || '',
+                            'Create Case Call',
+                            `Detail Create call : ContactID : ${dataForm.contactId}
                       ,RequestDateTime : ${dataForm.requestDateTime}
                       ,ChannelId : ${dataForm.channelId}
                       ,Type : ${dataForm.operationType}`,
-                        `Failed, Error : ${error}`,
-                    );
-                    throw error;
-                }),
-            )
-            .subscribe();
+                            `Failed, Error : ${error}`,
+                        );
+                        throw error;
+                    }),
+                )
+                .subscribe();
+        }
     }
 
     showSideBarContact() {
-        this.visibleLeftSideBar = true;
-        this.visibleRightSideBar = true;
-        this.FormShowing = false;
-        this.SearchFormShowing = false;
         this.searchContactShowing = true;
-        this.thanks = false;
-        this.AddContactShowing = false;
-        this.showOrgSidebar = false;
         this.showContactSidebar = true;
+    }
+
+    hideSideBarContact() {
+        this.searchContactShowing = false;
+        this.showContactSidebar = false;
     }
 
     pageSizeChangeContact() {
@@ -515,10 +380,8 @@ export class CreateCallComponent {
                 this.selectedFilter,
             )
             .subscribe((res: any) => {
-                console.log('API response:', res);
                 this.contacts = res;
                 this.sparecontacts = res;
-                console.log('contact:', this.contacts);
             });
     }
 
@@ -543,6 +406,7 @@ export class CreateCallComponent {
             this.contactName = `${res[0].firstName} ${res[0].lastName}`;
         });
         this.getContactNumber(contactsId);
+        this.hideSideBarContact();
     }
 
     async pageChangeContact(pageContact: number) {
@@ -567,7 +431,6 @@ export class CreateCallComponent {
     }
 
     searchContact() {
-        console.log('Search Contact:');
         if (this.selectedFilter !== 'all') {
             this.userId = this.userData.userId;
         } else {
@@ -583,115 +446,18 @@ export class CreateCallComponent {
         });
     }
 
-    onCheckboxChange(event: any, activityTypeId: number) {
-        this.isCheckboxSelected[activityTypeId] = event.target.checked;
-    }
-
-    chooseOrg(orgId: string) {
-        this.contactOrg = orgId;
-        this.contactService.getOrganizationById(orgId).subscribe((res: any) => {
-            this.contactOrgName = res[0].orgName;
-        });
-    }
-
-    showSideBarOrg() {
-        this.visibleLeftSideBar = true;
-        this.visibleRightSideBar = true;
-        this.FormShowing = false;
-        this.SearchFormShowing = false;
-        this.thanks = false;
-        this.SearchOrgShowing = true;
-        this.AddOrgShowing = false;
-        this.showOrgSidebar = true;
-        this.showContactSidebar = false;
-    }
-
-    pageSizeChangeOrg() {
-        this.currentPageOganization = 1;
-        this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
-    }
-
-    // pageSizeChangeEln() {
-    //     this.currentPageActivityById = 1;
-    //     this.getFormEln((this.currentPageEln - 1) * this.pageSizeEln, this.pageSizeEln, this.activityTypeId);
-    // }
-
-    sortOrg(value: string) {
-        if (this.sortIdOrg == value) {
-            if (this.sortIcon == 'fa-solid fa-sort-down') {
-                this.sortIcon = 'fa-solid fa-sort-up';
-                this.sortOrderOrg = 'DESC';
-            } else {
-                this.sortIcon = 'fa-solid fa-sort-down';
-                this.sortOrderOrg = 'ASC';
-            }
-        } else {
-            this.sortIdOrg = value;
-        }
-        this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
-    }
-
-    async pageChangeOrg(pageOrg: number) {
-        if (pageOrg != this.currentPageOrg) {
-            if (pageOrg >= 1 && pageOrg <= this.totalPageOrgs) {
-                this.currentPageOrg = pageOrg;
-                await this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
-                this.checkedValueOrgs = [];
-            }
-        }
-    }
-
-    get pageOrgs(): number[] {
-        var pageOrg: number[] = [];
-        this.totalPageOrgs = Math.ceil(this.totalItemOrgs / this.pageSizeOrg);
-        for (var i = -this.pagesToShowOrg; i <= this.pagesToShowOrg; i++) {
-            if (this.currentPageOrg + i > 0 && this.currentPageOrg + i <= this.totalPageOrgs) {
-                pageOrg.push(this.currentPageOrg + i);
-            }
-        }
-        return pageOrg;
-    }
-
-    async getFormOrg(pageOrg: number, pageSizeOrg: number) {
-        await this.contactService
-            .getOrgByPage(pageOrg, pageSizeOrg, `${this.sortIdOrg},${this.sortOrderOrg}`, this.valueSearchOrg, this.selectedFilter)
-            .subscribe((res: any) => {
-                this.organizations = res;
-                this.spareorganizations = res;
-            });
-    }
-
     async getContactNumber(contactsId: string) {
         try {
             const contactNumber = (await this.callServive.getContactNumbertById(contactsId).toPromise()) as any[];
-            console.log('contactNumber Res:', contactNumber);
 
             if (contactNumber && contactNumber.length > 0) {
                 this.contactNumber = contactNumber;
-                console.log('contactNumber: ', this.contactNumber);
             } else {
                 console.warn('No contact number found for this contactId');
             }
         } catch (error) {
             console.error('Error fetching contact number', error);
         }
-    }
-
-    async getPageOrg() {
-        await this.contactService.countOrg(this.valueSearchOrg, this.userId).subscribe((res: any) => {
-            this.totalItemOrgs = res.count;
-        });
-        console.log('Conut Org:', this.totalItemOrgs);
-    }
-
-    searchOrg() {
-        if (this.selectedFilter !== 'all') {
-            this.userId = this.userData.userId;
-        } else {
-            this.userId = '';
-        }
-        this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
-        this.getPageOrg();
     }
 
     onFileSelected(event: any) {
@@ -734,42 +500,26 @@ export class CreateCallComponent {
                 this.selectedFilter,
             )
             .subscribe((res: any) => {
-                console.log('API response:', res);
                 this.contacts = res;
                 this.sparecontacts = res;
-                console.log('contact:', this.contacts);
             });
     }
 
     selectedCheckboxIds: number[] = [];
 
-    toggleCheckbox(activityTopicId: number) {
-        const index = this.selectedCheckboxIds.indexOf(activityTopicId);
-        if (index === -1) {
-            this.selectedCheckboxIds.push(activityTopicId);
+    onCaseTopicChange(event: any) {
+        this.selectedCasesubject = null;
+
+        if (this.selectedCaseTopics && this.casetopics) {
+            this.selectedCaseTopicObject = this.casetopics.find((topic: any) => topic.caseTopicId == this.selectedCaseTopics);
         } else {
-            this.selectedCheckboxIds.splice(index, 1);
+            this.selectedCaseTopicObject = null;
         }
-    }
-
-    addTopicAndSubject() {
-        if (this.selectSubject < 5) this.selectSubject++;
-        console.log(this.selectSubject);
-    }
-    removeTopicAndSubject() {
-        if (this.selectSubject > 0) this.selectSubject--;
-        console.log(this.selectSubject);
-    }
-
-    onCaseTopicChange(event: any, index: number) {
-        // Clear case subject when case topic changes
-        this.selectedCasesubject[index] = null;
     }
 
     getStatusList() {
         this.callListService.getStatusList().subscribe((res: any) => {
             this.statusList = res;
-            console.log('Status List:', this.statusList);
         });
     }
 }
