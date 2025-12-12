@@ -6,108 +6,65 @@
                 <button type="button" (click)="submit()" class="btn btn-primary rounded text-white">บันทึก</button>
             </div>
             <p class="fs-5 mg-bt-0">สร้างข้อมูลการติดต่อ</p>
-            <form class="row g-3 mg-3">
-                <div class="col-md-6">
-                    <label for="inputPassword4" class="form-label">ผู้ติดต่อ</label>
-                    <div class="col-md-6">
-                        <div
-                            class="form-control"
-                            (click)="showSideBarContact()"
-                            data-bs-toggle="offcanvas"
-                            data-bs-target="#offcanvasRight"
-                            style="width: 200%; height: 38px; cursor: pointer"
-                        >
-                            {{ contactName }}
-                        </div>
+            <form class="row g-3">
+                <!-- ผู้ติดต่อ -->
+                <div class="col-12 col-md-6">
+                    <label for="inputContact" class="form-label">ผู้ติดต่อ</label>
+                    <div
+                        class="form-control d-flex align-items-center"
+                        (click)="showSideBarContact()"
+                        data-bs-toggle="offcanvas"
+                        data-bs-target="#offcanvasRight"
+                        style="cursor: pointer; min-height: 38px"
+                    >
+                        {{ contactName || 'เลือกผู้ติดต่อ...' }}
                     </div>
                 </div>
 
-                <div class="col-md-6">
-                    <label for="inputContactOrg" class="form-label">บริษัท</label>
-                    <div class="col-md-6">
-                        <div
-                            class="form-control"
-                            (click)="showSideBarOrg()"
-                            data-bs-toggle="offcanvas"
-                            data-bs-target="#offcanvasRight"
-                            style="width: 200%; height: 38px; cursor: pointer"
-                        >
-                            {{ contactOrgName }}
-                        </div>
-                    </div>
+                <!-- หัวข้อที่ติดต่อ -->
+                <div class="col-12 col-md-6">
+                    <label for="inputTopic" class="form-label">หัวข้อที่ติดต่อ<span class="text-danger">*</span></label>
+                    <select
+                        id="inputTopic"
+                        class="form-select"
+                        name="selectedCaseTopics"
+                        [(ngModel)]="selectedCaseTopics"
+                        (change)="onCaseTopicChange($event)"
+                    >
+                        <option disabled value="">กรุณาเลือกข้อมูล</option>
+                        <option *ngFor="let casetopic of casetopics" [value]="casetopic.caseTopicId">
+                            {{ casetopic.code }} - {{ casetopic.name }}
+                        </option>
+                    </select>
                 </div>
 
-                <div *ngFor="let i of numberArray">
-                    <div class="row" [ngClass]="{ 'display-none': selectSubject < i }">
-                        <div class="col-md-6">
-                            <label [ngClass]="{ 'display-none': i != 1 }" for="inputTopic" class="form-label"
-                                >หัวข้อที่ติดต่อ<span class="color-red">*</span></label
+                <!-- เรื่องที่ติดต่อ -->
+                <div class="col-12 col-md-6">
+                    <label for="inputCaseSubject" class="form-label">เรื่องที่ติดต่อ</label>
+                    <select id="inputCaseSubject" class="form-select" name="selectedCasesubject" [(ngModel)]="selectedCasesubject">
+                        <option disabled value="">กรุณาเลือกข้อมูล</option>
+                        <ng-container *ngFor="let casesubject of casesubjects">
+                            <option
+                                *ngIf="selectedCaseTopics && selectedCaseTopics == casesubject.caseTopicId"
+                                [value]="casesubject.caseSubjectId"
                             >
-                            <select
-                                id="inputTopic"
-                                class="form-select"
-                                [name]="'selectedCaseTopics' + i"
-                                [(ngModel)]="selectedCaseTopics[i - 1]"
-                                (change)="onCaseTopicChange($event, i - 1)"
-                            >
-                                <option disabled value="">กรุณาเลือกข้อมูล</option>
-                                <option *ngFor="let casetopic of casetopics" [value]="casetopic.caseTopicId">
-                                    {{ casetopic.code }} - {{ casetopic.name }}
-                                </option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label [ngClass]="{ 'display-none': i != 1 }" for="inputCaseSubject" class="form-label">เรื่องที่ติดต่อ</label>
-                            <select
-                                id="inputCaseSubject"
-                                class="form-select"
-                                [name]="'selectedCasesubject' + i"
-                                [(ngModel)]="selectedCasesubject[i - 1]"
-                            >
-                                <option disabled value="">กรุณาเลือกข้อมูล</option>
-                                <ng-container *ngFor="let casesubject of casesubjects">
-                                    <option
-                                        *ngIf="selectedCaseTopics[i - 1] && selectedCaseTopics[i - 1] == casesubject.caseTopicId"
-                                        [value]="casesubject.caseSubjectId"
-                                    >
-                                        {{ casesubject.name }}
-                                    </option>
-                                </ng-container>
-                            </select>
-                        </div>
-                        <div class="col-md-1">
-                            <!-- <span *ngIf="selectSubject == i && selectSubject != 5">
-                                <button
-                                    (click)="addTopicAndSubject()"
-                                    type="button"
-                                    class="btn btn-outline-primary btn-block"
-                                    style="width: 80%; margin-bottom: 10px"
-                                >
-                                    +
-                                </button>
-                            </span> -->
-                            <span *ngIf="selectSubject == i && selectSubject != 1">
-                                <button
-                                    (click)="removeTopicAndSubject()"
-                                    type="button"
-                                    class="btn btn-outline-danger btn-block"
-                                    style="width: 80%"
-                                >
-                                    -
-                                </button>
-                            </span>
-                        </div>
-                    </div>
+                                {{ casesubject.name }}
+                            </option>
+                        </ng-container>
+                    </select>
                 </div>
-                <div class="col-6">
+
+                <!-- สถานะ -->
+                <div class="col-12 col-md-6">
                     <label for="inputStatus" class="form-label">สถานะ</label>
                     <select id="inputStatus" class="form-select" name="selectedStatus" [(ngModel)]="selectedStatus">
                         <option disabled value="">กรุณาเลือกข้อมูล</option>
                         <option *ngFor="let status of statusList" [value]="status.id">{{ status.status }}</option>
                     </select>
                 </div>
-                <div class="col-6">
+
+                <!-- ช่องทางติดต่อ -->
+                <div class="col-12 col-md-6">
                     <label for="inputChannel" class="form-label">ช่องทางติดต่อ</label>
                     <select id="inputChannel" class="form-select" name="selectedChannels" [(ngModel)]="selectedChannels">
                         <option disabled value="">กรุณาเลือกข้อมูล</option>
@@ -115,21 +72,22 @@
                     </select>
                 </div>
 
-                <div class="col-6" *ngIf="selectedChannels === '1' || selectedChannels === '2' || selectedChannels === '3'">
-                    <label *ngIf="selectedChannels === '1' || selectedChannels === '2'" for="inputCallType" class="form-label"
-                        >ประเภทสาย</label
-                    >
-                    <label *ngIf="selectedChannels === '3'" for="inputCallType" class="form-label">ประเภทอีเมล</label>
+                <!-- ประเภทสาย/อีเมล -->
+                <div class="col-12 col-md-6" *ngIf="selectedChannels === '1' || selectedChannels === '2' || selectedChannels === '3'">
+                    <label for="inputCallType" class="form-label">
+                        {{ selectedChannels === '3' ? 'ประเภทอีเมล' : 'ประเภทสาย' }}
+                    </label>
                     <select id="inputCallType" class="form-select" name="selectedCallTypeId" [(ngModel)]="selectedCallTypeId">
                         <option disabled value="">กรุณาเลือกข้อมูล</option>
                         <option *ngFor="let callType of callTypes" [value]="callType.name">{{ callType.name }}</option>
                     </select>
                 </div>
 
-                <div class="col-6" *ngIf="selectedChannels === '1' || selectedChannels === '2'">
-                    <label for="inputContactNumber" class="form-label">เบอร์ติดต่อ<span class="color-red">*</span></label>
+                <!-- เบอร์ติดต่อ -->
+                <div class="col-12 col-md-6" *ngIf="selectedChannels === '1' || selectedChannels === '2'">
+                    <label for="inputContactNumber" class="form-label">เบอร์ติดต่อ<span class="text-danger">*</span></label>
                     <select id="inputContactNumber" class="form-select" name="selectedContactNumber" [(ngModel)]="selectedContactNumber">
-                        <!-- <option disabled value="">กรุณาเลือกข้อมูล</option> -->
+                        <option disabled [ngValue]="null">กรุณาเลือกข้อมูล</option>
                         <option
                             *ngFor="let contactNumbers of contactNumber"
                             [ngValue]="{ contactNumber: contactNumbers.contactNumber, contactNumberId: contactNumbers.contactNumberId }"
@@ -139,58 +97,65 @@
                     </select>
                 </div>
 
-                <div class="col-6">
-                    <label for="inputAddress" class="form-label">กรุณาเลือกวันที่</label>
-                    <div class="date-pik">
-                        <div class="col-auto">
-                            <div class="input-group start-date">
-                                <input
-                                    matInput
-                                    [matDatepicker]="picker1"
-                                    name="startTime"
-                                    [(ngModel)]="startTime"
-                                    required
-                                    class="input-date form-control"
-                                />
-                                <span class="input-group-text">
-                                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-                                    <mat-datepicker #picker1></mat-datepicker>
-                                </span>
-                            </div>
+                <!-- ไฟล์แนบ -->
+                <div class="col-12 col-md-6">
+                    <label for="formFileSm" class="form-label">ไฟล์แนบ</label>
+                    <input class="form-control" id="formFileSm" type="file" multiple (change)="onFileSelected($event)" />
+                </div>
+
+                <!-- วันที่และเวลา -->
+                <div class="col-12 col-md-6">
+                    <label for="inputDateTime" class="form-label">วันที่และเวลา</label>
+                    <div class="d-flex flex-wrap gap-1 align-items-center">
+                        <div class="input-group" style="width: auto; min-width: 180px">
+                            <input
+                                matInput
+                                [matDatepicker]="picker1"
+                                name="startTime"
+                                [(ngModel)]="startTime"
+                                required
+                                class="form-control"
+                                placeholder="เลือกวันที่"
+                                style="width: 120px"
+                            />
+                            <span class="input-group-text">
+                                <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                                <mat-datepicker #picker1></mat-datepicker>
+                            </span>
                         </div>
                         <ngb-timepicker
                             name="timepickStart"
                             [(ngModel)]="timepickStart"
                             [seconds]="seconds"
                             [ngModelOptions]="{ standalone: true }"
-                            (dateInput)="(formatTimepickStart)"
                             (ngModelChange)="onTimepickStartChange($event)"
                         ></ngb-timepicker>
                     </div>
                 </div>
-                <div class="col-6">
-                    <label for="formFileSm" class="form-label">ไฟล์แนบ</label>
-                    <div class="mb-3">
-                        <div class="form-input-file">
-                            <input
-                                class="form-control form-control-sm"
-                                id="formFileSm"
-                                type="file"
-                                multiple
-                                (change)="onFileSelected($event)"
-                            />
-                        </div>
-                    </div>
-                </div>
 
+                <!-- รายละเอียด -->
                 <div class="col-12">
-                    <label class="form-check-label" for="gridCheck"> รายละเอียด </label>
+                    <label for="floatingTextarea" class="form-label">รายละเอียด</label>
                     <textarea
                         class="form-control"
                         placeholder="กรุณากรอกข้อมูล"
                         id="floatingTextarea"
                         name="description"
                         [(ngModel)]="description"
+                        rows="3"
+                    ></textarea>
+                </div>
+
+                <!-- ความคิดเห็น -->
+                <div class="col-12">
+                    <label for="floatingTextareaComment" class="form-label">ความคิดเห็น</label>
+                    <textarea
+                        class="form-control"
+                        placeholder="กรุณากรอกข้อมูล"
+                        id="floatingTextareaComment"
+                        name="comment"
+                        [(ngModel)]="comment"
+                        rows="3"
                     ></textarea>
                 </div>
             </form>
@@ -230,7 +195,6 @@
                             </div>
                         </div>
                         <div class="p-5 shadow call-side-change-by w-100 h-100 overflow-auto p-4">
-                            <div class="table-responsive" *ngIf="SearchFormShowing"></div>
                             <div class="table-responsive">
                                 <table class="table">
                                     <thead>
@@ -243,25 +207,19 @@
                                                 <a (click)="sortContact('createdAt')">วันที่บันทึก</a
                                                 ><i *ngIf="sortIdContact == 'createdAt'" class="{{ sortIcon }}"></i>
                                             </th>
-                                            <th style="width: 15%" scope="col">
-                                                <a>เลือก</a>
-                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <ng-container>
-                                            <tr *ngFor="let contact of contacts; let i = index">
-                                                <td scope="row">{{ contact.name }}</td>
+                                            <tr
+                                                *ngFor="let contact of contacts; let i = index"
+                                                (click)="chooseContact(contact.contactId)"
+                                                class="cursor-pointer"
+                                                data-bs-dismiss="offcanvas"
+                                                data-bs-target="#offcanvasRight"
+                                            >
+                                                <td scope="row">{{ contact.fullname }}</td>
                                                 <td scope="row">{{ contact.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
-                                                <td scope="row">
-                                                    <button
-                                                        type="button"
-                                                        class="btn btn-link rounded-circle"
-                                                        (click)="chooseContact(contact.contactId)"
-                                                    >
-                                                        <i class="fa-solid fa-check"></i>
-                                                    </button>
-                                                </td>
                                             </tr>
                                         </ng-container>
                                         <ng-template #noDataTemplate>
@@ -321,112 +279,6 @@
                                             [value]="optionContact"
                                         >
                                             {{ optionContact }}
-                                        </option>
-                                    </select>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div *ngIf="showOrgSidebar">
-                        <div class="p-5 shadow call-side-detail" *ngIf="SearchOrgShowing">
-                            <div>
-                                <h4>เลือกร้านค้า/บริษัท</h4>
-                                <div class="row search-contact">
-                                    <div class="col-md-9">
-                                        <input
-                                            id="table-complete-search"
-                                            type="text"
-                                            class="form-control border shadow-none"
-                                            name="searchOrg"
-                                            [(ngModel)]="valueSearchOrg"
-                                            placeholder="ค้นหา..."
-                                            aria-describedby="basic-addon1"
-                                            style="width: 100%"
-                                            (change)="searchOrg()"
-                                        />
-                                    </div>
-                                    <button type="button" class="btn btn-primary btn-search-contact" (click)="searchOrg()">ค้นหา</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="shadow call-side-change-by w-100 h-100 overflow-auto p-4">
-                            <div class="table-responsive" *ngIf="SearchOrgShowing"></div>
-                            <div class="table-responsive p-4">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th style="width: 70%" scope="col">
-                                                <a (click)="sortOrg('name')">ชื่อ </a
-                                                ><i *ngIf="sortIdOrg == 'name'" class="{{ sortIcon }}"></i>
-                                            </th>
-                                            <th style="width: 15%" scope="col">
-                                                <a (click)="sortOrg('createdAt')">วันที่บันทึก</a
-                                                ><i *ngIf="sortIdOrg == 'createdAt'" class="{{ sortIcon }}"></i>
-                                            </th>
-                                            <th style="width: 15%" scope="col">
-                                                <a>เลือก</a>
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <ng-container>
-                                            <tr *ngFor="let org of organizations; let i = index">
-                                                <td scope="row">{{ org.name }}</td>
-                                                <td scope="row">{{ org.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
-                                                <td scope="row">
-                                                    <button
-                                                        type="button"
-                                                        class="btn btn-link rounded-circle"
-                                                        (click)="chooseOrg(org.organizationId)"
-                                                    >
-                                                        <i class="fa-solid fa-check"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        </ng-container>
-                                        <ng-template #noDataTemplate>
-                                            <tr>
-                                                <td colspan="4" class="text-center">ไม่มีข้อมูล</td>
-                                            </tr>
-                                        </ng-template>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <ul class="pagination cursor-pointer justify-content-center" *ngIf="SearchOrgShowing">
-                                <li class="page-item" [class.disabled]="currentPageOrg == 1">
-                                    <a class="page-link custom-link preBtn" (click)="pageChangeOrg(1)" aria-label="Previous">
-                                        <i class="fa-solid fa-angles-left"></i>
-                                    </a>
-                                </li>
-                                <li class="page-item" [class.disabled]="currentPageOrg == 1">
-                                    <a class="page-link custom-link" (click)="pageChangeOrg(currentPageOrg - 1)" aria-label="Previous">
-                                        <i class="fa-solid fa-angle-left"></i>
-                                    </a>
-                                </li>
-                                <li *ngFor="let pageOrg of pageOrgs" class="page-item" [class.active]="currentPageOrg == pageOrg">
-                                    <a class="page-link custom-link" (click)="pageChangeOrg(pageOrg)">{{ pageOrg }}</a>
-                                </li>
-                                <li class="page-item" [class.disabled]="currentPageOrg == totalPages">
-                                    <a class="page-link custom-link" (click)="pageChangeOrg(currentPageOrg + 1)" aria-label="Next">
-                                        <i class="fa-solid fa-angle-right"></i>
-                                    </a>
-                                </li>
-                                <li class="page-item" [class.disabled]="currentPageOrg == totalPageOrgs">
-                                    <a class="page-link custom-link nextBtn" (click)="pageChangeOrg(totalPageOrgs)" aria-label="Next">
-                                        <i class="fa-solid fa-angles-right"></i>
-                                    </a>
-                                </li>
-                                <li class="page-item ms-3">
-                                    <select
-                                        class="form-select"
-                                        aria-label="Default select example"
-                                        [(ngModel)]="pageSizeOrg"
-                                        (change)="pageSizeChangeOrg()"
-                                    >
-                                        <option class="dropdown-item" *ngFor="let optionOrg of pageSizeOptionOrgs" [value]="optionOrg">
-                                            {{ optionOrg }}
                                         </option>
                                     </select>
                                 </li>
