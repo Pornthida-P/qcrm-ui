@@ -816,7 +816,6 @@ export class ManageContactsComponent implements OnInit {
                     this.getComment(caseId);
                     this.getCaseTopicId(call.caseTopicId);
                     this.getChatHistory(call.chatId);
-                    console.log('Chat ID:', call);
                 },
                 (error) => {
                     console.error('Error fetching case:', error);
@@ -1169,7 +1168,6 @@ export class ManageContactsComponent implements OnInit {
     getChatHistory(chatId: string) {
         this.callListService.getChatHistory(chatId).subscribe((res: any) => {
             this.chatHistory = res;
-            console.log('Chat History:', res);
         });
     }
 }

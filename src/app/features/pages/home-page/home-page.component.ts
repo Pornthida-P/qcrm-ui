@@ -4,6 +4,7 @@ import * as moment from 'moment';
 import { User } from 'src/app/shared/interface/user.interface';
 import { UserService } from 'src/app/services/user/user.service';
 import { ContactsService } from 'src/app/services/contacts/contacts.service';
+import { StatusService } from 'src/app/services/status/status.service';
 import * as Highcharts from 'highcharts';
 
 @Component({
@@ -169,7 +170,12 @@ export class HomePageComponent implements OnInit {
         ],
     };
 
-    constructor(private callService: CallService, private userService: UserService, private contactService: ContactsService) {}
+    constructor(
+        private callService: CallService,
+        private userService: UserService,
+        private contactService: ContactsService,
+        public statusService: StatusService,
+    ) {}
 
     ngOnInit(): void {
         this.getDataUser();
@@ -447,29 +453,12 @@ export class HomePageComponent implements OnInit {
     }
 
     getStatusColorAndIcon(id: number) {
-        const colors = ['#FB5F20', '#010966', '#006400'];
-        const icons = [
-            '<i class="fa-solid fa-folder-open"></i>',
-            '<i class="fa-solid fa-hourglass-end"></i>',
-            '<i class="fa-solid fa-folder-closed"></i>',
-        ];
-        return { color: colors[id % colors.length], icon: icons[id % icons.length] } as any;
+        const style = this.statusService.getStatusColorByIndex(id);
+        return { color: style.backgroundColor, icon: `<i class="${style.icon}"></i>` };
     }
 
     getStatusColor(statusName: string): string {
-        if (!statusName) return '#6c757d';
-        const statusIndex = this.statusList.findIndex((s) => s.name === statusName);
-        if (statusIndex >= 0) {
-            return this.getStatusColorAndIcon(statusIndex).color;
-        }
-        // Default colors based on common status names
-        const statusColors: { [key: string]: string } = {
-            open: '#FB5F20',
-            pending: '#010966',
-            closed: '#006400',
-            cancelled: '#6c757d',
-        };
-        return statusColors[statusName] || '#6c757d';
+        return this.statusService.getStatusBgColor(statusName);
     }
 
     filterByStatus(statusName: string): void {
