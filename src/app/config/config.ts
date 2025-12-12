@@ -44,6 +44,8 @@ export const config = {
                 agent: '/agent',
                 comment: '/comments',
                 caseTopicId: '/topic-id',
+                callStatus: '/call-status',
+                callStatusId: '/call-status-id',
             },
             chatHistory: '/chathistory/getchat',
         },
