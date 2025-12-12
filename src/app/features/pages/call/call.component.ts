@@ -173,6 +173,10 @@ export class CallComponent implements OnInit {
     isDateDisabled: boolean = false;
     isDescriptionDisabled: boolean = false;
 
+    callStatus: any[] = [];
+    selectedCallStatusId: number | null = null;
+    callStatusId: any;
+
     constructor(
         private callService: CallService,
         private router: Router,
@@ -249,6 +253,7 @@ export class CallComponent implements OnInit {
         ];
 
         this.getStatusList();
+        this.getCallStatus();
     }
 
     getComment(caseId: string) {
@@ -620,6 +625,8 @@ export class CallComponent implements OnInit {
 
                     this.getComment(call.caseId);
                     this.getChatHistory(call.chatId);
+                    this.selectedCallStatusId = call.callStatus;
+                    this.getCallStatusId(call.callStatusId?.toString() || '');
                 },
                 (error) => {
                     console.error('Error fetching case:', error);
@@ -934,5 +941,18 @@ export class CallComponent implements OnInit {
         this.callListService.getChatHistory(chatId).subscribe((res: any) => {
             this.chatHistory = res;
         });
+    }
+
+    getCallStatus() {
+        this.callListService.getCallStatus().subscribe((res: any) => {
+            this.callStatus = res;
+        });
+    }
+
+    getCallStatusId(callStatusId: string) {
+        this.callListService.getCallStatusId(callStatusId).subscribe((res: any) => {
+            this.callStatusId = res;
+        });
+        console.log('callStatusId: ', this.callStatusId);
     }
 }

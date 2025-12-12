@@ -408,6 +408,27 @@
                                     </div>
 
                                     <div class="col-12">
+                                        <label class="form-label">สถานะการโทร</label>
+                                        <div class="row">
+                                            <div class="col-4" *ngFor="let status of callStatus">
+                                                <div class="form-check">
+                                                    <input
+                                                        class="form-check-input"
+                                                        type="radio"
+                                                        [id]="'callStatus_' + status.id"
+                                                        name="selectedCallStatus"
+                                                        [value]="status.id"
+                                                        [(ngModel)]="selectedCallStatusId"
+                                                    />
+                                                    <label class="form-check-label" [for]="'callStatus_' + status.id">
+                                                        {{ status.callStatus }}
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
                                         <label class="form-check-label" for="gridCheck"> รายละเอียด </label>
                                         <textarea
                                             class="form-control"
