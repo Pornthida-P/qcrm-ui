@@ -4,6 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { faEdit, faEye, faGear, faTrash, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
 import { TranslateService } from '@ngx-translate/core';
+import { StatusService } from 'src/app/services/status/status.service';
 
 @Component({
     selector: 'app-table-list',
@@ -28,6 +29,7 @@ export class TableListComponent implements OnInit, OnChanges, DoCheck {
     includesRole: string[] = ['role'];
     includesProfile: string[] = ['profile'];
     includesStatus: string[] = ['isActive'];
+    includesStatusName: string[] = ['status', 'statusName'];
     includesColor: string[] = ['color'];
     includesScript: string[] = ['script'];
 
@@ -45,7 +47,7 @@ export class TableListComponent implements OnInit, OnChanges, DoCheck {
 
     profileError: string = './assets/qcrm-ui/image/profile/user.jpg';
 
-    constructor(private socketIO: SocketIoService, private cdr: ChangeDetectorRef) {}
+    constructor(private socketIO: SocketIoService, private cdr: ChangeDetectorRef, public statusService: StatusService) {}
 
     ngOnInit(): void {
         this.updatePages();

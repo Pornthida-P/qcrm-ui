@@ -24,6 +24,17 @@
                         </div>
                     </ng-container>
 
+                    <ng-container *ngSwitchCase="includesStatusName.includes(column)">
+                        <span
+                            *ngIf="element[column]; else noStatusTemplate"
+                            class="status-badge"
+                            [style.background-color]="statusService.getStatusBgColor(element[column])"
+                        >
+                            {{ element[column] }}
+                        </span>
+                        <ng-template #noStatusTemplate>-</ng-template>
+                    </ng-container>
+
                     <ng-container *ngSwitchCase="includesDate.includes(column)">
                         <p class="label">{{ element[column] | date : 'dd/MM/yyyy HH:mm:ss' }}</p>
                     </ng-container>

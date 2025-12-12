@@ -17,6 +17,7 @@ import { AttachmentService } from 'src/app/services/attachment/attachment.servic
 import { Attachment } from 'src/app/shared/interface/attachment.interface';
 import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
 import { CallListService } from 'src/app/services/call-list/call-list.service';
+import { StatusService } from 'src/app/services/status/status.service';
 
 @Pipe({
     name: 'searchFilter',
@@ -104,7 +105,7 @@ export class CallComponent implements OnInit {
     cType: string = '';
     callId: string = '';
     selectedCasesubject: any;
-    selectedCaseTopics: any[] = [];
+    selectedCaseTopics: string | null = null;
     selectedChannels: any;
     currentChannel: any;
     channels: any;
@@ -118,9 +119,6 @@ export class CallComponent implements OnInit {
     combinedDateTimeStart: string = '';
     combinedDateTimeEnd: string = '';
 
-    numberArray = [1, 2, 3, 4, 5];
-    selectSubject = 1;
-
     selectedActivityTopicId: string[] = [];
     searchContactShowing: boolean = false;
 
@@ -129,24 +127,8 @@ export class CallComponent implements OnInit {
     activitiesTopic: any;
     selectedCheckboxIds: any;
 
-    pageSizeOptionOrgs = [5, 10, 20];
-    pageSizeOrg = 5;
-    currentPageOrg = 1;
-    totalItemOrgs = 0;
-    totalPageOrgs = 0;
-    pagesToShowOrg = 3;
-
-    sortIdOrg: string = 'createdAt';
-    sortOrderOrg: string = 'DESC';
-
     SearchFormShowing: boolean = true;
-    SearchOrgShowing: boolean = false;
 
-    organizations!: any;
-    spareorganizations!: any;
-    valueSearchOrg!: string;
-
-    AddOrgShowing: boolean = false;
     AddCallShowing: boolean = false;
 
     casetopics: any[] = [];
@@ -159,12 +141,8 @@ export class CallComponent implements OnInit {
 
     thanks: boolean = false;
 
-    contactOrg: string = '';
-    contactOrgName: string = '';
-    checkedValueOrgs: string[] = [];
     AddContactShowing: boolean = false;
 
-    showOrgSidebar: boolean = false;
     showContactSidebar: boolean = false;
 
     attachments: Attachment[] = [];
@@ -181,6 +159,20 @@ export class CallComponent implements OnInit {
     comment: any;
     comments: any[] = [];
 
+    selectedCaseTopicObject: any = null;
+    chatId: string = '';
+    chatHistory: any[] = [];
+    activeScriptTab: 'script' | 'chat' = 'script';
+
+    isTopicDisabled: boolean = false;
+    isSubjectDisabled: boolean = false;
+    isStatusDisabled: boolean = false;
+    isChannelDisabled: boolean = false;
+    isCallTypeDisabled: boolean = false;
+    isContactNumberDisabled: boolean = false;
+    isDateDisabled: boolean = false;
+    isDescriptionDisabled: boolean = false;
+
     constructor(
         private callService: CallService,
         private router: Router,
@@ -192,6 +184,7 @@ export class CallComponent implements OnInit {
         private attachmentService: AttachmentService,
         private auditLogService: AuditLogService,
         private callListService: CallListService,
+        public statusService: StatusService,
     ) {
         this.startTime = this.formatDate(new Date());
     }
@@ -455,29 +448,31 @@ export class CallComponent implements OnInit {
 
     exportExcel() {
         if (this.selectValue.length != 0) {
-            this.selectedCalls = this.calls.filter((calls: any) => this.selectValue.includes(calls.callId));
+            this.selectedCalls = this.calls.filter((calls: any) => this.selectValue.includes(calls.caseId));
         } else {
             this.selectedCalls = [];
         }
-
         if (this.selectedCalls.length != 0) {
             const processedForms = this.selectedCalls.reduce(
                 (acc: any, cur: any) => [
                     ...acc,
                     {
                         createdAt: cur.createdAt,
-                        name: cur.caller,
+                        name: cur.contact,
+                        contactNumber: cur.caller,
                         direction: cur.type,
-                        caseTopicName: cur.casesub,
+                        caseTopicName: cur.topic,
+                        caseSubjectName: cur.subject,
                         description: cur.description,
-                        solution: cur.solution,
                         username: cur.agent,
                     },
                 ],
                 [],
             );
 
-            const columns = [['เวลา', 'เบอร์โทร', 'ประเภทสาย', 'เรื่องที่ติดต่อ', 'รายละเอียด', 'แนวทางการแก้ไข', 'ผู้ที่รับผิดชอบ']];
+            const columns = [
+                ['เวลา', 'ชื่อ - นามสกุล', 'เบอร์โทร', 'ประเภทสาย', 'หัวข้อที่ติดต่อ', 'เรื่องที่ติดต่อ', 'รายละเอียด', 'ผู้ที่รับผิดชอบ'],
+            ];
             const wb = XLSX.utils.book_new();
             const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet([]);
             XLSX.utils.sheet_add_aoa(ws, columns);
@@ -491,6 +486,7 @@ export class CallComponent implements OnInit {
     }
 
     selectCheckbox(callId: number): void {
+        console.log('callId: ', callId);
         if (this.selectValue.includes(callId)) {
             this.selectValue = this.selectValue.filter((id) => id !== callId);
         } else {
@@ -502,7 +498,7 @@ export class CallComponent implements OnInit {
         this.calls.forEach((x: any) => {
             x.state = ev.target.checked;
             if (ev.target.checked) {
-                this.selectValue.push(x.callId);
+                this.selectValue.push(x.caseId);
             } else {
                 this.selectValue = [];
             }
@@ -523,11 +519,9 @@ export class CallComponent implements OnInit {
 
     showAddCall() {
         this.selectedChannels = '';
-        this.AddOrgShowing = false;
         this.FormShowing = false;
         this.SearchFormShowing = false;
         this.thanks = false;
-        this.SearchOrgShowing = false;
         this.AddCallShowing = true;
 
         this.callService.getCaseTopic().subscribe((casetopics: any) => {
@@ -564,62 +558,74 @@ export class CallComponent implements OnInit {
             minute: date.getMinutes(),
             second: date.getSeconds(),
         };
-        this.selectedCaseTopics = [];
+        this.selectedCaseTopics = null;
         this.selectedCasesubject = [];
         this.selectedActivityTopicId = [];
 
-        this.callService.getCaseById(callId).subscribe(
-            (call: any) => {
-                if (!call) {
-                    console.error('Case not found:', callId);
-                    return;
-                }
+        this.isTopicDisabled = true;
+        this.isSubjectDisabled = true;
+        this.isStatusDisabled = false;
+        this.isChannelDisabled = true;
+        this.isCallTypeDisabled = true;
+        this.isContactNumberDisabled = true;
+        this.isDateDisabled = true;
+        this.isDescriptionDisabled = true;
 
-                this.selectSubject = 1;
-                this.cType = 'case';
-                this.callId = call.caseId;
-                this.description = call.description;
-                this.startTime = call.requestDateTime;
-                const date = new Date(call.requestDateTime);
-                this.timepickStart = {
-                    hour: date.getHours(),
-                    minute: date.getMinutes(),
-                    second: date.getSeconds(),
-                };
-                this.selectedChannels = call.channelId;
-                this.currentChannel = call.channelId;
-                this.selectedCallTypeId = call.operationType;
-                if (call.contactNumber) {
-                    this.selectedContactNumber = {
-                        contactNumber: call.contactNumber,
-                        contactNumberId: call.contactNumberId || null,
+        this.callService.getCaseTopic().subscribe((casetopics: any) => {
+            this.casetopics = casetopics;
+
+            this.callService.getCaseById(callId).subscribe(
+                (call: any) => {
+                    if (!call) {
+                        console.error('Case not found:', callId);
+                        return;
+                    }
+
+                    this.cType = 'case';
+                    this.callId = call.caseId;
+                    this.description = call.description;
+                    this.startTime = call.requestDateTime;
+                    const date = new Date(call.requestDateTime);
+                    this.timepickStart = {
+                        hour: date.getHours(),
+                        minute: date.getMinutes(),
+                        second: date.getSeconds(),
                     };
-                }
-                this.selectedStatus = call.statusId;
+                    this.selectedChannels = call.channelId;
+                    this.currentChannel = call.channelId;
+                    this.selectedCallTypeId = call.operationType;
+                    if (call.contactNumber) {
+                        this.selectedContactNumber = {
+                            contactNumber: call.contactNumber,
+                            contactNumberId: call.contactNumberId || null,
+                        };
+                    }
+                    this.selectedStatus = call.statusId;
 
-                if (call.caseTopicId) {
-                    this.selectedCaseTopics[0] = call.caseTopicId;
-                    // console.log('Set selectedCaseTopics[0] to:', this.selectedCaseTopics[0]);
-                } else {
-                    this.selectedCaseTopics[0] = null;
-                }
+                    if (call.caseTopicId) {
+                        this.selectedCaseTopics = call.caseTopicId;
+                        this.selectedCaseTopicObject = this.casetopics.find((topic: any) => topic.caseTopicId == call.caseTopicId);
+                    } else {
+                        this.selectedCaseTopics = null;
+                        this.selectedCaseTopicObject = null;
+                    }
 
-                if (call.caseSubjectId) {
-                    setTimeout(() => {
-                        this.selectedCasesubject[0] = call.caseSubjectId;
-                        // console.log('Set selectedCasesubject[0] to:', this.selectedCasesubject[0]);
-                    }, 0);
-                } else {
-                    this.selectedCasesubject[0] = null;
-                }
+                    if (call.caseSubjectId) {
+                        setTimeout(() => {
+                            this.selectedCasesubject = call.caseSubjectId;
+                        }, 0);
+                    } else {
+                        this.selectedCasesubject = null;
+                    }
 
-                this.getComment(call.caseId);
-            },
-            (error) => {
-                console.error('Error fetching case:', error);
-                // Handle error appropriately
-            },
-        );
+                    this.getComment(call.caseId);
+                    this.getChatHistory(call.chatId);
+                },
+                (error) => {
+                    console.error('Error fetching case:', error);
+                },
+            );
+        });
 
         this.showAddCall();
         this.getContactNumber(contactId);
@@ -632,99 +638,6 @@ export class CallComponent implements OnInit {
         } else {
             this.selectedCheckboxIds.splice(index, 1);
         }
-    }
-
-    searchOrg() {
-        if (this.selectedFilter !== 'all') {
-            this.userId = this.userData.userId;
-        } else {
-            this.userId = '';
-        }
-        this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
-        this.getPageOrg();
-    }
-
-    async getFormOrg(pageOrg: number, pageSizeOrg: number) {
-        await this.contactsService
-            .getOrgByPage(pageOrg, pageSizeOrg, `${this.sortIdOrg},${this.sortOrderOrg}`, this.valueSearchOrg, this.selectedFilter)
-            .subscribe((res: any) => {
-                this.organizations = res;
-                this.spareorganizations = res;
-            });
-    }
-
-    async getPageOrg() {
-        await this.contactsService.countOrg(this.valueSearchOrg, this.userId).subscribe((res: any) => {
-            this.totalItemOrgs = res.count;
-        });
-    }
-
-    showAddOrg() {
-        this.AddOrgShowing = true;
-        this.FormShowing = false;
-        this.SearchFormShowing = false;
-        this.thanks = false;
-        this.SearchOrgShowing = false;
-        this.AddCallShowing = false;
-    }
-
-    sortOrg(value: string) {
-        if (this.sortIdOrg == value) {
-            if (this.sortIcon == 'fa-solid fa-sort-down') {
-                this.sortIcon = 'fa-solid fa-sort-up';
-                this.sortOrderOrg = 'DESC';
-            } else {
-                this.sortIcon = 'fa-solid fa-sort-down';
-                this.sortOrderOrg = 'ASC';
-            }
-        } else {
-            this.sortIdOrg = value;
-        }
-        this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
-    }
-
-    chooseOrg(orgId: string) {
-        this.contactOrg = orgId;
-        this.contactsService.getOrganizationById(orgId).subscribe((res: any) => {
-            this.contactOrgName = res[0].orgName;
-        });
-    }
-
-    async pageChangeOrg(pageOrg: number) {
-        if (pageOrg != this.currentPageOrg) {
-            if (pageOrg >= 1 && pageOrg <= this.totalPageOrgs) {
-                this.currentPageOrg = pageOrg;
-                await this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
-                this.checkedValueOrgs = [];
-            }
-        }
-    }
-
-    get pageOrgs(): number[] {
-        var pageOrg: number[] = [];
-        this.totalPageOrgs = Math.ceil(this.totalItemOrgs / this.pageSizeOrg);
-        for (var i = -this.pagesToShowOrg; i <= this.pagesToShowOrg; i++) {
-            if (this.currentPageOrg + i > 0 && this.currentPageOrg + i <= this.totalPageOrgs) {
-                pageOrg.push(this.currentPageOrg + i);
-            }
-        }
-        return pageOrg;
-    }
-
-    pageSizeChangeOrg() {
-        this.currentPage = 1;
-        this.getFormOrg((this.currentPageOrg - 1) * this.pageSizeOrg, this.pageSizeOrg);
-    }
-
-    showSideBarOrg() {
-        this.visibleLeftSideBar = true;
-        this.visibleRightSideBar = true;
-        this.FormShowing = false;
-        this.SearchFormShowing = false;
-        this.thanks = false;
-        this.SearchOrgShowing = true;
-        this.AddOrgShowing = false;
-        this.AddCallShowing = false;
     }
 
     formatTimepickStart() {
@@ -805,34 +718,22 @@ export class CallComponent implements OnInit {
         const isChannelOne = this.selectedChannels === '1';
         const selectedCallTypeId = isChannelOne ? this.selectedCallTypeId : null;
 
-        // Prepare selectedCaseTopics and selectedCasesubject for single select
-        for (let i = 0; i < this.selectSubject; i++) {
-            if (this.selectedCaseTopics[i] == null) {
-                this.selectedCaseTopics[i] = null;
-                this.selectedCasesubject[i] = null;
-            } else {
-                if (this.selectedCasesubject[i] == null) {
-                    this.selectedCasesubject[i] = null;
-                }
-            }
-        }
-        if (this.selectedCaseTopics.length > this.selectSubject) {
-            this.selectedCasesubject = this.selectedCasesubject.slice(0, this.selectSubject);
-            this.selectedCaseTopics = this.selectedCaseTopics.slice(0, this.selectSubject);
-        }
-
         if (!this.callId) {
-            if (this.selectedCaseTopics.length > 0 && this.selectedCaseTopics[0]) {
-                // Convert single select values to array format for backend compatibility
-                const caseTopicIdArray = this.selectedCaseTopics.map((topic: any) => (topic ? [topic] : []));
-                const caseSubjectArray = this.selectedCasesubject.map((subject: any) => (subject ? [subject] : []));
+            if (this.selectedCaseTopics) {
+                const caseTopicId = this.selectedCaseTopics;
+
+                const caseTopicCode =
+                    caseTopicId && this.casetopics
+                        ? this.casetopics.find((topic: any) => topic.caseTopicId === caseTopicId)?.code || null
+                        : null;
+
+                const caseSubjectId = this.selectedCasesubject || null;
 
                 const data = {
                     contactId: this.contactId,
                     name: userData.userId,
-                    organization: this.contactOrg,
-                    caseTopicId: caseTopicIdArray,
-                    caseSubject: caseSubjectArray,
+                    caseTopicId: caseTopicId,
+                    caseSubject: caseSubjectId,
                     channel: this.selectedChannels,
                     activityType: this.activityTypeId,
                     description: this.description,
@@ -877,68 +778,13 @@ export class CallComponent implements OnInit {
             } else {
                 this.sweetalertServices.getSwal('error', 'โปรดกรอกหัวข้อที่ติดต่อ', '', false, '');
             }
-        } else if (this.callId && this.cType === 'call') {
-            console.log('Edit Call:', this.callId);
-            if (this.selectedCaseTopics.length > 0 && this.selectedCaseTopics[0]) {
-                // Convert single select values to array format for backend compatibility
-                const caseTopicIdArray = this.selectedCaseTopics.map((topic: any) => (topic ? [topic] : []));
-                const caseSubjectArray = this.selectedCasesubject.map((subject: any) => (subject ? [subject] : []));
-
-                const data = {
-                    callId: this.callId,
-                    caseTopicId: caseTopicIdArray,
-                    caseSubject: caseSubjectArray,
-                    channel: this.selectedChannels,
-                    activityType: this.activityTypeId,
-                    description: this.description,
-                    startTime: `${selectedDate} ${selectedTime}`,
-                    solution: this.solutions,
-                    modifiedById: userData.userId,
-                    operationType: selectedCallTypeId,
-                    call_id: this.selectedContactNumber ? this.selectedContactNumber.contactNumber : null,
-                    contactNumberId: this.selectedContactNumber ? this.selectedContactNumber.contactNumberId : null,
-                    comment: this.comment,
-                };
-                console.log('Data: ', data);
-                this.contactsService
-                    .updateCalls(data)
-                    .pipe(
-                        tap((res) => {
-                            this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
-                            this.auditLogService.log(
-                                '',
-                                'Contact Update Call',
-                                this.callId,
-                                'Contact Update Case Call',
-                                JSON.stringify(data),
-                                `Success`,
-                            );
-                            window.location.reload();
-                        }),
-                        catchError((error) => {
-                            this.sweetalertServices.handleError(error);
-                            this.auditLogService.log(
-                                '',
-                                'Contact Update Call',
-                                this.callId,
-                                'Contact Update Case Call',
-                                JSON.stringify(data),
-                                `Failed, Error : ${error}`,
-                            );
-                            throw error;
-                        }),
-                    )
-                    .subscribe();
-            } else {
-                this.sweetalertServices.getSwal('error', 'โปรดกรอกหัวข้อที่ติดต่อ', '', false, '');
-            }
         } else if (this.callId && this.cType === 'case') {
             console.log('Edit Case:', this.callId);
-            if (this.selectedCaseTopics.length > 0) {
+            if (this.selectedCaseTopics) {
                 const data = {
                     callId: this.callId,
-                    caseTopicId: this.selectedCaseTopics[0],
-                    caseSubject: this.selectedCasesubject[0],
+                    caseTopicId: this.selectedCaseTopics,
+                    caseSubject: this.selectedCasesubject,
                     channel: this.selectedChannels,
                     description: this.description,
                     startTime: `${selectedDate} ${selectedTime}`,
@@ -997,19 +843,14 @@ export class CallComponent implements OnInit {
         return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:${second.toString().padStart(2, '0')}`;
     }
 
-    addTopicAndSubject() {
-        if (this.selectSubject < 5) this.selectSubject++;
-        console.log(this.selectSubject);
-    }
+    onCaseTopicChange(event: any) {
+        this.selectedCasesubject = null;
 
-    removeTopicAndSubject() {
-        if (this.selectSubject > 0) this.selectSubject--;
-        console.log(this.selectSubject);
-    }
-
-    onCaseTopicChange(event: any, index: number) {
-        // Clear case subject when case topic changes
-        this.selectedCasesubject[index] = null;
+        if (this.selectedCaseTopics && this.casetopics) {
+            this.selectedCaseTopicObject = this.casetopics.find((topic: any) => topic.caseTopicId == this.selectedCaseTopics);
+        } else {
+            this.selectedCaseTopicObject = null;
+        }
     }
 
     async getContactNumber(contactsId: string) {
@@ -1086,7 +927,12 @@ export class CallComponent implements OnInit {
     getStatusList() {
         this.callListService.getStatusList().subscribe((res: any) => {
             this.statusList = res;
-            console.log(this.statusList);
+        });
+    }
+
+    getChatHistory(chatId: string) {
+        this.callListService.getChatHistory(chatId).subscribe((res: any) => {
+            this.chatHistory = res;
         });
     }
 }

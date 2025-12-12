@@ -9,6 +9,7 @@ import { CallService } from 'src/app/services/call/call.service';
 import { firstValueFrom, forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
+import { StatusService } from 'src/app/services/status/status.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 @Component({
     selector: 'app-contact-import-management',
@@ -40,6 +41,7 @@ export class ContactImportManagementComponent implements OnInit {
         private userService: UserService,
         private callService: CallService,
         private sweetAlertService: SweetAlertService,
+        public statusService: StatusService,
     ) {}
 
     ngOnInit() {
@@ -392,29 +394,12 @@ export class ContactImportManagementComponent implements OnInit {
     }
 
     getStatusColorAndIcon(id: number) {
-        const colors = ['#FB5F20', '#010966', '#006400'];
-        const icons = [
-            '<i class="fa-solid fa-folder-open"></i>',
-            '<i class="fa-solid fa-hourglass-end"></i>',
-            '<i class="fa-solid fa-folder-closed"></i>',
-        ];
-        return { color: colors[id % colors.length], icon: icons[id % icons.length] } as any;
+        const style = this.statusService.getStatusColorByIndex(id);
+        return { color: style.backgroundColor, icon: `<i class="${style.icon}"></i>` };
     }
 
     getStatusColor(statusName: string): string {
-        if (!statusName) return '#6c757d';
-        const statusIndex = this.statusList.findIndex((s) => s.name === statusName);
-        if (statusIndex >= 0) {
-            return this.getStatusColorAndIcon(statusIndex).color;
-        }
-        // Default colors based on common status names
-        const statusColors: { [key: string]: string } = {
-            open: '#FB5F20',
-            pending: '#010966',
-            closed: '#006400',
-            cancelled: '#6c757d',
-        };
-        return statusColors[statusName] || '#6c757d';
+        return this.statusService.getStatusBgColor(statusName);
     }
 
     getStatusCount(status: string): number {
