@@ -22,15 +22,28 @@
                             </div>
                             <div class="mb-3">
                                 <label for="password" class="form-label"> รหัสผ่าน </label>
-                                <input
-                                    id="password"
-                                    type="password"
-                                    formControlName="password"
-                                    class="form-control w-100"
-                                    name="password"
-                                    placeholder="กรอกรหัสผ่านของคุณ"
-                                />
+                                <div class="position-relative">
+                                    <input
+                                        id="password"
+                                        [type]="showPassword ? 'text' : 'password'"
+                                        formControlName="password"
+                                        class="form-control w-100"
+                                        name="password"
+                                        placeholder="กรอกรหัสผ่านของคุณ"
+                                    />
+                                    <i
+                                        class="fa-solid fa-eye position-absolute top-50 end-0 translate-middle-y me-2"
+                                        (click)="togglePassword()"
+                                        *ngIf="!showPassword"
+                                    ></i>
+                                    <i
+                                        class="fa-solid fa-eye-slash position-absolute top-50 end-0 translate-middle-y me-2"
+                                        (click)="togglePassword()"
+                                        *ngIf="showPassword"
+                                    ></i>
+                                </div>
                             </div>
+
                             <button type="submit" class="border-0 rounded p-2 w-100 btn-primary-color text-white">เข้าสู่ระบบ</button>
                         </div>
                     </div>
