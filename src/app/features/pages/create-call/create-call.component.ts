@@ -131,6 +131,12 @@ export class CreateCallComponent {
     statusList: any[] = [];
     selectedCaseTopicObject: any = null;
 
+    // Autocomplete controls
+    topicControl = new FormControl('');
+    subjectControl = new FormControl('');
+    filteredTopics: any[] = [];
+    filteredSubjects: any[] = [];
+
     // pageEln: number | undefined = 0;
 
     // selectedActivityTopicId: string[] = [];
@@ -232,6 +238,7 @@ export class CreateCallComponent {
 
         this.callServive.getCaseTopic().subscribe((casetopics: any) => {
             this.casetopics = casetopics;
+            this.filteredTopics = casetopics;
         });
 
         this.callServive.getAllCaseSubjects().subscribe((casesubjects: any) => {
@@ -515,6 +522,43 @@ export class CreateCallComponent {
         } else {
             this.selectedCaseTopicObject = null;
         }
+    }
+
+    // Autocomplete filter functions
+    filterTopics() {
+        const filterValue = (this.topicControl.value || '').toString().toLowerCase();
+        this.filteredTopics = this.casetopics.filter((topic) => 
+            topic.name.toLowerCase().includes(filterValue) || topic.code.toLowerCase().includes(filterValue)
+        );
+    }
+
+    filterSubjects() {
+        const filterValue = (this.subjectControl.value || '').toString().toLowerCase();
+        this.filteredSubjects = this.casesubjects.filter(
+            (subject) => subject.caseTopicId == this.selectedCaseTopics && subject.name.toLowerCase().includes(filterValue),
+        );
+    }
+
+    displayTopicFn(topic: any): string {
+        return topic && topic.name ? `${topic.code} - ${topic.name}` : '';
+    }
+
+    displaySubjectFn(subject: any): string {
+        return subject && subject.name ? subject.name : '';
+    }
+
+    onTopicSelected(event: any) {
+        const selectedTopic = event.option.value;
+        this.selectedCaseTopics = selectedTopic.caseTopicId;
+        this.selectedCaseTopicObject = selectedTopic;
+        this.selectedCasesubject = null;
+        this.subjectControl.setValue('');
+        this.filterSubjects();
+    }
+
+    onSubjectSelected(event: any) {
+        const selectedSubject = event.option.value;
+        this.selectedCasesubject = selectedSubject.caseSubjectId;
     }
 
     getStatusList() {

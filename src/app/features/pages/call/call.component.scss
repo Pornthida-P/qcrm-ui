@@ -631,3 +631,76 @@ label:has(+ input:required):after {
         }
     }
 }
+
+// Mat Autocomplete Styles
+::ng-deep .mat-mdc-form-field {
+    width: 100%;
+
+    .mat-mdc-text-field-wrapper {
+        background-color: #fff;
+        padding: 0 12px;
+    }
+
+    .mat-mdc-form-field-flex {
+        height: 42px;
+        align-items: center;
+    }
+
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+        border-color: #ced4da;
+    }
+
+    &.mat-focused {
+        .mdc-notched-outline__leading,
+        .mdc-notched-outline__notch,
+        .mdc-notched-outline__trailing {
+            border-color: var(--color-primary, #0d6efd);
+        }
+    }
+
+    .mat-mdc-form-field-infix {
+        padding-top: 0;
+        padding-bottom: 0;
+        min-height: 42px;
+        display: flex;
+        align-items: center;
+    }
+
+    input.mat-mdc-input-element {
+        font-size: 14px;
+        margin-top: 0;
+    }
+
+    // Label styles - center vertically when not floating
+    .mat-mdc-floating-label {
+        font-size: 14px;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+    }
+
+    // When floating (focused or has value)
+    &.mat-mdc-form-field-should-float .mat-mdc-floating-label {
+        top: 0 !important;
+        transform: translateY(-50%) scale(0.75) !important;
+    }
+
+    .mdc-floating-label--float-above {
+        transform: translateY(-130%) scale(0.75) !important;
+    }
+
+    // Remove subscript space
+    .mat-mdc-form-field-subscript-wrapper {
+        display: none;
+    }
+}
+
+::ng-deep .mat-mdc-autocomplete-panel {
+    max-height: 250px;
+
+    .mat-mdc-option {
+        font-size: 14px;
+        min-height: 40px;
+    }
+}

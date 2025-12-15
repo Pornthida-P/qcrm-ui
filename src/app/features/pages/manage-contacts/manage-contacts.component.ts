@@ -191,6 +191,12 @@ export class ManageContactsComponent implements OnInit {
     callStatusId: any;
     history: any;
 
+    // Autocomplete controls
+    topicControl = new FormControl('');
+    subjectControl = new FormControl('');
+    filteredTopics: any[] = [];
+    filteredSubjects: any[] = [];
+
     constructor(
         private _location: Location,
         private contactsService: ContactsService,
@@ -646,6 +652,7 @@ export class ManageContactsComponent implements OnInit {
 
         this.callServive.getCaseTopic().subscribe((casetopics: any) => {
             this.casetopics = casetopics;
+            this.filteredTopics = casetopics;
         });
 
         this.callServive.getAllCaseSubjects().subscribe((casesubjects: any) => {
@@ -809,17 +816,28 @@ export class ManageContactsComponent implements OnInit {
                         this.selectedCaseTopics = call.caseTopicId;
                         // หา caseTopic object
                         this.selectedCaseTopicObject = this.casetopics.find((topic: any) => topic.caseTopicId == call.caseTopicId);
+                        // Set topicControl value for autocomplete
+                        if (this.selectedCaseTopicObject) {
+                            this.topicControl.setValue(this.selectedCaseTopicObject);
+                        }
                     } else {
                         this.selectedCaseTopics = null;
                         this.selectedCaseTopicObject = null;
+                        this.topicControl.setValue('');
                     }
 
                     if (call.caseSubjectId) {
                         setTimeout(() => {
                             this.selectedCasesubject = call.caseSubjectId;
+                            // Set subjectControl value for autocomplete
+                            const selectedSubject = this.casesubjects.find((subject: any) => subject.caseSubjectId == call.caseSubjectId);
+                            if (selectedSubject) {
+                                this.subjectControl.setValue(selectedSubject);
+                            }
                         }, 0);
                     } else {
                         this.selectedCasesubject = null;
+                        this.subjectControl.setValue('');
                     }
                     this.getComment(caseId);
                     this.getCaseTopicId(call.caseTopicId);
@@ -1180,6 +1198,41 @@ export class ManageContactsComponent implements OnInit {
         } else {
             this.selectedCaseTopicObject = null;
         }
+    }
+
+    // Autocomplete filter functions
+    filterTopics() {
+        const filterValue = (this.topicControl.value || '').toString().toLowerCase();
+        this.filteredTopics = this.casetopics.filter((topic) => topic.name.toLowerCase().includes(filterValue));
+    }
+
+    filterSubjects() {
+        const filterValue = (this.subjectControl.value || '').toString().toLowerCase();
+        this.filteredSubjects = this.casesubjects.filter(
+            (subject) => subject.caseTopicId == this.selectedCaseTopics && subject.name.toLowerCase().includes(filterValue),
+        );
+    }
+
+    displayTopicFn(topic: any): string {
+        return topic && topic.name ? topic.name : '';
+    }
+
+    displaySubjectFn(subject: any): string {
+        return subject && subject.name ? subject.name : '';
+    }
+
+    onTopicSelected(event: any) {
+        const selectedTopic = event.option.value;
+        this.selectedCaseTopics = selectedTopic.caseTopicId;
+        this.selectedCaseTopicObject = selectedTopic;
+        this.selectedCasesubject = null;
+        this.subjectControl.setValue('');
+        this.filterSubjects();
+    }
+
+    onSubjectSelected(event: any) {
+        const selectedSubject = event.option.value;
+        this.selectedCasesubject = selectedSubject.caseSubjectId;
     }
 
     getChatHistory(chatId: string) {
