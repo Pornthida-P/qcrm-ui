@@ -273,40 +273,53 @@
                                 <div class="row g-3">
                                     <div class="col-12 col-sm-6">
                                         <label for="inputTopic" class="form-label">หัวข้อที่ติดต่อ<span class="color-red">*</span></label>
-                                        <select
-                                            id="inputTopic"
-                                            class="form-select"
-                                            [name]="'selectedCaseTopics'"
-                                            [(ngModel)]="selectedCaseTopics"
-                                            (change)="onCaseTopicChange($event)"
-                                            [disabled]="isTopicDisabled"
-                                        >
-                                            <option disabled value="">กรุณาเลือกข้อมูล</option>
-                                            <option *ngFor="let casetopic of casetopics" [value]="casetopic.caseTopicId">
-                                                {{ casetopic.name }}
-                                            </option>
-                                        </select>
+
+                                        <mat-form-field class="w-100" appearance="outline">
+                                            <input
+                                                type="text"
+                                                matInput
+                                                [formControl]="topicControl"
+                                                [matAutocomplete]="autoTopic"
+                                                (input)="filterTopics()"
+                                                (focus)="filterTopics()"
+                                                placeholder="ค้นหาหัวข้อ..."
+                                            />
+                                            <mat-autocomplete
+                                                #autoTopic="matAutocomplete"
+                                                [displayWith]="displayTopicFn"
+                                                (optionSelected)="onTopicSelected($event)"
+                                            >
+                                                <mat-option *ngFor="let topic of filteredTopics" [value]="topic">
+                                                    {{ topic.name }}
+                                                </mat-option>
+                                            </mat-autocomplete>
+                                        </mat-form-field>
                                     </div>
 
                                     <div class="col-12 col-sm-6">
                                         <label for="inputCaseSubject" class="form-label">เรื่องที่ติดต่อ</label>
-                                        <select
-                                            id="inputCaseSubject"
-                                            class="form-select"
-                                            name="selectedCasesubject"
-                                            [(ngModel)]="selectedCasesubject"
-                                            [disabled]="isSubjectDisabled"
-                                        >
-                                            <option disabled value="">กรุณาเลือกข้อมูล</option>
-                                            <ng-container *ngFor="let casesubject of casesubjects">
-                                                <option
-                                                    *ngIf="selectedCaseTopics && selectedCaseTopics == casesubject.caseTopicId"
-                                                    [value]="casesubject.caseSubjectId"
-                                                >
-                                                    {{ casesubject.name }}
-                                                </option>
-                                            </ng-container>
-                                        </select>
+
+                                        <mat-form-field class="w-100" appearance="outline">
+                                            <input
+                                                type="text"
+                                                matInput
+                                                [formControl]="subjectControl"
+                                                [matAutocomplete]="autoSubject"
+                                                (input)="filterSubjects()"
+                                                (focus)="filterSubjects()"
+                                                placeholder="ค้นหาเรื่อง..."
+                                                [disabled]="!selectedCaseTopics"
+                                            />
+                                            <mat-autocomplete
+                                                #autoSubject="matAutocomplete"
+                                                [displayWith]="displaySubjectFn"
+                                                (optionSelected)="onSubjectSelected($event)"
+                                            >
+                                                <mat-option *ngFor="let subject of filteredSubjects" [value]="subject">
+                                                    {{ subject.name }}
+                                                </mat-option>
+                                            </mat-autocomplete>
+                                        </mat-form-field>
                                     </div>
                                 </div>
                             </div>

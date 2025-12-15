@@ -9,6 +9,7 @@ import { SearchPipe } from './call.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { MAT_DATE_LOCALE } from '@angular/material/core'
 import { NgSelectModule } from '@ng-select/ng-select';
@@ -30,6 +31,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
       MatDatepickerModule,
       MatInputModule,
       MatFormFieldModule,
+      MatAutocompleteModule,
       NgbTimepickerModule,
       NgSelectModule
 

@@ -8,6 +8,7 @@ import { JsonPipe } from '@angular/common';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -29,6 +30,7 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
     MatDatepickerModule,
     MatInputModule,
     MatFormFieldModule,
+    MatAutocompleteModule,
     NgbTimepickerModule,
     ReactiveFormsModule,
     NgbTypeaheadModule,
