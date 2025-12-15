@@ -19,6 +19,7 @@ export class LoginComponent {
 
     loginForm: FormGroup;
     userData?: User | null;
+    showPassword: boolean = false;
 
     constructor(
         private fb: FormBuilder,
@@ -82,9 +83,9 @@ export class LoginComponent {
                                 userId: res.user.userId,
                                 fullname: res.user.username,
                                 email: res.user.email,
-                                roles: res.user.role.roleTitle
+                                roles: res.user.role.roleTitle,
                             })}`,
-                            'Success'
+                            'Success',
                         );
                     }),
                     catchError((error) => {
@@ -95,12 +96,16 @@ export class LoginComponent {
                             '',
                             'User Login',
                             `User ${username} login failed - ${error.error?.message || error}`,
-                            'Failed'
+                            'Failed',
                         );
                         return throwError(error);
                     }),
                 )
                 .subscribe(() => {});
         }
+    }
+
+    togglePassword() {
+        this.showPassword = !this.showPassword;
     }
 }

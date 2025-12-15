@@ -19,6 +19,9 @@ export class MenagementPasswordComponent implements OnInit {
     newPassword: string = '';
     verifyPassword: string = '';
     isAction: boolean = false;
+    showOldPassword: boolean = false;
+    showNewPassword: boolean = false;
+    showVerifyPassword: boolean = false;
 
     passwordForm: FormGroup = new FormGroup({});
 
@@ -83,5 +86,17 @@ export class MenagementPasswordComponent implements OnInit {
                 this.auditLogService.log('', 'Account', '', 'Change Password', ``, `Success`);
                 this.router.navigate(['/logout']);
             });
+    }
+
+    toggleOldPassword() {
+        this.showOldPassword = !this.showOldPassword;
+    }
+
+    toggleNewPassword() {
+        this.showNewPassword = !this.showNewPassword;
+    }
+
+    toggleVerifyPassword() {
+        this.showVerifyPassword = !this.showVerifyPassword;
     }
 }
