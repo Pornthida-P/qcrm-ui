@@ -176,6 +176,9 @@ export class CallComponent implements OnInit {
     callStatus: any[] = [];
     selectedCallStatusId: number | null = null;
     callStatusId: any;
+    history: any[] = [];
+
+    originalStatus: any;
 
     constructor(
         private callService: CallService,
@@ -590,6 +593,7 @@ export class CallComponent implements OnInit {
                     this.callId = call.caseId;
                     this.description = call.description;
                     this.startTime = call.requestDateTime;
+                    this.originalStatus = call.statusId;
                     const date = new Date(call.requestDateTime);
                     this.timepickStart = {
                         hour: date.getHours(),
@@ -625,6 +629,7 @@ export class CallComponent implements OnInit {
 
                     this.getComment(call.caseId);
                     this.getChatHistory(call.chatId);
+                    this.getHistory(call.caseId);
                     this.selectedCallStatusId = call.callStatus;
                     this.getCallStatusId(call.callStatusId?.toString() || '');
                 },
@@ -799,6 +804,13 @@ export class CallComponent implements OnInit {
                     operationType: selectedCallTypeId,
                     status: this.selectedStatus,
                     comment: this.comment,
+                    callStatus: this.selectedCallStatusId,
+                    statusChange: {
+                        from: this.statusList.find((s: any) => s.id === this.originalStatus)?.status || this.originalStatus,
+                        to: this.statusList.find((s: any) => s.id === this.selectedStatus)?.status || this.selectedStatus,
+                        changedAt: new Date().toISOString(),
+                        changedBy: userData.userId,
+                    },
                 };
                 console.log('Data: ', data);
                 this.callService
@@ -954,5 +966,11 @@ export class CallComponent implements OnInit {
             this.callStatusId = res;
         });
         console.log('callStatusId: ', this.callStatusId);
+    }
+
+    getHistory(caseId: string) {
+        this.callListService.getHistory(caseId).subscribe((res: any) => {
+            this.history = res;
+        });
     }
 }

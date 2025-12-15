@@ -48,4 +48,8 @@ export class CallListService {
     getCallStatusId(callStatusId: string) {
         return this.http.get(`${this.baseUrl}${config.api.path.callList.callStatusId}/${callStatusId}`);
     }
+
+    getHistory(caseId: string) {
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.history}/${caseId}`);
+    }
 }
