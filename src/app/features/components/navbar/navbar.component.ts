@@ -1,11 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import {
-    faBars,
-    faMagnifyingGlass,
-    faArrowRightFromBracket,
-    faGear,
-    faGlobe,
-} from '@fortawesome/free-solid-svg-icons';
+import { faBars, faMagnifyingGlass, faArrowRightFromBracket, faGear, faGlobe } from '@fortawesome/free-solid-svg-icons';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs';
 import { UserService } from 'src/app/services/user/user.service';
@@ -27,7 +21,6 @@ export class NavbarComponent implements OnInit {
     value: string | undefined;
     hideSidebar: boolean = false;
     userData: User | null = null;
-    isAction: boolean = false;
     currentLanguage: string = '';
     languages: any[] = [];
 
@@ -95,8 +88,11 @@ export class NavbarComponent implements OnInit {
 
     getDataUser() {
         this.userService.getDataUser().subscribe((res: User | null) => {
-            this.userData = res;
-            this.isAction = res?.role.roleTitle.toLowerCase() === 'admin' ? true : false;
+            if (res) {
+                this.userData = res;
+            } else {
+                this.router.navigate(['logout']);
+            }
         });
     }
 
