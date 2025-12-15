@@ -233,21 +233,23 @@
                             </div>
                         </div>
                     </div>
-                    <div class="flex flex-column" *ngIf="AddCallShowing">
-                        <div class="row g-3 align-items-stretch">
+                    <div class="flex flex-column offcanvas-content-wrapper" *ngIf="AddCallShowing">
+                        <div class="row g-0 align-items-stretch h-100">
                             <div
+                                class="edit-contact-column"
                                 [ngClass]="{
                                     'col-12 col-lg-6': !attachmentShowing && (selectedCaseTopicObject?.script || chatHistory.length),
                                     'col-12': attachmentShowing || (!selectedCaseTopicObject?.script && !chatHistory.length)
                                 }"
                             >
                                 <div
-                                    class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3 gap-2"
+                                    class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3 gap-2 edit-contact-header"
                                 >
                                     <h4 class="mb-0" *ngIf="attachmentShowing == true">เพิ่มข้อมูลการติดต่อ</h4>
                                     <h4 class="mb-0" *ngIf="attachmentShowing == false">แก้ไขข้อมูลการติดต่อ</h4>
                                     <button class="btn btn-primary" type="button" (click)="submitCall()">บันทึก</button>
                                 </div>
+                                <div class="edit-contact-form-scroll">
                                 <form class="row g-3 mg-3">
                                     <div class="col-12">
                                         <div class="row g-3">
@@ -462,6 +464,20 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-12" *ngIf="history && history.length > 0">
+                                        <label class="form-label">ประวัติการเปลี่ยนสถานะ</label>
+                                        <div class="border rounded p-2 bg-light comment-history-container">
+                                            <div class="card mb-2" *ngFor="let item of history">
+                                                <div class="card-body py-2 px-3">
+                                                    <p class="mb-1 small">{{ item.status }}</p>
+                                                    <small class="text-muted">
+                                                        โดย {{ item.username || item.createdById }} |
+                                                        {{ item.createdAt | date : 'dd/MM/yyyy HH:mm' }}
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <!-- <div class="col-12" *ngIf="selectedCaseTopicObject && selectedCaseTopicObject.script">
                                         <label class="form-label">Script</label>
                                         <div class="border rounded p-2 bg-light" [innerHTML]="selectedCaseTopicObject.script"></div>
@@ -481,6 +497,7 @@
                                         </div>
                                     </div>
                                 </form>
+                                </div>
                             </div>
 
                             <!-- Script Only -->

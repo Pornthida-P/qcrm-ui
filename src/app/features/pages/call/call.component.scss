@@ -545,3 +545,89 @@ label:has(+ input:required):after {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     line-height: 1.2;
 }
+
+// Offcanvas body - disable default scroll
+::ng-deep .offcanvas-body {
+    overflow: hidden !important;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 1rem;
+}
+
+// Offcanvas content wrapper - full height layout
+.offcanvas-content-wrapper {
+    flex: 1;
+    height: 0;
+    overflow: hidden;
+    width: 100%;
+    max-width: 100%;
+
+    > .row {
+        height: 100%;
+        overflow: hidden;
+        margin: 0;
+        flex-wrap: nowrap;
+        gap: 16px;
+    }
+}
+
+// Edit contact column - scrollable form section
+.edit-contact-column {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    min-width: 0;
+    flex: 1;
+
+    .edit-contact-header {
+        flex-shrink: 0;
+    }
+
+    .edit-contact-form-scroll {
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding-right: 8px;
+
+        &::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+    }
+}
+
+// Script column - stays fixed while form scrolls
+.script-chat-column {
+    position: sticky !important;
+    top: 0;
+    align-self: flex-start;
+    height: 100%;
+    max-height: calc(100vh - 120px);
+    overflow: hidden;
+    min-width: 0;
+    flex-shrink: 1;
+
+    .card.h-100 {
+        max-height: 100%;
+        max-width: 100%;
+        overflow: hidden;
+
+        .card-body {
+            overflow-y: auto;
+            overflow-x: hidden;
+            max-height: calc(100vh - 200px);
+            word-wrap: break-word;
+            word-break: break-word;
+        }
+    }
+}
