@@ -189,6 +189,7 @@ export class ManageContactsComponent implements OnInit {
     callStatus: any;
     selectedCallStatusId: number | null = null;
     callStatusId: any;
+    history: any;
 
     constructor(
         private _location: Location,
@@ -824,6 +825,7 @@ export class ManageContactsComponent implements OnInit {
                     this.getCaseTopicId(call.caseTopicId);
                     this.getChatHistory(call.chatId);
                     this.getCallStatusId(this.selectedCallStatusId?.toString() || '');
+                    this.getHistory(caseId);
                 },
                 (error) => {
                     console.error('Error fetching case:', error);
@@ -1190,13 +1192,19 @@ export class ManageContactsComponent implements OnInit {
         this.callListService.getCallStatus().subscribe((res: any) => {
             this.callStatus = res;
         });
-        console.log('callStatus: ', this.callStatus);
+        // console.log('callStatus: ', this.callStatus);
     }
 
     getCallStatusId(callStatusId: string) {
         this.callListService.getCallStatusId(callStatusId).subscribe((res: any) => {
             this.callStatusId = res;
         });
-        console.log('callStatusId: ', this.callStatusId);
+        // console.log('callStatusId: ', this.callStatusId);
+    }
+
+    getHistory(caseId: string) {
+        this.callListService.getHistory(caseId).subscribe((res: any) => {
+            this.history = res;
+        });
     }
 }

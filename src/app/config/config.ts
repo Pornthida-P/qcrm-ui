@@ -46,6 +46,7 @@ export const config = {
                 caseTopicId: '/topic-id',
                 callStatus: '/call-status',
                 callStatusId: '/call-status-id',
+                history: '/history',
             },
             chatHistory: '/chathistory/getchat',
         },
