@@ -644,6 +644,10 @@ export class ManageContactsComponent implements OnInit {
     onChannelChange(event: any) {
         this.currentChannel = event;
         console.log('currentChannel:', this.currentChannel);
+
+        if (event === '1' || event === '2') {
+            this.selectedCallTypeId = this.outbound;
+        }
     }
 
     showAddCall() {
@@ -1034,7 +1038,7 @@ export class ManageContactsComponent implements OnInit {
                                 JSON.stringify(data),
                                 `Success`,
                             );
-                            window.location.reload();
+                            window.location.href = `${environment.subPath}/contacts/edit?key=${this.contactId}`;
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
@@ -1115,8 +1119,10 @@ export class ManageContactsComponent implements OnInit {
 
     sendMessage(): void {
         console.log('send');
-        const cleanedPhoneCall = this.phoneCall.trim().replace(/"/g, '');
-        const messageToSend = `dial|7${cleanedPhoneCall}`;
+        const cleanedPhoneCall = this.selectedContactNumber?.contactNumber?.trim().replace(/"/g, '') || '';
+        const messageToSend = `${config.urlWebSocket.dialPrefix}${cleanedPhoneCall}`;
+
+        console.log('messageToSend: ', messageToSend);
 
         if (this.socket$) {
             if (this.socket$.closed) {
