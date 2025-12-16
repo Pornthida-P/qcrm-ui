@@ -527,7 +527,7 @@ export class CreateCallComponent {
     // Autocomplete filter functions
     filterTopics() {
         const filterValue = (this.topicControl.value || '').toString().toLowerCase();
-        this.filteredTopics = this.casetopics.filter((topic) => 
+        this.filteredTopics = this.casetopics.filter((topic) =>
             topic.name.toLowerCase().includes(filterValue) || topic.code.toLowerCase().includes(filterValue)
         );
     }

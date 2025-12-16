@@ -66,5 +66,6 @@ export const config = {
     roleCanAccessCUDForm: ['admin', 'system', 'super admin'],
     urlWebSocket: {
         urlQAgent: `ws://127.0.0.1:8748/QAgent`,
+        dialPrefix: 'dial|7',
     },
 };

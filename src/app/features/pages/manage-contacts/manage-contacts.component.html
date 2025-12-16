@@ -21,7 +21,7 @@
             <form class="row g-3 mg-3">
                 <p class="mb-3 fs-5">ข้อมูลทั่วไป</p>
                 <span *ngIf="contactId === ''" class="text-danger"> ผู้ติดต่อใหม่ ({{ chatId }}) </span>
-                <div class="contact-number" *ngIf="TableShowing">
+                <!-- <div class="contact-number" *ngIf="TableShowing">
                     <div class="col-6 me-3">
                         <label for="inputContactNumber" class="form-label">ช่องทางติดต่อ</label>
                         <select id="inputContactNumber" class="form-select" name="selectedContactNumber" [(ngModel)]="phoneCall">
@@ -32,8 +32,8 @@
                         </select>
                     </div>
                     <button type="button" class="btn btn-success me-3" (click)="sendMessage()" [disabled]="!phoneCall">โทรออก</button>
-                    <!-- <button type="button" class="btn btn-danger" [disabled]="!connected" (click)="disconnect()">วางสาย</button> -->
-                </div>
+                    <button type="button" class="btn btn-danger" [disabled]="!connected" (click)="disconnect()">วางสาย</button>
+                </div> -->
                 <!-- <form class="mb-3 p-2">
                     <label for="inputFormName" class="form-label">เลขประจำตัว/เลขนิติบุคคล</label>
                     <input
@@ -270,6 +270,22 @@
                     <div class="edit-contact-form-scroll">
                         <form class="row g-3 mg-3">
                             <div class="col-12">
+                                <div class="contact-number mb-4" *ngIf="TableShowing && selectedContactNumber">
+                                    <div class="col-6 me-3">
+                                        <label for="inputContactNumber" class="form-label">ช่องทางติดต่อ</label>
+                                        <input
+                                            type="text"
+                                            id="inputContactNumber"
+                                            class="form-control"
+                                            [value]="selectedContactNumber.contactNumber"
+                                            readonly
+                                        />
+                                    </div>
+                                    <button type="button" class="btn btn-success me-3" (click)="sendMessage()" [disabled]="!selectedContactNumber">
+                                        โทรออก
+                                    </button>
+                                    <!-- <button type="button" class="btn btn-danger" [disabled]="!connected" (click)="disconnect()">วางสาย</button> -->
+                                </div>
                                 <div class="row g-3">
                                     <div class="col-12 col-sm-6">
                                         <label for="inputTopic" class="form-label">หัวข้อที่ติดต่อ<span class="color-red">*</span></label>
@@ -350,17 +366,18 @@
                                     <option disabled value="">กรุณาเลือกข้อมูล</option>
                                     <option *ngFor="let channel of channels" [value]="channel.channelId">{{ channel.name }}</option>
                                 </select>
-                                <div
-                                    class="w-100 mt-3"
-                                    *ngIf="selectedChannels === '1' || selectedChannels === '2' || selectedChannels === '3'"
-                                >
-                                    <label
-                                        *ngIf="selectedChannels === '1' || selectedChannels === '2'"
-                                        for="inputCallType"
-                                        class="form-label"
-                                        >ประเภทสาย</label
-                                    >
-                                    <label *ngIf="selectedChannels === '3'" for="inputCallType" class="form-label">ประเภทอีเมล</label>
+                                <div class="w-100 mt-3" *ngIf="selectedChannels === '1' || selectedChannels === '2'">
+                                    <label for="inputCallType" class="form-label">ประเภทสาย</label>
+                                    <input
+                                        type="text"
+                                        id="inputCallType"
+                                        class="form-control"
+                                        [value]="outbound"
+                                        readonly
+                                    />
+                                </div>
+                                <div class="w-100 mt-3" *ngIf="selectedChannels === '3'">
+                                    <label for="inputCallType" class="form-label">ประเภทอีเมล</label>
                                     <select
                                         id="inputCallType"
                                         class="form-select"
@@ -373,26 +390,15 @@
                                     </select>
                                 </div>
 
-                                <div class="w-100 mt-3" *ngIf="selectedChannels === '1' || selectedChannels === '2'">
+                                <div class="w-100 mt-3" *ngIf="(selectedChannels === '1' || selectedChannels === '2') && selectedContactNumber">
                                     <label for="inputContactNumber" class="form-label">เบอร์ติดต่อ<span class="color-red">*</span></label>
-                                    <select
+                                    <input
+                                        type="text"
                                         id="inputContactNumber"
-                                        class="form-select"
-                                        name="selectedContactNumber"
-                                        [(ngModel)]="selectedContactNumber"
-                                        [disabled]="isContactNumberDisabled"
-                                    >
-                                        <option disabled value="">กรุณาเลือกเบอร์ติดต่อ</option>
-                                        <option
-                                            *ngFor="let contactNumbers of contactNumber"
-                                            [ngValue]="{
-                                                contactNumber: contactNumbers.contactNumber,
-                                                contactNumberId: contactNumbers.contactNumberId
-                                            }"
-                                        >
-                                            {{ contactNumbers.contactNumber }}
-                                        </option>
-                                    </select>
+                                        class="form-control"
+                                        [value]="selectedContactNumber.contactNumber"
+                                        readonly
+                                    />
                                 </div>
                             </div>
 
