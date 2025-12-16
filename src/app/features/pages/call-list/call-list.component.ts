@@ -80,7 +80,18 @@ export class CallListComponent implements OnInit {
     getCaseListByUserId(userId: string) {
         this.callListService.getCaseListByUserId(userId).subscribe((res: any) => {
             console.log(res);
-            this.caseListByUserId = res;
+            this.caseListByUserId = res.sort((a: any, b: any) => {
+              const aHasCallStatus = a.callStatusId !== null && a.callStatusId !== undefined;
+              const bHasCallStatus = b.callStatusId !== null && b.callStatusId !== undefined;
+
+              if (aHasCallStatus === bHasCallStatus) {
+                  const aTime = a.callStatusChangedAt || a.requestDateTime;
+                  const bTime = b.callStatusChangedAt || b.requestDateTime;
+                  return new Date(aTime).getTime() - new Date(bTime).getTime();
+                }
+
+              return aHasCallStatus ? 1 : -1;
+          });
             this.calculatePages();
         });
         console.log(this.caseListByUserId);

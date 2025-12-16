@@ -15,9 +15,10 @@
                             <th scope="col">ประเภท</th>
                             <th scope="col">เรื่องที่ติดต่อ</th>
                             <th scope="col">หัวข้อ</th>
-                            <th scope="col">สคริปต์</th>
+                            <!-- <th scope="col">สคริปต์</th> -->
                             <th scope="col">รายละเอียด</th>
                             <th scope="col">สถานะ</th>
+                            <th scope="col">สถานะการโทร</th>
                             <th scope="col">ผู้ที่รับผิดชอบ</th>
                             <th scope="col">การดำเนินการ</th>
                         </tr>
@@ -31,9 +32,10 @@
                                 <td>{{ caseList.channel || '-' }}</td>
                                 <td>{{ caseList.subject || '-' }}</td>
                                 <td>{{ caseList.topic || '-' }}</td>
-                                <td>{{ caseList.script || '-' }}</td>
+                                <!-- <td>{{ caseList.script || '-' }}</td> -->
                                 <td>{{ caseList.description || '-' }}</td>
                                 <td>{{ caseList.status || '-' }}</td>
+                                <td>{{ caseList.callStatus || '-' }}</td>
                                 <td>{{ caseList.assignUser || '-' }}</td>
                                 <td class="text-center">
                                     <div class="d-flex flex-row flex-nowrap">

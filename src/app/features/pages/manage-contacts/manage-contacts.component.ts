@@ -188,6 +188,7 @@ export class ManageContactsComponent implements OnInit {
     activeScriptTab: 'script' | 'chat' = 'script';
     callStatus: any;
     selectedCallStatusId: number | null = null;
+    originalCallStatusId: number | null = null;
     callStatusId: any;
     history: any;
 
@@ -797,6 +798,7 @@ export class ManageContactsComponent implements OnInit {
                     this.selectedStatus = call.statusId;
                     this.originalStatus = call.statusId;
                     this.selectedCallStatusId = call.callStatus;
+                    this.originalCallStatusId = call.callStatus;
                     this.startTime = call.requestDateTime;
                     const date = new Date(call.requestDateTime);
                     this.timepickStart = {
@@ -1017,6 +1019,9 @@ export class ManageContactsComponent implements OnInit {
                     status: this.selectedStatus,
                     comment: this.comment,
                     callStatus: this.selectedCallStatusId,
+                    statusChangedAt: this.selectedCallStatusId !== this.originalCallStatusId
+                        ? new Date().toISOString()
+                        : null,
                     statusChange: {
                         from: this.statusList.find((s: any) => s.id === this.originalStatus)?.status || this.originalStatus,
                         to: this.statusList.find((s: any) => s.id === this.selectedStatus)?.status || this.selectedStatus,
