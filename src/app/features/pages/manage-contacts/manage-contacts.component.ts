@@ -1069,7 +1069,7 @@ export class ManageContactsComponent implements OnInit {
 
     connect(): void {
         console.log('connect');
-        const url = config.urlWebSocket.urlQAgent;
+        const url = environment.urlWebSocket.urlQAgent;
         this.socket$ = new WebSocketSubject({
             url: url,
             serializer: (value) => {
@@ -1127,7 +1127,7 @@ export class ManageContactsComponent implements OnInit {
     sendMessage(): void {
         console.log('send');
         const cleanedPhoneCall = this.selectedContactNumber?.contactNumber?.trim().replace(/"/g, '') || '';
-        const messageToSend = `${config.urlWebSocket.dialPrefix}${cleanedPhoneCall}`;
+        const messageToSend = `${environment.urlWebSocket.dialPrefix}${cleanedPhoneCall}`;
 
         console.log('messageToSend: ', messageToSend);
 
