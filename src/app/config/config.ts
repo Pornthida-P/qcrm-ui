@@ -68,4 +68,8 @@ export const config = {
         urlQAgent: `ws://127.0.0.1:8748/QAgent`,
         dialPrefix: 'dial|7',
     },
+    operationType: {
+        inbound: 'Inbound',
+        outbound: 'Outbound',
+    },
 };

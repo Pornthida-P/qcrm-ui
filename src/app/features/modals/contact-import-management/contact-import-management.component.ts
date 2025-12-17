@@ -11,6 +11,7 @@ import { catchError } from 'rxjs/operators';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { StatusService } from 'src/app/services/status/status.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { config } from 'src/app/config/config';
 @Component({
     selector: 'app-contact-import-management',
     standalone: false,
@@ -32,6 +33,7 @@ export class ContactImportManagementComponent implements OnInit {
     assignAt: string = '';
     status: string = '';
     statusList: any[] = [];
+    outbound: string = config.operationType.outbound;
 
     constructor(
         private contactService: ContactsService,
@@ -509,7 +511,7 @@ export class ContactImportManagementComponent implements OnInit {
                     caseTopicId: caseTopic && caseTopic.length > 0 ? caseTopic[0].caseTopicId : null,
                     caseTopicCode: contactObj['caseTopicCode'] || contact['caseTopicCode'] || contactObj['caseTopicCode'] || null,
                     caseSubjectId: caseSubject && caseSubject.length > 0 ? caseSubject[0].caseSubjectId : null,
-                    operationType: contactObj['operationType'] || contact['operationType'] || null,
+                    operationType: contactObj['operationType'] || contact['operationType'] || this.outbound,
                     priority: contactObj['priority'] || contact['priority'] || null,
                     status: contactObj['status'] || contact['status'] || 1,
                     solution: contactObj['solution'] || contact['solution'] || null,

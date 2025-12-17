@@ -115,8 +115,8 @@ export class ManageContactsComponent implements OnInit {
     userId: string = '';
 
     selectedCallTypeId: string = '';
-    inbound: string = 'Inbound';
-    outbound: string = 'Outbound';
+    inbound: string = config.operationType.inbound;
+    outbound: string = config.operationType.outbound;
     operationType: any;
     callTypes: any;
     caller_id: string = '';
