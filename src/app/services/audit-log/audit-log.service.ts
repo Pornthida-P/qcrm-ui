@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpBackend, HttpClient, HttpHeaders } from '@angular/common/http';
 import { config } from 'src/app/config/config';
 import { Observable, Subscription, catchError, tap } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
     providedIn: 'root',
@@ -17,7 +18,7 @@ export class AuditLogService {
         const userData = localStorage.getItem('userData');
         if (userData && username == '') username = this.getJson(userData).username;
         if (userData || username != '') {
-            const apiUrl = `${config.strapi.url}${config.strapi.path.auditlog}`;
+            const apiUrl = `${environment.strapi.url}${environment.strapi.path.auditlog}`;
             const body = {
                 data: {
                     user: username,
@@ -31,7 +32,7 @@ export class AuditLogService {
 
             const httpOptions = {
                 headers: new HttpHeaders({
-                    Authorization: `Bearer ${config.strapi.key}`,
+                    Authorization: `Bearer ${environment.strapi.key}`,
                     'Content-Type': 'application/json',
                 }),
             };
