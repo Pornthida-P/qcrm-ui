@@ -91,8 +91,8 @@ export class CallComponent implements OnInit {
 
     fileType: string = config.file.type;
 
-    inbound = 'Inbound';
-    outbound = 'Outbound';
+    inbound = config.operationType.inbound;
+    outbound = config.operationType.outbound;
 
     filterDate!: any[];
 

@@ -15,6 +15,7 @@ import Swal from 'sweetalert2';
 import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
 import { CallListService } from 'src/app/services/call-list/call-list.service';
 import { TranslateService } from '@ngx-translate/core';
+import { config } from 'src/app/config/config';
 @Component({
     selector: 'app-create-call',
     templateUrl: './create-call.component.html',
@@ -111,8 +112,8 @@ export class CreateCallComponent {
     callTypes: any;
     selectedCallTypeId: string = '';
 
-    inbound: string = 'Inbound';
-    outbound: string = 'Outbound';
+    inbound: string = config.operationType.inbound;
+    outbound: string = config.operationType.outbound;
     operationType: any;
 
     isCheckboxSelected: { [key: number]: boolean } = {};
@@ -529,8 +530,8 @@ export class CreateCallComponent {
     // Autocomplete filter functions
     filterTopics() {
         const filterValue = (this.topicControl.value || '').toString().toLowerCase();
-        this.filteredTopics = this.casetopics.filter((topic) =>
-            topic.name.toLowerCase().includes(filterValue) || topic.code.toLowerCase().includes(filterValue)
+        this.filteredTopics = this.casetopics.filter(
+            (topic) => topic.name.toLowerCase().includes(filterValue) || topic.code.toLowerCase().includes(filterValue),
         );
     }
 
