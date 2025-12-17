@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import Swal from 'sweetalert2';
 
 @Injectable({
     providedIn: 'root',
 })
 export class SweetAlertService {
-    constructor(private router: Router) {}
+    constructor(private router: Router, private translate: TranslateService) {}
 
     getSwal(icon: any, title: string, text: string, showButton: boolean, route: string, queryParams?: any) {
         Swal.fire({
@@ -46,16 +47,43 @@ export class SweetAlertService {
         contacts.forEach((contact: any) => {
             contactList += `<a href="contacts/edit?key=${contact.contactId}&call_id=${contactNum}">${contact.fullname}</a><br>`;
         });
+        const orYouMean = this.translate.instant('alert.orYouMean');
         return Swal.fire({
             icon: icon,
             title: title,
-            html: `หรือคุณหมายถึง<br>${contactList}`,
+            html: `${orYouMean}<br>${contactList}`,
             showCloseButton: true,
             showCancelButton: false,
             showConfirmButton: false,
-            allowOutsideClick: false, // Optionally prevent closing on outside click
-            allowEscapeKey: false, // Optionally prevent closing on ESC key
+            allowOutsideClick: false,
+            allowEscapeKey: false,
         });
+    }
+
+    // Helper methods for common alerts with auto-translation
+    success(messageKey: string = 'alert.saveSuccess', route: string = '', queryParams?: any) {
+        const title = this.translate.instant('alert.success');
+        const text = this.translate.instant(messageKey);
+        this.getSwal('success', title, text, false, route, queryParams);
+    }
+
+    error(messageKey: string = 'alert.error', route: string = '') {
+        const title = this.translate.instant('alert.error');
+        const text = this.translate.instant(messageKey);
+        this.getSwal('error', title, text, false, route);
+    }
+
+    warning(messageKey: string, route: string = '') {
+        const title = this.translate.instant('alert.warning');
+        const text = this.translate.instant(messageKey);
+        this.getSwal('warning', title, text, false, route);
+    }
+
+    confirmDelete(): Promise<any> {
+        const title = this.translate.instant('alert.deleteConfirm');
+        const confirmText = this.translate.instant('alert.confirm');
+        const cancelText = this.translate.instant('alert.cancel');
+        return this.confirmSwal('warning', title, '', confirmText, cancelText);
     }
 
     handleError(error: any) {
@@ -67,24 +95,24 @@ export class SweetAlertService {
         switch (error.status) {
             case 0:
                 icon = 'error';
-                title = 'Connection Error';
-                errorMessage = 'Failed to connect to the server. Please check your internet connection and try again.';
+                title = this.translate.instant('alert.error');
+                errorMessage = this.translate.instant('alert.connectionError');
                 break;
             case 400:
                 icon = 'error';
-                title = 'Error';
-                errorMessage = error.error.message || 'An error occurred.';
+                title = this.translate.instant('alert.error');
+                errorMessage = error.error.message || this.translate.instant('alert.error');
                 break;
             case 401:
                 icon = 'warning';
-                title = 'Warning Authentication';
-                errorMessage = error.error.message || 'Your session has expired. Please log in again.';
+                title = this.translate.instant('alert.warning');
+                errorMessage = error.error.message || this.translate.instant('alert.sessionExpired');
                 route = 'logout';
                 break;
             default:
                 icon = 'error';
-                title = 'Error Network';
-                errorMessage = 'Failed to request. Please try again later.';
+                title = this.translate.instant('alert.error');
+                errorMessage = this.translate.instant('alert.networkError');
                 route = '';
                 break;
         }

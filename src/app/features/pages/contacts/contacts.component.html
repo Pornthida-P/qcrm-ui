@@ -1,7 +1,7 @@
 <div class="h-100">
     <div class="bg-white rounded shadow w-100 h-100 overflow-auto p-4">
         <div class="p-4 d-flex flex-column justify-content-between flex-md-row flex-lg-row gap-4 align-items-center w-100">
-            <p class="m-0 d-flex fs-5">ฐานข้อมูลผู้ใช้บริการและประวัติผู้ติดต่อ</p>
+            <p class="m-0 d-flex fs-5">{{ 'menu.sidebar.contacts' | translate }}</p>
             <div class="d-flex flex-nowrap flex-grow-1">
                 <div class="input-group">
                     <span class="input-group-text bg-white border border-end-0 color-primary" id="basic-addon1">
@@ -13,13 +13,13 @@
                         class="form-control border border-start-0 shadow-none"
                         name="search"
                         [(ngModel)]="valueSearch"
-                        placeholder="ค้นหา..."
+                        [placeholder]="'common.search' | translate"
                         aria-describedby="basic-addon1"
                         style="width: 70%"
                         (change)="search()"
                     />
                     <button class="form-control btn-primary-color text-white shadow-none align-items-center" (click)="search()">
-                        ค้นหา
+                        {{ 'common.search' | translate }}
                     </button>
                 </div>
             </div>
@@ -29,7 +29,7 @@
                     (click)="contactsManage()"
                 >
                     <i class="fa-solid fa-plus"></i>
-                    สร้างผู้ติดต่อ
+                    {{ 'contact.newContact' | translate }}
                 </button>
                 <div class="d-none d-md-flex d-lg-none p-2 btn-primary-color rounded text-white" (click)="contactsManage()">
                     <i class="fa-solid fa-plus"></i>
@@ -42,16 +42,16 @@
                     <thead>
                         <tr>
                             <th scope="col">
-                                <a (click)="sort('fullname')">ชื่อ </a><i *ngIf="sortId == 'fullname'" class="{{ sortIcon }}"></i>
+                                <a (click)="sort('fullname')">{{ 'contact.firstName' | translate }}</a><i *ngIf="sortId == 'fullname'" class="{{ sortIcon }}"></i>
                             </th>
                             <th scope="col">
-                                <a (click)="sort('organization')">บริษัท</a><i *ngIf="sortId == 'organization'" class="{{ sortIcon }}"></i>
+                                <a (click)="sort('organization')">{{ 'contact.company' | translate }}</a><i *ngIf="sortId == 'organization'" class="{{ sortIcon }}"></i>
                             </th>
                             <th scope="col">
-                                <a (click)="sort('contactNumber')">เบอร์ติดต่อ</a
+                                <a (click)="sort('contactNumber')">{{ 'contact.phoneNumber' | translate }}</a
                                 ><i *ngIf="sortId == 'contactNumber'" class="{{ sortIcon }}"></i>
                             </th>
-                            <th scope="col" *ngIf="checkRole()"><a>จัดการ</a></th>
+                            <th scope="col" *ngIf="checkRole()"><a>{{ 'common.manage' | translate }}</a></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -71,13 +71,13 @@
                                 <td scope="row">{{ contacts.contactNumber }}</td>
                                 <td class="text-center" scope="row" *ngIf="checkRole()">
                                     <div class="d-flex flex-row flex-nowrap">
-                                        <div class="me-3 color-blue-dark" placement="top" ngbTooltip="แก้ไข" (click)="edit(contacts)">
+                                        <div class="me-3 color-blue-dark" placement="top" [ngbTooltip]="'common.edit' | translate" (click)="edit(contacts)">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </div>
                                         <div
                                             class="color-primary"
                                             placement="top"
-                                            ngbTooltip="ลบ"
+                                            [ngbTooltip]="'common.delete' | translate"
                                             (click)="deletecontacts(contacts.contactId)"
                                         >
                                             <i class="fa-solid fa-trash"></i>
@@ -88,7 +88,7 @@
                         </ng-container>
                         <ng-template #noDataTemplate>
                             <tr>
-                                <td colspan="5" class="text-center">ไม่มีข้อมูล</td>
+                                <td colspan="5" class="text-center">{{ 'common.dataNotFound' | translate }}</td>
                             </tr>
                         </ng-template>
                     </tbody>

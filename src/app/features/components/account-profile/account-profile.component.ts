@@ -12,6 +12,7 @@ import { config } from 'src/app/config/config';
 import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
 import { LoaderService } from 'src/app/services/loader/loader.service';
 import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-account-profile',
@@ -43,6 +44,7 @@ export class AccountProfileComponent {
         private sweetalertServices: SweetAlertService,
         private socketIO: SocketIoService,
         private auditLogService: AuditLogService,
+        private translate: TranslateService,
     ) {}
 
     ngOnInit(): void {
@@ -108,12 +110,12 @@ export class AccountProfileComponent {
         const file = event.target.files[0];
         if (file) {
             if (!['image/jpeg', 'image/png', 'image/gif'].includes(file.type)) {
-                this.sweetalertServices.getSwal('warning', 'Warning', 'Please upload an image of type JPG, GIF, or PNG.', false, '');
+                this.sweetalertServices.warning('alert.pleaseUploadValidImage');
                 return;
             }
 
             if (file.size > config.file.maxSize) {
-                this.sweetalertServices.getSwal('warning', 'Warning', 'Please upload an image with a size less than 2 MB.', false, '');
+                this.sweetalertServices.warning('alert.pleaseUploadSmallerImage');
                 return;
             }
 
@@ -133,7 +135,7 @@ export class AccountProfileComponent {
 
     async onClickSave() {
         if (!this.userDataForm.valid) {
-            this.sweetalertServices.getSwal('warning', 'Warning', 'Please fill in all required fields.', false, '');
+            this.sweetalertServices.warning('alert.pleaseFillAllFields');
             return;
         }
 
@@ -143,7 +145,7 @@ export class AccountProfileComponent {
         const role = this.roles.find((role) => role.roleId == roleId);
 
         if (!role) {
-            this.sweetalertServices.getSwal('warning', 'Warning', 'Please select a role.', false, '');
+            this.sweetalertServices.warning('alert.pleaseSelectRole');
             return;
         }
 
@@ -195,7 +197,7 @@ export class AccountProfileComponent {
             .addUser(userData)
             .pipe(
                 tap(() => {
-                    this.sweetalertServices.getSwal('success', 'Success', 'User has been added successfully.', false, '');
+                    this.sweetalertServices.success('alert.userAddedSuccess');
                     this.userDataForm.markAsPristine();
                     this.userDataForm.markAsUntouched();
                     this.auditLogService.log(
@@ -222,7 +224,7 @@ export class AccountProfileComponent {
     updateUser(userData: User) {
         this.userService.updateUser(userData).subscribe(
             () => {
-                this.sweetalertServices.getSwal('success', 'Success', 'User has been updated successfully.', false, '');
+                this.sweetalertServices.success('alert.userUpdatedSuccess');
                 this.userDataForm.markAsPristine();
                 this.userDataForm.markAsUntouched();
                 this.auditLogService.log(

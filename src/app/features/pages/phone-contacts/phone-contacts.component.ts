@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import Swal from 'sweetalert2';
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
+import { TranslateService } from '@ngx-translate/core';
 @Component({
     selector: 'app-phone-contacts',
     templateUrl: './phone-contacts.component.html',
@@ -92,6 +93,7 @@ export class PhoneContactsComponent {
         private route: ActivatedRoute,
         private router: Router,
         private auditLogService: AuditLogService,
+        private translate: TranslateService,
     ) {
         this.contact = { components: [] };
     }
@@ -270,7 +272,7 @@ export class PhoneContactsComponent {
                     tap((res) => {
                         Swal.fire({
                             icon: 'success',
-                            title: 'บันทึกข้อมูลเรียบร้อยแล้ว',
+                            title: this.translate.instant('alert.saveSuccess'),
                             showConfirmButton: false,
                             timer: 3000,
                             timerProgressBar: true,
@@ -319,7 +321,7 @@ export class PhoneContactsComponent {
                 .createContacts(data)
                 .pipe(
                     tap((res) => {
-                        this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '/call/create-call');
+                        this.sweetalertServices.success('alert.saveSuccess', '/call/create-call');
                         this.auditLogService.log(
                             '',
                             'Phone Contact',
@@ -461,7 +463,7 @@ export class PhoneContactsComponent {
                 )
                 .subscribe();
         } else {
-            this.sweetalertServices.getSwal('error', 'organization name cannot be empty.', '', false, '');
+            this.sweetalertServices.error('alert.pleaseEnterOrgName');
         }
     }
 }

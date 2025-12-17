@@ -14,6 +14,7 @@ import { Attachment } from 'src/app/shared/interface/attachment.interface';
 import Swal from 'sweetalert2';
 import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
 import { CallListService } from 'src/app/services/call-list/call-list.service';
+import { TranslateService } from '@ngx-translate/core';
 @Component({
     selector: 'app-create-call',
     templateUrl: './create-call.component.html',
@@ -151,6 +152,7 @@ export class CreateCallComponent {
         private attachmentService: AttachmentService,
         private auditLogService: AuditLogService,
         private callListService: CallListService,
+        private translate: TranslateService,
     ) {
         this.startTime = this.formatDate(new Date());
     }
@@ -329,7 +331,7 @@ export class CreateCallComponent {
                 .createCase(dataForm)
                 .pipe(
                     tap((res) => {
-                        this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '/contacts');
+                        this.sweetalertServices.success('alert.saveSuccess', '/contacts');
                         this.auditLogService.log(
                             '',
                             'Create Call',
@@ -481,7 +483,7 @@ export class CreateCallComponent {
                     tap((response: any) => {
                         Swal.fire({
                             icon: 'success',
-                            title: 'อัพโหลดข้อมูลเรียบร้อยแล้ว',
+                            title: this.translate.instant('alert.uploadSuccess'),
                             showConfirmButton: false,
                             timer: 2000,
                             timerProgressBar: true,

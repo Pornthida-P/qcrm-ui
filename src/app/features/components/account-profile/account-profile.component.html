@@ -87,7 +87,7 @@
                     (click)="onClickSave()"
                     [disabled]="!userDataForm.dirty"
                 >
-                    {{ 'component.account-profile.save' | translate }}
+                    {{ 'common.save' | translate }}
                 </button>
             </div>
         </form>
@@ -115,7 +115,7 @@
             <div *ngIf="mode === 'edit'" class="text-center px-3 py-2">
                 <input hidden type="file" #uploader (change)="onFileChanged($event)" />
                 <button type="button" class="btn btn-primary-color text-white m-1" (click)="uploader.click()">
-                    {{ 'component.account-profile.upload' | translate }}
+                    {{ 'common.upload' | translate }}
                 </button>
                 <p class="fs-8 m-1">{{ 'component.account-profile.UploadDiscrption' | translate }}</p>
             </div>

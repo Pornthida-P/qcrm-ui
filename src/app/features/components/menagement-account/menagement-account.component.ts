@@ -8,7 +8,6 @@ import { User } from 'src/app/shared/interface/user.interface';
     styleUrl: './menagement-account.component.scss',
 })
 export class MenagementAccountComponent implements OnInit {
-    title: string = 'menagement-account';
     userData?: User | null;
     isAction: boolean = false;
     mode: 'add' | 'view' | 'edit' = 'edit';

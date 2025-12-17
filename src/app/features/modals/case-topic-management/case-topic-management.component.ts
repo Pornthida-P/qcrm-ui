@@ -209,13 +209,7 @@ export class CaseTopicManagementComponent implements OnInit {
                                     this.callService.createCaseSubject(subject).subscribe((res: any) => {
                                         if (res.success) {
                                             this.dialogRef.close(res);
-                                            this.sweetalertService.getSwal(
-                                                'success',
-                                                this.translateService.instant('form.createSuccess'),
-                                                '',
-                                                false,
-                                                '',
-                                            );
+                                            this.sweetalertService.success('alert.createSuccess');
                                         } else {
                                             this.sweetalertService.handleError(res);
                                         }

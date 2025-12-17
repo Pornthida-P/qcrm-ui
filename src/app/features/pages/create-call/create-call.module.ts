@@ -14,6 +14,7 @@ import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule } from '@ngx-translate/core';
 @NgModule({
   declarations: [CreateCallComponent],
   imports: [
@@ -36,7 +37,8 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
     NgbTypeaheadModule,
     FontAwesomeModule,
     NgSelectModule,
-    NgbTooltipModule
+    NgbTooltipModule,
+    TranslateModule,
   ]
 })
 export class CreateCallModule { }

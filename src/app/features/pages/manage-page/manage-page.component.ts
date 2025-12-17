@@ -10,9 +10,9 @@ import { faUsers, faFileImport, faFileLines } from '@fortawesome/free-solid-svg-
 })
 export class ManagePageComponent implements OnInit {
     menuList = [
-        { label: 'menuManage.contact-import', route: 'contact-import' },
-        { label: 'menuManage.case-topic', route: 'case-topic' },
-        { label: 'menuManage.user', route: 'menagement-member' },
+        { label: 'menu.manage.contact-import', route: 'contact-import' },
+        { label: 'menu.manage.case-topic', route: 'case-topic' },
+        { label: 'menu.manage.user', route: 'menagement-member' },
     ];
 
     constructor(private router: Router) {}

@@ -12,10 +12,6 @@ import { TableListModule } from 'src/app/features/components/table-list/table-li
 import { MatDialogModule } from '@angular/material/dialog';
 import { ContactImportManagementModule } from 'src/app/features/modals/contact-import-management/contact-import-management.module';
 
-export function HttpLoaderFactory(http: HttpClient) {
-    return new TranslateHttpLoader(http, './assets/qcrm-ui/i18n/', '.json');
-}
-
 @NgModule({
     declarations: [ContactImportComponent],
     imports: [
@@ -26,13 +22,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         NgbTooltipModule,
         MatDialogModule,
         ContactImportManagementModule,
-        TranslateModule.forChild({
-            loader: {
-                provide: TranslateLoader,
-                useFactory: HttpLoaderFactory,
-                deps: [HttpClient],
-            },
-        }),
+        TranslateModule,
         RouterModule.forChild([
             {
                 path: '',

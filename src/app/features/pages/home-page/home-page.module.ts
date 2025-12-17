@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { HomePageComponent } from './home-page.component';
 import { HighchartsChartModule } from 'highcharts-angular';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
     declarations: [HomePageComponent],
@@ -19,6 +20,7 @@ import { HighchartsChartModule } from 'highcharts-angular';
             },
         ]),
         HighchartsChartModule,
+        TranslateModule,
     ],
     providers: [],
     exports: [],

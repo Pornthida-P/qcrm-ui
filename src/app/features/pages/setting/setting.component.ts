@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-setting',
@@ -13,11 +14,12 @@ export class SettingComponent implements OnInit, AfterViewInit {
     menuSetting: any[] = [];
     menuLogout: any = {};
 
-    title: string = 'ตั้งค่า';
+    title: string = '';
 
-    constructor(private router: Router) {}
+    constructor(private router: Router, private translate: TranslateService) {}
 
     ngOnInit(): void {
+        this.title = this.translate.instant('menu.settingTitle');
         this.menuSetting = [
             {
                 label: 'menagement-account',

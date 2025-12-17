@@ -1,52 +1,28 @@
 <div class="h-100">
     <div class="bg-white rounded shadow w-100 h-100 d-flex flex-column p-4 overflow-auto">
         <div class="d-bt-back">
-            <button type="button" (click)="prev()" class="btn btn-outline-danger">ย้อนกลับ</button>
+            <button type="button" (click)="prev()" class="btn btn-outline-danger">{{ 'common.back' | translate }}</button>
             <div class="d-flex flex-row">
                 <div class="d-flex flex-column me-3" *ngIf="TableShowing">
-                    <span class="mb-2"><strong>สร้างโดยผู้ใช้</strong> {{ contactCreatedByID }}</span>
-                    <span class="mb-2" *ngIf="contactModifiedByID"><strong>แก้ไขล่าสุดโดยผู้ใช้</strong> {{ contactModifiedByID }}</span>
+                    <span class="mb-2"><strong>{{ 'contact.createdBy' | translate }}</strong> {{ contactCreatedByID }}</span>
+                    <span class="mb-2" *ngIf="contactModifiedByID"><strong>{{ 'contact.modifiedBy' | translate }}</strong> {{ contactModifiedByID }}</span>
                 </div>
                 <div class="d-flex flex-column me-3" *ngIf="TableShowing">
-                    <span class="mb-2"><strong>เวลาที่สร้าง</strong> {{ contactCreatedAt }}</span>
-                    <span class="mb-2" *ngIf="contactModifiedByID"><strong>เวลาที่แก้ไข</strong> {{ contactModifiedAt }}</span>
+                    <span class="mb-2"><strong>{{ 'contact.createdAt' | translate }}</strong> {{ contactCreatedAt }}</span>
+                    <span class="mb-2" *ngIf="contactModifiedByID"><strong>{{ 'contact.modifiedAt' | translate }}</strong> {{ contactModifiedAt }}</span>
                 </div>
                 <div class="d-flex align-items-start">
-                    <button type="button" (click)="submit()" class="btn btn-primary rounded text-white">บันทึก</button>
+                    <button type="button" (click)="submit()" class="btn btn-primary rounded text-white">{{ 'common.save' | translate }}</button>
                 </div>
             </div>
         </div>
 
         <div class="flex flex-column">
             <form class="row g-3 mg-3">
-                <p class="mb-3 fs-5">ข้อมูลทั่วไป</p>
-                <span *ngIf="contactId === ''" class="text-danger"> ผู้ติดต่อใหม่ ({{ chatId }}) </span>
-                <!-- <div class="contact-number" *ngIf="TableShowing">
-                    <div class="col-6 me-3">
-                        <label for="inputContactNumber" class="form-label">ช่องทางติดต่อ</label>
-                        <select id="inputContactNumber" class="form-select" name="selectedContactNumber" [(ngModel)]="phoneCall">
-                            <option disabled value="">กรุณาเลือกเบอร์โทร</option>
-                            <option *ngFor="let contactNumber of contactNumbers" [value]="contactNumber.contactNumber">
-                                {{ contactNumber.contactNumber }}
-                            </option>
-                        </select>
-                    </div>
-                    <button type="button" class="btn btn-success me-3" (click)="sendMessage()" [disabled]="!phoneCall">โทรออก</button>
-                    <button type="button" class="btn btn-danger" [disabled]="!connected" (click)="disconnect()">วางสาย</button>
-                </div> -->
-                <!-- <form class="mb-3 p-2">
-                    <label for="inputFormName" class="form-label">เลขประจำตัว/เลขนิติบุคคล</label>
-                    <input
-                        type="text"
-                        class="form-control"
-                        [(ngModel)]="contactIden"
-                        name="contactIden"
-                        id="inputContactIden"
-                        [disabled]="!checkRole()"
-                    />
-                </form> -->
+                <p class="mb-3 fs-5">{{ 'contact.title' | translate }}</p>
+                <span *ngIf="contactId === ''" class="text-danger"> {{ 'contact.newContact' | translate }} ({{ chatId }}) </span>
                 <div class="col-md-6">
-                    <label for="inputContactFirstName" class="form-label">ชื่อ</label>
+                    <label for="inputContactFirstName" class="form-label">{{ 'contact.firstName' | translate }}</label>
                     <input
                         type="text"
                         class="form-control"
@@ -57,7 +33,7 @@
                     />
                 </div>
                 <div class="col-md-6">
-                    <label for="inputcontactLastName" class="form-label">นามสกุล</label>
+                    <label for="inputcontactLastName" class="form-label">{{ 'contact.lastName' | translate }}</label>
                     <input
                         type="text"
                         class="form-control"
@@ -68,7 +44,7 @@
                     />
                 </div>
                 <div class="col-md-6">
-                    <label for="inputContactGender" class="form-label">เพศ</label>
+                    <label for="inputContactGender" class="form-label">{{ 'contact.gender' | translate }}</label>
                     <select
                         id="inputContactGender"
                         class="form-select"
@@ -76,14 +52,14 @@
                         name="contactGender"
                         [disabled]="!checkRole()"
                     >
-                        <option value="unknown">ไม่ระบุ</option>
-                        <option value="male">ชาย</option>
-                        <option value="female">หญิง</option>
-                        <option value="other">อื่นๆ</option>
+                        <option value="unknown">{{ 'gender.unknown' | translate }}</option>
+                        <option value="male">{{ 'gender.male' | translate }}</option>
+                        <option value="female">{{ 'gender.female' | translate }}</option>
+                        <option value="other">{{ 'gender.other' | translate }}</option>
                     </select>
                 </div>
                 <div class="col-md-6">
-                    <label for="inputContactOrg" class="form-label">บริษัท</label>
+                    <label for="inputContactOrg" class="form-label">{{ 'contact.company' | translate }}</label>
                     <input
                         type="text"
                         class="form-control"
@@ -95,11 +71,11 @@
                 </div>
                 <div class="col-md-6">
                     <div class="d-flex">
-                        <label for="inputContactNum" class="form-label">เบอร์ติดต่อ</label>
+                        <label for="inputContactNum" class="form-label">{{ 'contact.phoneNumber' | translate }}</label>
                         <div
                             class="mb-2 p-1 btn-primary text-white rounded-2 cursor-pointer add-number ms-2"
                             (click)="inputAddPhone()"
-                            ngbTooltip="เพิ่มเบอร์ติดต่อ"
+                            [ngbTooltip]="'contact.addPhoneNumber' | translate"
                             *ngIf="TableShowing"
                         >
                             <i class="fa-solid fa-plus fs-icon"></i>
@@ -121,7 +97,7 @@
                         type="text"
                         class="form-control mt-2"
                         [(ngModel)]="contactNumNew"
-                        placeholder="เพิ่มเบอร์ติดต่อ"
+                        [placeholder]="'contact.addPhoneNumber' | translate"
                         name="contactNumNew"
                         id="inputContactNumNew"
                         pattern="[0-9]*"
@@ -143,7 +119,7 @@
                     </div>
                 </div>
                 <div class="col-md-6" *ngIf="MultiNumber == true">
-                    <label for="inputContactNum" class="form-label">เบอร์ติดต่อ (ใหม่)</label>
+                    <label for="inputContactNum" class="form-label">{{ 'contact.phoneNumber' | translate }} ({{ 'common.add' | translate }})</label>
                     <input
                         type="text"
                         class="form-control"
@@ -160,7 +136,7 @@
         </div>
         <div class="flex flex-column" *ngIf="TableShowing">
             <div class="d-flex align-items-center" style="margin-top: 5%">
-                <p class="mb-3 fs-5">ข้อมูลการติดต่อ</p>
+                <p class="mb-3 fs-5">{{ 'contact.contactInfo' | translate }}</p>
                 <button
                     class="btn btn-primary ms-2"
                     style="margin-top: -14px"
@@ -177,16 +153,16 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th style="width: 10%">เวลา</th>
-                                <th style="width: 10%">เบอร์โทร</th>
-                                <th style="width: 10%">ประเภทสาย</th>
-                                <th style="width: 10%">ช่องทางการติดต่อ</th>
-                                <th style="width: 10%">เรื่องที่ติดต่อ</th>
-                                <th style="width: 10%">รายละเอียด</th>
-                                <th style="width: 10%">สถานะ</th>
-                                <th style="width: 10%">ผู้ติดต่อ</th>
-                                <th style="width: 10%">ผู้รับผิดชอบ</th>
-                                <th style="width: 10%">จัดการ</th>
+                                <th style="width: 10%">{{ 'common.time' | translate }}</th>
+                                <th style="width: 10%">{{ 'contact.phoneNumber' | translate }}</th>
+                                <th style="width: 10%">{{ 'contact.callType' | translate }}</th>
+                                <th style="width: 10%">{{ 'contact.channel' | translate }}</th>
+                                <th style="width: 10%">{{ 'contact.subject' | translate }}</th>
+                                <th style="width: 10%">{{ 'contact.description' | translate }}</th>
+                                <th style="width: 10%">{{ 'common.status' | translate }}</th>
+                                <th style="width: 10%">{{ 'contact.contact' | translate }}</th>
+                                <th style="width: 10%">{{ 'contact.assignUser' | translate }}</th>
+                                <th style="width: 10%">{{ 'common.manage' | translate }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -210,29 +186,18 @@
                                                 data-bs-toggle="offcanvas"
                                                 data-bs-target="#offcanvasRight"
                                                 aria-controls="offcanvasRight"
-                                                ngbTooltip="แก้ไข"
+                                                [ngbTooltip]="'common.edit' | translate"
                                                 (click)="editCall(case.caseId)"
                                             >
                                                 <i class="fa-solid fa-pen-to-square"></i>
                                             </div>
-                                            <!-- <div
-                                                class="color-primary"
-                                                [style]="{ cursor: 'pointer' }"
-                                                placement="top"
-                                                style="cursor: pointer"
-                                                ngbTooltip="ลบ"
-                                                *ngIf="checkSupRole()"
-                                                (click)="deleteCall(case.caseId)"
-                                            >
-                                                <i class="fa-solid fa-trash"></i>
-                                            </div> -->
                                         </div>
                                     </td>
                                 </tr>
                             </ng-container>
                             <ng-template #noDataTemplate>
                                 <tr>
-                                    <td colspan="9" class="text-center">ไม่มีข้อมูล</td>
+                                    <td colspan="9" class="text-center">{{ 'common.dataNotFound' | translate }}</td>
                                 </tr>
                             </ng-template>
                         </tbody>
@@ -246,7 +211,7 @@
     <div class="offcanvas-body">
         <div class="d-flex flex-wrap justify-content-between">
             <div class="d-flex">
-                <div class="p-2 flex-grow-1" type="button" placement="bottom" ngbTooltip="ปิด">
+                <div class="p-2 flex-grow-1" type="button" placement="bottom" [ngbTooltip]="'common.cancel' | translate">
                     <fa-icon class="" [icon]="faCircleXmark" size="lg" data-bs-dismiss="offcanvas"></fa-icon>
                 </div>
             </div>
@@ -263,16 +228,16 @@
                     <div
                         class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3 gap-2 edit-contact-header"
                     >
-                        <h4 class="mb-0" *ngIf="attachmentShowing == true">เพิ่มข้อมูลการติดต่อ</h4>
-                        <h4 class="mb-0" *ngIf="attachmentShowing == false">แก้ไขข้อมูลการติดต่อ</h4>
-                        <button class="btn btn-primary" type="button" (click)="submitCall()">บันทึก</button>
+                        <h4 class="mb-0" *ngIf="attachmentShowing == true">{{ 'contact.addContactInfo' | translate }}</h4>
+                        <h4 class="mb-0" *ngIf="attachmentShowing == false">{{ 'contact.editContactInfo' | translate }}</h4>
+                        <button class="btn btn-primary" type="button" (click)="submitCall()">{{ 'common.save' | translate }}</button>
                     </div>
                     <div class="edit-contact-form-scroll">
                         <form class="row g-3 mg-3">
                             <div class="col-12">
                                 <div class="contact-number mb-4" *ngIf="TableShowing && selectedContactNumber">
                                     <div class="col-6 me-3">
-                                        <label for="inputContactNumber" class="form-label">ช่องทางติดต่อ</label>
+                                        <label for="inputContactNumber" class="form-label">{{ 'contact.channel' | translate }}</label>
                                         <input
                                             type="text"
                                             id="inputContactNumber"
@@ -282,13 +247,12 @@
                                         />
                                     </div>
                                     <button type="button" class="btn btn-success me-3" (click)="sendMessage()" [disabled]="!selectedContactNumber">
-                                        โทรออก
+                                        {{ 'contact.callOut' | translate }}
                                     </button>
-                                    <!-- <button type="button" class="btn btn-danger" [disabled]="!connected" (click)="disconnect()">วางสาย</button> -->
                                 </div>
                                 <div class="row g-3">
                                     <div class="col-12 col-sm-6">
-                                        <label for="inputTopic" class="form-label">หัวข้อที่ติดต่อ<span class="color-red">*</span></label>
+                                        <label for="inputTopic" class="form-label">{{ 'contact.topic' | translate }}<span class="color-red">*</span></label>
 
                                         <mat-form-field class="w-100" appearance="outline">
                                             <input
@@ -298,7 +262,7 @@
                                                 [matAutocomplete]="autoTopic"
                                                 (input)="filterTopics()"
                                                 (focus)="filterTopics()"
-                                                placeholder="ค้นหาหัวข้อ..."
+                                                [placeholder]="'contact.searchTopic' | translate"
                                             />
                                             <mat-autocomplete
                                                 #autoTopic="matAutocomplete"
@@ -313,7 +277,7 @@
                                     </div>
 
                                     <div class="col-12 col-sm-6">
-                                        <label for="inputCaseSubject" class="form-label">เรื่องที่ติดต่อ</label>
+                                        <label for="inputCaseSubject" class="form-label">{{ 'contact.subject' | translate }}</label>
 
                                         <mat-form-field class="w-100" appearance="outline">
                                             <input
@@ -323,7 +287,7 @@
                                                 [matAutocomplete]="autoSubject"
                                                 (input)="filterSubjects()"
                                                 (focus)="filterSubjects()"
-                                                placeholder="ค้นหาเรื่อง..."
+                                                [placeholder]="'contact.searchSubject' | translate"
                                                 [disabled]="!selectedCaseTopics"
                                             />
                                             <mat-autocomplete
@@ -341,7 +305,7 @@
                             </div>
 
                             <div class="col-12 col-sm-6">
-                                <label for="inputStatus" class="form-label">สถานะ</label>
+                                <label for="inputStatus" class="form-label">{{ 'common.status' | translate }}</label>
                                 <select
                                     id="inputStatus"
                                     class="form-select"
@@ -349,12 +313,12 @@
                                     [(ngModel)]="selectedStatus"
                                     [disabled]="isStatusDisabled"
                                 >
-                                    <option disabled value="">กรุณาเลือกข้อมูล</option>
+                                    <option disabled value="">{{ 'common.pleaseSelect' | translate }}</option>
                                     <option *ngFor="let status of statusList" [value]="status.id">{{ status.status }}</option>
                                 </select>
                             </div>
                             <div class="col-12 col-sm-6">
-                                <label for="inputChannel" class="form-label">ช่องทางติดต่อ</label>
+                                <label for="inputChannel" class="form-label">{{ 'contact.channel' | translate }}</label>
                                 <select
                                     id="inputChannel"
                                     class="form-select"
@@ -363,11 +327,11 @@
                                     (ngModelChange)="onChannelChange($event)"
                                     [disabled]="isChannelDisabled"
                                 >
-                                    <option disabled value="">กรุณาเลือกข้อมูล</option>
+                                    <option disabled value="">{{ 'common.pleaseSelect' | translate }}</option>
                                     <option *ngFor="let channel of channels" [value]="channel.channelId">{{ channel.name }}</option>
                                 </select>
                                 <div class="w-100 mt-3" *ngIf="selectedChannels === '1' || selectedChannels === '2'">
-                                    <label for="inputCallType" class="form-label">ประเภทสาย</label>
+                                    <label for="inputCallType" class="form-label">{{ 'contact.callType' | translate }}</label>
                                     <input
                                         type="text"
                                         id="inputCallType"
@@ -377,7 +341,7 @@
                                     />
                                 </div>
                                 <div class="w-100 mt-3" *ngIf="selectedChannels === '3'">
-                                    <label for="inputCallType" class="form-label">ประเภทอีเมล</label>
+                                    <label for="inputCallType" class="form-label">{{ 'contact.emailType' | translate }}</label>
                                     <select
                                         id="inputCallType"
                                         class="form-select"
@@ -385,13 +349,13 @@
                                         [(ngModel)]="selectedCallTypeId"
                                         [disabled]="isCallTypeDisabled"
                                     >
-                                        <option disabled value="">กรุณาเลือกข้อมูล</option>
+                                        <option disabled value="">{{ 'common.pleaseSelect' | translate }}</option>
                                         <option *ngFor="let callType of callTypes" [value]="callType.name">{{ callType.name }}</option>
                                     </select>
                                 </div>
 
                                 <div class="w-100 mt-3" *ngIf="(selectedChannels === '1' || selectedChannels === '2') && selectedContactNumber">
-                                    <label for="inputContactNumber" class="form-label">เบอร์ติดต่อ<span class="color-red">*</span></label>
+                                    <label for="inputContactNumber" class="form-label">{{ 'contact.phoneNumber' | translate }}<span class="color-red">*</span></label>
                                     <input
                                         type="text"
                                         id="inputContactNumber"
@@ -403,7 +367,7 @@
                             </div>
 
                             <div class="col-12">
-                                <label for="inputAddress" class="form-label">กรุณาเลือกวันที่และเวลา</label>
+                                <label for="inputAddress" class="form-label">{{ 'contact.dateTime' | translate }}</label>
                                 <div class="datetime-inline-wrapper">
                                     <div class="date-input-section">
                                         <div class="input-group">
@@ -414,7 +378,7 @@
                                                 [(ngModel)]="startTime"
                                                 required
                                                 class="form-control"
-                                                placeholder="เลือกวันที่"
+                                                [placeholder]="'common.selectDate' | translate"
                                                 [disabled]="isDateDisabled"
                                             />
                                             <span class="input-group-text">
@@ -439,7 +403,7 @@
                             </div>
 
                             <div class="col-12" *ngIf="selectedChannels === '1' || selectedChannels === '2'">
-                                <label class="form-label">สถานะการโทร</label>
+                                <label class="form-label">{{ 'contact.callStatus' | translate }}</label>
                                 <div class="row">
                                     <div class="col-4" *ngFor="let status of callStatus">
                                         <div class="form-check">
@@ -460,10 +424,10 @@
                             </div>
 
                             <div class="col-12">
-                                <label class="form-check-label" for="gridCheck"> รายละเอียด </label>
+                                <label class="form-check-label" for="gridCheck">{{ 'contact.description' | translate }}</label>
                                 <textarea
                                     class="form-control"
-                                    placeholder="กรุณากรอกข้อมูล"
+                                    [placeholder]="'common.pleaseEnter' | translate"
                                     id="floatingTextarea"
                                     name="description"
                                     [(ngModel)]="description"
@@ -471,36 +435,36 @@
                                 ></textarea>
                             </div>
                             <div class="col-12" *ngIf="attachmentShowing == false">
-                                <label class="form-check-label" for="gridCheck"> ความคิดเห็น </label>
+                                <label class="form-check-label" for="gridCheck">{{ 'contact.comment' | translate }}</label>
                                 <textarea
                                     class="form-control"
-                                    placeholder="กรุณากรอกข้อมูล"
+                                    [placeholder]="'common.pleaseEnter' | translate"
                                     id="floatingTextareaComment"
                                     name="comment"
                                     [(ngModel)]="comment"
                                 ></textarea>
                             </div>
                             <div class="col-12" *ngIf="comments && comments.length > 0">
-                                <label class="form-label">ประวัติความคิดเห็น</label>
+                                <label class="form-label">{{ 'contact.commentHistory' | translate }}</label>
                                 <div class="border rounded p-2 bg-light comment-history-container">
                                     <div class="card mb-2" *ngFor="let comment of comments">
                                         <div class="card-body py-2 px-3">
                                             <p class="card-text mb-1">{{ comment.comment }}</p>
                                             <small class="text-muted">
-                                                โดย {{ comment.username }} | {{ comment.createdAt | date : 'dd/MM/yyyy HH:mm' }}
+                                                {{ comment.username }} | {{ comment.createdAt | date : 'dd/MM/yyyy HH:mm' }}
                                             </small>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-12" *ngIf="history && history.length > 0">
-                                <label class="form-label">ประวัติการเปลี่ยนสถานะ</label>
+                                <label class="form-label">{{ 'contact.statusHistory' | translate }}</label>
                                 <div class="border rounded p-2 bg-light comment-history-container">
                                     <div class="card mb-2" *ngFor="let item of history">
                                         <div class="card-body py-2 px-3">
                                             <p class="mb-1 small">{{ item.status }}</p>
                                             <small class="text-muted">
-                                                โดย {{ item.username || item.createdById }} |
+                                                {{ item.username || item.createdById }} |
                                                 {{ item.createdAt | date : 'dd/MM/yyyy HH:mm' }}
                                             </small>
                                         </div>
@@ -508,12 +472,8 @@
                                 </div>
                             </div>
 
-                            <!-- <div class="col-12" *ngIf="selectedCaseTopicObject && selectedCaseTopicObject.script">
-                            <label class="form-label">Script</label>
-                            <div class="border rounded p-2 bg-light" [innerHTML]="selectedCaseTopicObject.script"></div>
-                        </div> -->
                             <div class="col-12 col-sm-6" *ngIf="attachmentShowing">
-                                <label for="formFileSm" class="form-label">ไฟล์แนบ</label>
+                                <label for="formFileSm" class="form-label">{{ 'contact.attachment' | translate }}</label>
                                 <div class="mb-3">
                                     <div class="form-input-file">
                                         <input
@@ -537,7 +497,7 @@
                 >
                     <div class="card h-100 d-flex flex-column">
                         <div class="card-header text-sm text-white" [ngStyle]="{ 'background-color': 'var(--color-blue-dark)' }">
-                            <p class="mb-0"><i class="fa-solid fa-file-lines me-2"></i>สคริปต์</p>
+                            <p class="mb-0"><i class="fa-solid fa-file-lines me-2"></i>{{ 'contact.script' | translate }}</p>
                         </div>
                         <div class="card-body script-container flex-grow-1">
                             <div [innerHTML]="selectedCaseTopicObject.script"></div>
@@ -551,7 +511,7 @@
                 >
                     <div class="card h-100 d-flex flex-column">
                         <div class="card-header text-sm text-white" [ngStyle]="{ 'background-color': 'var(--color-blue-dark)' }">
-                            <p class="mb-0"><i class="fa-solid fa-file-lines me-2"></i>ประวัติการสนทนา</p>
+                            <p class="mb-0"><i class="fa-solid fa-file-lines me-2"></i>{{ 'contact.chatHistory' | translate }}</p>
                         </div>
                         <div class="card-body chat-history-container flex-grow-1">
                             <div class="chat-messages">
@@ -600,7 +560,7 @@
                                         type="button"
                                         role="tab"
                                     >
-                                        <i class="fa-solid fa-file-lines me-2"></i>สคริปต์
+                                        <i class="fa-solid fa-file-lines me-2"></i>{{ 'contact.script' | translate }}
                                     </button>
                                 </li>
                                 <li class="nav-item" role="presentation">
@@ -611,7 +571,7 @@
                                         type="button"
                                         role="tab"
                                     >
-                                        <i class="fa-solid fa-comments me-2"></i>ประวัติการสนทนา
+                                        <i class="fa-solid fa-comments me-2"></i>{{ 'contact.chatHistory' | translate }}
                                     </button>
                                 </li>
                             </ul>

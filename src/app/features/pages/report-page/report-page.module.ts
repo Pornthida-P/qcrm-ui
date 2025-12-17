@@ -10,10 +10,6 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { SafeUrlPipe } from 'src/app/shared/pipe/safe-url.pipe';
 
-export function HttpLoaderFactory(http: HttpClient) {
-    return new TranslateHttpLoader(http, './assets/qcrm-ui/i18n/', '.json');
-}
-
 @NgModule({
     declarations: [ReportPageComponent],
     imports: [
@@ -30,13 +26,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         NgbPaginationModule,
         HttpClientModule,
         NgbTooltipModule,
-        TranslateModule.forChild({
-            loader: {
-                provide: TranslateLoader,
-                useFactory: HttpLoaderFactory,
-                deps: [HttpClient],
-            },
-        }),
+        TranslateModule,
         SafeUrlPipe,
     ],
 })

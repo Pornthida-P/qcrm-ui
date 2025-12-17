@@ -66,7 +66,7 @@ export class AttachmentsComponent implements OnInit {
         if (attachment.filepath) {
             this.attachmentService.view(attachment.filepath);
         } else {
-            this.sweetalertServices.getSwal('warning', 'Warning', 'There is a problem with the internet. Please try again.', false, '');
+            this.sweetalertServices.warning('alert.internetProblem');
         }
     }
 
@@ -74,7 +74,7 @@ export class AttachmentsComponent implements OnInit {
         if (attachment.filepath) {
             this.attachmentService.download(attachment.filepath);
         } else {
-            this.sweetalertServices.getSwal('warning', 'Warning', 'There is a problem with the internet. Please try again.', false, '');
+            this.sweetalertServices.warning('alert.internetProblem');
         }
     }
 
@@ -92,7 +92,7 @@ export class AttachmentsComponent implements OnInit {
                     this.deleteAttachmentId.emit(attachment.attachmentId);
                 });
         } else {
-            this.sweetalertServices.getSwal('warning', 'Warning', 'There is a problem with the internet. Please try again.', false, '');
+            this.sweetalertServices.warning('alert.internetProblem');
         }
     }
 }

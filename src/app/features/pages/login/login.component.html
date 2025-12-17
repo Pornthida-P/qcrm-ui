@@ -8,20 +8,20 @@
                     </div>
                     <div class="col-12">
                         <div>
-                            <p class="fs-3 text-center">เข้าสู่ระบบ</p>
+                            <p class="fs-3 text-center">{{ 'login.title' | translate }}</p>
                             <div class="mb-3">
-                                <label for="username" class="form-label">ชื่อผู้ใช้งาน </label>
+                                <label for="username" class="form-label">{{ 'login.username' | translate }}</label>
                                 <input
                                     id="username"
                                     type="text"
                                     formControlName="username"
                                     class="form-control w-100"
-                                    placeholder="กรอกชื่อผู้ใช้งานของคุณ"
+                                    [placeholder]="'login.usernamePlaceholder' | translate"
                                     required
                                 />
                             </div>
                             <div class="mb-3">
-                                <label for="password" class="form-label"> รหัสผ่าน </label>
+                                <label for="password" class="form-label">{{ 'login.password' | translate }}</label>
                                 <div class="position-relative">
                                     <input
                                         id="password"
@@ -29,7 +29,7 @@
                                         formControlName="password"
                                         class="form-control w-100"
                                         name="password"
-                                        placeholder="กรอกรหัสผ่านของคุณ"
+                                        [placeholder]="'login.passwordPlaceholder' | translate"
                                     />
                                     <i
                                         class="fa-solid fa-eye position-absolute top-50 end-0 translate-middle-y me-2"
@@ -44,7 +44,7 @@
                                 </div>
                             </div>
 
-                            <button type="submit" class="border-0 rounded p-2 w-100 btn-primary-color text-white">เข้าสู่ระบบ</button>
+                            <button type="submit" class="border-0 rounded p-2 w-100 btn-primary-color text-white">{{ 'login.submit' | translate }}</button>
                         </div>
                     </div>
                 </div>

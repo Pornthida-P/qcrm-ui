@@ -13,6 +13,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { MAT_DATE_LOCALE } from '@angular/material/core'
 import { NgSelectModule } from '@ng-select/ng-select';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
     declarations: [CallComponent, SearchPipe],
@@ -33,7 +34,8 @@ import { NgSelectModule } from '@ng-select/ng-select';
       MatFormFieldModule,
       MatAutocompleteModule,
       NgbTimepickerModule,
-      NgSelectModule
+      NgSelectModule,
+      TranslateModule
 
   ],
   providers: [

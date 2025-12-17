@@ -1,20 +1,20 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { faBars, faMagnifyingGlass, faArrowRightFromBracket, faGear, faGlobe } from '@fortawesome/free-solid-svg-icons';
 import { Router } from '@angular/router';
-import { tap } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { UserService } from 'src/app/services/user/user.service';
 import { User } from 'src/app/shared/interface/user.interface';
 import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
 import { NgbPopoverConfig } from '@ng-bootstrap/ng-bootstrap';
-import { TranslateService as Translate } from '@ngx-translate/core';
-import { TranslateService } from 'src/app/services/translate/translate.service';
+import { TranslateService } from '@ngx-translate/core';
+import { LanguageService } from 'src/app/services/language/language.service';
 
 @Component({
     selector: 'app-navbar',
     templateUrl: './navbar.component.html',
     styleUrls: ['./navbar.component.scss'],
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, OnDestroy {
     searchSidebarVisible: boolean = false;
     menuUser: any;
     menuUserNoneSm: any;
@@ -23,7 +23,7 @@ export class NavbarComponent implements OnInit {
     userData: User | null = null;
     currentLanguage: string = '';
     languages: any[] = [];
-
+    private langSubscription: Subscription = new Subscription();
     profileError: string = './assets/qcrm-ui/image/profile/user.jpg';
 
     faBars = faBars;
@@ -35,14 +35,17 @@ export class NavbarComponent implements OnInit {
         private socketIO: SocketIoService,
         private translateService: TranslateService,
         configPopover: NgbPopoverConfig,
+        private languageService: LanguageService,
     ) {
-        this.currentLanguage = this.translateService.getCurrentLanguage();
+        this.currentLanguage = this.languageService.current();
         configPopover.autoClose = 'outside';
     }
 
     ngOnInit() {
         this.getDataUser();
-
+        this.langSubscription = this.translateService.onLangChange.subscribe(() => {
+            this.currentLanguage = this.languageService.current();
+        });
         this.menuUser = [
             {
                 label: 'search',
@@ -119,11 +122,14 @@ export class NavbarComponent implements OnInit {
     }
 
     changeLanguage(language: string) {
-        this.translateService.setCurrentLanguage(language);
-        this.currentLanguage = language;
+        this.currentLanguage = this.languageService.toggle();
     }
 
     logout() {
         this.router.navigate(['logout']);
+    }
+
+    ngOnDestroy() {
+        this.langSubscription.unsubscribe();
     }
 }

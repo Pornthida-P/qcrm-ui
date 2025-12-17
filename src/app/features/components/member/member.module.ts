@@ -12,10 +12,6 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { MatDialogModule } from '@angular/material/dialog';
 import { UserMenagementModule } from '../../modals/user-menagement/user-menagement.module';
 
-export function HttpLoaderFactory(http: HttpClient) {
-    return new TranslateHttpLoader(http, './assets/qcrm-ui/i18n/', '.json');
-}
-
 @NgModule({
     declarations: [MemberComponent],
     imports: [
@@ -27,13 +23,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         ReactiveFormsModule,
         MatDialogModule,
         UserMenagementModule,
-        TranslateModule.forChild({
-            loader: {
-                provide: TranslateLoader,
-                useFactory: HttpLoaderFactory,
-                deps: [HttpClient],
-            },
-        }),
+        TranslateModule,
         RouterModule.forChild([
             {
                 path: '',

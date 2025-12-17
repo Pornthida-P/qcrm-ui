@@ -1,16 +1,16 @@
 <div class="h-100">
     <div class="bg-white rounded shadow w-100 h-100 d-flex flex-column p-4 overflow-auto">
         <div class="d-bt-back">
-            <button type="button" (click)="prev()" class="btn btn-outline-danger">ย้อนกลับ</button>
+            <button type="button" (click)="prev()" class="btn btn-outline-danger">{{ 'common.back' | translate }}</button>
             <div class="d-flex flex-row flex-nowrap">
-                <button type="button" (click)="submit()" class="btn btn-primary rounded text-white">บันทึก</button>
+                <button type="button" (click)="submit()" class="btn btn-primary rounded text-white">{{ 'common.save' | translate }}</button>
             </div>
         </div>
         <div class="flex flex-column">
-            <p class="mb-3 fs-5">ข้อมูลทั่วไป</p>
+            <p class="mb-3 fs-5">{{ 'contact.title' | translate }}</p>
             <form class="row g-3 mg-3">
                 <div class="col-md-6">
-                    <label for="inputContactFirstName" class="form-label">ชื่อ</label>
+                    <label for="inputContactFirstName" class="form-label">{{ 'contact.firstName' | translate }}</label>
                     <input
                         type="text"
                         class="form-control"
@@ -20,7 +20,7 @@
                     />
                 </div>
                 <div class="col-md-6">
-                    <label for="inputcontactLastName" class="form-label">นามสกุล</label>
+                    <label for="inputcontactLastName" class="form-label">{{ 'contact.lastName' | translate }}</label>
                     <input
                         type="text"
                         class="form-control"
@@ -30,7 +30,7 @@
                     />
                 </div>
                 <div class="col-md-6">
-                    <label for="inputContactOrg" class="form-label">ร้านค้า/บริษัท</label>
+                    <label for="inputContactOrg" class="form-label">{{ 'contact.companyStore' | translate }}</label>
                     <div class="col-md-6">
                         <div
                             class="form-control"
@@ -44,11 +44,11 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <label for="inputContactNum" class="form-label">เบอร์ติดต่อ</label>
+                    <label for="inputContactNum" class="form-label">{{ 'contact.phoneNumber' | translate }}</label>
                     <input type="text" class="form-control" name="contactNum" id="inputContactNum" [(ngModel)]="contactNumber" />
                 </div>
                 <div class="col-md-6">
-                    <label for="inputContactProvince" class="form-label">จังหวัด</label>
+                    <label for="inputContactProvince" class="form-label">{{ 'contact.province' | translate }}</label>
                     <input
                         type="text"
                         class="form-control"
@@ -63,7 +63,7 @@
                 <div class="offcanvas-body">
                     <div class="d-flex flex-wrap justify-content-between">
                         <div class="d-flex">
-                            <div class="p-2 flex-grow-1" type="button" placement="bottom" ngbTooltip="ปิด">
+                            <div class="p-2 flex-grow-1" type="button" placement="bottom" [ngbTooltip]="'common.cancel' | translate">
                                 <fa-icon class="" [icon]="faCircleXmark" size="lg" data-bs-dismiss="offcanvas"></fa-icon>
                             </div>
                         </div>
@@ -71,7 +71,7 @@
 
                     <div class="p-5 shadow call-side-detail" *ngIf="SearchOrgShowing">
                         <div>
-                            <h4>เลือกร้านค้า/บริษัท</h4>
+                            <h4>{{ 'contact.selectCompany' | translate }}</h4>
                             <div class="row">
                                 <div class="col-md-8">
                                     <input
@@ -80,16 +80,16 @@
                                         class="form-control border border-start-0 shadow-none"
                                         name="searchOrg"
                                         [(ngModel)]="valueSearchOrg"
-                                        placeholder="ค้นหา..."
+                                        [placeholder]="'common.search' | translate"
                                         aria-describedby="basic-addon1"
                                         style="width: 100%"
                                         (change)="searchOrg()"
                                     />
                                 </div>
                                 <div class="col-md-4 side-org-menu">
-                                    <button type="button" class="btn btn-primary" (click)="searchOrg()">ค้นหา</button>
+                                    <button type="button" class="btn btn-primary" (click)="searchOrg()">{{ 'common.search' | translate }}</button>
                                     <button class="btn btn-primary" type="button" (click)="showAddOrg()" style="height: 38px; width: auto">
-                                        เพิ่ม
+                                        {{ 'common.add' | translate }}
                                     </button>
                                 </div>
                             </div>
@@ -102,14 +102,14 @@
                                 <thead>
                                     <tr>
                                         <th style="width: 70%" scope="col">
-                                            <a (click)="sortOrg('name')">ชื่อ </a><i *ngIf="sortIdOrg == 'name'" class="{{ sortIcon }}"></i>
+                                            <a (click)="sortOrg('name')">{{ 'contact.firstName' | translate }} </a><i *ngIf="sortIdOrg == 'name'" class="{{ sortIcon }}"></i>
                                         </th>
                                         <th style="width: 15%" scope="col">
-                                            <a (click)="sortOrg('createdAt')">วันที่บันทึก</a
+                                            <a (click)="sortOrg('createdAt')">{{ 'contact.recordDate' | translate }}</a
                                             ><i *ngIf="sortIdOrg == 'createdAt'" class="{{ sortIcon }}"></i>
                                         </th>
                                         <th style="width: 15%" scope="col">
-                                            <a>เลือก</a>
+                                            <a>{{ 'contact.select' | translate }}</a>
                                         </th>
                                     </tr>
                                 </thead>
@@ -131,7 +131,7 @@
                                     </ng-container>
                                     <ng-template #noDataTemplate>
                                         <tr>
-                                            <td colspan="4" class="text-center">ไม่มีข้อมูล</td>
+                                            <td colspan="4" class="text-center">{{ 'common.dataNotFound' | translate }}</td>
                                         </tr>
                                     </ng-template>
                                 </tbody>
@@ -181,18 +181,18 @@
                             style="margin-bottom: 5%"
                             *ngIf="AddOrgShowing"
                         >
-                            ย้อนกลับ
+                            {{ 'common.back' | translate }}
                         </button>
                         <div class="flex flex-column" *ngIf="AddOrgShowing">
-                            <h4>เพิ่มร้านค้า/บริษัท</h4>
+                            <h4>{{ 'contact.addCompany' | translate }}</h4>
                             <form class="mb-3 p-2" style="width: 102.5%; margin-left: -1.5%; margin-bottom: 0%">
-                                <label for="inputOrgName" class="form-label">ชื่อ</label>
+                                <label for="inputOrgName" class="form-label">{{ 'contact.firstName' | translate }}</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" [(ngModel)]="orgName" name="orgName" id="inputOrgName" />
                                 </div>
                             </form>
                             <form class="mb-3 p-2" style="width: 102.5%; margin-left: -1.5%; margin-top: 3%">
-                                <label for="inputOrgIden" class="form-label">เลขประจำตัว</label>
+                                <label for="inputOrgIden" class="form-label">{{ 'contact.idNumber' | translate }}</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" [(ngModel)]="orgIden" name="orgIden" id="inputOrgIden" />
                                 </div>
@@ -205,7 +205,7 @@
                                         (click)="submitOrg()"
                                         style="height: 38px; margin-top: 20%"
                                     >
-                                        บันทึก
+                                        {{ 'common.save' | translate }}
                                     </button>
                                 </div>
                             </div>

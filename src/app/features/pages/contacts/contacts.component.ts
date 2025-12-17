@@ -5,6 +5,7 @@ import { catchError, tap } from 'rxjs';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import Swal from 'sweetalert2';
 import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-contacts',
@@ -38,12 +39,13 @@ export class ContactsComponent implements OnInit {
         private activeRoute: ActivatedRoute,
         private sweetalertServices: SweetAlertService,
         private auditLogService: AuditLogService,
+        private translate: TranslateService,
     ) {}
 
     ngOnInit() {
         this.filterOption = [
-            { name: 'ทั้งหมด', code: 'all' },
-            { name: 'Only My', code: this.userData.userId },
+            { name: this.translate.instant('filter.all'), code: 'all' },
+            { name: this.translate.instant('filter.onlyMy'), code: this.userData.userId },
         ];
         this.activeRoute.queryParams.subscribe((params) => {
             if (params['cb'] != undefined && params['cb'] != '') {
@@ -127,8 +129,10 @@ export class ContactsComponent implements OnInit {
     deletecontacts(contactId: string) {
         Swal.fire({
             icon: 'warning',
-            title: 'Do you want to delete this contact?',
+            title: this.translate.instant('alert.deleteConfirm'),
             showCancelButton: true,
+            confirmButtonText: this.translate.instant('alert.ok'),
+            cancelButtonText: this.translate.instant('alert.cancel'),
             confirmButtonColor: '#3066be',
             cancelButtonColor: '#ec5365',
             width: '50%',
@@ -141,7 +145,7 @@ export class ContactsComponent implements OnInit {
                     .deleteContacts(data)
                     .pipe(
                         tap((res) => {
-                            this.sweetalertServices.getSwal('success', 'Delete data success.', '', false, '');
+                            this.sweetalertServices.success('alert.deleteSuccess');
                             this.auditLogService.log('', 'Contact', contactId, 'Delete Contact', `Contact ID : ${contactId}`, `Success`);
                             window.location.reload();
                         }),

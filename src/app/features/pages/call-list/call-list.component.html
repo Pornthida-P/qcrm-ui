@@ -1,7 +1,7 @@
 <div class="h-full">
     <div class="bg-white rounded shadow w-100 h-100 d-flex flex-column p-4 overflow-auto">
         <div class="p-4">
-            <p class="m-0 d-flex fs-5">รายการติดต่อ</p>
+            <p class="m-0 d-flex fs-5">{{ 'callList.title' | translate }}</p>
         </div>
 
         <div>
@@ -9,18 +9,17 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th scope="col">เวลา</th>
-                            <th scope="col">ผู้ติดต่อ</th>
-                            <th scope="col">เบอร์โทร</th>
-                            <th scope="col">ประเภท</th>
-                            <th scope="col">เรื่องที่ติดต่อ</th>
-                            <th scope="col">หัวข้อ</th>
-                            <!-- <th scope="col">สคริปต์</th> -->
-                            <th scope="col">รายละเอียด</th>
-                            <th scope="col">สถานะ</th>
-                            <th scope="col">สถานะการโทร</th>
-                            <th scope="col">ผู้ที่รับผิดชอบ</th>
-                            <th scope="col">การดำเนินการ</th>
+                            <th scope="col">{{ 'common.time' | translate }}</th>
+                            <th scope="col">{{ 'contact.contact' | translate }}</th>
+                            <th scope="col">{{ 'contact.phoneNumber' | translate }}</th>
+                            <th scope="col">{{ 'contact.channel' | translate }}</th>
+                            <th scope="col">{{ 'contact.subject' | translate }}</th>
+                            <th scope="col">{{ 'contact.topic' | translate }}</th>
+                            <th scope="col">{{ 'contact.description' | translate }}</th>
+                            <th scope="col">{{ 'common.status' | translate }}</th>
+                            <th scope="col">{{ 'contact.callStatus' | translate }}</th>
+                            <th scope="col">{{ 'contact.assignUser' | translate }}</th>
+                            <th scope="col">{{ 'callList.action' | translate }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -32,7 +31,6 @@
                                 <td>{{ caseList.channel || '-' }}</td>
                                 <td>{{ caseList.subject || '-' }}</td>
                                 <td>{{ caseList.topic || '-' }}</td>
-                                <!-- <td>{{ caseList.script || '-' }}</td> -->
                                 <td>{{ caseList.description || '-' }}</td>
                                 <td>{{ caseList.status || '-' }}</td>
                                 <td>{{ caseList.callStatus || '-' }}</td>
@@ -46,27 +44,20 @@
                                             data-bs-toggle="offcanvas"
                                             data-bs-target="#offcanvasRight"
                                             aria-controls="offcanvasRight"
-                                            ngbTooltip="ติดต่อ"
+                                            [ngbTooltip]="'callList.callAction' | translate"
                                             (click)="clickCall(caseList.caseId, caseList.contactId)"
                                         >
                                             <i class="fa-solid fa-phone"></i>
                                         </div>
-                                        <!-- <div
-                                            class="color-primary"
-                                            [style]="{ cursor: 'pointer' }"
-                                            placement="top"
-                                            style="cursor: pointer"
-                                            ngbTooltip="ลบ"
-                                        >
-                                            <i class="fa-solid fa-trash"></i>
-                                        </div> -->
                                     </div>
                                 </td>
                             </tr>
                         </ng-container>
                         <ng-template #noDataTemplate>
                             <tr>
-                                <td colspan="11" class="text-center"><span class="color-gray">ไม่มีข้อมูล</span></td>
+                                <td colspan="11" class="text-center">
+                                    <span class="color-gray">{{ 'common.dataNotFound' | translate }}</span>
+                                </td>
                             </tr>
                         </ng-template>
                     </tbody>

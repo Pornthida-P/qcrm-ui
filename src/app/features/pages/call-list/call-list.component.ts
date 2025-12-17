@@ -1,12 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { CallListService } from 'src/app/services/call-list/call-list.service';
 import { Router } from '@angular/router';
 @Component({
     selector: 'app-call-list',
-    standalone: true,
-    imports: [CommonModule, FormsModule],
+    standalone: false,
     templateUrl: './call-list.component.html',
     styleUrl: './call-list.component.scss',
 })
@@ -81,17 +78,17 @@ export class CallListComponent implements OnInit {
         this.callListService.getCaseListByUserId(userId).subscribe((res: any) => {
             console.log(res);
             this.caseListByUserId = res.sort((a: any, b: any) => {
-              const aHasCallStatus = a.callStatusId !== null && a.callStatusId !== undefined;
-              const bHasCallStatus = b.callStatusId !== null && b.callStatusId !== undefined;
+                const aHasCallStatus = a.callStatusId !== null && a.callStatusId !== undefined;
+                const bHasCallStatus = b.callStatusId !== null && b.callStatusId !== undefined;
 
-              if (aHasCallStatus === bHasCallStatus) {
-                  const aTime = a.callStatusChangedAt || a.requestDateTime;
-                  const bTime = b.callStatusChangedAt || b.requestDateTime;
-                  return new Date(aTime).getTime() - new Date(bTime).getTime();
+                if (aHasCallStatus === bHasCallStatus) {
+                    const aTime = a.callStatusChangedAt || a.requestDateTime;
+                    const bTime = b.callStatusChangedAt || b.requestDateTime;
+                    return new Date(aTime).getTime() - new Date(bTime).getTime();
                 }
 
-              return aHasCallStatus ? 1 : -1;
-          });
+                return aHasCallStatus ? 1 : -1;
+            });
             this.calculatePages();
         });
         console.log(this.caseListByUserId);
