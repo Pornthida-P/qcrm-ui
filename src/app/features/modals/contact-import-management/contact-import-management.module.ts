@@ -9,27 +9,9 @@ import { HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { LoaderModule } from '../../components/loader/loader.module';
 
-export function HttpLoaderFactory(http: HttpClient) {
-    return new TranslateHttpLoader(http, './assets/qcrm-ui/i18n/', '.json');
-}
-
 @NgModule({
     declarations: [ContactImportManagementComponent],
-    imports: [
-        CommonModule,
-        FormsModule,
-        ReactiveFormsModule,
-        FontAwesomeModule,
-        MatDialogModule,
-        TranslateModule.forChild({
-            loader: {
-                provide: TranslateLoader,
-                useFactory: HttpLoaderFactory,
-                deps: [HttpClient],
-            },
-        }),
-        LoaderModule,
-    ],
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, FontAwesomeModule, MatDialogModule, TranslateModule, LoaderModule],
     exports: [ContactImportManagementComponent],
 })
 export class ContactImportManagementModule {}

@@ -12,6 +12,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ContactsService } from 'src/app/services/contacts/contacts.service';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
     declarations: [ManageContactsComponent],
@@ -33,6 +34,7 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
         MatAutocompleteModule,
         NgSelectModule,
         NgbTooltipModule,
+        TranslateModule,
     ],
     providers: [ContactsService, DecimalPipe],
 })

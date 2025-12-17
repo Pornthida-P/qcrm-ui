@@ -446,7 +446,7 @@ export class ManageContactsComponent implements OnInit {
             .editContacts(data)
             .pipe(
                 tap((res: any) => {
-                    this.sweetalertServices.getSwal('success', 'Save data success.', '', false, '/contacts/edit', {
+                    this.sweetalertServices.success('alert.saveSuccess', '/contacts/edit', {
                         key: res.contactId,
                     });
                     this.auditLogService.log('', 'Contact', '', 'Edit Contact', JSON.stringify(data), 'Success');
@@ -496,7 +496,7 @@ export class ManageContactsComponent implements OnInit {
 
                         Swal.fire({
                             icon: 'success',
-                            title: 'บันทึกข้อมูลเรียบร้อยแล้ว',
+                            title: this.translate.instant('alert.saveSuccess'),
                             showConfirmButton: false,
                             timer: 1000,
                             timerProgressBar: true,
@@ -515,7 +515,11 @@ export class ManageContactsComponent implements OnInit {
                     } else if (res.success === false && res.message === 'Duplicate' && this.MultiNumber === false) {
                         if (res.duplicates.length > 0) {
                             const duplicatedFields = [...new Set(res.duplicates.map((dup: any) => dup.duplicateOn))].join(' และ ');
-                            this.sweetalertServices.contactSwal('error', `${duplicatedFields}นี้ได้มีการลงทะเบียนแล้ว`, res.duplicates);
+                            this.sweetalertServices.contactSwal(
+                                'error',
+                                this.translate.instant('alert.duplicateField', { field: duplicatedFields }),
+                                res.duplicates,
+                            );
                             return;
                         }
                         this.auditLogService.log(
@@ -698,7 +702,7 @@ export class ManageContactsComponent implements OnInit {
                     tap((response: any) => {
                         Swal.fire({
                             icon: 'success',
-                            title: 'อัพโหลดข้อมูลเรียบร้อยแล้ว',
+                            title: this.translate.instant('alert.uploadSuccess'),
                             showConfirmButton: false,
                             timer: 2000,
                             timerProgressBar: true,
@@ -874,10 +878,10 @@ export class ManageContactsComponent implements OnInit {
         console.log('Delete Call:', callId);
         Swal.fire({
             icon: 'warning',
-            title: 'คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้?',
+            title: this.translate.instant('alert.deleteConfirm'),
             showCancelButton: true,
-            confirmButtonText: 'ตกลง',
-            cancelButtonText: 'ยกเลิก',
+            confirmButtonText: this.translate.instant('alert.ok'),
+            cancelButtonText: this.translate.instant('alert.cancel'),
             confirmButtonColor: '#3066be',
             cancelButtonColor: '#ec5365',
             width: '50%',
@@ -885,7 +889,7 @@ export class ManageContactsComponent implements OnInit {
             if (result.isConfirmed) {
                 this.contactsService.deleteCall(callId).subscribe(
                     (res: any) => {
-                        this.sweetalertServices.getSwal('success', 'ลบข้อมูลเรียบร้อยแล้ว', '', false, '');
+                        this.sweetalertServices.success('alert.deleteSuccess');
                         this.auditLogService.log(
                             '',
                             'Contact',
@@ -974,7 +978,7 @@ export class ManageContactsComponent implements OnInit {
                     .createCase(dataForm)
                     .pipe(
                         tap((res) => {
-                            this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
+                            this.sweetalertServices.success('alert.saveSuccess');
                             this.auditLogService.log(
                                 '',
                                 'Contact Create Case',
@@ -1000,7 +1004,7 @@ export class ManageContactsComponent implements OnInit {
                     )
                     .subscribe();
             } else {
-                this.sweetalertServices.getSwal('error', 'โปรดกรอกหัวข้อที่ติดต่อ', '', false, '');
+                this.sweetalertServices.error('alert.pleaseEnterTopic');
             }
         } else if (this.callId && this.cType === 'case') {
             // Update existing case
@@ -1019,9 +1023,7 @@ export class ManageContactsComponent implements OnInit {
                     status: this.selectedStatus,
                     comment: this.comment,
                     callStatus: this.selectedCallStatusId,
-                    statusChangedAt: this.selectedCallStatusId !== this.originalCallStatusId
-                        ? new Date().toISOString()
-                        : null,
+                    statusChangedAt: this.selectedCallStatusId !== this.originalCallStatusId ? new Date().toISOString() : null,
                     statusChange: {
                         from: this.statusList.find((s: any) => s.id === this.originalStatus)?.status || this.originalStatus,
                         to: this.statusList.find((s: any) => s.id === this.selectedStatus)?.status || this.selectedStatus,
@@ -1034,7 +1036,7 @@ export class ManageContactsComponent implements OnInit {
                     .updateCase(data)
                     .pipe(
                         tap((res) => {
-                            this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
+                            this.sweetalertServices.success('alert.saveSuccess');
                             this.auditLogService.log(
                                 '',
                                 'Contact Update Case',
@@ -1060,7 +1062,7 @@ export class ManageContactsComponent implements OnInit {
                     )
                     .subscribe();
             } else {
-                this.sweetalertServices.getSwal('error', 'โปรดกรอกหัวข้อที่ติดต่อ', '', false, '');
+                this.sweetalertServices.error('alert.pleaseEnterTopic');
             }
         }
     }

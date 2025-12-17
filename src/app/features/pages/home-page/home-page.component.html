@@ -2,23 +2,23 @@
     <!-- Filter Section -->
     <div class="row g-3 g-md-4 mb-3 mb-md-4">
         <div class="col-12 col-xl-6">
-            <h2 class="fw-bold mb-0">แดชบอร์ด</h2>
+            <h2 class="fw-bold mb-0">{{ 'dashboard.title' | translate }}</h2>
         </div>
         <div class="col-12 col-xl-6">
             <div class="row g-3">
                 <div class="col-12 col-sm-6 col-lg-4 col-xl-6">
-                    <label class="fw-bold mb-2" for="selectedCaseChannel">ช่องทาง</label>
+                    <label class="fw-bold mb-2" for="selectedCaseChannel">{{ 'dashboard.channel' | translate }}</label>
                     <select class="form-select shadow-none" [(ngModel)]="selectedCaseChannel" (change)="filterCases()">
-                        <option value="">ทั้งหมด</option>
+                        <option value="">{{ 'dashboard.all' | translate }}</option>
                         <option *ngFor="let caseChannel of caseChannelList" [value]="caseChannel.value">
                             {{ caseChannel.name }}
                         </option>
                     </select>
                 </div>
                 <div class="col-12 col-sm-6 col-lg-4 col-xl-6">
-                    <label class="fw-bold mb-2" for="selectedCaseTopic">หัวข้อเคส</label>
+                    <label class="fw-bold mb-2" for="selectedCaseTopic">{{ 'dashboard.caseTopic' | translate }}</label>
                     <select class="form-select shadow-none" [(ngModel)]="selectedCaseTopic" (change)="filterCases()">
-                        <option value="">ทั้งหมด</option>
+                        <option value="">{{ 'dashboard.all' | translate }}</option>
                         <option *ngFor="let caseTopic of caseTopicList" [value]="caseTopic.value">{{ caseTopic.name }}</option>
                     </select>
                 </div>
@@ -35,25 +35,25 @@
                         <div class="statistics-card h-100">
                             <div class="stat-item">
                                 <div class="stat-number">{{ caseTopicCount }}</div>
-                                <div class="stat-label">หัวข้อเคส</div>
+                                <div class="stat-label">{{ 'dashboard.caseTopic' | translate }}</div>
                                 <div class="stat-relation">
                                     <i class="fa-solid fa-arrow-down me-1"></i>
-                                    จาก
+                                    {{ 'dashboard.from' | translate }}
                                 </div>
                             </div>
                             <div class="stat-divider"></div>
                             <div class="stat-item">
                                 <div class="stat-number">{{ contactCount }}</div>
-                                <div class="stat-label">ผู้ติดต่อ</div>
+                                <div class="stat-label">{{ 'dashboard.contact' | translate }}</div>
                                 <div class="stat-relation">
                                     <i class="fa-solid fa-arrow-down me-1"></i>
-                                    จาก
+                                    {{ 'dashboard.from' | translate }}
                                 </div>
                             </div>
                             <div class="stat-divider"></div>
                             <div class="stat-item">
                                 <div class="stat-number">{{ allContactCount }}</div>
-                                <div class="stat-label">ผู้ติดต่อทั้งหมด</div>
+                                <div class="stat-label">{{ 'dashboard.allContact' | translate }}</div>
                             </div>
                         </div>
                     </div>
@@ -67,7 +67,7 @@
                         ></highcharts-chart>
                         <ng-template #contactChartNoData>
                             <div class="text-center">
-                                <p>ไม่พบข้อมูล</p>
+                                <p>{{ 'dashboard.noData' | translate }}</p>
                             </div>
                         </ng-template>
                     </div>
@@ -76,7 +76,7 @@
         </div>
         <div class="col-12 col-xl-6">
             <div class="bg-white rounded shadow p-3 p-md-4 h-100">
-                <p class="mb-3 mb-md-4 fw-bold text-left">ช่องทาง</p>
+                <p class="mb-3 mb-md-4 fw-bold text-left">{{ 'dashboard.channel' | translate }}</p>
 
                 <highcharts-chart
                     *ngIf="hasCaseChartData; else caseChartNoData"
@@ -96,7 +96,7 @@
                 </div>
                 <ng-template #caseChartNoData>
                     <div class="text-center">
-                        <p>ไม่พบข้อมูล</p>
+                        <p>{{ 'dashboard.noData' | translate }}</p>
                     </div>
                 </ng-template>
             </div>
@@ -107,7 +107,7 @@
     <div class="row g-3 g-md-4">
         <div class="col-12 col-md-4 col-lg-3 col-xl-2 mb-3 mb-md-0">
             <div class="bg-white rounded shadow p-3 p-md-4 h-100">
-                <p class="mb-3 mb-md-4 fw-bold text-left">สถานะเคส</p>
+                <p class="mb-3 mb-md-4 fw-bold text-left">{{ 'dashboard.caseStatus' | translate }}</p>
                 <ol class="timeline">
                     <li
                         *ngFor="let status of statusList"
@@ -127,19 +127,19 @@
         </div>
         <div class="col-12 col-md-8 col-lg-9 col-xl-10">
             <div class="bg-white rounded shadow p-3 p-md-4 h-100">
-                <p class="mb-3 mb-md-4 fw-bold text-left">เคส</p>
+                <p class="mb-3 mb-md-4 fw-bold text-left">{{ 'dashboard.case' | translate }}</p>
                 <div class="table-responsive">
                     <table class="table table-hover table-sm">
                         <thead>
                             <tr>
-                                <th scope="col" class="text-nowrap">วันที่สร้าง</th>
-                                <th scope="col" class="text-nowrap">ช่องทาง</th>
-                                <th scope="col" class="text-nowrap">ผู้ติดต่อ</th>
-                                <th scope="col" class="text-nowrap d-none d-md-table-cell">ประเภทเคส</th>
-                                <th scope="col" class="text-nowrap d-none d-lg-table-cell">หัวข้อเคส</th>
-                                <th scope="col" class="text-nowrap d-none d-xl-table-cell">รายละเอียด</th>
-                                <th scope="col" class="text-nowrap d-none d-lg-table-cell">ผู้ดูแล</th>
-                                <th scope="col" class="text-nowrap">สถานะ</th>
+                                <th scope="col" class="text-nowrap">{{ 'contact.createdAt' | translate }}</th>
+                                <th scope="col" class="text-nowrap">{{ 'dashboard.channel' | translate }}</th>
+                                <th scope="col" class="text-nowrap">{{ 'dashboard.contact' | translate }}</th>
+                                <th scope="col" class="text-nowrap d-none d-md-table-cell">{{ 'dashboard.caseType' | translate }}</th>
+                                <th scope="col" class="text-nowrap d-none d-lg-table-cell">{{ 'dashboard.caseTopic' | translate }}</th>
+                                <th scope="col" class="text-nowrap d-none d-xl-table-cell">{{ 'contact.description' | translate }}</th>
+                                <th scope="col" class="text-nowrap d-none d-lg-table-cell">{{ 'dashboard.agent' | translate }}</th>
+                                <th scope="col" class="text-nowrap">{{ 'common.status' | translate }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -166,7 +166,7 @@
                             </ng-container>
                             <ng-template #tableNoData>
                                 <tr>
-                                    <td colspan="8" class="text-center">ไม่พบข้อมูล</td>
+                                    <td colspan="8" class="text-center">{{ 'dashboard.noData' | translate }}</td>
                                 </tr>
                             </ng-template>
                         </tbody>

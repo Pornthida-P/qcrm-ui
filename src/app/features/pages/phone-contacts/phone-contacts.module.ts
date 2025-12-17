@@ -5,6 +5,8 @@ import { RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ContactsService } from 'src/app/services/contacts/contacts.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [PhoneContactsComponent],
@@ -18,7 +20,9 @@ import { ContactsService } from 'src/app/services/contacts/contacts.service';
           path: '',
           component: PhoneContactsComponent,
       }
-    ])
+    ]),
+    TranslateModule,
+    NgbTooltipModule,
   ],
   providers: [
     ContactsService, DecimalPipe

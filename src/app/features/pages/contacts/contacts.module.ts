@@ -8,6 +8,7 @@ import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { ContactsService } from 'src/app/services/contacts/contacts.service';
 import { HttpClientModule } from '@angular/common/http';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
     declarations: [ContactsComponent],
@@ -25,6 +26,7 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
         NgbPaginationModule,
         HttpClientModule,
         NgbTooltipModule,
+        TranslateModule,
     ],
     providers: [ContactsService],
 })

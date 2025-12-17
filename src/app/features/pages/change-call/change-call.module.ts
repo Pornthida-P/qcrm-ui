@@ -10,6 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { MAT_DATE_LOCALE } from '@angular/material/core'
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   declarations: [ChangeCallComponent],
@@ -28,7 +29,8 @@ import { MAT_DATE_LOCALE } from '@angular/material/core'
     MatInputModule,
     MatFormFieldModule,
     NgbTimepickerModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    TranslateModule,
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'en-GB' }

@@ -8,6 +8,7 @@ import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { User } from 'src/app/shared/interface/user.interface';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-member',
@@ -37,6 +38,7 @@ export class MemberComponent implements OnInit {
         private sweetalertService: SweetAlertService,
         private modalUserService: ModalUserService,
         private auditLogService: AuditLogService,
+        private translate: TranslateService,
     ) {}
 
     ngOnInit(): void {
@@ -121,14 +123,20 @@ export class MemberComponent implements OnInit {
 
     onClickDelete(member: User) {
         this.sweetalertService
-            .confirmSwal('warning', 'Warning', 'Are you sure you want to delete this user?', 'Yes', 'No')
+            .confirmSwal(
+                'warning',
+                this.translate.instant('alert.warning'),
+                this.translate.instant('alert.confirmDeleteUser'),
+                this.translate.instant('alert.yes'),
+                this.translate.instant('alert.no'),
+            )
             .then((result: { isConfirmed: any }) => {
                 if (result.isConfirmed) {
                     this.userService
                         .deleteUser(member.userId)
                         .pipe(
                             tap(() => {
-                                this.sweetalertService.getSwal('success', 'Success', 'Delete user successfully.', false, '');
+                                this.sweetalertService.success('alert.deleteUserSuccess');
                                 this.findAllMember();
                                 this.auditLogService.log('', 'Account', '', 'Delete', `User : ${member.username}, Email: ${member.email}`, `Success`);
                             }),

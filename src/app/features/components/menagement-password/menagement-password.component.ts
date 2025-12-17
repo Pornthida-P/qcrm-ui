@@ -13,7 +13,6 @@ import { User } from 'src/app/shared/interface/user.interface';
     styleUrl: './menagement-password.component.scss',
 })
 export class MenagementPasswordComponent implements OnInit {
-    title = 'menagement-password';
     userData?: User | null;
     currentPassword: string = '';
     newPassword: string = '';
@@ -60,13 +59,13 @@ export class MenagementPasswordComponent implements OnInit {
 
     onSubmit() {
         if (this.passwordForm.invalid) {
-            this.sweetalertService.getSwal('error', 'Warning', 'Please fill in all the fields.', false, '');
+            this.sweetalertService.warning('alert.pleaseFillAllFields');
             return;
         }
 
         const { newPassword, verifyPassword, currentPassword } = this.passwordForm.value;
         if (newPassword !== verifyPassword) {
-            this.sweetalertService.getSwal('error', 'Warning', 'Password does not match.', false, '');
+            this.sweetalertService.warning('alert.passwordNotMatch');
             this.auditLogService.log('', 'Account', '', 'Change Password', ``, `Failed, Password does not match`);
             this.passwordForm.reset();
             return;
@@ -81,7 +80,7 @@ export class MenagementPasswordComponent implements OnInit {
                 }),
             )
             .subscribe(() => {
-                this.sweetalertService.getSwal('success', 'Success', 'Password has been updated.', false, '');
+                this.sweetalertService.success('alert.passwordUpdated');
                 this.passwordForm.reset();
                 this.auditLogService.log('', 'Account', '', 'Change Password', ``, `Success`);
                 this.router.navigate(['/logout']);

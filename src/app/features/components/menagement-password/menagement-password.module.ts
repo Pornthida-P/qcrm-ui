@@ -4,12 +4,6 @@ import { RouterModule } from '@angular/router';
 import { MenagementPasswordComponent } from './menagement-password.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { HttpClient } from '@angular/common/http';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-
-export function HttpLoaderFactory(http: HttpClient) {
-    return new TranslateHttpLoader(http, './assets/qcrm-ui/i18n/', '.json');
-}
 
 @NgModule({
     declarations: [MenagementPasswordComponent],
@@ -23,13 +17,7 @@ export function HttpLoaderFactory(http: HttpClient) {
                 component: MenagementPasswordComponent,
             },
         ]),
-        TranslateModule.forChild({
-            loader: {
-                provide: TranslateLoader,
-                useFactory: HttpLoaderFactory,
-                deps: [HttpClient],
-            },
-        }),
+        TranslateModule,
     ],
 })
 export class MenagementPasswordModule {}

@@ -6,6 +6,7 @@ import { UserService } from 'src/app/services/user/user.service';
 import { ContactsService } from 'src/app/services/contacts/contacts.service';
 import { StatusService } from 'src/app/services/status/status.service';
 import * as Highcharts from 'highcharts';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-home-page',
@@ -121,7 +122,7 @@ export class HomePageComponent implements OnInit {
         series: [
             {
                 type: 'pie',
-                name: 'จำนวนเคสทั้งหมด',
+                name: '',
                 data: [],
             },
         ],
@@ -147,11 +148,11 @@ export class HomePageComponent implements OnInit {
         yAxis: {
             min: 0,
             title: {
-                text: 'จำนวนผู้ติดต่อ',
+                text: '',
             },
         },
         tooltip: {
-            valueSuffix: ' (คน)',
+            valueSuffix: '',
         },
         plotOptions: {
             column: {
@@ -162,7 +163,7 @@ export class HomePageComponent implements OnInit {
         colors: ['#ffd700', '#010966', '#FB5F20'],
         series: [
             {
-                name: 'จำนวน',
+                name: '',
                 type: 'column',
                 colorByPoint: true,
                 data: [],
@@ -175,9 +176,16 @@ export class HomePageComponent implements OnInit {
         private userService: UserService,
         private contactService: ContactsService,
         public statusService: StatusService,
+        private translate: TranslateService,
     ) {}
 
     ngOnInit(): void {
+        // Set chart name with translation
+        (this.caseChartOptions.series as any)[0].name = this.translate.instant('chart.totalCases');
+        (this.contactChartOptions.yAxis as any).title.text = this.translate.instant('chart.contactCount');
+        (this.contactChartOptions.series as any)[0].name = this.translate.instant('chart.count');
+        (this.contactChartOptions.tooltip as any).valueSuffix = ` (${this.translate.instant('dashboard.contact')})`;
+
         this.getDataUser();
         this.getCaseTopic();
         this.getCaseChannel();

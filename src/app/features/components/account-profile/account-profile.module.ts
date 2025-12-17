@@ -7,25 +7,9 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
-export function HttpLoaderFactory(http: HttpClient) {
-    return new TranslateHttpLoader(http, './assets/qcrm-ui/i18n/', '.json');
-}
-
 @NgModule({
     declarations: [AccountProfileComponent],
-    imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        FormsModule,
-        NgbModule,
-        TranslateModule.forChild({
-            loader: {
-                provide: TranslateLoader,
-                useFactory: HttpLoaderFactory,
-                deps: [HttpClient],
-            },
-        }),
-    ],
+    imports: [CommonModule, ReactiveFormsModule, FormsModule, NgbModule, TranslateModule],
     exports: [AccountProfileComponent],
 })
 export class AccountProfileModule {}

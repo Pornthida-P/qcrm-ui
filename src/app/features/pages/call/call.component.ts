@@ -18,6 +18,7 @@ import { Attachment } from 'src/app/shared/interface/attachment.interface';
 import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
 import { CallListService } from 'src/app/services/call-list/call-list.service';
 import { StatusService } from 'src/app/services/status/status.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Pipe({
     name: 'searchFilter',
@@ -198,6 +199,7 @@ export class CallComponent implements OnInit {
         private auditLogService: AuditLogService,
         private callListService: CallListService,
         public statusService: StatusService,
+        private translate: TranslateService,
     ) {
         this.startTime = this.formatDate(new Date());
     }
@@ -207,16 +209,16 @@ export class CallComponent implements OnInit {
 
         this.userRole = this.userData.role.roleTitle.toLocaleLowerCase();
         this.filterOption = [
-            { name: 'ทั้งหมด', code: 'all' },
-            { name: 'เฉพาะฉัน', code: this.userData.username },
+            { name: this.translate.instant('filter.all'), code: 'all' },
+            { name: this.translate.instant('filter.onlyMy'), code: this.userData.username },
         ];
 
         this.filterDate = [
-            { name: 'กรุณาเลือกวันที่', type: '' },
-            { name: 'วันนี้', type: 'toDay' },
-            { name: 'อาทิตย์นี้', type: 'thisWeek' },
-            { name: 'เดือนนี้', type: 'thisMonth' },
-            { name: 'เลือกวันที่', type: 'custom' },
+            { name: this.translate.instant('filter.pleaseSelectDate'), type: '' },
+            { name: this.translate.instant('filter.today'), type: 'toDay' },
+            { name: this.translate.instant('filter.thisWeek'), type: 'thisWeek' },
+            { name: this.translate.instant('filter.thisMonth'), type: 'thisMonth' },
+            { name: this.translate.instant('filter.customDate'), type: 'custom' },
         ];
 
         this.activeRoute.queryParams.subscribe((params) => {
@@ -485,7 +487,16 @@ export class CallComponent implements OnInit {
             );
 
             const columns = [
-                ['เวลา', 'ชื่อ - นามสกุล', 'เบอร์โทร', 'ประเภทสาย', 'หัวข้อที่ติดต่อ', 'เรื่องที่ติดต่อ', 'รายละเอียด', 'ผู้ที่รับผิดชอบ'],
+                [
+                    this.translate.instant('export.time'),
+                    this.translate.instant('export.fullName'),
+                    this.translate.instant('export.phone'),
+                    this.translate.instant('export.callType'),
+                    this.translate.instant('export.topic'),
+                    this.translate.instant('export.subject'),
+                    this.translate.instant('export.description'),
+                    this.translate.instant('export.assignUser'),
+                ],
             ];
             const wb = XLSX.utils.book_new();
             const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet([]);
@@ -724,7 +735,7 @@ export class CallComponent implements OnInit {
                     tap((response: any) => {
                         Swal.fire({
                             icon: 'success',
-                            title: 'อัพโหลดข้อมูลเรียบร้อยแล้ว',
+                            title: this.translate.instant('alert.uploadSuccess'),
                             showConfirmButton: false,
                             timer: 2000,
                             timerProgressBar: true,
@@ -781,7 +792,7 @@ export class CallComponent implements OnInit {
                     .createCalls(data)
                     .pipe(
                         tap((res) => {
-                            this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
+                            this.sweetalertServices.success('alert.saveSuccess');
                             this.auditLogService.log(
                                 '',
                                 'Contact Create Call',
@@ -807,7 +818,7 @@ export class CallComponent implements OnInit {
                     )
                     .subscribe();
             } else {
-                this.sweetalertServices.getSwal('error', 'โปรดกรอกหัวข้อที่ติดต่อ', '', false, '');
+                this.sweetalertServices.error('alert.pleaseEnterTopic');
             }
         } else if (this.callId && this.cType === 'case') {
             console.log('Edit Case:', this.callId);
@@ -836,7 +847,7 @@ export class CallComponent implements OnInit {
                     .updateCase(data)
                     .pipe(
                         tap((res) => {
-                            this.sweetalertServices.getSwal('success', 'บันทึกข้อมูลเรียบร้อยแล้ว', '', false, '');
+                            this.sweetalertServices.success('alert.saveSuccess');
                             this.auditLogService.log(
                                 '',
                                 'Contact Update Case',
@@ -862,7 +873,7 @@ export class CallComponent implements OnInit {
                     )
                     .subscribe();
             } else {
-                this.sweetalertServices.getSwal('error', 'โปรดกรอกหัวข้อที่ติดต่อ', '', false, '');
+                this.sweetalertServices.error('alert.pleaseEnterTopic');
             }
         }
     }
@@ -946,10 +957,10 @@ export class CallComponent implements OnInit {
         console.log('Delete Call:', callId);
         Swal.fire({
             icon: 'warning',
-            title: 'คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้?',
+            title: this.translate.instant('alert.deleteConfirm'),
             showCancelButton: true,
-            confirmButtonText: 'ตกลง',
-            cancelButtonText: 'ยกเลิก',
+            confirmButtonText: this.translate.instant('alert.ok'),
+            cancelButtonText: this.translate.instant('alert.cancel'),
             confirmButtonColor: '#3066be',
             cancelButtonColor: '#ec5365',
             width: '50%',
@@ -957,7 +968,7 @@ export class CallComponent implements OnInit {
             if (result.isConfirmed) {
                 this.contactsService.deleteCall(callId).subscribe(
                     (res: any) => {
-                        this.sweetalertServices.getSwal('success', 'ลบข้อมูลเรียบร้อยแล้ว', '', false, '');
+                        this.sweetalertServices.success('alert.deleteSuccess');
                         this.auditLogService.log(
                             '',
                             'Contact',

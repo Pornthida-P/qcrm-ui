@@ -51,14 +51,20 @@ export class CaseTopicComponent {
 
     onClickDelete(data: any) {
         this.sweetalertService
-            .confirmSwal('warning', 'Warning', 'Are you sure you want to delete this case topic?', 'Yes', 'No')
+            .confirmSwal(
+                'warning',
+                this.translateService.instant('alert.warning'),
+                this.translateService.instant('alert.confirmDeleteCaseTopic'),
+                this.translateService.instant('alert.yes'),
+                this.translateService.instant('alert.no'),
+            )
             .then((result: { isConfirmed: any }) => {
                 if (result.isConfirmed) {
                     this.callService
                         .deleteCaseTopic(data.caseTopicId)
                         .pipe(
                             tap(() => {
-                                this.sweetalertService.getSwal('success', 'Success', 'Delete case topic successfully.', false, '');
+                                this.sweetalertService.success('alert.deleteCaseTopicSuccess');
                                 this.findAllCaseTopic();
                             }),
                             catchError((error) => {
