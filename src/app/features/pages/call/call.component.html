@@ -247,104 +247,104 @@
                                 >
                                     <h4 class="mb-0" *ngIf="attachmentShowing == true">{{ 'contact.addContactInfo' | translate }}</h4>
                                     <h4 class="mb-0" *ngIf="attachmentShowing == false">{{ 'contact.editContactInfo' | translate }}</h4>
-                                    <button class="btn btn-primary" type="button" (click)="submitCall()">{{ 'common.save' | translate }}</button>
+                                    <button class="btn btn-primary" type="button" (click)="submitCall()">
+                                        {{ 'common.save' | translate }}
+                                    </button>
                                 </div>
                                 <div class="edit-contact-form-scroll">
-                                <form class="row g-3 mg-3">
-                                    <div class="col-12">
-                                        <div class="row g-3">
-                                            <div class="col-12 col-sm-6">
-                                              <label for="inputTopic" class="form-label">{{ 'contact.topic' | translate }}<span class="color-red">*</span></label>
-
-                                                <mat-form-field class="w-100" appearance="outline">
-                                                    <input
-                                                        type="text"
-                                                        matInput
-                                                        [formControl]="topicControl"
-                                                        [matAutocomplete]="autoTopic"
-                                                        (input)="filterTopics()"
-                                                        (focus)="filterTopics()"
-                                                        [placeholder]="'contact.searchTopic' | translate"
-                                                    />
-                                                    <mat-autocomplete
-                                                        #autoTopic="matAutocomplete"
-                                                        [displayWith]="displayTopicFn"
-                                                        (optionSelected)="onTopicSelected($event)"
+                                    <form class="row g-3 mg-3">
+                                        <div class="col-12">
+                                            <div class="row g-3">
+                                                <div class="col-12 col-sm-6">
+                                                    <label for="inputTopic" class="form-label"
+                                                        >{{ 'contact.topic' | translate }}<span class="color-red">*</span></label
                                                     >
-                                                        <mat-option *ngFor="let topic of filteredTopics" [value]="topic">
-                                                            {{ topic.name }}
-                                                        </mat-option>
-                                                    </mat-autocomplete>
-                                                </mat-form-field>
-                                            </div>
 
-                                            <div class="col-12 col-sm-6">
-                                              <label for="inputCaseSubject" class="form-label">{{ 'contact.subject' | translate }}</label>
+                                                    <mat-form-field class="w-100" appearance="outline">
+                                                        <input
+                                                            type="text"
+                                                            matInput
+                                                            [formControl]="topicControl"
+                                                            [matAutocomplete]="autoTopic"
+                                                            (input)="filterTopics()"
+                                                            (focus)="filterTopics()"
+                                                            [placeholder]="'contact.searchTopic' | translate"
+                                                        />
+                                                        <mat-autocomplete
+                                                            #autoTopic="matAutocomplete"
+                                                            [displayWith]="displayTopicFn"
+                                                            (optionSelected)="onTopicSelected($event)"
+                                                        >
+                                                            <mat-option *ngFor="let topic of filteredTopics" [value]="topic">
+                                                                {{ topic.name }}
+                                                            </mat-option>
+                                                        </mat-autocomplete>
+                                                    </mat-form-field>
+                                                </div>
 
-                                                <mat-form-field class="w-100" appearance="outline">
-                                                    <input
-                                                        type="text"
-                                                        matInput
-                                                        [formControl]="subjectControl"
-                                                        [matAutocomplete]="autoSubject"
-                                                        (input)="filterSubjects()"
-                                                        (focus)="filterSubjects()"
-                                                        [placeholder]="'contact.searchSubject' | translate"
-                                                        [disabled]="!selectedCaseTopics"
-                                                    />
-                                                    <mat-autocomplete
-                                                        #autoSubject="matAutocomplete"
-                                                        [displayWith]="displaySubjectFn"
-                                                        (optionSelected)="onSubjectSelected($event)"
-                                                    >
-                                                        <mat-option *ngFor="let subject of filteredSubjects" [value]="subject">
-                                                            {{ subject.name }}
-                                                        </mat-option>
-                                                    </mat-autocomplete>
-                                                </mat-form-field>
+                                                <div class="col-12 col-sm-6">
+                                                    <label for="inputCaseSubject" class="form-label">{{
+                                                        'contact.subject' | translate
+                                                    }}</label>
+
+                                                    <mat-form-field class="w-100" appearance="outline">
+                                                        <input
+                                                            type="text"
+                                                            matInput
+                                                            [formControl]="subjectControl"
+                                                            [matAutocomplete]="autoSubject"
+                                                            (input)="filterSubjects()"
+                                                            (focus)="filterSubjects()"
+                                                            [placeholder]="'contact.searchSubject' | translate"
+                                                            [disabled]="!selectedCaseTopics"
+                                                        />
+                                                        <mat-autocomplete
+                                                            #autoSubject="matAutocomplete"
+                                                            [displayWith]="displaySubjectFn"
+                                                            (optionSelected)="onSubjectSelected($event)"
+                                                        >
+                                                            <mat-option *ngFor="let subject of filteredSubjects" [value]="subject">
+                                                                {{ subject.name }}
+                                                            </mat-option>
+                                                        </mat-autocomplete>
+                                                    </mat-form-field>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <div class="col-12 col-sm-6">
-                                        <label for="inputStatus" class="form-label">{{ 'common.status' | translate }}</label>
-                                        <select
-                                            id="inputStatus"
-                                            class="form-select"
-                                            name="selectedStatus"
-                                            [(ngModel)]="selectedStatus"
-                                            [disabled]="isStatusDisabled"
-                                        >
-                                            <option disabled value="">{{ 'common.pleaseSelect' | translate }}</option>
-                                            <option *ngFor="let status of statusList" [value]="status.id">{{ status.status }}</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-12 col-sm-6">
-                                        <label for="inputChannel" class="form-label">{{ 'contact.channel' | translate }}</label>
-                                        <select
-                                            id="inputChannel"
-                                            class="form-select"
-                                            name="selectedChannels"
-                                            [(ngModel)]="selectedChannels"
-                                            (ngModelChange)="onChannelChange($event)"
-                                            [disabled]="isChannelDisabled"
-                                        >
-                                            <option disabled value="">{{ 'common.pleaseSelect' | translate }}</option>
-                                            <option *ngFor="let channel of channels" [value]="channel.channelId">{{ channel.name }}</option>
-                                        </select>
-                                        <div
-                                            class="w-100 mt-3"
-                                            *ngIf="selectedChannels === '1' || selectedChannels === '2' || selectedChannels === '3'"
-                                        >
-                                            <label
-                                                *ngIf="selectedChannels === '1' || selectedChannels === '2'"
-                                                for="inputCallType"
-                                                class="form-label"
-                                                >{{ 'contact.callType' | translate }}</label
+                                        <div class="col-12 col-sm-6">
+                                            <label for="inputStatus" class="form-label">{{ 'common.status' | translate }}</label>
+                                            <select
+                                                id="inputStatus"
+                                                class="form-select"
+                                                name="selectedStatus"
+                                                [(ngModel)]="selectedStatus"
+                                                [disabled]="isStatusDisabled"
                                             >
-                                            <label *ngIf="selectedChannels === '3'" for="inputCallType" class="form-label"
-                                                >{{ 'contact.emailType' | translate }}</label
+                                                <option disabled value="">{{ 'common.pleaseSelect' | translate }}</option>
+                                                <option *ngFor="let status of statusList" [value]="status.id">{{ status.status }}</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-12 col-sm-6">
+                                            <label for="inputChannel" class="form-label">{{ 'contact.channel' | translate }}</label>
+                                            <select
+                                                id="inputChannel"
+                                                class="form-select"
+                                                name="selectedChannels"
+                                                [(ngModel)]="selectedChannels"
+                                                (ngModelChange)="onChannelChange($event)"
+                                                [disabled]="isChannelDisabled"
                                             >
+                                                <option disabled value="">{{ 'common.pleaseSelect' | translate }}</option>
+                                                <option *ngFor="let channel of channels" [value]="channel.channelId">
+                                                    {{ channel.name }}
+                                                </option>
+                                            </select>
+                                        </div>
+
+                                        <!-- ประเภทสาย (Voice) -->
+                                        <div class="col-12 col-sm-6" *ngIf="selectedChannels === '1' || selectedChannels === '2'">
+                                            <label for="inputCallType" class="form-label">{{ 'contact.callType' | translate }}</label>
                                             <select
                                                 id="inputCallType"
                                                 class="form-select"
@@ -359,151 +359,159 @@
                                             </select>
                                         </div>
 
-                                        <div class="w-100 mt-3" *ngIf="selectedChannels === '1' || selectedChannels === '2'">
-                                            <label for="inputContactNumber" class="form-label"
-                                                >{{ 'contact.phoneNumber' | translate }}<span class="color-red">*</span></label
-                                            >
+                                        <!-- ประเภทอีเมล (Email) -->
+                                        <div class="col-12 col-sm-6" *ngIf="selectedChannels === '3'">
+                                            <label for="inputCallType" class="form-label">{{ 'contact.emailType' | translate }}</label>
                                             <select
-                                                id="inputContactNumber"
+                                                id="inputCallType"
                                                 class="form-select"
-                                                name="selectedContactNumber"
-                                                [(ngModel)]="selectedContactNumber"
-                                                [disabled]="isContactNumberDisabled"
+                                                name="selectedCallTypeId"
+                                                [(ngModel)]="selectedCallTypeId"
+                                                [disabled]="isCallTypeDisabled"
                                             >
-                                                <option disabled value="">{{ 'contact.selectPhone' | translate }}</option>
-                                                <option
-                                                    *ngFor="let contactNumbers of contactNumber"
-                                                    [ngValue]="{
-                                                        contactNumber: contactNumbers.contactNumber,
-                                                        contactNumberId: contactNumbers.contactNumberId
-                                                    }"
-                                                >
-                                                    {{ contactNumbers.contactNumber }}
+                                                <option disabled value="">{{ 'common.pleaseSelect' | translate }}</option>
+                                                <option *ngFor="let callType of callTypes" [value]="callType.name">
+                                                    {{ callType.name }}
                                                 </option>
                                             </select>
                                         </div>
-                                    </div>
 
-                                    <div class="col-12">
-                                        <label for="inputAddress" class="form-label">{{ 'contact.dateTime' | translate }}</label>
-                                        <div class="datetime-inline-wrapper">
-                                            <div class="date-input-section">
-                                                <div class="input-group">
-                                                    <input
-                                                        matInput
-                                                        [matDatepicker]="picker1"
-                                                        name="startTime"
-                                                        [(ngModel)]="startTime"
-                                                        required
-                                                        class="form-control"
-                                                        [placeholder]="'common.selectDate' | translate"
+                                        <!-- เบอร์ติดต่อ -->
+                                        <div
+                                            class="col-12 col-sm-6"
+                                            *ngIf="(selectedChannels === '1' || selectedChannels === '2') && selectedContactNumber"
+                                        >
+                                            <label for="inputContactNumber" class="form-label"
+                                                >{{ 'contact.phoneNumber' | translate }}<span class="color-red">*</span></label
+                                            >
+                                            <input
+                                                type="text"
+                                                id="inputContactNumber"
+                                                class="form-control"
+                                                [value]="selectedContactNumber.contactNumber"
+                                                readonly
+                                            />
+                                        </div>
+                                        <div class="col-12">
+                                            <label for="inputAddress" class="form-label">{{ 'contact.dateTime' | translate }}</label>
+                                            <div class="datetime-inline-wrapper">
+                                                <div class="date-input-section">
+                                                    <div class="input-group">
+                                                        <input
+                                                            matInput
+                                                            [matDatepicker]="picker1"
+                                                            name="startTime"
+                                                            [(ngModel)]="startTime"
+                                                            required
+                                                            class="form-control"
+                                                            [placeholder]="'common.selectDate' | translate"
+                                                            [disabled]="isDateDisabled"
+                                                        />
+                                                        <span class="input-group-text">
+                                                            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                                                            <mat-datepicker #picker1></mat-datepicker>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="time-input-section">
+                                                    <ngb-timepicker
+                                                        name="timepickStart"
+                                                        [(ngModel)]="timepickStart"
+                                                        [seconds]="seconds"
+                                                        [ngModelOptions]="{ standalone: true }"
+                                                        (dateInput)="(formatTimepickStart)"
+                                                        class="time-picker-inline"
+                                                        (ngModelChange)="onTimepickStartChange($event)"
                                                         [disabled]="isDateDisabled"
-                                                    />
-                                                    <span class="input-group-text">
-                                                        <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-                                                        <mat-datepicker #picker1></mat-datepicker>
-                                                    </span>
+                                                    ></ngb-timepicker>
                                                 </div>
                                             </div>
-                                            <div class="time-input-section">
-                                                <ngb-timepicker
-                                                    name="timepickStart"
-                                                    [(ngModel)]="timepickStart"
-                                                    [seconds]="seconds"
-                                                    [ngModelOptions]="{ standalone: true }"
-                                                    (dateInput)="(formatTimepickStart)"
-                                                    class="time-picker-inline"
-                                                    (ngModelChange)="onTimepickStartChange($event)"
-                                                    [disabled]="isDateDisabled"
-                                                ></ngb-timepicker>
+                                        </div>
+
+                                        <div class="col-12" *ngIf="selectedChannels === '1' || selectedChannels === '2'">
+                                            <label class="form-label">{{ 'contact.callStatus' | translate }}</label>
+                                            <div class="row">
+                                                <div class="col-4" *ngFor="let status of callStatus">
+                                                    <div class="form-check">
+                                                        <input
+                                                            class="form-check-input"
+                                                            type="radio"
+                                                            [id]="'callStatus_' + status.id"
+                                                            name="selectedCallStatus"
+                                                            [value]="status.id"
+                                                            [(ngModel)]="selectedCallStatusId"
+                                                        />
+                                                        <label class="form-check-label" [for]="'callStatus_' + status.id">
+                                                            {{ status.callStatus }}
+                                                        </label>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <div class="col-12" *ngIf="selectedChannels === '1' || selectedChannels === '2'">
-                                        <label class="form-label">{{ 'contact.callStatus' | translate }}</label>
-                                        <div class="row">
-                                            <div class="col-4" *ngFor="let status of callStatus">
-                                                <div class="form-check">
+                                        <div class="col-12">
+                                            <label class="form-check-label" for="gridCheck">{{ 'contact.description' | translate }}</label>
+                                            <textarea
+                                                class="form-control"
+                                                [placeholder]="'common.pleaseEnter' | translate"
+                                                id="floatingTextarea"
+                                                name="description"
+                                                [(ngModel)]="description"
+                                                [disabled]="isDescriptionDisabled"
+                                            ></textarea>
+                                        </div>
+                                        <div class="col-12" *ngIf="attachmentShowing == false">
+                                            <label class="form-check-label" for="gridCheck">{{ 'contact.comment' | translate }}</label>
+                                            <textarea
+                                                class="form-control"
+                                                [placeholder]="'common.pleaseEnter' | translate"
+                                                id="floatingTextareaComment"
+                                                name="comment"
+                                                [(ngModel)]="comment"
+                                            ></textarea>
+                                        </div>
+                                        <div class="col-12" *ngIf="comments && comments.length > 0">
+                                            <label class="form-label">{{ 'contact.commentHistory' | translate }}</label>
+                                            <div class="border rounded p-2 bg-light comment-history-container">
+                                                <div class="card mb-2" *ngFor="let comment of comments">
+                                                    <div class="card-body py-2 px-3">
+                                                        <p class="card-text mb-1">{{ comment.comment }}</p>
+                                                        <small class="text-muted">
+                                                            {{ comment.username }} | {{ comment.createdAt | date : 'dd/MM/yyyy HH:mm' }}
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12" *ngIf="history && history.length > 0">
+                                            <label class="form-label">{{ 'contact.statusHistory' | translate }}</label>
+                                            <div class="border rounded p-2 bg-light comment-history-container">
+                                                <div class="card mb-2" *ngFor="let item of history">
+                                                    <div class="card-body py-2 px-3">
+                                                        <p class="mb-1 small">{{ item.status }}</p>
+                                                        <small class="text-muted">
+                                                            {{ item.username || item.createdById }} |
+                                                            {{ item.createdAt | date : 'dd/MM/yyyy HH:mm' }}
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-sm-6" *ngIf="attachmentShowing">
+                                            <label for="formFileSm" class="form-label">{{ 'contact.attachment' | translate }}</label>
+                                            <div class="mb-3">
+                                                <div class="form-input-file">
                                                     <input
-                                                        class="form-check-input"
-                                                        type="radio"
-                                                        [id]="'callStatus_' + status.id"
-                                                        name="selectedCallStatus"
-                                                        [value]="status.id"
-                                                        [(ngModel)]="selectedCallStatusId"
+                                                        class="form-control form-control-sm"
+                                                        id="formFileSm"
+                                                        type="file"
+                                                        multiple
+                                                        (change)="onFileSelected($event)"
                                                     />
-                                                    <label class="form-check-label" [for]="'callStatus_' + status.id">
-                                                        {{ status.callStatus }}
-                                                    </label>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-
-                                    <div class="col-12">
-                                        <label class="form-check-label" for="gridCheck">{{ 'contact.description' | translate }}</label>
-                                        <textarea
-                                            class="form-control"
-                                            [placeholder]="'common.pleaseEnter' | translate"
-                                            id="floatingTextarea"
-                                            name="description"
-                                            [(ngModel)]="description"
-                                            [disabled]="isDescriptionDisabled"
-                                        ></textarea>
-                                    </div>
-                                    <div class="col-12" *ngIf="attachmentShowing == false">
-                                        <label class="form-check-label" for="gridCheck">{{ 'contact.comment' | translate }}</label>
-                                        <textarea
-                                            class="form-control"
-                                            [placeholder]="'common.pleaseEnter' | translate"
-                                            id="floatingTextareaComment"
-                                            name="comment"
-                                            [(ngModel)]="comment"
-                                        ></textarea>
-                                    </div>
-                                    <div class="col-12" *ngIf="comments && comments.length > 0">
-                                        <label class="form-label">{{ 'contact.commentHistory' | translate }}</label>
-                                        <div class="border rounded p-2 bg-light comment-history-container">
-                                            <div class="card mb-2" *ngFor="let comment of comments">
-                                                <div class="card-body py-2 px-3">
-                                                    <p class="card-text mb-1">{{ comment.comment }}</p>
-                                                    <small class="text-muted">
-                                                        {{ comment.username }} | {{ comment.createdAt | date : 'dd/MM/yyyy HH:mm' }}
-                                                    </small>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-12" *ngIf="history && history.length > 0">
-                                        <label class="form-label">{{ 'contact.statusHistory' | translate }}</label>
-                                        <div class="border rounded p-2 bg-light comment-history-container">
-                                            <div class="card mb-2" *ngFor="let item of history">
-                                                <div class="card-body py-2 px-3">
-                                                    <p class="mb-1 small">{{ item.status }}</p>
-                                                    <small class="text-muted">
-                                                        {{ item.username || item.createdById }} |
-                                                        {{ item.createdAt | date : 'dd/MM/yyyy HH:mm' }}
-                                                    </small>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-12 col-sm-6" *ngIf="attachmentShowing">
-                                        <label for="formFileSm" class="form-label">{{ 'contact.attachment' | translate }}</label>
-                                        <div class="mb-3">
-                                            <div class="form-input-file">
-                                                <input
-                                                    class="form-control form-control-sm"
-                                                    id="formFileSm"
-                                                    type="file"
-                                                    multiple
-                                                    (change)="onFileSelected($event)"
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
+                                    </form>
                                 </div>
                             </div>
 
@@ -534,7 +542,9 @@
                                         class="card-header text-sm text-white"
                                         [ngStyle]="{ 'background-color': 'var(--color-blue-dark)' }"
                                     >
-                                        <p class="mb-0"><i class="fa-solid fa-file-lines me-2"></i>{{ 'contact.chatHistory' | translate }}</p>
+                                        <p class="mb-0">
+                                            <i class="fa-solid fa-file-lines me-2"></i>{{ 'contact.chatHistory' | translate }}
+                                        </p>
                                     </div>
                                     <div class="card-body chat-history-container flex-grow-1">
                                         <div class="chat-messages">

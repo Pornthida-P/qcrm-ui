@@ -318,53 +318,58 @@
                                 </select>
                             </div>
                             <div class="col-12 col-sm-6">
-                                <label for="inputChannel" class="form-label">{{ 'contact.channel' | translate }}</label>
-                                <select
-                                    id="inputChannel"
-                                    class="form-select"
-                                    name="selectedChannels"
-                                    [(ngModel)]="selectedChannels"
-                                    (ngModelChange)="onChannelChange($event)"
-                                    [disabled]="isChannelDisabled"
-                                >
-                                    <option disabled value="">{{ 'common.pleaseSelect' | translate }}</option>
-                                    <option *ngFor="let channel of channels" [value]="channel.channelId">{{ channel.name }}</option>
-                                </select>
-                                <div class="w-100 mt-3" *ngIf="selectedChannels === '1' || selectedChannels === '2'">
-                                    <label for="inputCallType" class="form-label">{{ 'contact.callType' | translate }}</label>
-                                    <input
-                                        type="text"
-                                        id="inputCallType"
-                                        class="form-control"
-                                        [value]="outbound"
-                                        readonly
-                                    />
-                                </div>
-                                <div class="w-100 mt-3" *ngIf="selectedChannels === '3'">
-                                    <label for="inputCallType" class="form-label">{{ 'contact.emailType' | translate }}</label>
-                                    <select
-                                        id="inputCallType"
-                                        class="form-select"
-                                        name="selectedCallTypeId"
-                                        [(ngModel)]="selectedCallTypeId"
-                                        [disabled]="isCallTypeDisabled"
-                                    >
-                                        <option disabled value="">{{ 'common.pleaseSelect' | translate }}</option>
-                                        <option *ngFor="let callType of callTypes" [value]="callType.name">{{ callType.name }}</option>
-                                    </select>
-                                </div>
+                              <label for="inputChannel" class="form-label">{{ 'contact.channel' | translate }}</label>
+                              <select
+                                  id="inputChannel"
+                                  class="form-select"
+                                  name="selectedChannels"
+                                  [(ngModel)]="selectedChannels"
+                                  (ngModelChange)="onChannelChange($event)"
+                                  [disabled]="isChannelDisabled"
+                              >
+                                  <option disabled value="">{{ 'common.pleaseSelect' | translate }}</option>
+                                  <option *ngFor="let channel of channels" [value]="channel.channelId">{{ channel.name }}</option>
+                              </select>
+                          </div>
 
-                                <div class="w-100 mt-3" *ngIf="(selectedChannels === '1' || selectedChannels === '2') && selectedContactNumber">
-                                    <label for="inputContactNumber" class="form-label">{{ 'contact.phoneNumber' | translate }}<span class="color-red">*</span></label>
-                                    <input
-                                        type="text"
-                                        id="inputContactNumber"
-                                        class="form-control"
-                                        [value]="selectedContactNumber.contactNumber"
-                                        readonly
-                                    />
-                                </div>
-                            </div>
+                          <!-- ประเภทสาย (Voice) -->
+                          <div class="col-12 col-sm-6" *ngIf="selectedChannels === '1' || selectedChannels === '2'">
+                              <label for="inputCallType" class="form-label">{{ 'contact.callType' | translate }}</label>
+                              <input
+                                  type="text"
+                                  id="inputCallType"
+                                  class="form-control"
+                                  [value]="outbound"
+                                  readonly
+                              />
+                          </div>
+
+                          <!-- ประเภทอีเมล (Email) -->
+                          <div class="col-12 col-sm-6" *ngIf="selectedChannels === '3'">
+                              <label for="inputCallType" class="form-label">{{ 'contact.emailType' | translate }}</label>
+                              <select
+                                  id="inputCallType"
+                                  class="form-select"
+                                  name="selectedCallTypeId"
+                                  [(ngModel)]="selectedCallTypeId"
+                                  [disabled]="isCallTypeDisabled"
+                              >
+                                  <option disabled value="">{{ 'common.pleaseSelect' | translate }}</option>
+                                  <option *ngFor="let callType of callTypes" [value]="callType.name">{{ callType.name }}</option>
+                              </select>
+                          </div>
+
+                          <!-- เบอร์ติดต่อ -->
+                          <div class="col-12 col-sm-6" *ngIf="(selectedChannels === '1' || selectedChannels === '2') && selectedContactNumber">
+                              <label for="inputContactNumber" class="form-label">{{ 'contact.phoneNumber' | translate }}<span class="color-red">*</span></label>
+                              <input
+                                  type="text"
+                                  id="inputContactNumber"
+                                  class="form-control"
+                                  [value]="selectedContactNumber.contactNumber"
+                                  readonly
+                              />
+                          </div>
 
                             <div class="col-12">
                                 <label for="inputAddress" class="form-label">{{ 'contact.dateTime' | translate }}</label>
