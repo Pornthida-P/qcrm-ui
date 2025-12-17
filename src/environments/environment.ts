@@ -27,6 +27,6 @@ export const environment = {
     },
     urlWebSocket: {
         urlQAgent: `ws://127.0.0.1:8748/QAgent`,
-        dialPrefix: 'dial|7',
+        dialPrefix: 'dial|9',
     },
 };
