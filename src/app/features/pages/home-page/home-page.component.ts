@@ -195,7 +195,7 @@ export class HomePageComponent implements OnInit {
 
     initChart(caseChannelCount: any[], caseTopicCount: any[]) {
         (this.caseChartOptions.series as any)[0].data = caseChannelCount.map((item) => ({ name: item.name, y: item.value }));
-        (this.contactChartOptions.xAxis as any).categories = caseTopicCount.map((item) => item.name);
+        (this.contactChartOptions.xAxis as any).categories = caseTopicCount.map((item) => item.code);
         (this.contactChartOptions.series as any)[0].data = caseTopicCount.map((item) => item.value);
         this.updateFlag = true;
     }
@@ -251,13 +251,14 @@ export class HomePageComponent implements OnInit {
                     this.caseTopic = Object.values(
                         this.allCases.reduce((acc, item) => {
                             const topic = item.topic;
-
+                            const code = item.topicCode;
                             if (topic) {
                                 if (!acc[topic]) {
-                                    acc[topic] = { name: topic, value: 0 };
+                                    acc[topic] = { code: code, name: topic, value: 0 };
                                 }
 
                                 acc[topic].value += 1;
+                                acc[topic].code = code;
                             }
                             return acc;
                         }, {}),
@@ -286,8 +287,7 @@ export class HomePageComponent implements OnInit {
 
             const matchesChannel = !this.selectedCaseChannel || caseItem.channel === this.selectedCaseChannel;
 
-            const matchesTopic =
-                !this.selectedCaseTopic || (caseItem.topic && caseItem.topic.toLowerCase().includes(this.selectedCaseTopic.toLowerCase()));
+            const matchesTopic = !this.selectedCaseTopic || caseItem.topicCode === this.selectedCaseTopic;
 
             const hasAnyFilter = this.selectedStatus || this.selectedCaseChannel || this.selectedCaseTopic;
 
@@ -346,13 +346,14 @@ export class HomePageComponent implements OnInit {
         let caseTopic = Object.values(
             filteredAllCases.reduce((acc, item) => {
                 const topic = item.topic;
-
+                const code = item.topicCode;
                 if (topic) {
                     if (!acc[topic]) {
-                        acc[topic] = { name: topic, value: 0 };
+                        acc[topic] = { code: code, name: topic, value: 0 };
                     }
 
                     acc[topic].value += 1;
+                    acc[topic].code = code;
                 }
                 return acc;
             }, {}),
@@ -382,7 +383,12 @@ export class HomePageComponent implements OnInit {
 
     getCaseTopic() {
         this.callService.getCaseTopic().subscribe((res: any) => {
-            this.caseTopicList = res.map((item: any) => ({ id: item.caseTopicId, name: `${item.code} - ${item.name}`, value: item.name }));
+            this.caseTopicList = res.map((item: any) => ({
+                id: item.caseTopicId,
+                code: item.code,
+                name: `${item.code} - ${item.name}`,
+                value: item.code,
+            }));
         });
     }
 
@@ -480,7 +486,7 @@ export class HomePageComponent implements OnInit {
     }
 
     getAllContactCount() {
-        this.contactService.countByAssignedUserId(this.createdById == 'all' ? '' : this.createdById).subscribe((res: any) => {
+        this.contactService.countByAssignedUserId(this.createdById === 'all' ? '' : this.createdById).subscribe((res: any) => {
             this.allContactCount = res.count ?? 0;
         });
     }
