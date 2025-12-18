@@ -1,37 +1,61 @@
 <div class="d-flex flex-column p-2 p-md-4 overflow-auto">
-    <!-- Filter Section -->
+    <!-- Header -->
+    <div class="mb-3 mb-md-4">
+        <h2 class="fw-bold mb-0">{{ 'dashboard.title' | translate }}</h2>
+    </div>
+
+    <!-- Row 1: Case Status + Filters -->
     <div class="row g-3 g-md-4 mb-3 mb-md-4">
-        <div class="col-12 col-xl-6">
-            <h2 class="fw-bold mb-0">{{ 'dashboard.title' | translate }}</h2>
+        <div class="col-12 col-lg-6">
+            <div class="bg-white rounded shadow p-3 p-md-4 h-100">
+                <ol class="timeline timeline-horizontal">
+                    <li
+                        *ngFor="let status of statusList"
+                        (click)="filterByStatus(status.name)"
+                        [class.active]="selectedStatus === status.name"
+                    >
+                        <div class="circle" [style.background-color]="getStatusColorAndIcon(status.id - 1).color">
+                            <span [innerHTML]="getStatusColorAndIcon(status.id - 1).icon"></span>
+                        </div>
+                        <div class="content">
+                            <p>{{ status.name }}</p>
+                            <p>{{ status.caseCount }}</p>
+                        </div>
+                    </li>
+                </ol>
+            </div>
         </div>
-        <div class="col-12 col-xl-6">
-            <div class="row g-3">
-                <div class="col-12 col-sm-6 col-lg-4 col-xl-6">
-                    <label class="fw-bold mb-2" for="selectedCaseChannel">{{ 'dashboard.channel' | translate }}</label>
-                    <select class="form-select shadow-none" [(ngModel)]="selectedCaseChannel" (change)="filterCases()">
-                        <option value="">{{ 'dashboard.all' | translate }}</option>
-                        <option *ngFor="let caseChannel of caseChannelList" [value]="caseChannel.value">
-                            {{ caseChannel.name }}
-                        </option>
-                    </select>
-                </div>
-                <div class="col-12 col-sm-6 col-lg-4 col-xl-6">
-                    <label class="fw-bold mb-2" for="selectedCaseTopic">{{ 'dashboard.caseTopic' | translate }}</label>
-                    <select class="form-select shadow-none" [(ngModel)]="selectedCaseTopic" (change)="filterCases()">
-                        <option value="">{{ 'dashboard.all' | translate }}</option>
-                        <option *ngFor="let caseTopic of caseTopicList" [value]="caseTopic.value">{{ caseTopic.name }}</option>
-                    </select>
+        <div class="col-12 col-lg-6">
+            <div class="bg-white rounded shadow p-3 p-md-4 h-100">
+                <div class="row g-3">
+                    <div class="col-12 col-sm-6">
+                        <label class="fw-bold mb-2" for="selectedCaseChannel">{{ 'dashboard.channel' | translate }}</label>
+                        <select class="form-select shadow-none" [(ngModel)]="selectedCaseChannel" (change)="filterCases()">
+                            <option value="">{{ 'dashboard.all' | translate }}</option>
+                            <option *ngFor="let caseChannel of caseChannelList" [value]="caseChannel.value">
+                                {{ caseChannel.name }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <label class="fw-bold mb-2" for="selectedCaseTopic">{{ 'dashboard.caseTopic' | translate }}</label>
+                        <select class="form-select shadow-none" [(ngModel)]="selectedCaseTopic" (change)="filterCases()">
+                            <option value="">{{ 'dashboard.all' | translate }}</option>
+                            <option *ngFor="let caseTopic of caseTopicList" [value]="caseTopic.value">{{ caseTopic.name }}</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Charts Section -->
+    <!-- Row 2: Contact Chart + Channel Chart -->
     <div class="row g-3 g-md-4 mb-3 mb-md-4">
-        <div class="col-12 col-xl-6">
+        <div class="col-12 col-lg-6">
             <div class="bg-white rounded shadow p-3 p-md-4 h-100">
-                <div class="row g-3 g-md-4 h-100">
-                    <div class="col-12 col-md-4">
+                <p class="mb-3 mb-md-4 fw-bold text-left">{{ 'dashboard.contact' | translate }}</p>
+                <div class="row g-3 g-md-4">
+                    <div class="col-12 col-sm-4">
                         <div class="statistics-card h-100">
                             <div class="stat-item">
                                 <div class="stat-number">{{ caseTopicCount }}</div>
@@ -57,7 +81,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-12 col-md-8 d-flex justify-content-center align-items-center min-height-chart">
+                    <div class="col-12 col-sm-8 d-flex justify-content-center align-items-center min-height-chart">
                         <highcharts-chart
                             *ngIf="hasContactChartData; else contactChartNoData"
                             [Highcharts]="Highcharts"
@@ -74,10 +98,9 @@
                 </div>
             </div>
         </div>
-        <div class="col-12 col-xl-6">
+        <div class="col-12 col-lg-6">
             <div class="bg-white rounded shadow p-3 p-md-4 h-100">
                 <p class="mb-3 mb-md-4 fw-bold text-left">{{ 'dashboard.channel' | translate }}</p>
-
                 <highcharts-chart
                     *ngIf="hasCaseChartData; else caseChartNoData"
                     [Highcharts]="Highcharts"
@@ -103,30 +126,10 @@
         </div>
     </div>
 
-    <!-- Status and Cases Section -->
-    <div class="row g-3 g-md-4">
-        <div class="col-12 col-md-4 col-lg-3 col-xl-2 mb-3 mb-md-0">
-            <div class="bg-white rounded shadow p-3 p-md-4 h-100">
-                <p class="mb-3 mb-md-4 fw-bold text-left">{{ 'dashboard.caseStatus' | translate }}</p>
-                <ol class="timeline">
-                    <li
-                        *ngFor="let status of statusList"
-                        (click)="filterByStatus(status.name)"
-                        [class.active]="selectedStatus === status.name"
-                    >
-                        <div class="circle" [style.background-color]="getStatusColorAndIcon(status.id - 1).color">
-                            <span [innerHTML]="getStatusColorAndIcon(status.id - 1).icon"></span>
-                        </div>
-                        <div class="content">
-                            <p>{{ status.name }}</p>
-                            <p>{{ status.caseCount }}</p>
-                        </div>
-                    </li>
-                </ol>
-            </div>
-        </div>
-        <div class="col-12 col-md-8 col-lg-9 col-xl-10">
-            <div class="bg-white rounded shadow p-3 p-md-4 h-100">
+    <!-- Row 3: Cases Table - Full Width -->
+    <div class="row">
+        <div class="col-12">
+            <div class="bg-white rounded shadow p-3 p-md-4">
                 <p class="mb-3 mb-md-4 fw-bold text-left">{{ 'dashboard.case' | translate }}</p>
                 <div class="table-responsive">
                     <table class="table table-hover table-sm">
