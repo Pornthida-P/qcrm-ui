@@ -225,6 +225,7 @@ export class CreateCallComponent {
     }
 
     ngOnInit(): void {
+        this.subjectControl.disable();
         this.route.queryParams.subscribe((params: any) => {
             if (!params['caller_id']) {
                 this.selectedCallTypeId = this.outbound;
@@ -557,6 +558,12 @@ export class CreateCallComponent {
         this.selectedCasesubject = null;
         this.subjectControl.setValue('');
         this.filterSubjects();
+
+        if (this.hasSubjectsForSelectedTopic) {
+            this.subjectControl.enable();
+        } else {
+            this.subjectControl.disable();
+        }
     }
 
     onSubjectSelected(event: any) {
@@ -568,5 +575,10 @@ export class CreateCallComponent {
         this.callListService.getStatusList().subscribe((res: any) => {
             this.statusList = res;
         });
+    }
+
+    get hasSubjectsForSelectedTopic(): boolean {
+        if (!this.selectedCaseTopics) return false;
+        return this.casesubjects.some((subject) => subject.caseTopicId == this.selectedCaseTopics);
     }
 }

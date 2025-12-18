@@ -216,6 +216,7 @@ export class ManageContactsComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.subjectControl.disable();
         const state = history.state;
         if (state.itemId) {
             this.contactId = state.itemId;
@@ -740,6 +741,11 @@ export class ManageContactsComponent implements OnInit {
         this.selectedCasesubject = null;
         this.selectedActivityTopicId = [];
 
+        // Reset autocomplete controls
+        this.topicControl.setValue('');
+        this.topicControl.enable();
+        this.subjectControl.setValue('');
+        this.subjectControl.disable();
         this.isTopicDisabled = false;
         this.isSubjectDisabled = false;
         this.isStatusDisabled = false;
@@ -784,8 +790,11 @@ export class ManageContactsComponent implements OnInit {
         this.isCallTypeDisabled = true;
         this.isContactNumberDisabled = true;
         this.isDateDisabled = true;
-        this.isDescriptionDisabled = true;
+        this.isDescriptionDisabled = false;
         this.isCommentsHistoryShowing = true;
+
+        this.topicControl.disable();
+        this.subjectControl.disable();
 
         this.callServive.getContactNumbertById(this.contactId).subscribe((contactNumbers: any) => {
             if (contactNumbers && Array.isArray(contactNumbers) && contactNumbers.length > 0) {
@@ -1241,6 +1250,12 @@ export class ManageContactsComponent implements OnInit {
         this.selectedCasesubject = null;
         this.subjectControl.setValue('');
         this.filterSubjects();
+
+        if (this.hasSubjectsForSelectedTopic) {
+            this.subjectControl.enable();
+        } else {
+            this.subjectControl.disable();
+        }
     }
 
     onSubjectSelected(event: any) {
@@ -1272,5 +1287,10 @@ export class ManageContactsComponent implements OnInit {
         this.callListService.getHistory(caseId).subscribe((res: any) => {
             this.history = res;
         });
+    }
+
+    get hasSubjectsForSelectedTopic(): boolean {
+        if (!this.selectedCaseTopics) return false;
+        return this.casesubjects.some((subject) => subject.caseTopicId == this.selectedCaseTopics);
     }
 }
