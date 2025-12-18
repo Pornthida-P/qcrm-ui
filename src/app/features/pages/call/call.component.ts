@@ -205,6 +205,7 @@ export class CallComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.subjectControl.disable();
         this.getUserData();
 
         this.userRole = this.userData.role.roleTitle.toLocaleLowerCase();
@@ -595,7 +596,10 @@ export class CallComponent implements OnInit {
         this.isCallTypeDisabled = true;
         this.isContactNumberDisabled = true;
         this.isDateDisabled = true;
-        this.isDescriptionDisabled = true;
+        this.isDescriptionDisabled = false;
+
+        this.topicControl.disable();
+        this.subjectControl.disable();
 
         this.callService.getCaseTopic().subscribe((casetopics: any) => {
             this.casetopics = casetopics;
@@ -930,6 +934,12 @@ export class CallComponent implements OnInit {
         this.selectedCasesubject = null;
         this.subjectControl.setValue('');
         this.filterSubjects();
+
+        if (this.hasSubjectsForSelectedTopic) {
+            this.subjectControl.enable();
+        } else {
+            this.subjectControl.disable();
+        }
     }
 
     onSubjectSelected(event: any) {
@@ -1037,5 +1047,10 @@ export class CallComponent implements OnInit {
         this.callListService.getHistory(caseId).subscribe((res: any) => {
             this.history = res;
         });
+    }
+
+    get hasSubjectsForSelectedTopic(): boolean {
+        if (!this.selectedCaseTopics) return false;
+        return this.casesubjects.some((subject) => subject.caseTopicId == this.selectedCaseTopics);
     }
 }

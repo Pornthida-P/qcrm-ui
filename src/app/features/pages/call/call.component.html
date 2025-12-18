@@ -296,7 +296,6 @@
                                                             (input)="filterSubjects()"
                                                             (focus)="filterSubjects()"
                                                             [placeholder]="'contact.searchSubject' | translate"
-                                                            [disabled]="!selectedCaseTopics"
                                                         />
                                                         <mat-autocomplete
                                                             #autoSubject="matAutocomplete"
@@ -390,6 +389,7 @@
                                                 class="form-control"
                                                 [value]="selectedContactNumber.contactNumber"
                                                 readonly
+                                                [disabled]="isContactNumberDisabled"
                                             />
                                         </div>
                                         <div class="col-12">
