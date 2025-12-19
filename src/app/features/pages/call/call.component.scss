@@ -132,9 +132,6 @@ label:has(+ input:required):after {
     justify-content: space-between;
     align-items: stretch;
 }
-.btn-search-contact {
-    width: 20%;
-}
 .contact-number {
     display: flex;
     justify-content: flex-start;
@@ -171,15 +168,6 @@ label:has(+ input:required):after {
 .table-smn th {
     text-align: left;
     width: 700px;
-}
-
-.submitTopic {
-    display: flex;
-    align-items: flex-end;
-}
-
-.display-none {
-    display: none;
 }
 
 .color-red {
