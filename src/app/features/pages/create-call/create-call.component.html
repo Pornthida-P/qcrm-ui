@@ -23,7 +23,7 @@
 
                 <!-- หัวข้อที่ติดต่อ -->
                 <div class="col-12 col-md-6">
-                  <label for="inputTopic" class="form-label">{{ 'contact.topic' | translate }}<span class="color-red">*</span></label>
+                  <label for="inputTopic" class="form-label fw-semibold">{{ 'contact.topic' | translate }}<span class="color-red">*</span></label>
 
                     <mat-form-field class="w-100" appearance="outline">
                         <input
@@ -49,7 +49,7 @@
 
                 <!-- เรื่องที่ติดต่อ -->
                 <div class="col-12 col-md-6">
-                    <label for="inputCaseSubject" class="form-label">{{ 'contact.subject' | translate }}</label>
+                    <label for="inputCaseSubject" class="form-label fw-semibold">{{ 'contact.subject' | translate }}</label>
                   <mat-form-field class="w-100" appearance="outline">
                         <input
                             type="text"
@@ -74,7 +74,7 @@
 
                 <!-- สถานะ -->
                 <div class="col-12 col-md-6">
-                    <label for="inputStatus" class="form-label">{{ 'common.status' | translate }}</label>
+                    <label for="inputStatus" class="form-label fw-semibold">{{ 'common.status' | translate }}</label>
                     <select id="inputStatus" class="form-select" name="selectedStatus" [(ngModel)]="selectedStatus">
                         <option disabled value="">{{ 'common.pleaseSelect' | translate }}</option>
                         <option *ngFor="let status of statusList" [value]="status.id">{{ status.status }}</option>
@@ -83,7 +83,7 @@
 
                 <!-- ช่องทางติดต่อ -->
                 <div class="col-12 col-md-6">
-                    <label for="inputChannel" class="form-label">{{ 'contact.channel' | translate }}</label>
+                    <label for="inputChannel" class="form-label fw-semibold">{{ 'contact.channel' | translate }}</label>
                     <select id="inputChannel" class="form-select" name="selectedChannels" [(ngModel)]="selectedChannels">
                         <option disabled value="">{{ 'common.pleaseSelect' | translate }}</option>
                         <option *ngFor="let channel of channels" [value]="channel.channelId">{{ channel.name }}</option>
@@ -92,7 +92,7 @@
 
                 <!-- ประเภทสาย/อีเมล -->
                 <div class="col-12 col-md-6" *ngIf="selectedChannels === '1' || selectedChannels === '2' || selectedChannels === '3'">
-                    <label for="inputCallType" class="form-label">
+                    <label for="inputCallType" class="form-label fw-semibold">
                         {{ selectedChannels === '3' ? ('contact.emailType' | translate) : ('contact.callType' | translate) }}
                     </label>
                     <select id="inputCallType" class="form-select" name="selectedCallTypeId" [(ngModel)]="selectedCallTypeId">
@@ -103,7 +103,7 @@
 
                 <!-- เบอร์ติดต่อ -->
                 <div class="col-12 col-md-6" *ngIf="selectedChannels === '1' || selectedChannels === '2'">
-                    <label for="inputContactNumber" class="form-label">{{ 'contact.phoneNumber' | translate }}<span class="text-danger">*</span></label>
+                    <label for="inputContactNumber" class="form-label fw-semibold">{{ 'contact.phoneNumber' | translate }}<span class="text-danger">*</span></label>
                     <select id="inputContactNumber" class="form-select" name="selectedContactNumber" [(ngModel)]="selectedContactNumber">
                         <option disabled [ngValue]="null">{{ 'common.pleaseSelect' | translate }}</option>
                         <option
@@ -117,13 +117,13 @@
 
                 <!-- ไฟล์แนบ -->
                 <div class="col-12 col-md-6">
-                    <label for="formFileSm" class="form-label">{{ 'contact.attachment' | translate }}</label>
+                    <label for="formFileSm" class="form-label fw-semibold">{{ 'contact.attachment' | translate }}</label>
                     <input class="form-control" id="formFileSm" type="file" multiple (change)="onFileSelected($event)" />
                 </div>
 
                 <!-- วันที่และเวลา -->
                 <div class="col-12 col-md-6">
-                    <label for="inputDateTime" class="form-label">{{ 'contact.dateTime' | translate }}</label>
+                    <label for="inputDateTime" class="form-label fw-semibold">{{ 'contact.dateTime' | translate }}</label>
                     <div class="d-flex flex-wrap gap-1 align-items-center">
                         <div class="input-group" style="width: auto; min-width: 180px">
                             <input
@@ -153,7 +153,7 @@
 
                 <!-- รายละเอียด -->
                 <div class="col-12">
-                    <label for="floatingTextarea" class="form-label">{{ 'contact.description' | translate }}</label>
+                    <label for="floatingTextarea" class="form-label fw-semibold">{{ 'contact.description' | translate }}</label>
                     <textarea
                         class="form-control"
                         [placeholder]="'common.pleaseEnter' | translate"
@@ -166,7 +166,7 @@
 
                 <!-- ความคิดเห็น -->
                 <div class="col-12">
-                    <label for="floatingTextareaComment" class="form-label">{{ 'contact.comment' | translate }}</label>
+                    <label for="floatingTextareaComment" class="form-label fw-semibold">{{ 'contact.comment' | translate }}</label>
                     <textarea
                         class="form-control"
                         [placeholder]="'common.pleaseEnter' | translate"
