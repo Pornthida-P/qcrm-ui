@@ -1,81 +1,8 @@
-.w-15 {
-    width: 10%;
-}
-
-.display-none {
-    display: none;
-}
-
-.btn-search-contact {
-    width: 20%;
-}
-
-.submitTopic {
-    display: flex;
-    align-items: flex-end;
-}
-
-.d-bt-back {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 23px;
-}
-.bt-back {
-    width: 100px;
-}
-
 label:has(+ input:required):after {
     content: ' *';
     color: red;
 }
 
-.mg-bt {
-    margin-bottom: 1%;
-}
-.mg-bt-0 {
-    margin-bottom: 0%;
-}
-.mg-3 {
-    margin: 0 3% 3% 3%;
-}
-
-.disabled {
-    pointer-events: none;
-    opacity: 0.5;
-}
-
-.dp-hidden {
-    width: 0;
-    margin: 0;
-    border: none;
-    padding: 0;
-}
-.custom-day {
-    text-align: center;
-    padding: 0.185rem 0.25rem;
-    display: inline-block;
-    height: 2rem;
-    width: 2rem;
-}
-.custom-day.focused {
-    background-color: #e6e6e6;
-}
-.custom-day.range,
-.custom-day:hover {
-    background-color: rgb(2, 117, 216);
-    color: white;
-}
-.custom-day.faded {
-    background-color: rgba(2, 117, 216, 0.5);
-}
-.date-pik {
-    // display: flex;
-    align-items: center;
-    justify-content: flex-start;
-}
-.date-time {
-    margin-right: 7%;
-}
 .input-group-text {
     padding: 0;
     max-width: 38px !important;
@@ -90,102 +17,13 @@ label:has(+ input:required):after {
         margin: auto;
     }
 }
-.pd-l-50 {
-    padding-left: 50px;
-}
-.mg-b {
-    margin-bottom: 3px;
-}
-.div-form-check {
-    display: flex;
-    margin-left: -18%;
-}
-.form-input-file {
-    display: flex;
-    align-items: center;
-}
-
-.form-check {
-    margin-top: 5px;
-    margin-right: 12px;
-    width: 100%;
-}
-
-::ng-deep .chevron .ngb-tp-chevron {
-    display: none !important;
-}
-::ng-deep .date-pik .btn-link {
-    display: none;
-}
-
-::ng-deep .tpk {
-    margin-left: 100px;
-}
 
 ::ng-deep .cdk-overlay-container {
     z-index: 2000;
 }
 
-.search-contact {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: stretch;
-}
-.contact-number {
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-end;
-}
-.pd-l-30 {
-    padding-left: 30px;
-}
-
-.w-100 {
-    width: 100%;
-}
-
-.pd-t-20 {
-    padding-top: 20px;
-}
-
-.table-smn {
-    // width: 400px;
-    table-layout: fixed;
-    border-collapse: collapse;
-}
-
-.table-smn tbody {
-    display: block;
-    overflow: auto;
-    height: 450px;
-}
-
-.table-smn thead tr {
-    display: block;
-}
-
-.table-smn th {
-    text-align: left;
-    width: 700px;
-}
-
 .color-red {
     color: #28c195;
-}
-
-.fs-icon {
-    font-size: 12px;
-}
-
-.add-number {
-    width: 25px;
-    height: 25px;
-    text-align: center;
-    display: flex;
-    justify-content: space-around;
-    align-content: stretch;
-    align-items: center;
 }
 
 .chat-messages {
@@ -238,7 +76,6 @@ label:has(+ input:required):after {
         .bubble {
             padding: 10px 14px;
             position: relative;
-            animation: chat-bubble-appear 0.3s ease-out;
 
             .message {
                 line-height: 1.4;
@@ -263,18 +100,7 @@ label:has(+ input:required):after {
     }
 }
 
-@keyframes chat-bubble-appear {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
 
-// System Message Styles
 .system-message {
     display: flex;
     flex-direction: column;
@@ -304,7 +130,6 @@ label:has(+ input:required):after {
     }
 }
 
-// Inline DateTime Picker Styles
 .datetime-inline-wrapper {
     display: flex;
     flex-direction: row;
@@ -402,7 +227,6 @@ label:has(+ input:required):after {
     }
 }
 
-// Script and Chat container - fill parent height
 .script-container,
 .chat-history-container {
     flex: 1;
@@ -423,31 +247,11 @@ label:has(+ input:required):after {
     }
 }
 
-// Override for chat-history-container specific styles
 .chat-history-container {
     background-color: #fafafa;
     padding: 16px;
 }
 
-// Card height matching - script/chat column
-.script-chat-column {
-    display: flex;
-    flex-direction: column;
-
-    .card.h-100 {
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-
-        .card-body {
-            flex: 1;
-            overflow-y: auto;
-            max-height: calc(100vh - 250px);
-        }
-    }
-}
-
-// Ensure both columns have equal height in row
 .row.align-items-stretch {
     > [class*='col-'] {
         display: flex;
@@ -455,7 +259,6 @@ label:has(+ input:required):after {
     }
 }
 
-// Responsive chat messages
 @media (max-width: 991.98px) {
     .chat-messages {
         .message-row {
@@ -492,7 +295,6 @@ label:has(+ input:required):after {
         }
     }
 
-    // Tabs for Script and Chat History
     .nav-tabs.card-header-tabs {
         border-bottom: none;
         margin: -0.5rem -1rem;
@@ -534,7 +336,6 @@ label:has(+ input:required):after {
     line-height: 1.2;
 }
 
-// Offcanvas body - disable default scroll
 ::ng-deep .offcanvas-body {
     overflow: hidden !important;
     display: flex;
@@ -543,7 +344,6 @@ label:has(+ input:required):after {
     padding: 1rem;
 }
 
-// Offcanvas content wrapper - full height layout
 .offcanvas-content-wrapper {
     flex: 1;
     height: 0;
@@ -560,7 +360,6 @@ label:has(+ input:required):after {
     }
 }
 
-// Edit contact column - scrollable form section
 .edit-contact-column {
     display: flex;
     flex-direction: column;
@@ -594,7 +393,6 @@ label:has(+ input:required):after {
     }
 }
 
-// Script column - stays fixed while form scrolls
 .script-chat-column {
     position: sticky !important;
     top: 0;
@@ -620,7 +418,6 @@ label:has(+ input:required):after {
     }
 }
 
-// Mat Autocomplete Styles
 ::ng-deep .mat-mdc-form-field {
     width: 100%;
 
@@ -629,7 +426,6 @@ label:has(+ input:required):after {
         padding: 0 12px;
     }
 
-    // Disabled state - match Bootstrap disabled input style
     &.mat-form-field-disabled {
         .mat-mdc-text-field-wrapper {
             background-color: #e9ecef;
@@ -687,14 +483,12 @@ label:has(+ input:required):after {
         margin-top: 0;
     }
 
-    // Label styles - center vertically when not floating
     .mat-mdc-floating-label {
         font-size: 14px;
         top: 50% !important;
         transform: translateY(-50%) !important;
     }
 
-    // When floating (focused or has value)
     &.mat-mdc-form-field-should-float .mat-mdc-floating-label {
         top: 0 !important;
         transform: translateY(-50%) scale(0.75) !important;
@@ -704,7 +498,6 @@ label:has(+ input:required):after {
         transform: translateY(-130%) scale(0.75) !important;
     }
 
-    // Remove subscript space
     .mat-mdc-form-field-subscript-wrapper {
         display: none;
     }
