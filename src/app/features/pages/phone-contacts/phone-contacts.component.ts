@@ -10,9 +10,6 @@ import Swal from 'sweetalert2';
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
 import { TranslateService } from '@ngx-translate/core';
-import { TokenService } from 'src/app/services/token/token.service';
-import { UserService } from 'src/app/services/user/user.service';
-import { LoginService } from 'src/app/services/login/login.service';
 @Component({
     selector: 'app-phone-contacts',
     templateUrl: './phone-contacts.component.html',
@@ -97,25 +94,12 @@ export class PhoneContactsComponent {
         private router: Router,
         private auditLogService: AuditLogService,
         private translate: TranslateService,
-        private tokenService: TokenService,
-        private userService: UserService,
-        private loginService: LoginService,
     ) {
         this.contact = { components: [] };
     }
 
     ngOnInit(): void {
-        this.route.queryParamMap.subscribe(async (params) => {
-            const ott = params.get('ott');
-
-            if (ott && !this.tokenService.isTokenValid()) {
-                const success = await this.crossLogin(ott);
-                if (!success) {
-                    this.router.navigate(['/login']);
-                    return;
-                }
-            }
-
+        this.route.queryParamMap.subscribe((params) => {
             const chatId = params.get('chatid') || '';
             const chatType = params.get('chattype') || '';
             const displayName = params.get('displayName') || '';
@@ -480,22 +464,6 @@ export class PhoneContactsComponent {
                 .subscribe();
         } else {
             this.sweetalertServices.error('alert.pleaseEnterOrgName');
-        }
-    }
-
-    private async crossLogin(ott: string): Promise<boolean> {
-        try {
-            const response: any = await this.loginService.crossAuth(ott).toPromise();
-
-            if (response && response.user && response.token) {
-                this.userService.setDataUser(response.user);
-                this.tokenService.setDataToken(response.token);
-                return true;
-            }
-            return false;
-        } catch (error) {
-            console.error('Cross-auth failed:', error);
-            return false;
         }
     }
 }
