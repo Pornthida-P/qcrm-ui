@@ -13,6 +13,13 @@
                         *ngFor="let status of statusList"
                         (click)="filterByStatus(status.name)"
                         [class.active]="selectedStatus === status.name"
+                        [style.background]="
+                            'linear-gradient(135deg, ' +
+                            getStatusColorAndIcon(status.id - 1).color +
+                            '40 0%, ' +
+                            getStatusColorAndIcon(status.id - 1).color +
+                            '18 50%, transparent 100%)'
+                        "
                     >
                         <div class="circle" [style.background-color]="getStatusColorAndIcon(status.id - 1).color">
                             <span [innerHTML]="getStatusColorAndIcon(status.id - 1).icon"></span>
