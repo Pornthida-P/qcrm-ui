@@ -252,7 +252,7 @@
                                 </div>
                                 <div class="row g-3">
                                     <div class="col-12 col-sm-6">
-                                        <label for="inputTopic" class="form-label">{{ 'contact.topic' | translate }}<span class="color-red">*</span></label>
+                                        <label for="inputTopic" class="form-label fw-semibold">{{ 'contact.topic' | translate }}<span class="color-red">*</span></label>
 
                                         <mat-form-field class="w-100" appearance="outline">
                                             <input
@@ -277,7 +277,7 @@
                                     </div>
 
                                     <div class="col-12 col-sm-6">
-                                        <label for="inputCaseSubject" class="form-label">{{ 'contact.subject' | translate }}</label>
+                                        <label for="inputCaseSubject" class="form-label fw-semibold">{{ 'contact.subject' | translate }}</label>
 
                                         <mat-form-field class="w-100" appearance="outline">
                                             <input
@@ -304,7 +304,7 @@
                             </div>
 
                             <div class="col-12 col-sm-6">
-                                <label for="inputStatus" class="form-label">{{ 'common.status' | translate }}</label>
+                                <label for="inputStatus" class="form-label fw-semibold">{{ 'common.status' | translate }}</label>
                                 <select
                                     id="inputStatus"
                                     class="form-select"
@@ -317,7 +317,7 @@
                                 </select>
                             </div>
                             <div class="col-12 col-sm-6">
-                              <label for="inputChannel" class="form-label">{{ 'contact.channel' | translate }}</label>
+                              <label for="inputChannel" class="form-label fw-semibold">{{ 'contact.channel' | translate }}</label>
                               <select
                                   id="inputChannel"
                                   class="form-select"
@@ -333,7 +333,7 @@
 
                           <!-- ประเภทสาย (Voice) -->
                           <div class="col-12 col-sm-6" *ngIf="selectedChannels === '1' || selectedChannels === '2'">
-                              <label for="inputCallType" class="form-label">{{ 'contact.callType' | translate }}</label>
+                              <label for="inputCallType" class="form-label fw-semibold">{{ 'contact.callType' | translate }}</label>
                               <input
                                   type="text"
                                   id="inputCallType"
@@ -346,7 +346,7 @@
 
                           <!-- ประเภทอีเมล (Email) -->
                           <div class="col-12 col-sm-6" *ngIf="selectedChannels === '3'">
-                              <label for="inputCallType" class="form-label">{{ 'contact.emailType' | translate }}</label>
+                              <label for="inputCallType" class="form-label fw-semibold">{{ 'contact.emailType' | translate }}</label>
                               <select
                                   id="inputCallType"
                                   class="form-select"
@@ -361,19 +361,19 @@
 
                           <!-- เบอร์ติดต่อ -->
                           <div class="col-12 col-sm-6" *ngIf="(selectedChannels === '1' || selectedChannels === '2') && selectedContactNumber">
-                              <label for="inputContactNumber" class="form-label">{{ 'contact.phoneNumber' | translate }}<span class="color-red">*</span></label>
+                              <label for="inputContactNumber" class="form-label fw-semibold">{{ 'contact.phoneNumber' | translate }}<span class="color-red">*</span></label>
                               <input
                                   type="text"
                                   id="inputContactNumber"
                                   class="form-control"
                                   [value]="selectedContactNumber.contactNumber"
                                   readonly
-                                  [disabled]="isContactNumberDisabled"  
+                                  [disabled]="isContactNumberDisabled"
                               />
                           </div>
 
                             <div class="col-12">
-                                <label for="inputAddress" class="form-label">{{ 'contact.dateTime' | translate }}</label>
+                                <label for="inputAddress" class="form-label fw-semibold">{{ 'contact.dateTime' | translate }}</label>
                                 <div class="datetime-inline-wrapper">
                                     <div class="date-input-section">
                                         <div class="input-group">
@@ -409,7 +409,7 @@
                             </div>
 
                             <div class="col-12" *ngIf="selectedChannels === '1' || selectedChannels === '2'">
-                                <label class="form-label">{{ 'contact.callStatus' | translate }}</label>
+                                <label class="form-label fw-semibold">{{ 'contact.callStatus' | translate }}</label>
                                 <div class="row">
                                     <div class="col-4" *ngFor="let status of callStatus">
                                         <div class="form-check">
@@ -430,7 +430,7 @@
                             </div>
 
                             <div class="col-12">
-                                <label class="form-check-label" for="gridCheck">{{ 'contact.description' | translate }}</label>
+                                <label class="form-check-label fw-semibold" for="gridCheck">{{ 'contact.description' | translate }}</label>
                                 <textarea
                                     class="form-control"
                                     [placeholder]="'common.pleaseEnter' | translate"
@@ -441,7 +441,7 @@
                                 ></textarea>
                             </div>
                             <div class="col-12" *ngIf="attachmentShowing == false">
-                                <label class="form-check-label" for="gridCheck">{{ 'contact.comment' | translate }}</label>
+                                <label class="form-check-label fw-semibold" for="gridCheck">{{ 'contact.comment' | translate }}</label>
                                 <textarea
                                     class="form-control"
                                     [placeholder]="'common.pleaseEnter' | translate"
@@ -451,7 +451,7 @@
                                 ></textarea>
                             </div>
                             <div class="col-12" *ngIf="comments && comments.length > 0">
-                                <label class="form-label">{{ 'contact.commentHistory' | translate }}</label>
+                                <label class="form-label fw-semibold">{{ 'contact.commentHistory' | translate }}</label>
                                 <div class="border rounded p-2 bg-light comment-history-container">
                                     <div class="card mb-2" *ngFor="let comment of comments">
                                         <div class="card-body py-2 px-3">
@@ -464,7 +464,7 @@
                                 </div>
                             </div>
                             <div class="col-12" *ngIf="history && history.length > 0">
-                                <label class="form-label">{{ 'contact.statusHistory' | translate }}</label>
+                                <label class="form-label fw-semibold">{{ 'contact.statusHistory' | translate }}</label>
                                 <div class="border rounded p-2 bg-light comment-history-container">
                                     <div class="card mb-2" *ngFor="let item of history">
                                         <div class="card-body py-2 px-3">
@@ -479,7 +479,7 @@
                             </div>
 
                             <div class="col-12 col-sm-6" *ngIf="attachmentShowing">
-                                <label for="formFileSm" class="form-label">{{ 'contact.attachment' | translate }}</label>
+                                <label for="formFileSm" class="form-label fw-semibold">{{ 'contact.attachment' | translate }}</label>
                                 <div class="mb-3">
                                     <div class="form-input-file">
                                         <input
