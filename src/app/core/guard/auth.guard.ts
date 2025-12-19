@@ -18,8 +18,10 @@ export class AuthGuard {
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
         const ott = route.queryParams['ott'];
-        if (ott && !this.tokenService.isTokenValid()) {
-            return this.handleCrossAuth(ott);
+
+        // ถ้ามี OTT → ตรวจสอบและ cross-auth ถ้า user ต่างกัน
+        if (ott) {
+            return this.handleCrossAuthWithCheck(ott);
         }
 
         if (!this.tokenService.isTokenValid()) {
@@ -44,18 +46,31 @@ export class AuthGuard {
         );
     }
 
-    private handleCrossAuth(ott: string): Observable<boolean> {
+    private handleCrossAuthWithCheck(ott: string): Observable<boolean> {
         return this.loginService.crossAuth(ott).pipe(
             map((response: any) => {
                 if (response && response.user && response.token) {
-                    this.userService.setDataUser(response.user);
-                    this.tokenService.setDataToken(response.token);
+                    // ดึง user ปัจจุบัน
+                    const currentUserData = localStorage.getItem('userData');
+                    const currentUser = currentUserData ? JSON.parse(currentUserData) : null;
+
+                    // ถ้า user ต่างกัน หรือยังไม่ได้ login → update user และ token
+                    if (!currentUser || currentUser.username !== response.user.username) {
+                        this.userService.setDataUser(response.user);
+                        this.tokenService.setDataToken(response.token);
+                    }
+                    // ถ้า user เดียวกัน → ใช้ต่อได้เลย (ไม่ต้อง update)
+
                     return true;
                 }
                 this.handleUnauthorized();
                 return false;
             }),
             catchError(() => {
+                // ถ้า cross-auth ล้มเหลว แต่มี token อยู่แล้ว → ใช้ต่อ
+                if (this.tokenService.isTokenValid()) {
+                    return of(true);
+                }
                 this.handleUnauthorized();
                 return of(false);
             }),
