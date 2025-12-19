@@ -1,16 +1,27 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { LoginService } from 'src/app/services/login/login.service';
 import { TokenService } from 'src/app/services/token/token.service';
-import { Observable, of, map } from 'rxjs';
+import { UserService } from 'src/app/services/user/user.service';
+import { Observable, of, map, from, switchMap, catchError } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
 })
 export class AuthGuard {
-    constructor(private loginService: LoginService, private tokenService: TokenService, private router: Router) {}
+    constructor(
+        private loginService: LoginService,
+        private tokenService: TokenService,
+        private userService: UserService,
+        private router: Router,
+    ) {}
 
-    canActivate(): Observable<boolean> {
+    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+        const ott = route.queryParams['ott'];
+        if (ott && !this.tokenService.isTokenValid()) {
+            return this.handleCrossAuth(ott);
+        }
+
         if (!this.tokenService.isTokenValid()) {
             this.handleUnauthorized();
             return of(false);
@@ -29,6 +40,24 @@ export class AuthGuard {
                     return false;
                 }
                 return true;
+            }),
+        );
+    }
+
+    private handleCrossAuth(ott: string): Observable<boolean> {
+        return this.loginService.crossAuth(ott).pipe(
+            map((response: any) => {
+                if (response && response.user && response.token) {
+                    this.userService.setDataUser(response.user);
+                    this.tokenService.setDataToken(response.token);
+                    return true;
+                }
+                this.handleUnauthorized();
+                return false;
+            }),
+            catchError(() => {
+                this.handleUnauthorized();
+                return of(false);
             }),
         );
     }
