@@ -65,4 +65,16 @@ export class LoginService {
             }),
         );
     }
+
+    crossAuth(ott: string): Observable<any> {
+        return this.http.post(`${this.baseUrl}/cross-auth`, { ott }).pipe(
+            tap((res: any) => {
+                if (res.user) {
+                    res.user.profile = res.user.profile ? `${environment.api.url}${res.user.profile}` : '';
+                }
+                this.setLogined(true);
+                this.updateIsLogined();
+            }),
+        );
+    }
 }
