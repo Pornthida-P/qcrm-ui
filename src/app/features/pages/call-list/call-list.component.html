@@ -33,7 +33,16 @@
                                 <td>{{ caseList.topic || '-' }}</td>
                                 <td>{{ caseList.description || '-' }}</td>
                                 <td>{{ caseList.status || '-' }}</td>
-                                <td>{{ caseList.callStatus || '-' }}</td>
+                                <td scope="row">
+                                    <span
+                                        *ngIf="caseList.status; else noStatus"
+                                        class="status-badge"
+                                        [style.background-color]="statusService.getStatusBgColor(caseList.status)"
+                                    >
+                                        {{ caseList.status }}
+                                    </span>
+                                    <ng-template #noStatus>-</ng-template>
+                                </td>
                                 <td>{{ caseList.assignUser || '-' }}</td>
                                 <td class="text-center">
                                     <div class="d-flex flex-row flex-nowrap">
