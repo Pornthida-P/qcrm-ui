@@ -32,7 +32,6 @@
                                 <td>{{ caseList.subject || '-' }}</td>
                                 <td>{{ caseList.topic || '-' }}</td>
                                 <td>{{ caseList.description || '-' }}</td>
-                                <td>{{ caseList.status || '-' }}</td>
                                 <td scope="row">
                                     <span
                                         *ngIf="caseList.status; else noStatus"
@@ -43,6 +42,7 @@
                                     </span>
                                     <ng-template #noStatus>-</ng-template>
                                 </td>
+                                <td>{{ caseList.callStatus || '-' }}</td>
                                 <td>{{ caseList.assignUser || '-' }}</td>
                                 <td class="text-center">
                                     <div class="d-flex flex-row flex-nowrap">
