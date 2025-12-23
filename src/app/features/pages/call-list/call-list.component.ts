@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CallListService } from 'src/app/services/call-list/call-list.service';
 import { Router } from '@angular/router';
+import { StatusService } from 'src/app/services/status/status.service';
 @Component({
     selector: 'app-call-list',
     standalone: false,
@@ -19,7 +20,7 @@ export class CallListComponent implements OnInit {
     userId: string = '';
     statusList: any[] = [];
 
-    constructor(private callListService: CallListService, private router: Router) {}
+    constructor(private callListService: CallListService, private router: Router, public statusService: StatusService) {}
 
     ngOnInit(): void {
         this.calculatePages();
