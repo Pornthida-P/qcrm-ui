@@ -18,6 +18,7 @@ import { TranslateService } from '@ngx-translate/core';
 declare var bootstrap: any;
 import { CallListService } from 'src/app/services/call-list/call-list.service';
 import { environment } from 'src/environments/environment';
+import { StatusService } from 'src/app/services/status/status.service';
 
 @Component({
     selector: 'app-manage-contacts',
@@ -210,6 +211,7 @@ export class ManageContactsComponent implements OnInit {
         private callServive: CallService,
         private translate: TranslateService,
         private callListService: CallListService,
+        public statusService: StatusService,
     ) {
         this.contact = { components: [] };
         this.startTime = this.formatDate(new Date());
@@ -740,6 +742,15 @@ export class ManageContactsComponent implements OnInit {
         this.selectedCaseTopics = null;
         this.selectedCasesubject = null;
         this.selectedActivityTopicId = [];
+
+        // Reset contact number and status
+        this.selectedContactNumber = null;
+        this.selectedStatus = '';
+        this.selectedCallStatusId = 0;
+        this.comment = '';
+        this.comments = [];
+        this.history = [];
+        this.selectedCaseTopicObject = null;
 
         // Reset autocomplete controls
         this.topicControl.setValue('');
