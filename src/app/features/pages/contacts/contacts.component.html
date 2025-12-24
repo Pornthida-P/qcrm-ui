@@ -37,62 +37,23 @@
             </div>
         </div>
         <div>
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">
-                                <a (click)="sort('fullname')">{{ 'contact.firstName' | translate }}</a><i *ngIf="sortId == 'fullname'" class="{{ sortIcon }}"></i>
-                            </th>
-                            <th scope="col">
-                                <a (click)="sort('organization')">{{ 'contact.company' | translate }}</a><i *ngIf="sortId == 'organization'" class="{{ sortIcon }}"></i>
-                            </th>
-                            <th scope="col">
-                                <a (click)="sort('contactNumber')">{{ 'contact.phoneNumber' | translate }}</a
-                                ><i *ngIf="sortId == 'contactNumber'" class="{{ sortIcon }}"></i>
-                            </th>
-                            <th scope="col" *ngIf="checkRole()"><a>{{ 'common.manage' | translate }}</a></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <ng-container *ngIf="contacts?.length > 0; else noDataTemplate">
-                            <tr *ngFor="let contacts of contacts; let i = index">
-                                <td (click)="edit(contacts)" class="cursor-pointer w-max-ellipsis" scope="row">
-                                    <div
-                                        [ngbTooltip]="contacts.fullname"
-                                        placement="bottom"
-                                        class="text-ellipsis"
-                                        style="color: #3066be; text-decoration: underline"
-                                    >
-                                        {{ contacts.fullname }}
-                                    </div>
-                                </td>
-                                <td scope="row">{{ contacts.organization }}</td>
-                                <td scope="row">{{ contacts.contactNumber }}</td>
-                                <td class="text-center" scope="row" *ngIf="checkRole()">
-                                    <div class="d-flex flex-row flex-nowrap">
-                                        <div class="me-3 color-blue-dark" placement="top" [ngbTooltip]="'common.edit' | translate" (click)="edit(contacts)">
-                                            <i class="fa-solid fa-pen-to-square"></i>
-                                        </div>
-                                        <div
-                                            class="color-primary"
-                                            placement="top"
-                                            [ngbTooltip]="'common.delete' | translate"
-                                            (click)="deletecontacts(contacts.contactId)"
-                                        >
-                                            <i class="fa-solid fa-trash"></i>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        </ng-container>
-                        <ng-template #noDataTemplate>
-                            <tr>
-                                <td colspan="5" class="text-center">{{ 'common.dataNotFound' | translate }}</td>
-                            </tr>
-                        </ng-template>
-                    </tbody>
-                </table>
+            <!-- Card Grid Layout -->
+            <div class="row g-3 m-4">
+                <ng-container *ngIf="contacts?.length > 0; else noDataTemplate">
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3" *ngFor="let contact of contacts">
+                        <app-card
+                            [data]="contact"
+                            [showActions]="checkRole()"
+                            (onEdit)="edit($event)"
+                            (onDelete)="deletecontacts($event.contactId)">
+                        </app-card>
+                    </div>
+                </ng-container>
+                <ng-template #noDataTemplate>
+                    <div class="col-12 text-center py-5 text-muted">
+                        {{ 'common.dataNotFound' | translate }}
+                    </div>
+                </ng-template>
             </div>
             <ul class="pagination cursor-pointer justify-content-center">
                 <li class="page-item" [class.disabled]="currentPage == 1">
