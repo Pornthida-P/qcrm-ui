@@ -1,0 +1,34 @@
+<div class="contact-card">
+    <!-- Avatar & Name Header -->
+    <div class="card-header-section cursor-pointer" (click)="onEdit.emit(data)">
+        <div class="avatar">
+            {{ data?.fullname?.charAt(0)?.toUpperCase() || '?' }}
+        </div>
+        <div class="header-info">
+            <h6 class="contact-name">{{ data?.fullname || '-' }}</h6>
+            <span class="contact-org" *ngIf="data?.organization">{{ data?.organization }}</span>
+        </div>
+    </div>
+
+    <!-- Contact Info -->
+    <div class="card-body-section">
+        <div class="info-row">
+            <div class="info-icon">
+                <i class="fa-solid fa-phone"></i>
+            </div>
+            <span class="info-text">{{ data?.contactNumber || '-' }}</span>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="card-actions" *ngIf="showActions">
+        <button class="action-btn edit-btn" (click)="onEdit.emit(data)">
+            <i class="fa-solid fa-pen-to-square"></i>
+            <span>แก้ไข</span>
+        </button>
+        <button class="action-btn delete-btn" (click)="onDelete.emit(data)">
+            <i class="fa-solid fa-trash"></i>
+            <span>ลบ</span>
+        </button>
+    </div>
+</div>

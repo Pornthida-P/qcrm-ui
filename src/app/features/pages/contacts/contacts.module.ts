@@ -9,7 +9,7 @@ import { ContactsService } from 'src/app/services/contacts/contacts.service';
 import { HttpClientModule } from '@angular/common/http';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
-
+import { CardComponent } from '../../components/card/card.component';
 @NgModule({
     declarations: [ContactsComponent],
     imports: [
@@ -27,6 +27,7 @@ import { TranslateModule } from '@ngx-translate/core';
         HttpClientModule,
         NgbTooltipModule,
         TranslateModule,
+        CardComponent,
     ],
     providers: [ContactsService],
 })

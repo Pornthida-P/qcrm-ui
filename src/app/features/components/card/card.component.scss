@@ -1,0 +1,138 @@
+.contact-card {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(1, 9, 102, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(1, 9, 102, 0.15);
+  }
+}
+
+.card-header-section {
+  background: linear-gradient(135deg, #010966 0%, #3066be 100%);
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.avatar {
+  width:32px;
+  height: 32px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 600;
+  color: #fff;
+  flex-shrink: 0;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.header-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.contact-name {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 2px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.contact-org {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 13px;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-body-section {
+  padding: 16px 20px;
+  flex: 1;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.info-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #f0f4ff 0%, #e8ecff 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #010966;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.info-text {
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.card-actions {
+  display: flex;
+  border-top: 1px solid #f0f0f0;
+}
+
+.action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  i {
+    font-size: 12px;
+  }
+
+  &.edit-btn {
+    color: #010966;
+    border-right: 1px solid #f0f0f0;
+
+    &:hover {
+      background: linear-gradient(135deg, #f0f4ff 0%, #e8ecff 100%);
+    }
+  }
+
+  &.delete-btn {
+    color: #dc3545;
+
+    &:hover {
+      background: #fff5f5;
+    }
+  }
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
