@@ -4,218 +4,333 @@
             <button type="button" (click)="prev()" class="btn btn-outline-danger">{{ 'common.back' | translate }}</button>
             <div class="d-flex flex-row">
                 <div class="d-flex flex-column me-3" *ngIf="TableShowing">
-                    <span class="mb-2"><strong>{{ 'contact.createdBy' | translate }}</strong> {{ contactCreatedByID }}</span>
-                    <span class="mb-2" *ngIf="contactModifiedByID"><strong>{{ 'contact.modifiedBy' | translate }}</strong> {{ contactModifiedByID }}</span>
+                    <span class="mb-2"
+                        ><strong>{{ 'contact.createdBy' | translate }}</strong> {{ contactCreatedByID }}</span
+                    >
+                    <span class="mb-2" *ngIf="contactModifiedByID"
+                        ><strong>{{ 'contact.modifiedBy' | translate }}</strong> {{ contactModifiedByID }}</span
+                    >
                 </div>
                 <div class="d-flex flex-column me-3" *ngIf="TableShowing">
-                    <span class="mb-2"><strong>{{ 'contact.createdAt' | translate }}</strong> {{ contactCreatedAt }}</span>
-                    <span class="mb-2" *ngIf="contactModifiedByID"><strong>{{ 'contact.modifiedAt' | translate }}</strong> {{ contactModifiedAt }}</span>
+                    <span class="mb-2"
+                        ><strong>{{ 'contact.createdAt' | translate }}</strong> {{ contactCreatedAt }}</span
+                    >
+                    <span class="mb-2" *ngIf="contactModifiedByID"
+                        ><strong>{{ 'contact.modifiedAt' | translate }}</strong> {{ contactModifiedAt }}</span
+                    >
                 </div>
                 <div class="d-flex align-items-start">
-                    <button type="button" (click)="submit()" class="btn btn-primary rounded text-white">{{ 'common.save' | translate }}</button>
+                    <button type="button" (click)="submit()" class="btn btn-primary rounded text-white">
+                        {{ 'common.save' | translate }}
+                    </button>
                 </div>
             </div>
         </div>
 
-        <div class="flex flex-column">
-            <form class="row g-3 mg-3">
-                <p class="mb-3 fs-5">{{ 'contact.title' | translate }}</p>
-                <span *ngIf="contactId === ''" class="text-danger"> {{ 'contact.newContact' | translate }} ({{ chatId }}) </span>
-                <div class="col-md-6">
-                    <label for="inputContactFirstName" class="form-label">{{ 'contact.firstName' | translate }}</label>
-                    <input
-                        type="text"
-                        class="form-control"
-                        [(ngModel)]="contactFirstName"
-                        name="contactFirstName"
-                        id="inputContactFirstName"
-                        [disabled]="!checkRole()"
-                    />
-                </div>
-                <div class="col-md-6">
-                    <label for="inputcontactLastName" class="form-label">{{ 'contact.lastName' | translate }}</label>
-                    <input
-                        type="text"
-                        class="form-control"
-                        [(ngModel)]="contactLastName"
-                        name="contactLastName"
-                        id="inputContactLastName"
-                        [disabled]="!checkRole()"
-                    />
-                </div>
-                <div class="col-md-6">
-                    <label for="inputContactGender" class="form-label">{{ 'contact.gender' | translate }}</label>
-                    <select
-                        id="inputContactGender"
-                        class="form-select"
-                        [(ngModel)]="contactGender"
-                        name="contactGender"
-                        [disabled]="!checkRole()"
+        <div id="accordion" class="custom-accordion">
+            <div class="card accordion-card">
+                <div class="card-header accordion-header" id="headingOne">
+                    <button
+                        class="accordion-btn"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseOne"
+                        aria-expanded="true"
+                        aria-controls="collapseOne"
                     >
-                        <option value="unknown">{{ 'gender.unknown' | translate }}</option>
-                        <option value="male">{{ 'gender.male' | translate }}</option>
-                        <option value="female">{{ 'gender.female' | translate }}</option>
-                        <option value="other">{{ 'gender.other' | translate }}</option>
-                    </select>
+                        <div class="accordion-title">
+                            <i class="fa-solid fa-user-circle me-2"></i>
+                            {{ 'contact.title' | translate }}
+                        </div>
+                        <i class="fa-solid fa-chevron-down accordion-icon"></i>
+                    </button>
                 </div>
-                <div class="col-md-6">
-                    <label for="inputContactOrg" class="form-label">{{ 'contact.company' | translate }}</label>
-                    <input
-                        type="text"
-                        class="form-control"
-                        [(ngModel)]="contactOrgName"
-                        name="contactOrgName"
-                        id="inputContactOrg"
-                        [disabled]="!checkRole()"
-                    />
+
+                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne">
+                    <div class="card-body p-4">
+                        <!-- New Contact Badge -->
+                        <div *ngIf="contactId === ''" class="alert alert-warning d-inline-flex align-items-center mb-4 py-2 px-3">
+                            <i class="fa-solid fa-user-plus me-2"></i>
+                            {{ 'contact.newContact' | translate }}
+                            <span class="badge bg-secondary ms-2">{{ chatId }}</span>
+                        </div>
+
+                        <form class="row g-3">
+                            <div class="col-md-6">
+                                <label for="inputContactFirstName" class="form-label fw-semibold">
+                                    {{ 'contact.firstName' | translate }}
+                                </label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    [(ngModel)]="contactFirstName"
+                                    name="contactFirstName"
+                                    id="inputContactFirstName"
+                                    [disabled]="!checkRole()"
+                                    [placeholder]="'contact.firstName' | translate"
+                                />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="inputcontactLastName" class="form-label fw-semibold">
+                                    {{ 'contact.lastName' | translate }}
+                                </label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    [(ngModel)]="contactLastName"
+                                    name="contactLastName"
+                                    id="inputContactLastName"
+                                    [disabled]="!checkRole()"
+                                    [placeholder]="'contact.lastName' | translate"
+                                />
+                            </div>
+                            <div class="col-md-6">
+                                <label for="inputContactGender" class="form-label fw-semibold">
+                                    {{ 'contact.gender' | translate }}
+                                </label>
+                                <select
+                                    id="inputContactGender"
+                                    class="form-select"
+                                    [(ngModel)]="contactGender"
+                                    name="contactGender"
+                                    [disabled]="!checkRole()"
+                                >
+                                    <option value="unknown">{{ 'gender.unknown' | translate }}</option>
+                                    <option value="male">{{ 'gender.male' | translate }}</option>
+                                    <option value="female">{{ 'gender.female' | translate }}</option>
+                                    <option value="other">{{ 'gender.other' | translate }}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="inputContactOrg" class="form-label fw-semibold">
+                                    {{ 'contact.company' | translate }}
+                                </label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    [(ngModel)]="contactOrgName"
+                                    name="contactOrgName"
+                                    id="inputContactOrg"
+                                    [disabled]="!checkRole()"
+                                    [placeholder]="'contact.company' | translate"
+                                />
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center mb-2">
+                                    <label for="inputContactNum" class="form-label fw-semibold mb-0">
+                                        {{ 'contact.phoneNumber' | translate }}
+                                    </label>
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-outline-primary-custom ms-2"
+                                        (click)="inputAddPhone()"
+                                        [ngbTooltip]="'contact.addPhoneNumber' | translate"
+                                        *ngIf="TableShowing"
+                                    >
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                                <!-- New Contact Phone -->
+                                <input
+                                    *ngIf="!contactId"
+                                    type="text"
+                                    class="form-control"
+                                    name="contactNum"
+                                    id="inputContactNum"
+                                    pattern="[0-9]*"
+                                    inputmode="numeric"
+                                    onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                                    (input)="onInputChange($event, 'contactNum')"
+                                    [placeholder]="'contact.phoneNumber' | translate"
+                                />
+                                <!-- Add New Phone -->
+                                <input
+                                    *ngIf="isInputVisible"
+                                    type="text"
+                                    class="form-control mb-2"
+                                    [(ngModel)]="contactNumNew"
+                                    [placeholder]="'contact.addPhoneNumber' | translate"
+                                    name="contactNumNew"
+                                    id="inputContactNumNew"
+                                    pattern="[0-9]*"
+                                    inputmode="numeric"
+                                    onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                                    (input)="onInputChange($event, 'contactNumNew')"
+                                />
+                                <!-- Existing Phone Numbers -->
+                                <div *ngFor="let contact of contactNumbers; let i = index; let last = last" [class.mb-2]="!last">
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        [(ngModel)]="contact.contactNumber"
+                                        name="contactNum{{ i }}"
+                                        id="inputContactNum{{ i }}"
+                                        pattern="[0-9]*"
+                                        inputmode="numeric"
+                                        onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                                    />
+                                </div>
+                            </div>
+                            <div class="col-md-6" *ngIf="MultiNumber == true">
+                                <label for="inputContactNum2" class="form-label fw-semibold">
+                                    {{ 'contact.phoneNumber' | translate }} ({{ 'common.add' | translate }})
+                                </label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    [(ngModel)]="contactNum2"
+                                    name="contactNum2"
+                                    id="inputContactNum2"
+                                    pattern="[0-9]*"
+                                    inputmode="numeric"
+                                    onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                                    (input)="onInputChange($event, 'contactNum2')"
+                                    [placeholder]="'contact.phoneNumber' | translate"
+                                />
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="d-flex">
-                        <label for="inputContactNum" class="form-label">{{ 'contact.phoneNumber' | translate }}</label>
-                        <div
-                            class="mb-2 p-1 btn-primary text-white rounded-2 cursor-pointer add-number ms-2"
-                            (click)="inputAddPhone()"
-                            [ngbTooltip]="'contact.addPhoneNumber' | translate"
-                            *ngIf="TableShowing"
-                        >
-                            <i class="fa-solid fa-plus fs-icon"></i>
+            </div>
+            <div class="card accordion-card mt-3" *ngIf="TableShowing">
+                <div class="card-header accordion-header" id="headingTwo">
+                    <button
+                        class="accordion-btn"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseTwo"
+                        aria-expanded="true"
+                        aria-controls="collapseTwo"
+                    >
+                        <div class="accordion-title">
+                            <i class="fa-solid fa-address-book me-2"></i>
+                            {{ 'contact.contactInfo' | translate }}
+                        </div>
+                        <i class="fa-solid fa-chevron-down accordion-icon"></i>
+                    </button>
+                    <button
+                        class="btn btn-add-case"
+                        (click)="createCall(); $event.stopPropagation()"
+                        data-bs-toggle="offcanvas"
+                        data-bs-target="#offcanvasRight"
+                        aria-controls="offcanvasRight"
+                    >
+                        <i class="fa-solid fa-plus me-1"></i>
+                        {{ 'contact.addContactInfo' | translate }}
+                    </button>
+                </div>
+                <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo">
+                    <div class="card-body p-0">
+                        <div class="table-responsive custom-table-wrapper table-scroll-container">
+                            <table class="table table-hover custom-table mb-0 table-fixed-header">
+                                <thead>
+                                    <tr>
+                                        <th>{{ 'common.time' | translate }}</th>
+                                        <th>{{ 'contact.phoneNumber' | translate }}</th>
+                                        <th>{{ 'contact.callType' | translate }}</th>
+                                        <th>{{ 'contact.channel' | translate }}</th>
+                                        <th>{{ 'contact.subject' | translate }}</th>
+                                        <th>{{ 'contact.description' | translate }}</th>
+                                        <th>{{ 'common.status' | translate }}</th>
+                                        <th>{{ 'contact.contact' | translate }}</th>
+                                        <th>{{ 'contact.assignUser' | translate }}</th>
+                                        <th class="text-center">{{ 'common.manage' | translate }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <ng-container *ngIf="contactCall && contactCall.length > 0; else noDataTemplate">
+                                        <tr *ngFor="let case of contactCall" class="table-row-hover">
+                                            <td>
+                                                <span class="text-muted">
+                                                    <i class="fa-regular fa-clock me-1"></i>
+                                                    {{ case.requestDateTime | date : 'dd/MM/yyyy HH:mm' }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-light text-dark">
+                                                    <i class="fa-solid fa-phone me-1"></i>
+                                                    {{ case.contactNumber || '-' }}
+                                                </span>
+                                            </td>
+                                            <td>{{ case.operationType || '-' }}</td>
+                                            <td>
+                                                <span
+                                                    *ngIf="case.channel; else noChannel"
+                                                    class="badge channel-badge"
+                                                    [style.background-color]="statusService.getChannelBgColor(case.channel)"
+                                                >
+                                                    {{ case.channel }}
+                                                </span>
+                                                <ng-template #noChannel>
+                                                    <span class="text-muted">-</span>
+                                                </ng-template>
+                                            </td>
+                                            <td>{{ case.caseTopicName }}</td>
+                                            <td class="text-truncate" style="max-width: 150px">{{ case.description }}</td>
+                                            <td>
+                                                <span
+                                                    *ngIf="case.status; else noStatus"
+                                                    class="badge status-badge"
+                                                    [style.background-color]="statusService.getStatusBgColor(case.status)"
+                                                >
+                                                    <i [class]="statusService.getStatusIcon(case.status)" class="me-1"></i>
+                                                    {{ case.status }}
+                                                </span>
+                                                <ng-template #noStatus>
+                                                    <span class="text-muted">-</span>
+                                                </ng-template>
+                                            </td>
+                                            <td>{{ case.firstName }}</td>
+                                            <td>{{ case.responsibleUser || case.createdById }}</td>
+                                            <td class="text-center">
+                                                <button
+                                                    class="btn btn-sm btn-outline-primary-custom btn-action"
+                                                    data-bs-toggle="offcanvas"
+                                                    data-bs-target="#offcanvasRight"
+                                                    aria-controls="offcanvasRight"
+                                                    [ngbTooltip]="'common.edit' | translate"
+                                                    (click)="editCall(case.caseId)"
+                                                >
+                                                    <i class="fa-solid fa-pen-to-square"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+                                    <ng-template #noDataTemplate>
+                                        <tr>
+                                            <td colspan="10" class="text-center py-5">
+                                                <div class="empty-state">
+                                                    <i class="fa-solid fa-inbox fa-3x text-muted mb-3"></i>
+                                                    <p class="text-muted mb-0">{{ 'common.dataNotFound' | translate }}</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                    <input
-                        *ngIf="!contactId"
-                        type="text"
-                        class="form-control"
-                        name="contactNum"
-                        id="inputContactNum"
-                        pattern="[0-9]*"
-                        inputmode="numeric"
-                        onkeypress="return event.charCode >= 48 && event.charCode <= 57"
-                        (input)="onInputChange($event, 'contactNum')"
-                    />
-                    <input
-                        *ngIf="isInputVisible"
-                        type="text"
-                        class="form-control mt-2"
-                        [(ngModel)]="contactNumNew"
-                        [placeholder]="'contact.addPhoneNumber' | translate"
-                        name="contactNumNew"
-                        id="inputContactNumNew"
-                        pattern="[0-9]*"
-                        inputmode="numeric"
-                        onkeypress="return event.charCode >= 48 && event.charCode <= 57"
-                        (input)="onInputChange($event, 'contactNumNew')"
-                    />
-                    <div *ngFor="let contact of contactNumbers; let i = index">
-                        <input
-                            type="text"
-                            class="form-control mt-2"
-                            [(ngModel)]="contact.contactNumber"
-                            name="contactNum{{ i }}"
-                            id="inputContactNum{{ i }}"
-                            pattern="[0-9]*"
-                            inputmode="numeric"
-                            onkeypress="return event.charCode >= 48 && event.charCode <= 57"
-                        />
-                    </div>
-                </div>
-                <div class="col-md-6" *ngIf="MultiNumber == true">
-                    <label for="inputContactNum" class="form-label">{{ 'contact.phoneNumber' | translate }} ({{ 'common.add' | translate }})</label>
-                    <input
-                        type="text"
-                        class="form-control"
-                        [(ngModel)]="contactNum2"
-                        name="contactNum2"
-                        id="inputContactNum2"
-                        pattern="[0-9]*"
-                        inputmode="numeric"
-                        onkeypress="return event.charCode >= 48 && event.charCode <= 57"
-                        (input)="onInputChange($event, 'contactNum2')"
-                    />
-                </div>
-            </form>
-        </div>
-        <div class="flex flex-column" *ngIf="TableShowing">
-            <div class="d-flex align-items-center" style="margin-top: 5%">
-                <p class="mb-3 fs-5">{{ 'contact.contactInfo' | translate }}</p>
-                <button
-                    class="btn btn-primary ms-2"
-                    style="margin-top: -14px"
-                    (click)="createCall()"
-                    data-bs-toggle="offcanvas"
-                    data-bs-target="#offcanvasRight"
-                    aria-controls="offcanvasRight"
-                >
-                    <i class="fa-solid fa-plus"></i>
-                </button>
-            </div>
-            <div class="h-100">
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th style="width: 10%">{{ 'common.time' | translate }}</th>
-                                <th style="width: 10%">{{ 'contact.phoneNumber' | translate }}</th>
-                                <th style="width: 10%">{{ 'contact.callType' | translate }}</th>
-                                <th style="width: 10%">{{ 'contact.channel' | translate }}</th>
-                                <th style="width: 10%">{{ 'contact.subject' | translate }}</th>
-                                <th style="width: 10%">{{ 'contact.description' | translate }}</th>
-                                <th style="width: 10%">{{ 'common.status' | translate }}</th>
-                                <th style="width: 10%">{{ 'contact.contact' | translate }}</th>
-                                <th style="width: 10%">{{ 'contact.assignUser' | translate }}</th>
-                                <th style="width: 10%">{{ 'common.manage' | translate }}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <ng-container *ngIf="contactCall && contactCall.length > 0; else noDataTemplate">
-                                <tr *ngFor="let case of contactCall">
-                                    <td>{{ case.requestDateTime | date : 'dd/MM/yyyy  HH:mm' }}</td>
-                                    <td>{{ case.contactNumber || '-' }}</td>
-                                    <td>{{ case.operationType || '-' }}</td>
-                                    <td>{{ case.channel }}</td>
-                                    <td>{{ case.caseTopicName }}</td>
-                                    <td>{{ case.description }}</td>
-                                    <td>{{ case.status }}</td>
-                                    <td>{{ case.firstName }}</td>
-                                    <td>{{ case.responsibleUser || case.createdById }}</td>
-                                    <td class="text-center" scope="row">
-                                        <div class="d-flex flex-row flex-nowrap">
-                                            <div
-                                                class="me-3 color-blue-dark"
-                                                placement="top"
-                                                style="cursor: pointer"
-                                                data-bs-toggle="offcanvas"
-                                                data-bs-target="#offcanvasRight"
-                                                aria-controls="offcanvasRight"
-                                                [ngbTooltip]="'common.edit' | translate"
-                                                (click)="editCall(case.caseId)"
-                                            >
-                                                <i class="fa-solid fa-pen-to-square"></i>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </ng-container>
-                            <ng-template #noDataTemplate>
-                                <tr>
-                                    <td colspan="9" class="text-center">{{ 'common.dataNotFound' | translate }}</td>
-                                </tr>
-                            </ng-template>
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
     </div>
 </div>
 <div class="offcanvas offcanvas-end w-75" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
-    <div class="offcanvas-body">
-        <div class="d-flex flex-wrap justify-content-between">
-            <div class="d-flex">
-                <div class="p-2 flex-grow-1" type="button" placement="bottom" [ngbTooltip]="'common.cancel' | translate">
-                    <fa-icon class="" [icon]="faCircleXmark" size="lg" data-bs-dismiss="offcanvas"></fa-icon>
-                </div>
-            </div>
+    <div class="offcanvas-header border-bottom bg-light py-3">
+        <div class="d-flex align-items-center">
+            <h5 class="offcanvas-title mb-0 fw-bold text-primary" *ngIf="attachmentShowing == true">
+                <i class="fa-solid fa-plus-circle me-2"></i>{{ 'contact.addContactInfo' | translate }}
+            </h5>
+            <h5 class="offcanvas-title mb-0 fw-bold text-primary" *ngIf="attachmentShowing == false">
+                <i class="fa-solid fa-edit me-2"></i>{{ 'contact.editContactInfo' | translate }}
+            </h5>
         </div>
+        <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-primary" type="button" (click)="submitCall()">
+                <i class="fa-solid fa-save me-1"></i>{{ 'common.save' | translate }}
+            </button>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+    </div>
+    <div class="offcanvas-body">
         <div class="flex flex-column offcanvas-content-wrapper" *ngIf="AddCallShowing">
             <div class="row g-0 align-items-stretch h-100">
                 <div
@@ -225,34 +340,33 @@
                         'col-12': attachmentShowing || (!selectedCaseTopicObject?.script && !chatHistory.length)
                     }"
                 >
-                    <div
-                        class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3 gap-2 edit-contact-header"
-                    >
-                        <h4 class="mb-0" *ngIf="attachmentShowing == true">{{ 'contact.addContactInfo' | translate }}</h4>
-                        <h4 class="mb-0" *ngIf="attachmentShowing == false">{{ 'contact.editContactInfo' | translate }}</h4>
-                        <button class="btn btn-primary" type="button" (click)="submitCall()">{{ 'common.save' | translate }}</button>
-                    </div>
                     <div class="edit-contact-form-scroll">
-                        <form class="row g-3 mg-3">
-                            <div class="col-12">
-                                <div class="contact-number mb-4" *ngIf="TableShowing && selectedContactNumber">
-                                    <div class="col-6 me-3">
-                                        <label for="inputContactNumber" class="form-label">{{ 'contact.channel' | translate }}</label>
-                                        <input
-                                            type="text"
-                                            id="inputContactNumber"
-                                            class="form-control"
-                                            [value]="selectedContactNumber.contactNumber"
-                                            readonly
-                                        />
+                        <form class="row g-3">
+                            <!-- Call Out Section -->
+                            <div class="col-12" *ngIf="TableShowing && selectedContactNumber">
+                                <div class="alert alert-info d-flex align-items-center justify-content-between py-2 mb-0">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fa-solid fa-phone me-2"></i>
+                                        <span class="fw-semibold">{{ selectedContactNumber.contactNumber }}</span>
                                     </div>
-                                    <button type="button" class="btn btn-success me-3" (click)="sendMessage()" [disabled]="!selectedContactNumber">
-                                        {{ 'contact.callOut' | translate }}
+                                    <button
+                                        type="button"
+                                        class="btn btn-success btn-sm"
+                                        (click)="sendMessage()"
+                                        [disabled]="!selectedContactNumber"
+                                    >
+                                        <i class="fa-solid fa-phone-volume me-1"></i>{{ 'contact.callOut' | translate }}
                                     </button>
                                 </div>
+                            </div>
+
+                            <!-- Topic & Subject -->
+                            <div class="col-12">
                                 <div class="row g-3">
                                     <div class="col-12 col-sm-6">
-                                        <label for="inputTopic" class="form-label fw-semibold">{{ 'contact.topic' | translate }}<span class="color-red">*</span></label>
+                                        <label for="inputTopic" class="form-label fw-semibold"
+                                            >{{ 'contact.topic' | translate }}<span class="color-red">*</span></label
+                                        >
 
                                         <mat-form-field class="w-100" appearance="outline">
                                             <input
@@ -277,7 +391,9 @@
                                     </div>
 
                                     <div class="col-12 col-sm-6">
-                                        <label for="inputCaseSubject" class="form-label fw-semibold">{{ 'contact.subject' | translate }}</label>
+                                        <label for="inputCaseSubject" class="form-label fw-semibold">{{
+                                            'contact.subject' | translate
+                                        }}</label>
 
                                         <mat-form-field class="w-100" appearance="outline">
                                             <input
@@ -317,60 +433,65 @@
                                 </select>
                             </div>
                             <div class="col-12 col-sm-6">
-                              <label for="inputChannel" class="form-label fw-semibold">{{ 'contact.channel' | translate }}</label>
-                              <select
-                                  id="inputChannel"
-                                  class="form-select"
-                                  name="selectedChannels"
-                                  [(ngModel)]="selectedChannels"
-                                  (ngModelChange)="onChannelChange($event)"
-                                  [disabled]="isChannelDisabled"
-                              >
-                                  <option disabled value="">{{ 'common.pleaseSelect' | translate }}</option>
-                                  <option *ngFor="let channel of channels" [value]="channel.channelId">{{ channel.name }}</option>
-                              </select>
-                          </div>
+                                <label for="inputChannel" class="form-label fw-semibold">{{ 'contact.channel' | translate }}</label>
+                                <select
+                                    id="inputChannel"
+                                    class="form-select"
+                                    name="selectedChannels"
+                                    [(ngModel)]="selectedChannels"
+                                    (ngModelChange)="onChannelChange($event)"
+                                    [disabled]="isChannelDisabled"
+                                >
+                                    <option disabled value="">{{ 'common.pleaseSelect' | translate }}</option>
+                                    <option *ngFor="let channel of channels" [value]="channel.channelId">{{ channel.name }}</option>
+                                </select>
+                            </div>
 
-                          <!-- ประเภทสาย (Voice) -->
-                          <div class="col-12 col-sm-6" *ngIf="selectedChannels === '1' || selectedChannels === '2'">
-                              <label for="inputCallType" class="form-label fw-semibold">{{ 'contact.callType' | translate }}</label>
-                              <input
-                                  type="text"
-                                  id="inputCallType"
-                                  class="form-control"
-                                  [value]="outbound"
-                                  readonly
-                                  [disabled]="isCallTypeDisabled"
-                              />
-                          </div>
+                            <!-- ประเภทสาย (Voice) -->
+                            <div class="col-12 col-sm-6" *ngIf="selectedChannels === '1' || selectedChannels === '2'">
+                                <label for="inputCallType" class="form-label fw-semibold">{{ 'contact.callType' | translate }}</label>
+                                <input
+                                    type="text"
+                                    id="inputCallType"
+                                    class="form-control"
+                                    [value]="outbound"
+                                    readonly
+                                    [disabled]="isCallTypeDisabled"
+                                />
+                            </div>
 
-                          <!-- ประเภทอีเมล (Email) -->
-                          <div class="col-12 col-sm-6" *ngIf="selectedChannels === '3'">
-                              <label for="inputCallType" class="form-label fw-semibold">{{ 'contact.emailType' | translate }}</label>
-                              <select
-                                  id="inputCallType"
-                                  class="form-select"
-                                  name="selectedCallTypeId"
-                                  [(ngModel)]="selectedCallTypeId"
-                                  [disabled]="isCallTypeDisabled"
-                              >
-                                  <option disabled value="">{{ 'common.pleaseSelect' | translate }}</option>
-                                  <option *ngFor="let callType of callTypes" [value]="callType.name">{{ callType.name }}</option>
-                              </select>
-                          </div>
+                            <!-- ประเภทอีเมล (Email) -->
+                            <div class="col-12 col-sm-6" *ngIf="selectedChannels === '3'">
+                                <label for="inputCallType" class="form-label fw-semibold">{{ 'contact.emailType' | translate }}</label>
+                                <select
+                                    id="inputCallType"
+                                    class="form-select"
+                                    name="selectedCallTypeId"
+                                    [(ngModel)]="selectedCallTypeId"
+                                    [disabled]="isCallTypeDisabled"
+                                >
+                                    <option disabled value="">{{ 'common.pleaseSelect' | translate }}</option>
+                                    <option *ngFor="let callType of callTypes" [value]="callType.name">{{ callType.name }}</option>
+                                </select>
+                            </div>
 
-                          <!-- เบอร์ติดต่อ -->
-                          <div class="col-12 col-sm-6" *ngIf="(selectedChannels === '1' || selectedChannels === '2') && selectedContactNumber">
-                              <label for="inputContactNumber" class="form-label fw-semibold">{{ 'contact.phoneNumber' | translate }}<span class="color-red">*</span></label>
-                              <input
-                                  type="text"
-                                  id="inputContactNumber"
-                                  class="form-control"
-                                  [value]="selectedContactNumber.contactNumber"
-                                  readonly
-                                  [disabled]="isContactNumberDisabled"
-                              />
-                          </div>
+                            <!-- เบอร์ติดต่อ -->
+                            <div
+                                class="col-12 col-sm-6"
+                                *ngIf="(selectedChannels === '1' || selectedChannels === '2') && selectedContactNumber"
+                            >
+                                <label for="inputContactNumber" class="form-label fw-semibold"
+                                    >{{ 'contact.phoneNumber' | translate }}<span class="color-red">*</span></label
+                                >
+                                <input
+                                    type="text"
+                                    id="inputContactNumber"
+                                    class="form-control"
+                                    [value]="selectedContactNumber.contactNumber"
+                                    readonly
+                                    [disabled]="isContactNumberDisabled"
+                                />
+                            </div>
 
                             <div class="col-12">
                                 <label for="inputAddress" class="form-label fw-semibold">{{ 'contact.dateTime' | translate }}</label>

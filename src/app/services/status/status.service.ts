@@ -33,13 +33,29 @@ export class StatusService {
         },
     };
 
-    private defaultColors = ['#FB5F20', '#010966', '#006400', '#6c757d', '#17a2b8', '#ffc107', '#dc3545'];
+    // Channel styles - ช่องทางติดต่อ
+    private channelColors: { [key: string]: StatusStyle } = {
+        voice: {
+            color: '#ffffff',
+            backgroundColor: '#17a2b8',
+            icon: 'fa-solid fa-phone',
+        },
+        line: {
+            color: '#ffffff',
+            backgroundColor: '#06C755',
+            icon: 'fa-brands fa-line',
+        },
+        facebook: {
+            color: '#ffffff',
+            backgroundColor: '#1877F2',
+            icon: 'fa-brands fa-facebook-messenger',
+        },
+    };
+
+    private defaultColors = ['#FB5F20', '#010966', '#006400', '#6c757d', '#ffc107', '#dc3545'];
 
     constructor() {}
 
-    /**
-     * Get status style by status name
-     */
     getStatusStyle(statusName: string): StatusStyle {
         if (!statusName) {
             return this.getDefaultStyle();
@@ -61,9 +77,6 @@ export class StatusService {
         };
     }
 
-    /**
-     * Get status color by index (for status list)
-     */
     getStatusColorByIndex(index: number): StatusStyle {
         const colors = ['#FB5F20', '#010966', '#006400'];
         const icons = ['fa-solid fa-folder-open', 'fa-solid fa-hourglass-end', 'fa-solid fa-folder-closed'];
@@ -75,18 +88,49 @@ export class StatusService {
         };
     }
 
-    /**
-     * Get just the background color for badge styling
-     */
     getStatusBgColor(statusName: string): string {
         return this.getStatusStyle(statusName).backgroundColor;
     }
 
-    /**
-     * Get icon class for status
-     */
     getStatusIcon(statusName: string): string {
         return this.getStatusStyle(statusName).icon;
+    }
+
+    getChannelStyle(channelName: string): StatusStyle {
+        if (!channelName) {
+            return this.getDefaultChannelStyle();
+        }
+
+        const normalizedName = channelName.toLowerCase().trim();
+
+        // Check predefined channels
+        if (this.channelColors[normalizedName]) {
+            return this.channelColors[normalizedName];
+        }
+
+        // Generate color based on channel name hash
+        const colorIndex = this.hashString(normalizedName) % this.defaultColors.length;
+        return {
+            color: '#ffffff',
+            backgroundColor: this.defaultColors[colorIndex],
+            icon: 'fa-solid fa-circle-nodes',
+        };
+    }
+
+    getChannelBgColor(channelName: string): string {
+        return this.getChannelStyle(channelName).backgroundColor;
+    }
+
+    getChannelIcon(channelName: string): string {
+        return this.getChannelStyle(channelName).icon;
+    }
+
+    private getDefaultChannelStyle(): StatusStyle {
+        return {
+            color: '#ffffff',
+            backgroundColor: '#6c757d',
+            icon: 'fa-solid fa-circle-nodes',
+        };
     }
 
     private getDefaultStyle(): StatusStyle {
