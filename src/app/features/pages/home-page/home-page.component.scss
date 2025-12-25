@@ -1,3 +1,6 @@
+// Import shared table styles
+@import 'src/app/styles/table-shared';
+
 .statistics-card {
     display: flex;
     flex-direction: column;
@@ -402,14 +405,16 @@
     }
 }
 
-.status-badge {
-    display: inline-block;
-    padding: 0.35rem 0.75rem;
-    border-radius: 20px;
-    color: white;
-    font-size: 0.875rem;
-    font-weight: 600;
-    white-space: nowrap;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    line-height: 1.2;
+// Component-specific overrides
+.table-scroll-container {
+    max-height: 400px; // Override for dashboard
+}
+
+// Row overdue style (dashboard specific)
+.row-overdue {
+    background: rgba(220, 53, 69, 0.08);
+
+    &:hover {
+        background: rgba(220, 53, 69, 0.12);
+    }
 }

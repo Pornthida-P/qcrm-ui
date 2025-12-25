@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -10,9 +10,9 @@ import { TokenInterceptor } from './core/interceptor/token.interceptor';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { LoaderModule } from './features/components/loader/loader.module';
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { Observable, map } from 'rxjs';
+import { Observable, map, lastValueFrom } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 interface VocabItem {
@@ -30,11 +30,9 @@ export class CustomTranslateLoader implements TranslateLoader {
     constructor(private http: HttpClient) {}
 
     getTranslation(lang: string): Observable<any> {
-        // ดึงข้อมูล vocabs จาก API แทนไฟล์ JSON
         const apiUrl = `${environment.api.url}/vocabs?lang=${lang}`;
         return this.http.get<VocabItem[]>(apiUrl).pipe(
             map((vocabs: VocabItem[]) => {
-                // แปลง array เป็น object { key: value } สำหรับ ngx-translate
                 const translations: { [key: string]: string } = {};
                 vocabs.forEach((vocab) => {
                     translations[vocab.key] = vocab.value;
@@ -47,6 +45,14 @@ export class CustomTranslateLoader implements TranslateLoader {
 
 export function HttpLoaderFactory(http: HttpClient) {
     return new CustomTranslateLoader(http);
+}
+
+export function initializeTranslations(translate: TranslateService): () => Promise<void> {
+    return () => {
+        const storedLanguage = localStorage.getItem('isLanguage') || 'th';
+        translate.setDefaultLang(storedLanguage);
+        return lastValueFrom(translate.use(storedLanguage));
+    };
 }
 
 @NgModule({
@@ -74,6 +80,12 @@ export function HttpLoaderFactory(http: HttpClient) {
         {
             provide: HTTP_INTERCEPTORS,
             useClass: TokenInterceptor,
+            multi: true,
+        },
+        {
+            provide: APP_INITIALIZER,
+            useFactory: initializeTranslations,
+            deps: [TranslateService],
             multi: true,
         },
     ],

@@ -45,6 +45,12 @@ export class ContactImportComponent {
         'isDeleted',
         'assignedUserId',
         'attachment',
+        'script',
+        'contactNumberId',
+        'callStatus',
+        'callStatusId',
+        'callStatusChangedAt',
+        'type',
     ];
     showColumnMenu = false;
     contactListImports: any[] = [];
@@ -123,32 +129,24 @@ export class ContactImportComponent {
                     this.caseList = caseList;
 
                     if (this.caseList && this.caseList.length > 0) {
+                        this.columnVisibility = {};
+                        const columns = new Set<string>();
+
                         this.caseList.forEach((caseItem) => {
                             Object.keys(caseItem).forEach((key) => {
                                 if (!this.ignoreColumns.includes(key)) {
-                                    this.columnVisibility[key] = false;
+                                    columns.add(key);
                                 }
                             });
                         });
 
-                        this.displayedColumns = [
-                            'requestDateTime',
-                            'fullname',
-                            'contactNumber',
-                            'channel',
-                            'topic',
-                            'subject',
-                            'script',
-                            'description',
-                            'status',
-                            'assignUser',
-                        ];
+                        this.displayedColumns = Array.from(columns);
+                        this.displayedColumns.forEach((col) => (this.columnVisibility[col] = true));
                         this.dataSource = new MatTableDataSource<any>(this.caseList);
-
-                        this.displayedColumns.forEach((column) => (this.columnVisibility[column] = true));
                     } else {
                         this.displayedColumns = [];
-                        this.dataSource.data = [];
+                        this.columnVisibility = {};
+                        this.dataSource = new MatTableDataSource<any>([]);
                     }
                 }),
                 catchError((error) => {
@@ -156,6 +154,6 @@ export class ContactImportComponent {
                     throw error;
                 }),
             )
-            .subscribe(() => {});
+            .subscribe();
     }
 }

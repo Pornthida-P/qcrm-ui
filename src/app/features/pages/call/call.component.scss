@@ -1,3 +1,6 @@
+// Import shared table styles
+@import 'src/app/styles/table-shared';
+
 label:has(+ input:required):after {
     content: ' *';
     color: red;
@@ -99,7 +102,6 @@ label:has(+ input:required):after {
         }
     }
 }
-
 
 .system-message {
     display: flex;
@@ -324,16 +326,15 @@ label:has(+ input:required):after {
     }
 }
 
-.status-badge {
-    display: inline-block;
-    padding: 0.35rem 0.75rem;
-    border-radius: 20px;
-    color: white;
-    font-size: 0.875rem;
-    font-weight: 600;
-    white-space: nowrap;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    line-height: 1.2;
+// Offcanvas Header Styling
+.offcanvas-header {
+    .offcanvas-title {
+        color: var(--color-blue-dark);
+
+        i {
+            color: var(--primary);
+        }
+    }
 }
 
 ::ng-deep .offcanvas-body {
@@ -367,10 +368,6 @@ label:has(+ input:required):after {
     overflow: hidden;
     min-width: 0;
     flex: 1;
-
-    .edit-contact-header {
-        flex-shrink: 0;
-    }
 
     .edit-contact-form-scroll {
         flex: 1;

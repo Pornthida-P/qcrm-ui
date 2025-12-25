@@ -4,7 +4,6 @@ import { UserService } from './services/user/user.service';
 import { User } from './shared/interface/user.interface';
 import { LoaderService } from './services/loader/loader.service';
 import { TranslateService } from './services/translate/translate.service';
-import { TranslateService as Translate } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-root',
@@ -20,10 +19,9 @@ export class AppComponent implements OnInit {
         private socketIO: SocketIoService,
         private userService: UserService,
         private loaderService: LoaderService,
-        private translate: Translate,
         private translateService: TranslateService,
     ) {
-        this.translate.setDefaultLang(this.translateService.getCurrentLanguage());
+        // Translation is now preloaded via APP_INITIALIZER in app.module.ts
     }
 
     async ngOnInit() {
