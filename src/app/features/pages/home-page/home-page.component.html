@@ -138,85 +138,110 @@
         <div class="col-12">
             <div class="bg-white rounded shadow p-3 p-md-4">
                 <p class="mb-3 mb-md-4 fw-bold text-left">{{ 'dashboard.case' | translate }}</p>
-                <div class="table-responsive">
-                    <table class="table table-hover table-sm">
-                        <thead>
-                            <tr>
-                                <th scope="col" class="text-nowrap">{{ 'contact.createdAt' | translate }}</th>
-                                <th scope="col" class="text-nowrap">{{ 'dashboard.channel' | translate }}</th>
-                                <th scope="col" class="text-nowrap">{{ 'dashboard.contact' | translate }}</th>
-                                <th scope="col" class="text-nowrap d-none d-md-table-cell">{{ 'dashboard.caseType' | translate }}</th>
-                                <th scope="col" class="text-nowrap d-none d-lg-table-cell">{{ 'dashboard.caseTopic' | translate }}</th>
-                                <th scope="col" class="text-nowrap d-none d-xl-table-cell">{{ 'contact.description' | translate }}</th>
-                                <th scope="col" class="text-nowrap d-none d-lg-table-cell">{{ 'dashboard.agent' | translate }}</th>
-                                <th scope="col" class="text-nowrap">{{ 'common.status' | translate }}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <ng-container *ngIf="filteredCases.length > 0; else tableNoData">
-                                <tr *ngFor="let caseItem of filteredCases" [class.table-danger]="isOverOneDay(caseItem.createdAt)">
-                                    <td class="text-nowrap">{{ caseItem.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
-                                    <td class="text-nowrap">{{ caseItem.channel || '-' }}</td>
-                                    <td class="text-nowrap">{{ caseItem.contact || '-' }}</td>
-                                    <td class="text-nowrap d-none d-md-table-cell">{{ caseItem.topic || '-' }}</td>
-                                    <td class="text-nowrap d-none d-lg-table-cell">{{ caseItem.subject || '-' }}</td>
-                                    <td class="d-none d-xl-table-cell">{{ caseItem.description || '-' }}</td>
-                                    <td class="text-nowrap d-none d-lg-table-cell">{{ caseItem.agent || '-' }}</td>
-                                    <td class="text-nowrap">
-                                        <span
-                                            *ngIf="caseItem.status; else noStatus"
-                                            class="status-badge"
-                                            [style.background-color]="getStatusColor(caseItem.status)"
-                                        >
-                                            {{ caseItem.status }}
-                                        </span>
-                                        <ng-template #noStatus>-</ng-template>
-                                    </td>
-                                </tr>
-                            </ng-container>
-                            <ng-template #tableNoData>
+                <div class="table-card">
+                    <div class="table-scroll-container">
+                        <table class="table table-hover custom-table mb-0 table-fixed-header">
+                            <thead>
                                 <tr>
-                                    <td colspan="8" class="text-center">{{ 'dashboard.noData' | translate }}</td>
+                                    <th scope="col">{{ 'contact.createdAt' | translate }}</th>
+                                    <th scope="col">{{ 'dashboard.channel' | translate }}</th>
+                                    <th scope="col">{{ 'dashboard.contact' | translate }}</th>
+                                    <th scope="col" class="d-none d-md-table-cell">{{ 'dashboard.caseType' | translate }}</th>
+                                    <th scope="col" class="d-none d-lg-table-cell">{{ 'dashboard.caseTopic' | translate }}</th>
+                                    <th scope="col" class="d-none d-xl-table-cell">{{ 'contact.description' | translate }}</th>
+                                    <th scope="col" class="d-none d-lg-table-cell">{{ 'dashboard.agent' | translate }}</th>
+                                    <th scope="col">{{ 'common.status' | translate }}</th>
                                 </tr>
-                            </ng-template>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                <ng-container *ngIf="filteredCases.length > 0; else tableNoData">
+                                    <tr *ngFor="let caseItem of filteredCases" [class.row-overdue]="isOverOneDay(caseItem.createdAt)">
+                                        <td class="text-nowrap">{{ caseItem.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
+                                        <td>
+                                            <span
+                                                *ngIf="caseItem.channel; else noChannel"
+                                                class="channel-badge"
+                                                [style.background-color]="statusService.getChannelBgColor(caseItem.channel)"
+                                            >
+                                                {{ caseItem.channel }}
+                                            </span>
+                                            <ng-template #noChannel>-</ng-template>
+                                        </td>
+                                        <td class="text-nowrap">{{ caseItem.contact || '-' }}</td>
+                                        <td class="text-nowrap d-none d-md-table-cell">{{ caseItem.topic || '-' }}</td>
+                                        <td class="text-truncate d-none d-lg-table-cell" style="max-width: 120px">
+                                            {{ caseItem.subject || '-' }}
+                                        </td>
+                                        <td
+                                            class="text-truncate d-none d-xl-table-cell"
+                                            style="max-width: 150px"
+                                            [ngbTooltip]="caseItem.description"
+                                            [disableTooltip]="!caseItem.description"
+                                            container="body"
+                                            placement="top"
+                                        >
+                                            {{ caseItem.description || '-' }}
+                                        </td>
+                                        <td class="text-nowrap d-none d-lg-table-cell">{{ caseItem.agent || '-' }}</td>
+                                        <td>
+                                            <span
+                                                *ngIf="caseItem.status; else noStatus"
+                                                class="status-badge"
+                                                [style.background-color]="getStatusColor(caseItem.status)"
+                                            >
+                                                <i [class]="statusService.getStatusIcon(caseItem.status)" class="me-1"></i>
+                                                {{ caseItem.status }}
+                                            </span>
+                                            <ng-template #noStatus>-</ng-template>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                                <ng-template #tableNoData>
+                                    <tr>
+                                        <td colspan="8" class="text-center py-5">
+                                            <div class="empty-state">
+                                                <i class="fa-solid fa-inbox fa-3x text-muted mb-3"></i>
+                                                <p class="text-muted mb-0">{{ 'dashboard.noData' | translate }}</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                <ul class="pagination sidebar justify-content-center mt-3 flex-wrap">
-                    <li class="page-item" [class.disabled]="currentPage == 1">
-                        <a class="page-link custom-link preBtn" (click)="pageChange(1)" aria-label="Previous">
-                            <i class="fa-solid fa-angles-left"></i>
-                        </a>
-                    </li>
-                    <li class="page-item" [class.disabled]="currentPage == 1">
-                        <a class="page-link custom-link" (click)="pageChange(currentPage - 1)" aria-label="Previous">
-                            <i class="fa-solid fa-angle-left"></i>
-                        </a>
-                    </li>
-                    <li *ngFor="let page of pages" class="page-item" [class.active]="currentPage == page">
-                        <a class="page-link custom-link" (click)="pageChange(page)">{{ page }}</a>
-                    </li>
-                    <li class="page-item" [class.disabled]="currentPage == totalPages">
-                        <a class="page-link custom-link" (click)="pageChange(currentPage + 1)" aria-label="Next">
-                            <i class="fa-solid fa-angle-right"></i>
-                        </a>
-                    </li>
-                    <li class="page-item" [class.disabled]="currentPage == totalPages">
-                        <a class="page-link custom-link nextBtn" (click)="pageChange(totalPages)" aria-label="Next">
-                            <i class="fa-solid fa-angles-right"></i>
-                        </a>
-                    </li>
-                    <li class="page-item mt-2 mt-md-0 ms-md-3">
-                        <select
-                            class="form-select form-select-sm"
-                            aria-label="Default select example"
-                            [(ngModel)]="pageSize"
-                            (change)="pageSizeChange()"
-                        >
-                            <option class="dropdown-item" *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}</option>
-                        </select>
-                    </li>
-                </ul>
+                <nav class="d-flex justify-content-center mt-4">
+                    <ul class="pagination pagination-custom mb-0 flex-wrap">
+                        <li class="page-item" [class.disabled]="currentPage == 1">
+                            <a class="page-link" (click)="pageChange(1)" aria-label="First">
+                                <i class="fa-solid fa-angles-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item" [class.disabled]="currentPage == 1">
+                            <a class="page-link" (click)="pageChange(currentPage - 1)" aria-label="Previous">
+                                <i class="fa-solid fa-angle-left"></i>
+                            </a>
+                        </li>
+                        <li *ngFor="let page of pages" class="page-item" [class.active]="currentPage == page">
+                            <a class="page-link" (click)="pageChange(page)">{{ page }}</a>
+                        </li>
+                        <li class="page-item" [class.disabled]="currentPage == totalPages">
+                            <a class="page-link" (click)="pageChange(currentPage + 1)" aria-label="Next">
+                                <i class="fa-solid fa-angle-right"></i>
+                            </a>
+                        </li>
+                        <li class="page-item" [class.disabled]="currentPage == totalPages">
+                            <a class="page-link" (click)="pageChange(totalPages)" aria-label="Last">
+                                <i class="fa-solid fa-angles-right"></i>
+                            </a>
+                        </li>
+                        <li class="page-item mt-2 mt-md-0 ms-md-3">
+                            <select class="form-select form-select-sm page-size-select" [(ngModel)]="pageSize" (change)="pageSizeChange()">
+                                <option *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}</option>
+                            </select>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>

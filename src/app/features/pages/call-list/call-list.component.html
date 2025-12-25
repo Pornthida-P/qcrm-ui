@@ -4,9 +4,9 @@
             <p class="m-0 d-flex fs-5">{{ 'callList.title' | translate }}</p>
         </div>
 
-        <div>
-            <div class="table-responsive">
-                <table class="table table-hover">
+        <div class="table-card">
+            <div class="table-scroll-container">
+                <table class="table table-hover custom-table mb-0 table-fixed-header">
                     <thead>
                         <tr>
                             <th scope="col">{{ 'common.time' | translate }}</th>
@@ -19,7 +19,7 @@
                             <th scope="col">{{ 'common.status' | translate }}</th>
                             <th scope="col">{{ 'contact.callStatus' | translate }}</th>
                             <th scope="col">{{ 'contact.assignUser' | translate }}</th>
-                            <th scope="col">{{ 'callList.action' | translate }}</th>
+                            <th scope="col" class="text-center">{{ 'callList.action' | translate }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -27,81 +27,111 @@
                             <tr *ngFor="let caseList of paginatedCalls; let i = index">
                                 <td>{{ caseList.requestDateTime | date : 'dd/MM/yyyy HH:mm' }}</td>
                                 <td>{{ caseList.fullname || '-' }}</td>
-                                <td>{{ caseList.contactNumber || '-' }}</td>
-                                <td>{{ caseList.channel || '-' }}</td>
-                                <td>{{ caseList.subject || '-' }}</td>
-                                <td>{{ caseList.topic || '-' }}</td>
-                                <td>{{ caseList.description || '-' }}</td>
-                                <td scope="row">
+                                <td>
+                                    <span *ngIf="caseList.contactNumber" class="phone-text">
+                                        <i class="fa-solid fa-phone me-1"></i>{{ caseList.contactNumber }}
+                                    </span>
+                                    <span *ngIf="!caseList.contactNumber">-</span>
+                                </td>
+                                <td>
+                                    <span
+                                        *ngIf="caseList.channel; else noChannel"
+                                        class="channel-badge"
+                                        [style.background-color]="statusService.getChannelBgColor(caseList.channel)"
+                                    >
+                                        {{ caseList.channel }}
+                                    </span>
+                                    <ng-template #noChannel>-</ng-template>
+                                </td>
+                                <td class="text-truncate" style="max-width: 120px">{{ caseList.subject || '-' }}</td>
+                                <td class="text-truncate" style="max-width: 120px">{{ caseList.topic || '-' }}</td>
+                                <td
+                                    class="text-truncate"
+                                    style="max-width: 150px"
+                                    [ngbTooltip]="caseList.description"
+                                    [disableTooltip]="!caseList.description"
+                                    container="body"
+                                    placement="top"
+                                >
+                                    {{ caseList.description || '-' }}
+                                </td>
+                                <td>
                                     <span
                                         *ngIf="caseList.status; else noStatus"
                                         class="status-badge"
                                         [style.background-color]="statusService.getStatusBgColor(caseList.status)"
                                     >
+                                        <i [class]="statusService.getStatusIcon(caseList.status)" class="me-1"></i>
                                         {{ caseList.status }}
                                     </span>
                                     <ng-template #noStatus>-</ng-template>
                                 </td>
-                                <td>{{ caseList.callStatus || '-' }}</td>
+                                <td>
+                                    <span *ngIf="caseList.callStatus" class="call-status-badge">{{ caseList.callStatus }}</span>
+                                    <span *ngIf="!caseList.callStatus">-</span>
+                                </td>
                                 <td>{{ caseList.assignUser || '-' }}</td>
                                 <td class="text-center">
-                                    <div class="d-flex flex-row flex-nowrap">
-                                        <div
-                                            class="me-3 color-blue-dark"
-                                            placement="top"
-                                            style="cursor: pointer"
-                                            data-bs-toggle="offcanvas"
-                                            data-bs-target="#offcanvasRight"
-                                            aria-controls="offcanvasRight"
-                                            [ngbTooltip]="'callList.callAction' | translate"
-                                            (click)="clickCall(caseList.caseId, caseList.contactId)"
-                                        >
-                                            <i class="fa-solid fa-phone"></i>
-                                        </div>
-                                    </div>
+                                    <button
+                                        type="button"
+                                        class="btn btn-action btn-success"
+                                        data-bs-toggle="offcanvas"
+                                        data-bs-target="#offcanvasRight"
+                                        aria-controls="offcanvasRight"
+                                        [ngbTooltip]="'callList.callAction' | translate"
+                                        placement="top"
+                                        (click)="clickCall(caseList.caseId, caseList.contactId)"
+                                    >
+                                        <i class="fa-solid fa-phone"></i>
+                                    </button>
                                 </td>
                             </tr>
                         </ng-container>
                         <ng-template #noDataTemplate>
                             <tr>
-                                <td colspan="11" class="text-center">
-                                    <span class="color-gray">{{ 'common.dataNotFound' | translate }}</span>
+                                <td colspan="11" class="text-center py-5">
+                                    <div class="empty-state">
+                                        <i class="fa-solid fa-inbox fa-3x text-muted mb-3"></i>
+                                        <p class="text-muted mb-0">{{ 'common.dataNotFound' | translate }}</p>
+                                    </div>
                                 </td>
                             </tr>
                         </ng-template>
                     </tbody>
                 </table>
             </div>
-            <ul class="pagination sidebar justify-content-center">
+        </div>
+        <nav class="d-flex justify-content-center mt-4">
+            <ul class="pagination pagination-custom mb-0">
                 <li class="page-item" [class.disabled]="currentPage == 1">
-                    <a class="page-link custom-link preBtn" (click)="pageChange(1)" aria-label="Previous">
+                    <a class="page-link" (click)="pageChange(1)" aria-label="First">
                         <i class="fa-solid fa-angles-left"></i>
                     </a>
                 </li>
                 <li class="page-item" [class.disabled]="currentPage == 1">
-                    <a class="page-link custom-link" (click)="pageChange(currentPage - 1)" aria-label="Previous">
+                    <a class="page-link" (click)="pageChange(currentPage - 1)" aria-label="Previous">
                         <i class="fa-solid fa-angle-left"></i>
                     </a>
                 </li>
                 <li *ngFor="let page of pages" class="page-item" [class.active]="currentPage == page">
-                    <a class="page-link custom-link" (click)="pageChange(page)">{{ page }}</a>
+                    <a class="page-link" (click)="pageChange(page)">{{ page }}</a>
                 </li>
                 <li class="page-item" [class.disabled]="currentPage == totalPages">
-                    <a class="page-link custom-link" (click)="pageChange(currentPage + 1)" aria-label="Next">
+                    <a class="page-link" (click)="pageChange(currentPage + 1)" aria-label="Next">
                         <i class="fa-solid fa-angle-right"></i>
                     </a>
                 </li>
                 <li class="page-item" [class.disabled]="currentPage == totalPages">
-                    <a class="page-link custom-link nextBtn" (click)="pageChange(totalPages)" aria-label="Next">
+                    <a class="page-link" (click)="pageChange(totalPages)" aria-label="Last">
                         <i class="fa-solid fa-angles-right"></i>
                     </a>
                 </li>
                 <li class="page-item ms-3">
-                    <select class="form-select" aria-label="Default select example" [(ngModel)]="pageSize" (change)="pageSizeChange()">
-                        <option class="dropdown-item" *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}</option>
+                    <select class="form-select form-select-sm page-size-select" [(ngModel)]="pageSize" (change)="pageSizeChange()">
+                        <option *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}</option>
                     </select>
                 </li>
             </ul>
-        </div>
+        </nav>
     </div>
 </div>

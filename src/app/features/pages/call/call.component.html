@@ -1,5 +1,5 @@
 <div class="h-100">
-    <div class="bg-white rounded shadow w-100 h-100 overflow-auto">
+    <div class="bg-white rounded shadow w-100 h-100 overflow-auto p-4">
         <div class="p-3 p-md-4">
             <!-- Desktop: 1 row | Mobile: wrap -->
             <div class="d-flex flex-wrap flex-xl-nowrap align-items-center gap-2 gap-xl-3">
@@ -97,142 +97,173 @@
             </div>
         </div>
         <div>
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th class="text-center">
-                                <input
-                                    type="checkbox"
-                                    name="all"
-                                    [checked]="isAllChecked() && selectValue.length > 0"
-                                    (change)="checkAll($event)"
-                                />
-                            </th>
-                            <th scope="col">{{ 'common.time' | translate }}</th>
-                            <th scope="col">{{ 'contact.phoneNumber' | translate }}</th>
-                            <th scope="col">{{ 'contact.contact' | translate }}</th>
-                            <th scope="col">{{ 'contact.channel' | translate }}</th>
-                            <th scope="col">{{ 'contact.callType' | translate }}</th>
-                            <th scope="col">{{ 'contact.subject' | translate }}</th>
-                            <th scope="col">{{ 'contact.description' | translate }}</th>
-                            <th scope="col">{{ 'common.status' | translate }}</th>
-                            <th scope="col">{{ 'contact.assignUser' | translate }}</th>
-                            <th scope="col" *ngIf="checkSupRole()">{{ 'common.manage' | translate }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <ng-container *ngIf="(calls | searchFilter : valueSearch : selectedFilter)?.length > 0; else noDataTemplate">
-                            <tr *ngFor="let calls of calls | searchFilter : valueSearch : selectedFilter; let i = index">
-                                <td class="text-center">
+            <div class="table-card">
+                <div class="table-scroll-container">
+                    <table class="table table-hover custom-table mb-0 table-fixed-header">
+                        <thead>
+                            <tr>
+                                <th class="text-center" style="width: 50px">
                                     <input
                                         type="checkbox"
-                                        [(ngModel)]="calls.state"
-                                        name="calls"
-                                        value="calls.caseId"
-                                        (change)="selectCheckbox(calls.caseId)"
+                                        class="form-check-input"
+                                        name="all"
+                                        [checked]="isAllChecked() && selectValue.length > 0"
+                                        (change)="checkAll($event)"
                                     />
-                                </td>
-                                <td scope="row">{{ calls.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
-                                <td
-                                    (click)="createCallFideId(calls, calls.contactId, calls.caller)"
-                                    class="cursor-pointer w-max-ellipsis"
-                                    data-bs-toggle="offcanvas"
-                                    data-bs-target="#offcanvasRight"
-                                    aria-controls="offcanvasRight"
-                                    scope="row"
-                                >
-                                    <div
-                                        [ngbTooltip]="'common.view' | translate"
-                                        placement="bottom"
-                                        class="text-ellipsis"
-                                        style="color: #3066be; text-decoration: underline"
+                                </th>
+                                <th scope="col">{{ 'common.time' | translate }}</th>
+                                <th scope="col">{{ 'contact.phoneNumber' | translate }}</th>
+                                <th scope="col">{{ 'contact.contact' | translate }}</th>
+                                <th scope="col">{{ 'contact.channel' | translate }}</th>
+                                <th scope="col">{{ 'contact.callType' | translate }}</th>
+                                <th scope="col">{{ 'contact.subject' | translate }}</th>
+                                <th scope="col">{{ 'contact.description' | translate }}</th>
+                                <th scope="col">{{ 'common.status' | translate }}</th>
+                                <th scope="col">{{ 'contact.assignUser' | translate }}</th>
+                                <th scope="col" class="text-center" *ngIf="checkSupRole()">{{ 'common.manage' | translate }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ng-container *ngIf="(calls | searchFilter : valueSearch : selectedFilter)?.length > 0; else noDataTemplate">
+                                <tr *ngFor="let calls of calls | searchFilter : valueSearch : selectedFilter; let i = index">
+                                    <td class="text-center">
+                                        <input
+                                            type="checkbox"
+                                            class="form-check-input"
+                                            [(ngModel)]="calls.state"
+                                            name="calls"
+                                            value="calls.caseId"
+                                            (change)="selectCheckbox(calls.caseId)"
+                                        />
+                                    </td>
+                                    <td>{{ calls.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
+                                    <td
+                                        (click)="createCallFideId(calls, calls.contactId, calls.caller)"
+                                        class="cursor-pointer"
+                                        data-bs-toggle="offcanvas"
+                                        data-bs-target="#offcanvasRight"
+                                        aria-controls="offcanvasRight"
                                     >
-                                        {{ calls.caller }}
-                                    </div>
-                                </td>
-                                <td scope="row">{{ calls.contact }}</td>
-                                <td scope="row">{{ calls.channel }}</td>
-                                <td scope="row">{{ calls.type }}</td>
-                                <td scope="row">{{ calls.topic }}</td>
-                                <td scope="row">{{ calls.description }}</td>
-                                <td scope="row">
-                                    <span
-                                        *ngIf="calls.status; else noStatus"
-                                        class="status-badge"
-                                        [style.background-color]="statusService.getStatusBgColor(calls.status)"
+                                        <span [ngbTooltip]="'common.view' | translate" placement="bottom" class="phone-text">
+                                            <i class="fa-solid fa-phone me-1"></i>{{ calls.caller }}
+                                        </span>
+                                    </td>
+                                    <td>{{ calls.contact }}</td>
+                                    <td>
+                                        <span
+                                            *ngIf="calls.channel; else noChannel"
+                                            class="channel-badge"
+                                            [style.background-color]="statusService.getChannelBgColor(calls.channel)"
+                                        >
+                                            {{ calls.channel }}
+                                        </span>
+                                        <ng-template #noChannel>-</ng-template>
+                                    </td>
+                                    <td>{{ calls.type }}</td>
+                                    <td class="text-truncate" style="max-width: 150px">{{ calls.topic }}</td>
+                                    <td
+                                        class="text-truncate"
+                                        style="max-width: 180px"
+                                        [ngbTooltip]="calls.description"
+                                        [disableTooltip]="!calls.description"
+                                        container="body"
+                                        placement="top"
                                     >
-                                        {{ calls.status }}
-                                    </span>
-                                    <ng-template #noStatus>-</ng-template>
-                                </td>
-                                <td scope="row">{{ calls.agent }}</td>
-                                <td class="text-center" scope="row" *ngIf="checkSupRole()">
-                                    <div class="d-flex flex-row flex-nowrap">
-                                        <div
-                                            class="me-3 color-blue-dark"
-                                            placement="top"
-                                            style="cursor: pointer"
+                                        {{ calls.description }}
+                                    </td>
+                                    <td>
+                                        <span
+                                            *ngIf="calls.status; else noStatus"
+                                            class="status-badge"
+                                            [style.background-color]="statusService.getStatusBgColor(calls.status)"
+                                        >
+                                            <i [class]="statusService.getStatusIcon(calls.status)" class="me-1"></i>
+                                            {{ calls.status }}
+                                        </span>
+                                        <ng-template #noStatus>-</ng-template>
+                                    </td>
+                                    <td>{{ calls.agent }}</td>
+                                    <td class="text-center" *ngIf="checkSupRole()">
+                                        <button
+                                            type="button"
+                                            class="btn btn-action btn-outline-primary"
                                             data-bs-toggle="offcanvas"
                                             data-bs-target="#offcanvasRight"
                                             aria-controls="offcanvasRight"
                                             [ngbTooltip]="'common.edit' | translate"
+                                            placement="top"
                                             (click)="editCall(calls.caseId, calls.contactId)"
                                         >
                                             <i class="fa-solid fa-pen-to-square"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            <ng-template #noDataTemplate>
+                                <tr>
+                                    <td colspan="11" class="text-center py-5">
+                                        <div class="empty-state">
+                                            <i class="fa-solid fa-inbox fa-3x text-muted mb-3"></i>
+                                            <p class="text-muted mb-0">{{ 'common.dataNotFound' | translate }}</p>
                                         </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        </ng-container>
-                        <ng-template #noDataTemplate>
-                            <tr>
-                                <td colspan="11" class="text-center">{{ 'common.dataNotFound' | translate }}</td>
-                            </tr>
-                        </ng-template>
-                    </tbody>
-                </table>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <ul class="pagination sidebar justify-content-center">
-                <li class="page-item" [class.disabled]="currentPage == 1">
-                    <a class="page-link custom-link preBtn" (click)="pageChange(1)" aria-label="Previous">
-                        <i class="fa-solid fa-angles-left"></i>
-                    </a>
-                </li>
-                <li class="page-item" [class.disabled]="currentPage == 1">
-                    <a class="page-link custom-link" (click)="pageChange(currentPage - 1)" aria-label="Previous">
-                        <i class="fa-solid fa-angle-left"></i>
-                    </a>
-                </li>
-                <li *ngFor="let page of pages" class="page-item" [class.active]="currentPage == page">
-                    <a class="page-link custom-link" (click)="pageChange(page)">{{ page }}</a>
-                </li>
-                <li class="page-item" [class.disabled]="currentPage == totalPages">
-                    <a class="page-link custom-link" (click)="pageChange(currentPage + 1)" aria-label="Next">
-                        <i class="fa-solid fa-angle-right"></i>
-                    </a>
-                </li>
-                <li class="page-item" [class.disabled]="currentPage == totalPages">
-                    <a class="page-link custom-link nextBtn" (click)="pageChange(totalPages)" aria-label="Next">
-                        <i class="fa-solid fa-angles-right"></i>
-                    </a>
-                </li>
-                <li class="page-item ms-3">
-                    <select class="form-select" aria-label="Default select example" [(ngModel)]="pageSize" (change)="pageSizeChange()">
-                        <option class="dropdown-item" *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}</option>
-                    </select>
-                </li>
-            </ul>
+            <nav class="d-flex justify-content-center mt-4">
+                <ul class="pagination pagination-custom mb-0">
+                    <li class="page-item" [class.disabled]="currentPage == 1">
+                        <a class="page-link" (click)="pageChange(1)" aria-label="First">
+                            <i class="fa-solid fa-angles-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item" [class.disabled]="currentPage == 1">
+                        <a class="page-link" (click)="pageChange(currentPage - 1)" aria-label="Previous">
+                            <i class="fa-solid fa-angle-left"></i>
+                        </a>
+                    </li>
+                    <li *ngFor="let page of pages" class="page-item" [class.active]="currentPage == page">
+                        <a class="page-link" (click)="pageChange(page)">{{ page }}</a>
+                    </li>
+                    <li class="page-item" [class.disabled]="currentPage == totalPages">
+                        <a class="page-link" (click)="pageChange(currentPage + 1)" aria-label="Next">
+                            <i class="fa-solid fa-angle-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item" [class.disabled]="currentPage == totalPages">
+                        <a class="page-link" (click)="pageChange(totalPages)" aria-label="Last">
+                            <i class="fa-solid fa-angles-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item ms-3">
+                        <select class="form-select form-select-sm page-size-select" [(ngModel)]="pageSize" (change)="pageSizeChange()">
+                            <option *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}</option>
+                        </select>
+                    </li>
+                </ul>
+            </nav>
 
             <div class="offcanvas offcanvas-end w-75" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
-                <div class="offcanvas-body">
-                    <div class="d-flex flex-wrap justify-content-between">
-                        <div class="d-flex">
-                            <div class="p-2 flex-grow-1" type="button" placement="bottom" [ngbTooltip]="'common.cancel' | translate">
-                                <fa-icon class="" [icon]="faCircleXmark" size="lg" data-bs-dismiss="offcanvas"></fa-icon>
-                            </div>
-                        </div>
+                <div class="offcanvas-header border-bottom bg-light py-3">
+                    <div class="d-flex align-items-center">
+                        <h5 class="offcanvas-title mb-0 fw-bold text-blue-dark" *ngIf="attachmentShowing == true">
+                            <i class="fa-solid fa-plus-circle me-2"></i>{{ 'contact.addContactInfo' | translate }}
+                        </h5>
+                        <h5 class="offcanvas-title mb-0 fw-bold text-blue-dark" *ngIf="attachmentShowing == false">
+                            <i class="fa-solid fa-edit me-2"></i>{{ 'contact.editContactInfo' | translate }}
+                        </h5>
                     </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="btn btn-primary" type="button" (click)="submitCall()">
+                            <i class="fa-solid fa-save me-1"></i>{{ 'common.save' | translate }}
+                        </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                </div>
+                <div class="offcanvas-body">
                     <div class="flex flex-column offcanvas-content-wrapper" *ngIf="AddCallShowing">
                         <div class="row g-0 align-items-stretch h-100">
                             <div
@@ -242,17 +273,9 @@
                                     'col-12': attachmentShowing || (!selectedCaseTopicObject?.script && !chatHistory.length)
                                 }"
                             >
-                                <div
-                                    class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3 gap-2 edit-contact-header"
-                                >
-                                    <h4 class="mb-0" *ngIf="attachmentShowing == true">{{ 'contact.addContactInfo' | translate }}</h4>
-                                    <h4 class="mb-0" *ngIf="attachmentShowing == false">{{ 'contact.editContactInfo' | translate }}</h4>
-                                    <button class="btn btn-primary" type="button" (click)="submitCall()">
-                                        {{ 'common.save' | translate }}
-                                    </button>
-                                </div>
                                 <div class="edit-contact-form-scroll">
-                                    <form class="row g-3 mx-3 mb-3">
+                                    <form class="row g-3">
+                                        <!-- Topic & Subject -->
                                         <div class="col-12">
                                             <div class="row g-3">
                                                 <div class="col-12 col-sm-6">
@@ -312,7 +335,9 @@
                                         </div>
 
                                         <div class="col-12 col-sm-6">
-                                            <label for="inputStatus" class="form-label fw-semibold">{{ 'common.status' | translate }}</label>
+                                            <label for="inputStatus" class="form-label fw-semibold">{{
+                                                'common.status' | translate
+                                            }}</label>
                                             <select
                                                 id="inputStatus"
                                                 class="form-select"
@@ -325,7 +350,9 @@
                                             </select>
                                         </div>
                                         <div class="col-12 col-sm-6">
-                                            <label for="inputChannel" class="form-label fw-semibold">{{ 'contact.channel' | translate }}</label>
+                                            <label for="inputChannel" class="form-label fw-semibold">{{
+                                                'contact.channel' | translate
+                                            }}</label>
                                             <select
                                                 id="inputChannel"
                                                 class="form-select"
@@ -343,7 +370,9 @@
 
                                         <!-- ประเภทสาย (Voice) -->
                                         <div class="col-12 col-sm-6" *ngIf="selectedChannels === '1' || selectedChannels === '2'">
-                                            <label for="inputCallType" class="form-label fw-semibold">{{ 'contact.callType' | translate }}</label>
+                                            <label for="inputCallType" class="form-label fw-semibold">{{
+                                                'contact.callType' | translate
+                                            }}</label>
                                             <select
                                                 id="inputCallType"
                                                 class="form-select"
@@ -360,7 +389,9 @@
 
                                         <!-- ประเภทอีเมล (Email) -->
                                         <div class="col-12 col-sm-6" *ngIf="selectedChannels === '3'">
-                                            <label for="inputCallType" class="form-label fw-semibold">{{ 'contact.emailType' | translate }}</label>
+                                            <label for="inputCallType" class="form-label fw-semibold">{{
+                                                'contact.emailType' | translate
+                                            }}</label>
                                             <select
                                                 id="inputCallType"
                                                 class="form-select"
@@ -393,7 +424,9 @@
                                             />
                                         </div>
                                         <div class="col-12">
-                                            <label for="inputAddress" class="form-label fw-semibold">{{ 'contact.dateTime' | translate }}</label>
+                                            <label for="inputAddress" class="form-label fw-semibold">{{
+                                                'contact.dateTime' | translate
+                                            }}</label>
                                             <div class="datetime-inline-wrapper">
                                                 <div class="date-input-section">
                                                     <div class="input-group">
@@ -450,7 +483,9 @@
                                         </div>
 
                                         <div class="col-12">
-                                            <label class="form-check-label fw-semibold" for="gridCheck">{{ 'contact.description' | translate }}</label>
+                                            <label class="form-check-label fw-semibold" for="gridCheck">{{
+                                                'contact.description' | translate
+                                            }}</label>
                                             <textarea
                                                 class="form-control"
                                                 [placeholder]="'common.pleaseEnter' | translate"
@@ -461,7 +496,9 @@
                                             ></textarea>
                                         </div>
                                         <div class="col-12" *ngIf="attachmentShowing == false">
-                                            <label class="form-check-label fw-semibold" for="gridCheck">{{ 'contact.comment' | translate }}</label>
+                                            <label class="form-check-label fw-semibold" for="gridCheck">{{
+                                                'contact.comment' | translate
+                                            }}</label>
                                             <textarea
                                                 class="form-control"
                                                 [placeholder]="'common.pleaseEnter' | translate"
@@ -498,7 +535,9 @@
                                             </div>
                                         </div>
                                         <div class="col-12 col-sm-6" *ngIf="attachmentShowing">
-                                            <label for="formFileSm" class="form-label fw-semibold">{{ 'contact.attachment' | translate }}</label>
+                                            <label for="formFileSm" class="form-label fw-semibold">{{
+                                                'contact.attachment' | translate
+                                            }}</label>
                                             <div class="mb-3">
                                                 <div class="d-flex align-items-center">
                                                     <input
