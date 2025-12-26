@@ -52,4 +52,53 @@ export class CallListService {
     getHistory(caseId: string) {
         return this.http.get(`${this.baseUrl}${config.api.path.callList.history}/${caseId}`);
     }
+
+    // Phase 2: Admin Lead Management APIs
+
+    getAgentWorkload() {
+        return this.http.get(`${this.baseUrl}/agent-workload`);
+    }
+
+    getActiveAgents() {
+        return this.http.get(`${this.baseUrl}/active-agents`);
+    }
+
+    getAdminLeads(filter: string = 'all') {
+        return this.http.get(`${this.baseUrl}/admin-leads/${filter}`);
+    }
+
+    getLeadsForReassignment() {
+        return this.http.get(`${this.baseUrl}/leads-for-reassignment`);
+    }
+
+    reassignLeads(agentIds?: string[]) {
+        return this.http.post(`${this.baseUrl}/reassign-leads`, { agentIds });
+    }
+
+    reassignFromAgent(sourceAgentId: string, targetAgentIds: string[]) {
+        return this.http.post(`${this.baseUrl}/reassign-from-agent`, { sourceAgentId, targetAgentIds });
+    }
+
+    reassignCase(caseId: string, newAgentId: string, modifiedById: string) {
+        return this.http.put(`${this.baseUrl}/reassign-case`, {
+            caseId,
+            newAgentId,
+            modifiedById,
+        });
+    }
+
+    bulkReassignLeads(caseIds: string[], newAgentId: string, modifiedById: string) {
+        return this.http.put(`${this.baseUrl}/bulk-reassign`, {
+            caseIds,
+            newAgentId,
+            modifiedById,
+        });
+    }
+
+    restoreFromDeadPool(caseId: string, modifiedById: string) {
+        return this.http.put(`${this.baseUrl}/restore-from-dead-pool`, {
+            caseId,
+            modifiedById,
+        });
+    }
 }

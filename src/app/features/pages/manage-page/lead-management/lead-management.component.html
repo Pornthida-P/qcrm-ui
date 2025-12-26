@@ -1,0 +1,421 @@
+<div class="lead-management-wrapper">
+    <!-- Header -->
+    <div class="header-section d-flex justify-content-between align-items-center mb-3">
+        <h2 class="fs-5 m-0">{{ 'leadManagement.title' | translate }}</h2>
+        <div class="d-flex gap-2">
+            <button class="btn btn-success btn-sm" (click)="openImportDialog()">
+                <i class="fa-solid fa-file-import me-1"></i>
+                {{ 'leadManagement.importLeads' | translate }}
+            </button>
+            <button class="btn btn-primary btn-sm" (click)="openAutoReassignModal()">
+                <i class="fa-solid fa-shuffle me-1"></i>
+                {{ 'leadManagement.autoReassign' | translate }}
+            </button>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs-section mb-3">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link" [class.active]="activeTab === 'leads'" (click)="switchTab('leads')" style="cursor: pointer">
+                    <i class="fa-solid fa-list me-1"></i>
+                    {{ 'leadManagement.allLeads' | translate }}
+                    <span class="badge bg-primary ms-1">{{ leads.length }}</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" [class.active]="activeTab === 'dead-pool'" (click)="switchTab('dead-pool')" style="cursor: pointer">
+                    <i class="fa-solid fa-skull me-1"></i>
+                    {{ 'leadManagement.deadPool' | translate }}
+                    <span class="badge bg-danger ms-1">{{ deadPoolLeads.length }}</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" [class.active]="activeTab === 'workload'" (click)="switchTab('workload')" style="cursor: pointer">
+                    <i class="fa-solid fa-chart-pie me-1"></i>
+                    {{ 'leadManagement.agentWorkload' | translate }}
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Filters (for leads tab) -->
+    <div *ngIf="activeTab === 'leads'" class="filters-section d-flex gap-2 flex-wrap mb-3">
+        <button
+            class="btn btn-sm"
+            [class.btn-primary]="activeFilter === 'all'"
+            [class.btn-outline-primary]="activeFilter !== 'all'"
+            (click)="switchFilter('all')"
+        >
+            {{ 'leadManagement.filterAll' | translate }}
+        </button>
+        <button
+            class="btn btn-sm"
+            [class.btn-warning]="activeFilter === 'pending'"
+            [class.btn-outline-warning]="activeFilter !== 'pending'"
+            (click)="switchFilter('pending')"
+        >
+            {{ 'leadManagement.filterPending' | translate }}
+        </button>
+        <button
+            class="btn btn-sm"
+            [class.btn-danger]="activeFilter === 'no-answer'"
+            [class.btn-outline-danger]="activeFilter !== 'no-answer'"
+            (click)="switchFilter('no-answer')"
+        >
+            {{ 'leadManagement.filterNoAnswer' | translate }}
+        </button>
+        <button
+            class="btn btn-sm"
+            [class.btn-secondary]="activeFilter === 'unassigned'"
+            [class.btn-outline-secondary]="activeFilter !== 'unassigned'"
+            (click)="switchFilter('unassigned')"
+        >
+            {{ 'leadManagement.filterUnassigned' | translate }}
+        </button>
+
+        <!-- Agent Filter -->
+        <div class="ms-auto d-flex align-items-center gap-2">
+            <label class="text-muted small mb-0">{{ 'leadManagement.filterByAgent' | translate }}:</label>
+            <select class="form-select form-select-sm" [(ngModel)]="filterAgent" (ngModelChange)="onAgentFilterChange()" style="width: 150px">
+                <option value="">{{ 'leadManagement.allAgents' | translate }}</option>
+                <option *ngFor="let agent of agents" [value]="agent.userId">{{ agent.username }}</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Bulk Actions -->
+    <div *ngIf="activeTab !== 'workload' && selectedLeads.size > 0" class="bulk-actions d-flex gap-3 align-items-center mb-3">
+        <span class="text-muted">
+            {{ 'leadManagement.selectedCount' | translate }}: <strong>{{ selectedLeads.size }}</strong>
+        </span>
+        <select class="form-select form-select-sm" [(ngModel)]="bulkSelectedAgent" style="width: 180px">
+            <option value="">{{ 'leadManagement.selectAgent' | translate }}</option>
+            <option *ngFor="let agent of agents" [value]="agent.userId">{{ agent.username }}</option>
+        </select>
+        <button class="btn btn-success btn-sm" (click)="bulkReassign()">
+            <i class="fa-solid fa-users-gear me-1"></i>
+            {{ 'leadManagement.bulkReassign' | translate }}
+        </button>
+    </div>
+
+    <!-- Leads Table -->
+    <div *ngIf="activeTab === 'leads' || activeTab === 'dead-pool'" class="table-section">
+        <div class="table-scroll-container">
+            <table class="table table-hover custom-table table-fixed-header mb-0">
+                <thead>
+                    <tr>
+                        <th *ngIf="activeTab === 'leads'" style="width: 40px">
+                            <input type="checkbox" [(ngModel)]="selectAll" (change)="toggleSelectAll()" class="form-check-input" />
+                        </th>
+                        <th>{{ 'common.time' | translate }}</th>
+                        <th>{{ 'contact.contact' | translate }}</th>
+                        <th>{{ 'contact.phoneNumber' | translate }}</th>
+                        <th>{{ 'contact.topic' | translate }}</th>
+                        <th>{{ 'contact.callStatus' | translate }}</th>
+                        <th class="text-center">{{ 'callList.attempts' | translate }}</th>
+                        <th>{{ 'contact.assignUser' | translate }}</th>
+                        <th class="text-center">{{ 'callList.action' | translate }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let lead of paginatedLeads">
+                        <td *ngIf="activeTab === 'leads'">
+                            <input
+                                type="checkbox"
+                                [checked]="isSelected(lead.caseId)"
+                                (change)="toggleLeadSelection(lead.caseId)"
+                                class="form-check-input"
+                            />
+                        </td>
+                        <td>{{ lead.requestDateTime | date : 'dd/MM/yyyy HH:mm' }}</td>
+                        <td>{{ lead.fullname || '-' }}</td>
+                        <td>
+                            <span *ngIf="lead.contactNumber" class="phone-text">
+                                <i class="fa-solid fa-phone me-1"></i>{{ lead.contactNumber }}
+                            </span>
+                            <span *ngIf="!lead.contactNumber">-</span>
+                        </td>
+                        <td>{{ lead.topic || '-' }}</td>
+                        <td>
+                            <span *ngIf="lead.callStatus" class="call-status-badge" [ngClass]="getCallStatusClass(lead.callStatus)">
+                                {{ lead.callStatus }}
+                            </span>
+                            <span *ngIf="!lead.callStatus" class="call-status-badge status-not-called">
+                                {{ 'leadManagement.notCalled' | translate }}
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <span class="attempt-badge" [class]="getAttemptClass(lead.attemptCount)">
+                                {{ lead.attemptCount || 0 }} / 3
+                            </span>
+                        </td>
+                        <td>{{ lead.assignUser || '-' }}</td>
+                        <td class="text-center">
+                            <div class="d-flex gap-1 justify-content-center">
+                                <ng-container *ngIf="activeTab === 'leads'">
+                                    <select
+                                        class="form-select form-select-sm"
+                                        [ngModel]="getRowAgent(lead.caseId)"
+                                        (ngModelChange)="setRowAgent(lead.caseId, $event)"
+                                        style="width: 110px"
+                                    >
+                                        <option value="">{{ 'leadManagement.selectAgent' | translate }}</option>
+                                        <option *ngFor="let agent of agents" [value]="agent.userId">{{ agent.username }}</option>
+                                    </select>
+                                    <button
+                                        class="btn btn-action btn-outline-primary"
+                                        (click)="reassignSingle(lead.caseId)"
+                                        [ngbTooltip]="'leadManagement.reassign' | translate"
+                                    >
+                                        <i class="fa-solid fa-user-pen"></i>
+                                    </button>
+                                </ng-container>
+                                <button
+                                    *ngIf="activeTab === 'dead-pool'"
+                                    class="btn btn-sm btn-outline-success"
+                                    (click)="restoreFromDeadPool(lead.caseId)"
+                                    [ngbTooltip]="'leadManagement.restore' | translate"
+                                >
+                                    <i class="fa-solid fa-rotate-left me-1"></i>
+                                    {{ 'leadManagement.restore' | translate }}
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr *ngIf="paginatedLeads.length === 0">
+                        <td [attr.colspan]="activeTab === 'leads' ? 9 : 8" class="text-center py-4">
+                            <div class="empty-state">
+                                <i class="fa-solid fa-inbox fa-2x mb-2"></i>
+                                <p class="text-muted mb-0">{{ 'common.dataNotFound' | translate }}</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- Pagination -->
+    <nav *ngIf="activeTab !== 'workload'" class="d-flex justify-content-center mt-4">
+        <ul class="pagination pagination-custom mb-0">
+            <li class="page-item" [class.disabled]="currentPage == 1">
+                <a class="page-link" (click)="pageChange(1)" aria-label="First">
+                    <i class="fa-solid fa-angles-left"></i>
+                </a>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage == 1">
+                <a class="page-link" (click)="pageChange(currentPage - 1)" aria-label="Previous">
+                    <i class="fa-solid fa-angle-left"></i>
+                </a>
+            </li>
+            <li *ngFor="let page of pages" class="page-item" [class.active]="currentPage == page">
+                <a class="page-link" (click)="pageChange(page)">{{ page }}</a>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage == totalPages">
+                <a class="page-link" (click)="pageChange(currentPage + 1)" aria-label="Next">
+                    <i class="fa-solid fa-angle-right"></i>
+                </a>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage == totalPages">
+                <a class="page-link" (click)="pageChange(totalPages)" aria-label="Last">
+                    <i class="fa-solid fa-angles-right"></i>
+                </a>
+            </li>
+            <li class="page-item ms-3">
+                <select class="form-select form-select-sm page-size-select" [(ngModel)]="pageSize" (change)="pageSizeChange()">
+                    <option *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}</option>
+                </select>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Agent Workload -->
+    <div *ngIf="activeTab === 'workload'" class="workload-section">
+        <div class="row">
+            <div class="col-md-4 mb-3" *ngFor="let agent of agentWorkload">
+                <div class="card workload-card">
+                    <div class="card-body py-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="agent-avatar me-2" style="width: 40px; height: 40px; font-size: 1rem;">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                            <h6 class="card-title mb-0">{{ agent.username }}</h6>
+                        </div>
+                        <div class="workload-stats" style="padding-top: 0.75rem;">
+                            <div class="stat-item">
+                                <span class="stat-value text-primary" style="font-size: 1.25rem;">{{ agent.totalLeads || 0 }}</span>
+                                <span class="stat-label">{{ 'leadManagement.totalLeads' | translate }}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value text-warning" style="font-size: 1.25rem;">{{ agent.pendingLeads || 0 }}</span>
+                                <span class="stat-label">{{ 'leadManagement.pendingLeads' | translate }}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value text-danger" style="font-size: 1.25rem;">{{ agent.deadPoolLeads || 0 }}</span>
+                                <span class="stat-label">{{ 'leadManagement.deadPoolLeads' | translate }}</span>
+                            </div>
+                        </div>
+                        <!-- Reassign from this agent button -->
+                        <div class="card-actions mt-3 pt-2 border-top" *ngIf="agent.totalLeads > 0">
+                            <button
+                                class="btn btn-outline-primary btn-sm w-100"
+                                (click)="openReassignFromAgentModal(agent)"
+                            >
+                                <i class="fa-solid fa-shuffle me-1"></i>
+                                {{ 'leadManagement.reassignFromAgent' | translate }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="agentWorkload.length === 0" class="col-12 text-center py-4">
+                <div class="empty-state">
+                    <i class="fa-solid fa-users fa-2x mb-2"></i>
+                    <p class="text-muted">{{ 'leadManagement.noAgents' | translate }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Auto Reassign Modal -->
+<div class="modal-backdrop" *ngIf="showAutoReassignModal" (click)="closeAutoReassignModal()"></div>
+<div class="auto-reassign-modal" *ngIf="showAutoReassignModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">{{ 'leadManagement.selectAgentsForReassign' | translate }}</h5>
+            <button type="button" class="btn-close" (click)="closeAutoReassignModal()"></button>
+        </div>
+        <div class="modal-body">
+            <p class="text-muted small mb-3">{{ 'leadManagement.selectAgentsHelp' | translate }}</p>
+
+            <!-- Select All -->
+            <div class="form-check mb-2 select-all-row">
+                <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="selectAllAgents"
+                    [(ngModel)]="selectAllAgents"
+                    (change)="toggleSelectAllAgents()"
+                />
+                <label class="form-check-label fw-bold" for="selectAllAgents">
+                    {{ 'common.selectAll' | translate }}
+                </label>
+            </div>
+            <hr class="my-2" />
+
+            <!-- Agent List -->
+            <div class="agent-list">
+                <div class="form-check agent-row" *ngFor="let agent of agents">
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        [id]="'agent-' + agent.userId"
+                        [checked]="isAgentSelected(agent.userId)"
+                        (change)="toggleAgentSelection(agent.userId)"
+                    />
+                    <label class="form-check-label" [for]="'agent-' + agent.userId">
+                        <span class="agent-name">{{ agent.username }}</span>
+                        <span class="agent-workload text-muted small" *ngIf="getAgentWorkloadCount(agent.userId) !== null">
+                            ({{ getAgentWorkloadCount(agent.userId) }} leads)
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="selected-count mt-3 text-end">
+                <span class="badge bg-primary">
+                    {{ 'leadManagement.selectedAgents' | translate }}: {{ selectedAgentsForReassign.size }} / {{ agents.length }}
+                </span>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm" (click)="closeAutoReassignModal()">
+                {{ 'common.cancel' | translate }}
+            </button>
+            <button type="button" class="btn btn-primary btn-sm" (click)="confirmAutoReassign()" [disabled]="selectedAgentsForReassign.size === 0">
+                <i class="fa-solid fa-shuffle me-1"></i>
+                {{ 'leadManagement.autoReassign' | translate }}
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Reassign From Agent Modal -->
+<div class="modal-backdrop" *ngIf="showReassignFromAgentModal" (click)="closeReassignFromAgentModal()"></div>
+<div class="auto-reassign-modal" *ngIf="showReassignFromAgentModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">{{ 'leadManagement.reassignFromAgentTitle' | translate }}</h5>
+            <button type="button" class="btn-close" (click)="closeReassignFromAgentModal()"></button>
+        </div>
+        <div class="modal-body">
+            <!-- Source Agent Info -->
+            <div class="source-agent-info mb-3 p-3 bg-light rounded">
+                <div class="d-flex align-items-center">
+                    <div class="agent-avatar me-2" style="width: 36px; height: 36px; font-size: 0.9rem;">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <div>
+                        <strong>{{ sourceAgent?.username }}</strong>
+                        <div class="text-muted small">{{ sourceAgent?.totalLeads || 0 }} leads</div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-muted small mb-3">{{ 'leadManagement.selectTargetAgentsHelp' | translate }}</p>
+
+            <!-- Select All -->
+            <div class="form-check mb-2 select-all-row">
+                <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="selectAllTargetAgents"
+                    [(ngModel)]="selectAllTargetAgents"
+                    (change)="toggleSelectAllTargetAgents()"
+                />
+                <label class="form-check-label fw-bold" for="selectAllTargetAgents">
+                    {{ 'common.selectAll' | translate }}
+                </label>
+            </div>
+            <hr class="my-2" />
+
+            <!-- Agent List (exclude source agent) -->
+            <div class="agent-list">
+                <div class="form-check agent-row" *ngFor="let agent of getTargetAgents()">
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        [id]="'target-agent-' + agent.userId"
+                        [checked]="isTargetAgentSelected(agent.userId)"
+                        (change)="toggleTargetAgentSelection(agent.userId)"
+                    />
+                    <label class="form-check-label" [for]="'target-agent-' + agent.userId">
+                        <span class="agent-name">{{ agent.username }}</span>
+                        <span class="agent-workload text-muted small" *ngIf="getAgentWorkloadCount(agent.userId) !== null">
+                            ({{ getAgentWorkloadCount(agent.userId) }} leads)
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="selected-count mt-3 text-end">
+                <span class="badge bg-primary">
+                    {{ 'leadManagement.selectedAgents' | translate }}: {{ selectedTargetAgents.size }} / {{ getTargetAgents().length }}
+                </span>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm" (click)="closeReassignFromAgentModal()">
+                {{ 'common.cancel' | translate }}
+            </button>
+            <button type="button" class="btn btn-primary btn-sm" (click)="confirmReassignFromAgent()" [disabled]="selectedTargetAgents.size === 0">
+                <i class="fa-solid fa-shuffle me-1"></i>
+                {{ 'leadManagement.reassign' | translate }}
+            </button>
+        </div>
+    </div>
+</div>

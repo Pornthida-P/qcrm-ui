@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
-    constructor(private tokenServices: TokenService, private router: Router) {}
+    constructor(private tokenServices: TokenService, private router: Router, private ngZone: NgZone) {}
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         const token = this.tokenServices.getDataToken();
@@ -38,6 +38,8 @@ export class TokenInterceptor implements HttpInterceptor {
     }
 
     private handleAuthError(): void {
-        this.router.navigate(['/logout']);
+        this.ngZone.run(() => {
+            this.router.navigate(['/logout']);
+        });
     }
 }

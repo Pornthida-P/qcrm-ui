@@ -280,6 +280,36 @@
     color: #495057;
     font-size: 0.8rem;
     font-weight: 500;
+
+    // ไม่รับสาย / สายไม่ว่าง / ปฏิเสธสาย / แบคลิสต์ - สีแดง
+    &.status-no-answer {
+        background: #ffebee;
+        color: #c62828;
+    }
+
+    // ฝากข้อความ / โทรกลับภายหลัง / โทรซ้ำ - สีส้ม
+    &.status-followup {
+        background: #fff3e0;
+        color: #e65100;
+    }
+
+    // ติดต่อได้ / สำเร็จ - สีเขียว
+    &.status-success {
+        background: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    // รอข้อมูล / รอดำเนินการ - สีฟ้า
+    &.status-pending {
+        background: #e3f2fd;
+        color: #1565c0;
+    }
+
+    // ยังไม่ได้โทร - สีเหลือง
+    &.status-not-called {
+        background: #fff3cd;
+        color: #856404;
+    }
 }
 
 // ===========================================

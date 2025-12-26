@@ -1,0 +1,264 @@
+@import 'src/app/styles/table-shared';
+
+// Main container - fit screen without scroll
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.lead-management-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    padding: 1rem;
+}
+
+// Header section
+.header-section {
+    flex-shrink: 0;
+}
+
+// Tabs section
+.tabs-section {
+    flex-shrink: 0;
+}
+
+// Filters section
+.filters-section {
+    flex-shrink: 0;
+}
+
+// Bulk actions
+.bulk-actions {
+    flex-shrink: 0;
+    background: #f8f9fa;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e9ecef;
+}
+
+// Table section - takes remaining space
+.table-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+}
+
+// Table scroll container - fills available space
+.table-scroll-container {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
+
+// Workload section
+.workload-section {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+// Tabs
+.nav-tabs {
+    border-bottom: 2px solid #dee2e6;
+
+    .nav-link {
+        border: none;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -2px;
+        color: #6c757d;
+        font-weight: 500;
+
+        &:hover {
+            border-color: transparent;
+            color: var(--primary);
+        }
+
+        &.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background: transparent;
+        }
+
+        .badge {
+            font-size: 0.7rem;
+        }
+    }
+}
+
+// Attempt badge
+.attempt-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 0.375rem;
+    background-color: #e8f5e9;
+    color: #2e7d32;
+
+    &.attempt-warning {
+        background-color: #fff3e0;
+        color: #e65100;
+    }
+
+    &.attempt-danger {
+        background-color: #ffebee;
+        color: #c62828;
+    }
+}
+
+// Workload cards
+.workload-card {
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .agent-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--color-blue-dark) 0%, var(--primary) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.25rem;
+    }
+
+    .workload-stats {
+        display: flex;
+        gap: 1rem;
+        justify-content: space-around;
+        padding-top: 1rem;
+        border-top: 1px solid #e9ecef;
+
+        .stat-item {
+            text-align: center;
+
+            .stat-value {
+                display: block;
+                font-size: 1.5rem;
+                font-weight: 700;
+            }
+
+            .stat-label {
+                font-size: 0.75rem;
+                color: #6c757d;
+            }
+        }
+    }
+}
+
+// Auto Reassign Modal
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1040;
+}
+
+.auto-reassign-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1050;
+    width: 100%;
+    max-width: 480px;
+
+    .modal-content {
+        background: white;
+        border-radius: 0.5rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+    }
+
+    .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.25rem;
+        background: linear-gradient(135deg, var(--color-blue-dark) 0%, var(--primary) 100%);
+        color: white;
+
+        .modal-title {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .btn-close {
+            filter: brightness(0) invert(1);
+            opacity: 0.8;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+    }
+
+    .modal-body {
+        padding: 1.25rem;
+        max-height: 400px;
+        overflow-y: auto;
+
+        .select-all-row {
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 0.375rem;
+        }
+
+        .agent-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .agent-row {
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.15s;
+
+            &:hover {
+                background-color: #f8f9fa;
+            }
+
+            .agent-name {
+                font-weight: 500;
+            }
+
+            .agent-workload {
+                margin-left: 0.5rem;
+            }
+        }
+
+        .form-check-input:checked {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+        padding: 1rem 1.25rem;
+        background: #f8f9fa;
+        border-top: 1px solid #e9ecef;
+    }
+}
