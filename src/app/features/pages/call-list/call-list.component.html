@@ -18,6 +18,7 @@
                             <th scope="col">{{ 'contact.description' | translate }}</th>
                             <th scope="col">{{ 'common.status' | translate }}</th>
                             <th scope="col">{{ 'contact.callStatus' | translate }}</th>
+                            <th scope="col" class="text-center">{{ 'callList.attempts' | translate }}</th>
                             <th scope="col">{{ 'contact.assignUser' | translate }}</th>
                             <th scope="col" class="text-center">{{ 'callList.action' | translate }}</th>
                         </tr>
@@ -70,6 +71,15 @@
                                     <span *ngIf="caseList.callStatus" class="call-status-badge">{{ caseList.callStatus }}</span>
                                     <span *ngIf="!caseList.callStatus">-</span>
                                 </td>
+                                <td class="text-center">
+                                    <span 
+                                        class="attempt-badge"
+                                        [class.attempt-warning]="caseList.attemptCount >= 2"
+                                        [class.attempt-danger]="caseList.attemptCount >= 3"
+                                    >
+                                        {{ caseList.attemptCount || 0 }} / 3
+                                    </span>
+                                </td>
                                 <td>{{ caseList.assignUser || '-' }}</td>
                                 <td class="text-center">
                                     <button
@@ -89,7 +99,7 @@
                         </ng-container>
                         <ng-template #noDataTemplate>
                             <tr>
-                                <td colspan="11" class="text-center py-5">
+                                <td colspan="12" class="text-center py-5">
                                     <div class="empty-state">
                                         <i class="fa-solid fa-inbox fa-3x text-muted mb-3"></i>
                                         <p class="text-muted mb-0">{{ 'common.dataNotFound' | translate }}</p>

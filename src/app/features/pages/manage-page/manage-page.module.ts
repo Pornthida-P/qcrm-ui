@@ -2,12 +2,9 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ManagePageComponent } from './manage-page.component';
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { HttpClient } from '@angular/common/http';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { TranslateModule } from '@ngx-translate/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ContactImportComponent } from './contact-import/contact-import.component';
 
 @NgModule({
     declarations: [ManagePageComponent],
@@ -20,7 +17,7 @@ import { ContactImportComponent } from './contact-import/contact-import.componen
                 children: [
                     {
                         path: '',
-                        redirectTo: 'contact-import',
+                        redirectTo: 'lead-management',
                         pathMatch: 'full',
                     },
                     {
@@ -32,8 +29,8 @@ import { ContactImportComponent } from './contact-import/contact-import.componen
                         loadChildren: () => import('./case-topic/case-topic.module').then((m) => m.CaseTopicModule),
                     },
                     {
-                        path: 'contact-import',
-                        loadChildren: () => import('./contact-import/contact-import.module').then((m) => m.ContactImportModule),
+                        path: 'lead-management',
+                        loadChildren: () => import('./lead-management/lead-management.module').then((m) => m.LeadManagementModule),
                     },
                 ],
             },
