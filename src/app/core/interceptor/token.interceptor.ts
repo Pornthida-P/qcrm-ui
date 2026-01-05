@@ -19,6 +19,7 @@ export class TokenInterceptor implements HttpInterceptor {
 
         // Skip token expiry check for logout and audit-log requests to prevent infinite loop
         if (token && this.tokenServices.isTokenExpired() && !shouldSkipTokenCheck) {
+            console.warn('Token expired - blocking request:', request.url);
             this.handleAuthError();
             return throwError(() => new Error('Token expired'));
         }
