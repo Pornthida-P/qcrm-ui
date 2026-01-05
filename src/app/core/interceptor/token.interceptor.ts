@@ -14,9 +14,11 @@ export class TokenInterceptor implements HttpInterceptor {
         const token = this.tokenServices.getDataToken();
         const isQimApi = request.url.startsWith(environment.api.urlQIM);
         const isLogoutRequest = request.url.includes('/logout');
+        const isAuditLogRequest = request.url.includes('/audit-log');
+        const shouldSkipTokenCheck = isLogoutRequest || isAuditLogRequest;
 
-        // Skip token expiry check for logout requests to prevent infinite loop
-        if (token && this.tokenServices.isTokenExpired() && !isLogoutRequest) {
+        // Skip token expiry check for logout and audit-log requests to prevent infinite loop
+        if (token && this.tokenServices.isTokenExpired() && !shouldSkipTokenCheck) {
             this.handleAuthError();
             return throwError(() => new Error('Token expired'));
         }
@@ -31,7 +33,7 @@ export class TokenInterceptor implements HttpInterceptor {
 
         return next.handle(request).pipe(
             catchError((error: HttpErrorResponse) => {
-                if ((error.status === 401 || error.status === 403) && !isLogoutRequest) {
+                if ((error.status === 401 || error.status === 403) && !shouldSkipTokenCheck) {
                     this.handleAuthError();
                 }
                 return throwError(() => error);
