@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { take } from 'rxjs';
 import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
 import { LoginService } from 'src/app/services/login/login.service';
 import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
@@ -30,15 +31,18 @@ export class LogoutComponent implements OnInit {
 
     initzation(): void {
         this.getDataUser();
-        setTimeout(() => {
-            this.logout();
-        }, 1000);
     }
 
     getDataUser(): void {
-        this.userService.getDataUser().subscribe((res: User | null) => {
-            this.userData = res;
-        });
+        this.userService
+            .getDataUser()
+            .pipe(take(1))
+            .subscribe((res: User | null) => {
+                this.userData = res;
+                setTimeout(() => {
+                    this.logout();
+                }, 1000);
+            });
     }
 
     logout(): void {
