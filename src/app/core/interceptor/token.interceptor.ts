@@ -13,8 +13,10 @@ export class TokenInterceptor implements HttpInterceptor {
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         const token = this.tokenServices.getDataToken();
         const isQimApi = request.url.startsWith(environment.api.urlQIM);
+        const isLogoutRequest = request.url.includes('/logout');
 
-        if (token && this.tokenServices.isTokenExpired()) {
+        // Skip token expiry check for logout requests to prevent infinite loop
+        if (token && this.tokenServices.isTokenExpired() && !isLogoutRequest) {
             this.handleAuthError();
             return throwError(() => new Error('Token expired'));
         }
@@ -29,7 +31,7 @@ export class TokenInterceptor implements HttpInterceptor {
 
         return next.handle(request).pipe(
             catchError((error: HttpErrorResponse) => {
-                if (error.status === 401 || error.status === 403) {
+                if ((error.status === 401 || error.status === 403) && !isLogoutRequest) {
                     this.handleAuthError();
                 }
                 return throwError(() => error);
