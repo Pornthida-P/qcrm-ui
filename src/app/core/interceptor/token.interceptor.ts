@@ -15,7 +15,8 @@ export class TokenInterceptor implements HttpInterceptor {
         const isQimApi = request.url.startsWith(environment.api.urlQIM);
         const isLogoutRequest = request.url.includes('/logout');
         const isAuditLogRequest = request.url.includes('/audit-log');
-        const shouldSkipTokenCheck = isLogoutRequest || isAuditLogRequest;
+        const isVocabsRequest = request.url.includes('/vocabs');
+        const shouldSkipTokenCheck = isLogoutRequest || isAuditLogRequest || isVocabsRequest;
 
         // Skip token expiry check for logout and audit-log requests to prevent infinite loop
         if (token && this.tokenServices.isTokenExpired() && !shouldSkipTokenCheck) {
