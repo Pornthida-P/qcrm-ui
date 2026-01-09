@@ -1,0 +1,131 @@
+<div class="case-code-modal">
+    <!-- Header -->
+    <div class="modal-header-section">
+        <div class="row align-items-center">
+            <div class="col-12 col-md-8">
+                <h5 class="modal-title mb-0">
+                    {{ 'title.' + title | translate }}
+                    <span class="badge bg-secondary ms-2">{{ 'mode.' + data.mode | translate }}</span>
+                </h5>
+            </div>
+            <div class="col-12 col-md-4 text-end mt-2 mt-md-0">
+                <button type="button" class="btn-close-modal" (click)="onClickClose()" aria-label="Close">
+                    <fa-icon [icon]="faXmark"></fa-icon>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="modal-content-section">
+        <form [formGroup]="caseCodeForm" (ngSubmit)="saveCaseCode()">
+            <!-- Tabs -->
+            <ul class="nav nav-tabs mb-3" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button
+                        class="nav-link"
+                        [class.active]="activeTab === 'basic'"
+                        type="button"
+                        (click)="activeTab = 'basic'"
+                        id="basic-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#basic"
+                        role="tab"
+                        aria-controls="basic"
+                        aria-selected="true"
+                    >
+                        {{ 'form.basicInfo' | translate }}
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button
+                        class="nav-link"
+                        [class.active]="activeTab === 'script'"
+                        type="button"
+                        (click)="activeTab = 'script'"
+                        id="script-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#script"
+                        role="tab"
+                        aria-controls="script"
+                        aria-selected="false"
+                    >
+                        {{ 'form.script' | translate }}
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Tab Content -->
+            <div class="tab-content">
+                <!-- Basic Information Tab -->
+                <div
+                    class="tab-pane fade"
+                    [class.show]="activeTab === 'basic'"
+                    [class.active]="activeTab === 'basic'"
+                    id="basic"
+                    role="tabpanel"
+                    aria-labelledby="basic-tab"
+                >
+                    <div class="form-section">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="code" class="form-label"
+                                    >{{ 'form.code' | translate }} <span class="text-danger">*</span></label
+                                >
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="code"
+                                    formControlName="code"
+                                    [readonly]="data.mode === 'view'"
+                                    [class.is-invalid]="caseCodeForm.get('code')?.invalid && caseCodeForm.get('code')?.touched"
+                                />
+                                <div
+                                    class="invalid-feedback"
+                                    *ngIf="caseCodeForm.get('code')?.invalid && caseCodeForm.get('code')?.touched"
+                                >
+                                    {{ 'form.codeRequired' | translate }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Script Tab -->
+                <div
+                    class="tab-pane fade"
+                    [class.show]="activeTab === 'script'"
+                    [class.active]="activeTab === 'script'"
+                    id="script"
+                    role="tabpanel"
+                    aria-labelledby="script-tab"
+                >
+                    <div class="form-section script-section">
+                        <div *ngIf="data.mode === 'view'" class="script-viewer">
+                            <div [innerHTML]="formatScript(caseCodeForm.get('script')?.value)"></div>
+                        </div>
+                        <angular-editor
+                            *ngIf="data.mode !== 'view'"
+                            [formControl]="scriptControl"
+                            [config]="editorConfig"
+                            id="script"
+                        ></angular-editor>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="modal-actions" *ngIf="data.mode !== 'view'">
+                <div class="d-flex justify-content-end gap-2">
+                    <button type="button" class="btn btn-secondary" (click)="onClickClose()">
+                        {{ 'common.cancel' | translate }}
+                    </button>
+                    <button type="submit" class="btn btn-primary" [disabled]="caseCodeForm.invalid">
+                        {{ 'common.save' | translate }}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+

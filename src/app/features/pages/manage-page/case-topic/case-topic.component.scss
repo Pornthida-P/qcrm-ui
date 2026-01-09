@@ -6,3 +6,42 @@
     max-height: 400px;
     overflow-y: scroll;
 }
+
+.nav-tabs {
+    border-bottom: 2px solid #dee2e6;
+    margin-bottom: 1rem;
+
+    .nav-link {
+        color: #6c757d;
+        border: none;
+        border-bottom: 2px solid transparent;
+        padding: 0.75rem 1rem;
+        font-weight: 500;
+        transition: all 0.2s ease-in-out;
+
+        &:hover {
+            color: var(--color-blue-dark, #007bff);
+            border-bottom-color: #dee2e6;
+        }
+
+        &.active {
+            color: var(--color-blue-dark, #007bff);
+            background-color: transparent;
+            border-bottom-color: var(--color-blue-dark, #007bff);
+        }
+
+        i {
+            font-size: 0.9rem;
+        }
+    }
+}
+
+// Hide scrollbar but keep functionality
+.overflow-auto {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}

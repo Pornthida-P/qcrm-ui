@@ -183,4 +183,122 @@ export class CallService {
     deleteCaseSubject(id: string) {
         return this.http.delete(`${this.baseUrl}${config.api.path.callList.baseUrl}${config.api.path.callList.caseSubjects}/${id}`);
     }
+
+    // Case Code
+    getCaseCode() {
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-code`);
+    }
+
+    getCaseCodeById(id: string) {
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-code/${id}`);
+    }
+
+    createCaseCode(data: any) {
+        return this.http.post(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-code`, data);
+    }
+
+    updateCaseCode(id: string, data: any) {
+        return this.http.put(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-code/${id}`, data);
+    }
+
+    deleteCaseCode(id: string, modifiedById: string) {
+        return this.http.delete(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-code/${id}`, {
+            body: { modifiedById },
+        });
+    }
+
+    // Case Type
+    getCaseType() {
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-type`);
+    }
+
+    createCaseType(data: any) {
+        return this.http.post(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-type`, data);
+    }
+
+    updateCaseType(id: string, data: any) {
+        return this.http.put(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-type/${id}`, data);
+    }
+
+    deleteCaseType(id: string, modifiedById: string) {
+        return this.http.delete(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-type/${id}`, {
+            body: { modifiedById },
+        });
+    }
+
+    // Service Group
+    getCaseServiceGroup() {
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-group`);
+    }
+
+    createCaseServiceGroup(data: any) {
+        return this.http.post(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-group`, data);
+    }
+
+    updateCaseServiceGroup(id: string, data: any) {
+        return this.http.put(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-group/${id}`, data);
+    }
+
+    deleteCaseServiceGroup(id: string, modifiedById: string) {
+        return this.http.delete(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-group/${id}`, {
+            body: { modifiedById },
+        });
+    }
+
+    // Service Type
+    getCaseServiceType() {
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-type`);
+    }
+
+    createCaseServiceType(data: any) {
+        return this.http.post(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-type`, data);
+    }
+
+    updateCaseServiceType(id: string, data: any) {
+        return this.http.put(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-type/${id}`, data);
+    }
+
+    deleteCaseServiceType(id: string, modifiedById: string) {
+        return this.http.delete(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-type/${id}`, {
+            body: { modifiedById },
+        });
+    }
+
+    // Service Sub-Type
+    getServiceSubType() {
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}/service-sub-type`);
+    }
+
+    createServiceSubType(data: any) {
+        return this.http.post(`${this.baseUrl}${config.api.path.callList.baseUrl}/service-sub-type`, data);
+    }
+
+    updateServiceSubType(id: string, data: any) {
+        return this.http.put(`${this.baseUrl}${config.api.path.callList.baseUrl}/service-sub-type/${id}`, data);
+    }
+
+    deleteServiceSubType(id: string, modifiedById: string) {
+        return this.http.delete(`${this.baseUrl}${config.api.path.callList.baseUrl}/service-sub-type/${id}`, {
+            body: { modifiedById },
+        });
+    }
+
+    // Sentiment
+    getSentiment() {
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}/sentiment`);
+    }
+
+    createSentiment(data: any) {
+        return this.http.post(`${this.baseUrl}${config.api.path.callList.baseUrl}/sentiment`, data);
+    }
+
+    updateSentiment(id: string, data: any) {
+        return this.http.put(`${this.baseUrl}${config.api.path.callList.baseUrl}/sentiment/${id}`, data);
+    }
+
+    deleteSentiment(id: string, modifiedById: string) {
+        return this.http.delete(`${this.baseUrl}${config.api.path.callList.baseUrl}/sentiment/${id}`, {
+            body: { modifiedById },
+        });
+    }
 }
