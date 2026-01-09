@@ -1,39 +1,36 @@
 <div class="container">
     <div class="row g-3 p-3">
         <div class="col-md-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <h2 class="fs-5 m-0">{{ 'title.' + title | translate }}</h2>
-                <button type="button" class="btn btn-primary-color text-white" (click)="onClickAdd()">
-                    <div class="d-flex gap-1">
-                        <fa-icon [icon]="faPlusCircle"></fa-icon>
-                        <p class="label">{{ 'page.case-topic.add' | translate }}</p>
-                    </div>
-                </button>
-            </div>
+            <h2 class="fs-5 m-0">{{ 'title.' + title | translate }}</h2>
         </div>
-        <div class="col-md-12">
-            <div class="row">
-                <div class="col mb-3">
-                    <input
-                        type="text"
-                        class="form-control"
-                        [placeholder]="'page.case-topic.placeHolder' | translate"
-                        #inputSearch
-                        (input)="onSearch(inputSearch.value)"
-                    />
-                </div>
-            </div>
 
-            <app-table-list
-                [title]="title"
-                [dataSource]="dataSource"
-                [displayedColumns]="displayedColumns"
-                [isAction]="isAction"
-                [isShowTool]="true"
-                (view)="onClickView($event)"
-                (edit)="onClickEdit($event)"
-                (delete)="onClickDelete($event)"
-            ></app-table-list>
+        <!-- Tab Navigation -->
+        <div class="col-md-12">
+            <ul class="nav nav-tabs flex-nowrap overflow-auto">
+                <li class="nav-item" *ngFor="let tab of tabs">
+                    <a
+                        class="nav-link text-nowrap"
+                        [class.active]="activeTab === tab.id"
+                        (click)="switchTab(tab.id)"
+                        style="cursor: pointer"
+                    >
+                        <i [class]="'fa-solid ' + tab.icon + ' me-1'"></i>
+                        {{ tab.label | translate }}
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="col-md-12">
+            <div [ngSwitch]="activeTab">
+                <app-case-code-tab *ngSwitchCase="'case-code'"></app-case-code-tab>
+                <app-case-type-tab *ngSwitchCase="'case-type'"></app-case-type-tab>
+                <app-service-group-tab *ngSwitchCase="'service-group'"></app-service-group-tab>
+                <app-service-type-tab *ngSwitchCase="'service-type'"></app-service-type-tab>
+                <app-service-sub-type-tab *ngSwitchCase="'service-sub-type'"></app-service-sub-type-tab>
+                <app-sentiment-tab *ngSwitchCase="'sentiment'"></app-sentiment-tab>
+            </div>
         </div>
     </div>
 </div>
