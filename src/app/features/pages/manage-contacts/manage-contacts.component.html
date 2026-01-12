@@ -224,33 +224,29 @@
                                 <thead>
                                     <tr>
                                         <th>{{ 'common.time' | translate }}</th>
-                                        <th>{{ 'contact.phoneNumber' | translate }}</th>
-                                        <th>{{ 'contact.callType' | translate }}</th>
                                         <th>{{ 'contact.channel' | translate }}</th>
-                                        <th>{{ 'contact.subject' | translate }}</th>
-                                        <th>{{ 'contact.description' | translate }}</th>
-                                        <th>{{ 'common.status' | translate }}</th>
-                                        <th>{{ 'contact.contact' | translate }}</th>
+                                        <th>{{ 'contact.callType' | translate }}</th>
+                                        <th>{{ 'contact.code' | translate }}</th>
+                                        <th>{{ 'contact.assignDate' | translate }}</th>
                                         <th>{{ 'contact.assignUser' | translate }}</th>
+                                        <th>{{ 'contact.caseType' | translate }}</th>
+                                        <th>{{ 'contact.serviceGroup' | translate }}</th>
+                                        <th>{{ 'contact.serviceType' | translate }}</th>
+                                        <th>{{ 'contact.serviceSubType' | translate }}</th>
+                                        <th>{{ 'contact.description' | translate }}</th>
+                                        <th>{{ 'contact.comment' | translate }}</th>
+                                        <th>{{ 'contact.contact' | translate }}</th>
+                                        <th>{{ 'contact.callStatus' | translate }}</th>
+                                        <th>{{ 'common.status' | translate }}</th>
                                         <th class="text-center">{{ 'common.manage' | translate }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <ng-container *ngIf="contactCall && contactCall.length > 0; else noDataTemplate">
                                         <tr *ngFor="let case of contactCall" class="table-row-hover">
-                                            <td>
-                                                <span class="text-muted">
-                                                    <i class="fa-regular fa-clock me-1"></i>
-                                                    {{ case.requestDateTime | date : 'dd/MM/yyyy HH:mm' }}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <span class="badge bg-light text-dark">
-                                                    <i class="fa-solid fa-phone me-1"></i>
-                                                    {{ case.contactNumber || '-' }}
-                                                </span>
-                                            </td>
-                                            <td>{{ case.operationType || '-' }}</td>
+                                            <!-- เวลา -->
+                                            <td>{{ case.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
+                                            <!-- Channel -->
                                             <td>
                                                 <span
                                                     *ngIf="case.channel; else noChannel"
@@ -263,8 +259,82 @@
                                                     <span class="text-muted">-</span>
                                                 </ng-template>
                                             </td>
-                                            <td>{{ case.caseTopicName }}</td>
-                                            <td class="text-truncate" style="max-width: 150px">{{ case.description }}</td>
+                                            <!-- Call Type -->
+                                            <td>{{ case.type || '-' }}</td>
+                                            <!-- Case Code -->
+                                            <td>
+                                                <span
+                                                    class="text-primary fw-semibold cursor-pointer"
+                                                    data-bs-toggle="offcanvas"
+                                                    data-bs-target="#offcanvasRight"
+                                                    aria-controls="offcanvasRight"
+                                                    (click)="editCall(case.caseId)"
+                                                >
+                                                    {{ case.casecode || '-' }}
+                                                </span>
+                                            </td>
+                                            <!-- Assign Date -->
+                                            <td>{{ case.assignDate ? (case.assignDate | date : 'dd/MM/yyyy HH:mm') : '-' }}</td>
+                                            <!-- Assign User -->
+                                            <td>{{ case.agent || '-' }}</td>
+                                            <!-- Case Type -->
+                                            <td class="text-truncate" style="max-width: 120px">{{ case.casetype || '-' }}</td>
+                                            <!-- Service Group -->
+                                            <td class="text-truncate" style="max-width: 120px">{{ case.caseServiceGroup || '-' }}</td>
+                                            <!-- Service Type -->
+                                            <td class="text-truncate" style="max-width: 120px">{{ case.caseServiceType || '-' }}</td>
+                                            <!-- Service Sub Type -->
+                                            <td class="text-truncate" style="max-width: 120px">{{ case.caseServiceSubType || '-' }}</td>
+                                            <!-- Description -->
+                                            <td
+                                                class="text-truncate"
+                                                style="max-width: 150px"
+                                                [ngbTooltip]="case.description"
+                                                [disableTooltip]="!case.description"
+                                                container="body"
+                                                placement="top"
+                                            >
+                                                {{ case.description || '-' }}
+                                            </td>
+                                            <!-- Comment -->
+                                            <td
+                                                class="text-truncate"
+                                                style="max-width: 150px"
+                                                [ngbTooltip]="case.comment"
+                                                [disableTooltip]="!case.comment"
+                                                container="body"
+                                                placement="top"
+                                            >
+                                                {{ case.comment || '-' }}
+                                            </td>
+                                            <!-- ผู้ติดต่อ (Contact) -->
+                                            <td>{{ case.contact || '-' }}</td>
+                                            <!-- Call Status -->
+                                            <td>
+                                                <span
+                                                    *ngIf="case.callStatusName; else noCallStatus"
+                                                    class="badge"
+                                                    [ngClass]="{
+                                                        'bg-success':
+                                                            case.callStatusName?.includes('ติดต่อสำเร็จ') ||
+                                                            case.callStatusName?.includes('สนทนาต่อ'),
+                                                        'bg-danger':
+                                                            case.callStatusName?.includes('ไม่รับสาย') ||
+                                                            case.callStatusName?.includes('ไม่สนทนาต่อ'),
+                                                        'bg-warning': case.callStatusName?.includes('ไม่สะดวกสนทนา'),
+                                                        'bg-secondary':
+                                                            !case.callStatusName?.includes('ติดต่อสำเร็จ') &&
+                                                            !case.callStatusName?.includes('สนทนาต่อ') &&
+                                                            !case.callStatusName?.includes('ไม่รับสาย') &&
+                                                            !case.callStatusName?.includes('ไม่สนทนาต่อ') &&
+                                                            !case.callStatusName?.includes('ไม่สะดวกสนทนา')
+                                                    }"
+                                                >
+                                                    {{ case.callStatusName }}
+                                                </span>
+                                                <ng-template #noCallStatus>-</ng-template>
+                                            </td>
+                                            <!-- Case Status -->
                                             <td>
                                                 <span
                                                     *ngIf="case.status; else noStatus"
@@ -278,8 +348,7 @@
                                                     <span class="text-muted">-</span>
                                                 </ng-template>
                                             </td>
-                                            <td>{{ case.firstName }}</td>
-                                            <td>{{ case.responsibleUser || case.createdById }}</td>
+                                            <!-- Manage -->
                                             <td class="text-center">
                                                 <button
                                                     class="btn btn-sm btn-outline-primary-custom btn-action"
@@ -296,7 +365,7 @@
                                     </ng-container>
                                     <ng-template #noDataTemplate>
                                         <tr>
-                                            <td colspan="10" class="text-center py-5">
+                                            <td colspan="16" class="text-center py-5">
                                                 <div class="empty-state">
                                                     <i class="fa-solid fa-inbox fa-3x text-muted mb-3"></i>
                                                     <p class="text-muted mb-0">{{ 'common.dataNotFound' | translate }}</p>

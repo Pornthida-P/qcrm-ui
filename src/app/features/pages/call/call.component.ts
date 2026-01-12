@@ -132,8 +132,11 @@ export class CallComponent implements OnInit {
 
     AddCallShowing: boolean = false;
 
-    casetopics: any[] = [];
-    casesubjects: any[] = [];
+    caseCodes: any[] = [];
+    caseTypes: any[] = [];
+    serviceGroups: any[] = [];
+    serviceTypes: any[] = [];
+    serviceSubTypes: any[] = [];
     callTypes: any;
 
     isCheckboxSelected: { [key: number]: boolean } = {};
@@ -160,13 +163,20 @@ export class CallComponent implements OnInit {
     comment: any;
     comments: any[] = [];
 
-    selectedCaseTopicObject: any = null;
+    selectedCaseCode: any = null;
+    selectedCaseCodeObject: any = null;
+    selectedCaseType: any = null;
+    selectedServiceGroup: any = null;
+    selectedServiceType: any = null;
+    selectedServiceSubType: any = null;
     chatId: string = '';
     chatHistory: any[] = [];
     activeScriptTab: 'script' | 'chat' = 'script';
 
-    isTopicDisabled: boolean = false;
-    isSubjectDisabled: boolean = false;
+    // Sentiment
+    sentiments: any[] = [];
+    selectedSentiment: number | null = null;
+
     isStatusDisabled: boolean = false;
     isChannelDisabled: boolean = false;
     isCallTypeDisabled: boolean = false;
@@ -180,10 +190,16 @@ export class CallComponent implements OnInit {
     history: any[] = [];
 
     // Autocomplete controls
-    topicControl = new FormControl('');
-    subjectControl = new FormControl('');
-    filteredTopics: any[] = [];
-    filteredSubjects: any[] = [];
+    codeControl = new FormControl('');
+    caseTypeControl = new FormControl('');
+    serviceGroupControl = new FormControl('');
+    serviceTypeControl = new FormControl('');
+    serviceSubTypeControl = new FormControl('');
+    filteredCodes: any[] = [];
+    filteredCaseTypes: any[] = [];
+    filteredServiceGroups: any[] = [];
+    filteredServiceTypes: any[] = [];
+    filteredServiceSubTypes: any[] = [];
 
     originalStatus: any;
 
@@ -205,7 +221,6 @@ export class CallComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.subjectControl.disable();
         this.getUserData();
 
         this.userRole = this.userData.role.roleTitle.toLocaleLowerCase();
@@ -266,6 +281,7 @@ export class CallComponent implements OnInit {
 
         this.getStatusList();
         this.getCallStatus();
+        this.getSentiments();
     }
 
     getComment(caseId: string) {
@@ -475,13 +491,20 @@ export class CallComponent implements OnInit {
                     ...acc,
                     {
                         createdAt: cur.createdAt,
-                        name: cur.contact,
-                        contactNumber: cur.caller,
-                        direction: cur.type,
-                        caseTopicName: cur.topic,
-                        caseSubjectName: cur.subject,
+                        channel: cur.channel,
+                        callType: cur.type,
+                        caseCode: cur.casecode,
+                        assignDate: cur.assignDate,
+                        assignUser: cur.agent,
+                        caseType: cur.casetype,
+                        serviceGroup: cur.caseServiceGroup,
+                        serviceType: cur.caseServiceType,
+                        serviceSubType: cur.caseServiceSubType,
                         description: cur.description,
-                        username: cur.agent,
+                        comment: cur.comment,
+                        contact: cur.contact,
+                        callStatus: cur.callStatusName,
+                        caseStatus: cur.status,
                     },
                 ],
                 [],
@@ -489,14 +512,21 @@ export class CallComponent implements OnInit {
 
             const columns = [
                 [
-                    this.translate.instant('export.time'),
-                    this.translate.instant('export.fullName'),
-                    this.translate.instant('export.phone'),
-                    this.translate.instant('export.callType'),
-                    this.translate.instant('export.topic'),
-                    this.translate.instant('export.subject'),
-                    this.translate.instant('export.description'),
-                    this.translate.instant('export.assignUser'),
+                    this.translate.instant('common.time'),
+                    this.translate.instant('contact.channel'),
+                    this.translate.instant('contact.callType'),
+                    this.translate.instant('contact.code'),
+                    this.translate.instant('contact.assignDate'),
+                    this.translate.instant('contact.assignUser'),
+                    this.translate.instant('contact.caseType'),
+                    this.translate.instant('contact.serviceGroup'),
+                    this.translate.instant('contact.serviceType'),
+                    this.translate.instant('contact.serviceSubType'),
+                    this.translate.instant('contact.description'),
+                    this.translate.instant('contact.comment'),
+                    this.translate.instant('contact.contact'),
+                    this.translate.instant('contact.callStatus'),
+                    this.translate.instant('common.status'),
                 ],
             ];
             const wb = XLSX.utils.book_new();
@@ -550,13 +580,29 @@ export class CallComponent implements OnInit {
         this.thanks = false;
         this.AddCallShowing = true;
 
-        this.callService.getCaseTopic().subscribe((casetopics: any) => {
-            this.casetopics = casetopics;
-            this.filteredTopics = casetopics;
+        this.callService.getCaseCode().subscribe((caseCodes: any) => {
+            this.caseCodes = caseCodes;
+            this.filteredCodes = caseCodes;
         });
 
-        this.callService.getAllCaseSubjects().subscribe((casesubjects: any) => {
-            this.casesubjects = casesubjects;
+        this.callService.getCaseType().subscribe((caseTypes: any) => {
+            this.caseTypes = caseTypes;
+            this.filteredCaseTypes = caseTypes;
+        });
+
+        this.callService.getCaseServiceGroup().subscribe((serviceGroups: any) => {
+            this.serviceGroups = serviceGroups;
+            this.filteredServiceGroups = serviceGroups;
+        });
+
+        this.callService.getCaseServiceType().subscribe((serviceTypes: any) => {
+            this.serviceTypes = serviceTypes;
+            this.filteredServiceTypes = serviceTypes;
+        });
+
+        this.callService.getServiceSubType().subscribe((serviceSubTypes: any) => {
+            this.serviceSubTypes = serviceSubTypes;
+            this.filteredServiceSubTypes = serviceSubTypes;
         });
 
         this.callService.getAllChannels().subscribe((channels: any) => {
@@ -572,7 +618,6 @@ export class CallComponent implements OnInit {
         this.attachmentShowing = false;
         this.cType = '';
         this.callId = '';
-        this.selectedCasesubject = '';
         this.selectedChannels = '';
         this.activityTypeId = '';
         this.startTime = '';
@@ -585,12 +630,14 @@ export class CallComponent implements OnInit {
             minute: date.getMinutes(),
             second: date.getSeconds(),
         };
-        this.selectedCaseTopics = null;
-        this.selectedCasesubject = [];
+        this.selectedCaseCode = null;
+        this.selectedCaseCodeObject = null;
+        this.selectedCaseType = null;
+        this.selectedServiceGroup = null;
+        this.selectedServiceType = null;
+        this.selectedServiceSubType = null;
         this.selectedActivityTopicId = [];
 
-        this.isTopicDisabled = true;
-        this.isSubjectDisabled = true;
         this.isStatusDisabled = false;
         this.isChannelDisabled = true;
         this.isCallTypeDisabled = true;
@@ -598,79 +645,144 @@ export class CallComponent implements OnInit {
         this.isDateDisabled = true;
         this.isDescriptionDisabled = false;
 
-        this.topicControl.disable();
-        this.subjectControl.disable();
+        this.codeControl.disable();
+        this.caseTypeControl.disable();
+        this.serviceGroupControl.disable();
+        this.serviceTypeControl.disable();
+        this.serviceSubTypeControl.disable();
 
-        this.callService.getCaseTopic().subscribe((casetopics: any) => {
-            this.casetopics = casetopics;
-            this.filteredTopics = casetopics;
+        this.callService.getCaseCode().subscribe((caseCodes: any) => {
+            this.caseCodes = caseCodes;
+            this.filteredCodes = caseCodes;
 
-            this.callService.getCaseById(callId).subscribe(
-                (call: any) => {
-                    if (!call) {
-                        console.error('Case not found:', callId);
-                        return;
-                    }
+            this.callService.getCaseType().subscribe((caseTypes: any) => {
+                this.caseTypes = caseTypes;
+                this.filteredCaseTypes = caseTypes;
 
-                    this.cType = 'case';
-                    this.callId = call.caseId;
-                    this.description = call.description;
-                    this.startTime = call.requestDateTime;
-                    this.originalStatus = call.statusId;
-                    const date = new Date(call.requestDateTime);
-                    this.timepickStart = {
-                        hour: date.getHours(),
-                        minute: date.getMinutes(),
-                        second: date.getSeconds(),
-                    };
-                    this.selectedChannels = call.channelId;
-                    this.currentChannel = call.channelId;
-                    this.selectedCallTypeId = call.operationType;
-                    if (call.contactNumber) {
-                        this.selectedContactNumber = {
-                            contactNumber: call.contactNumber,
-                            contactNumberId: call.contactNumberId || null,
-                        };
-                    }
-                    this.selectedStatus = call.statusId;
+                this.callService.getCaseServiceGroup().subscribe((serviceGroups: any) => {
+                    this.serviceGroups = serviceGroups;
+                    this.filteredServiceGroups = serviceGroups;
 
-                    if (call.caseTopicId) {
-                        this.selectedCaseTopics = call.caseTopicId;
-                        this.selectedCaseTopicObject = this.casetopics.find((topic: any) => topic.caseTopicId == call.caseTopicId);
-                        // Set topicControl value for autocomplete
-                        if (this.selectedCaseTopicObject) {
-                            this.topicControl.setValue(this.selectedCaseTopicObject);
-                        }
-                    } else {
-                        this.selectedCaseTopics = null;
-                        this.selectedCaseTopicObject = null;
-                        this.topicControl.setValue('');
-                    }
+                    this.callService.getCaseServiceType().subscribe((serviceTypes: any) => {
+                        this.serviceTypes = serviceTypes;
+                        this.filteredServiceTypes = serviceTypes;
 
-                    if (call.caseSubjectId) {
-                        setTimeout(() => {
-                            this.selectedCasesubject = call.caseSubjectId;
-                            // Set subjectControl value for autocomplete
-                            const selectedSubject = this.casesubjects.find((subject: any) => subject.caseSubjectId == call.caseSubjectId);
-                            if (selectedSubject) {
-                                this.subjectControl.setValue(selectedSubject);
-                            }
-                        }, 0);
-                    } else {
-                        this.selectedCasesubject = null;
-                        this.subjectControl.setValue('');
-                    }
+                        this.callService.getServiceSubType().subscribe((serviceSubTypes: any) => {
+                            this.serviceSubTypes = serviceSubTypes;
+                            this.filteredServiceSubTypes = serviceSubTypes;
 
-                    this.getComment(call.caseId);
-                    this.getChatHistory(call.chatId);
-                    this.getHistory(call.caseId);
-                    this.selectedCallStatusId = call.callStatus;
-                    this.getCallStatusId(call.callStatusId?.toString() || '');
-                },
-                (error) => {
-                    console.error('Error fetching case:', error);
-                },
-            );
+                            this.callService.getCaseById(callId).subscribe(
+                                (call: any) => {
+                                    if (!call) {
+                                        console.error('Case not found:', callId);
+                                        return;
+                                    }
+
+                                    this.cType = 'case';
+                                    this.callId = call.caseId;
+                                    this.description = call.description;
+                                    this.startTime = call.requestDateTime;
+                                    this.originalStatus = call.statusId;
+                                    const date = new Date(call.requestDateTime);
+                                    this.timepickStart = {
+                                        hour: date.getHours(),
+                                        minute: date.getMinutes(),
+                                        second: date.getSeconds(),
+                                    };
+                                    this.selectedChannels = call.channelId;
+                                    this.currentChannel = call.channelId;
+                                    this.selectedCallTypeId = call.operationType;
+                                    if (call.contactNumber) {
+                                        this.selectedContactNumber = {
+                                            contactNumber: call.contactNumber,
+                                            contactNumberId: call.contactNumberId || null,
+                                        };
+                                    }
+                                    this.selectedStatus = call.statusId;
+                                    this.selectedSentiment = call.sentimentId;
+
+                                    // Set codeControl value
+                                    if (call.caseCodeId) {
+                                        this.selectedCaseCode = call.caseCodeId;
+                                        const selectedCode = this.caseCodes.find((code: any) => code.id == call.caseCodeId);
+                                        if (selectedCode) {
+                                            this.codeControl.setValue(selectedCode);
+                                            this.selectedCaseCodeObject = selectedCode;
+                                        }
+                                    } else {
+                                        this.selectedCaseCode = null;
+                                        this.selectedCaseCodeObject = null;
+                                        this.codeControl.setValue('');
+                                    }
+
+                                    // Set caseTypeControl value
+                                    if (call.caseTypeId) {
+                                        this.selectedCaseType = call.caseTypeId;
+                                        const selectedCaseType = this.caseTypes.find((type: any) => type.id == call.caseTypeId);
+                                        if (selectedCaseType) {
+                                            this.caseTypeControl.setValue(selectedCaseType);
+                                        }
+                                    } else {
+                                        this.selectedCaseType = null;
+                                        this.caseTypeControl.setValue('');
+                                    }
+
+                                    // Set serviceGroupControl value
+                                    if (call.caseServiceGroupId) {
+                                        this.selectedServiceGroup = call.caseServiceGroupId;
+                                        const selectedServiceGroup = this.serviceGroups.find(
+                                            (group: any) => group.id == call.caseServiceGroupId,
+                                        );
+                                        if (selectedServiceGroup) {
+                                            this.serviceGroupControl.setValue(selectedServiceGroup);
+                                        }
+                                    } else {
+                                        this.selectedServiceGroup = null;
+                                        this.serviceGroupControl.setValue('');
+                                    }
+
+                                    // Set serviceTypeControl value
+                                    if (call.caseServiceTypeId) {
+                                        this.selectedServiceType = call.caseServiceTypeId;
+                                        const selectedServiceType = this.serviceTypes.find(
+                                            (type: any) => type.id == call.caseServiceTypeId,
+                                        );
+                                        if (selectedServiceType) {
+                                            this.serviceTypeControl.setValue(selectedServiceType);
+                                        }
+                                    } else {
+                                        this.selectedServiceType = null;
+                                        this.serviceTypeControl.setValue('');
+                                    }
+
+                                    // Set serviceSubTypeControl value
+                                    if (call.caseServiceSubTypeId) {
+                                        this.selectedServiceSubType = call.caseServiceSubTypeId;
+                                        const selectedServiceSubType = this.serviceSubTypes.find(
+                                            (subType: any) => subType.id == call.caseServiceSubTypeId,
+                                        );
+                                        if (selectedServiceSubType) {
+                                            this.serviceSubTypeControl.setValue(selectedServiceSubType);
+                                        }
+                                    } else {
+                                        this.selectedServiceSubType = null;
+                                        this.serviceSubTypeControl.setValue('');
+                                    }
+
+                                    this.getComment(call.caseId);
+                                    this.getChatHistory(call.chatId);
+                                    this.getHistory(call.caseId);
+                                    this.selectedCallStatusId = call.callStatus;
+                                    this.getCallStatusId(call.callStatusId?.toString() || '');
+                                },
+                                (error) => {
+                                    console.error('Error fetching case:', error);
+                                },
+                            );
+                        });
+                    });
+                });
+            });
         });
 
         this.showAddCall();
@@ -765,21 +877,15 @@ export class CallComponent implements OnInit {
         const selectedCallTypeId = isChannelOne ? this.selectedCallTypeId : null;
 
         if (!this.callId) {
-            if (this.selectedCaseTopics) {
-                const caseTopicId = this.selectedCaseTopics;
-
-                const caseTopicCode =
-                    caseTopicId && this.casetopics
-                        ? this.casetopics.find((topic: any) => topic.caseTopicId === caseTopicId)?.code || null
-                        : null;
-
-                const caseSubjectId = this.selectedCasesubject || null;
-
+            if (this.selectedCaseCode) {
                 const data = {
                     contactId: this.contactId,
                     name: userData.userId,
-                    caseTopicId: caseTopicId,
-                    caseSubject: caseSubjectId,
+                    caseCodeId: this.selectedCaseCode,
+                    caseTypeId: this.selectedCaseType,
+                    caseServiceGroupId: this.selectedServiceGroup,
+                    caseServiceTypeId: this.selectedServiceType,
+                    caseServiceSubTypeId: this.selectedServiceSubType,
                     channel: this.selectedChannels,
                     activityType: this.activityTypeId,
                     description: this.description,
@@ -790,6 +896,7 @@ export class CallComponent implements OnInit {
                     call_id: this.phoneCall,
                     operationType: selectedCallTypeId,
                     comment: this.comment,
+                    sentimentId: this.selectedSentiment,
                 };
                 console.log('Data: ', data);
                 this.callService
@@ -822,15 +929,18 @@ export class CallComponent implements OnInit {
                     )
                     .subscribe();
             } else {
-                this.sweetalertServices.error('alert.pleaseEnterTopic');
+                this.sweetalertServices.error('alert.pleaseEnterCode');
             }
         } else if (this.callId && this.cType === 'case') {
             console.log('Edit Case:', this.callId);
-            if (this.selectedCaseTopics) {
+            if (this.selectedCaseCode) {
                 const data = {
                     callId: this.callId,
-                    caseTopicId: this.selectedCaseTopics,
-                    caseSubject: this.selectedCasesubject,
+                    caseCodeId: this.selectedCaseCode,
+                    caseTypeId: this.selectedCaseType,
+                    caseServiceGroupId: this.selectedServiceGroup,
+                    caseServiceTypeId: this.selectedServiceType,
+                    caseServiceSubTypeId: this.selectedServiceSubType,
                     channel: this.selectedChannels,
                     description: this.description,
                     startTime: `${selectedDate} ${selectedTime}`,
@@ -839,6 +949,7 @@ export class CallComponent implements OnInit {
                     status: this.selectedStatus,
                     comment: this.comment,
                     callStatus: this.selectedCallStatusId,
+                    sentimentId: this.selectedSentiment,
                     statusChange:
                         this.selectedStatus !== this.originalStatus
                             ? {
@@ -880,7 +991,7 @@ export class CallComponent implements OnInit {
                     )
                     .subscribe();
             } else {
-                this.sweetalertServices.error('alert.pleaseEnterTopic');
+                this.sweetalertServices.error('alert.pleaseEnterCode');
             }
         }
     }
@@ -899,55 +1010,298 @@ export class CallComponent implements OnInit {
         return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:${second.toString().padStart(2, '0')}`;
     }
 
-    onCaseTopicChange(event: any) {
-        this.selectedCasesubject = null;
-
-        if (this.selectedCaseTopics && this.casetopics) {
-            this.selectedCaseTopicObject = this.casetopics.find((topic: any) => topic.caseTopicId == this.selectedCaseTopics);
-        } else {
-            this.selectedCaseTopicObject = null;
-        }
-    }
-
     // Autocomplete filter functions
-    filterTopics() {
-        const filterValue = (this.topicControl.value || '').toString().toLowerCase();
-        this.filteredTopics = this.casetopics.filter((topic) => topic.name.toLowerCase().includes(filterValue));
-    }
+    filterCodes() {
+        const controlValue = this.codeControl.value as any;
+        const originalValue = (typeof controlValue === 'object' && controlValue ? controlValue.code : controlValue || '').toString().trim();
+        const filterValue = originalValue.toLowerCase();
 
-    filterSubjects() {
-        const filterValue = (this.subjectControl.value || '').toString().toLowerCase();
-        this.filteredSubjects = this.casesubjects.filter(
-            (subject) => subject.caseTopicId == this.selectedCaseTopics && subject.name.toLowerCase().includes(filterValue),
-        );
-    }
+        if (!filterValue) {
+            this.filteredCodes = [...this.caseCodes];
+            return;
+        }
 
-    displayTopicFn(topic: any): string {
-        return topic && topic.name ? topic.name : '';
-    }
+        this.filteredCodes = this.caseCodes.filter((code: any) => code.code.toLowerCase().includes(filterValue));
 
-    displaySubjectFn(subject: any): string {
-        return subject && subject.name ? subject.name : '';
-    }
-
-    onTopicSelected(event: any) {
-        const selectedTopic = event.option.value;
-        this.selectedCaseTopics = selectedTopic.caseTopicId;
-        this.selectedCaseTopicObject = selectedTopic;
-        this.selectedCasesubject = null;
-        this.subjectControl.setValue('');
-        this.filterSubjects();
-
-        if (this.hasSubjectsForSelectedTopic) {
-            this.subjectControl.enable();
-        } else {
-            this.subjectControl.disable();
+        const exactMatch = this.caseCodes.find((code: any) => code.code.toLowerCase() === filterValue);
+        if (!exactMatch && filterValue) {
+            this.filteredCodes = [{ id: null, code: originalValue, isNew: true }, ...this.filteredCodes];
         }
     }
 
-    onSubjectSelected(event: any) {
-        const selectedSubject = event.option.value;
-        this.selectedCasesubject = selectedSubject.caseSubjectId;
+    filterCaseTypes() {
+        const controlValue = this.caseTypeControl.value as any;
+        const originalValue = (typeof controlValue === 'object' && controlValue ? controlValue.name : controlValue || '').toString().trim();
+        const filterValue = originalValue.toLowerCase();
+
+        if (!filterValue) {
+            this.filteredCaseTypes = [...this.caseTypes];
+            return;
+        }
+
+        this.filteredCaseTypes = this.caseTypes.filter((type: any) => type.name.toLowerCase().includes(filterValue));
+
+        const exactMatch = this.caseTypes.find((type: any) => type.name.toLowerCase() === filterValue);
+        if (!exactMatch && filterValue) {
+            this.filteredCaseTypes = [{ id: null, name: originalValue, isNew: true }, ...this.filteredCaseTypes];
+        }
+    }
+
+    filterServiceGroups() {
+        const controlValue = this.serviceGroupControl.value as any;
+        const originalValue = (typeof controlValue === 'object' && controlValue ? controlValue.name : controlValue || '').toString().trim();
+        const filterValue = originalValue.toLowerCase();
+
+        if (!filterValue) {
+            this.filteredServiceGroups = [...this.serviceGroups];
+            return;
+        }
+
+        this.filteredServiceGroups = this.serviceGroups.filter((group: any) => group.name.toLowerCase().includes(filterValue));
+
+        const exactMatch = this.serviceGroups.find((group: any) => group.name.toLowerCase() === filterValue);
+        if (!exactMatch && filterValue) {
+            this.filteredServiceGroups = [{ id: null, name: originalValue, isNew: true }, ...this.filteredServiceGroups];
+        }
+    }
+
+    filterServiceTypes() {
+        const controlValue = this.serviceTypeControl.value as any;
+        const originalValue = (typeof controlValue === 'object' && controlValue ? controlValue.name : controlValue || '').toString().trim();
+        const filterValue = originalValue.toLowerCase();
+
+        if (!filterValue) {
+            this.filteredServiceTypes = [...this.serviceTypes];
+            return;
+        }
+
+        this.filteredServiceTypes = this.serviceTypes.filter((type: any) => type.name.toLowerCase().includes(filterValue));
+
+        const exactMatch = this.serviceTypes.find((type: any) => type.name.toLowerCase() === filterValue);
+        if (!exactMatch && filterValue) {
+            this.filteredServiceTypes = [{ id: null, name: originalValue, isNew: true }, ...this.filteredServiceTypes];
+        }
+    }
+
+    filterServiceSubTypes() {
+        const controlValue = this.serviceSubTypeControl.value as any;
+        const originalValue = (typeof controlValue === 'object' && controlValue ? controlValue.name : controlValue || '').toString().trim();
+        const filterValue = originalValue.toLowerCase();
+
+        if (!filterValue) {
+            this.filteredServiceSubTypes = [...this.serviceSubTypes];
+            return;
+        }
+
+        this.filteredServiceSubTypes = this.serviceSubTypes.filter((subType: any) => subType.name.toLowerCase().includes(filterValue));
+
+        const exactMatch = this.serviceSubTypes.find((subType: any) => subType.name.toLowerCase() === filterValue);
+        if (!exactMatch && filterValue) {
+            this.filteredServiceSubTypes = [{ id: null, name: originalValue, isNew: true }, ...this.filteredServiceSubTypes];
+        }
+    }
+
+    displayCodeFn = (code: any): string => {
+        return code?.code || '';
+    };
+
+    displayCaseTypeFn = (caseType: any): string => {
+        return caseType?.name || '';
+    };
+
+    displayServiceGroupFn = (serviceGroup: any): string => {
+        return serviceGroup?.name || '';
+    };
+
+    displayServiceTypeFn = (serviceType: any): string => {
+        return serviceType?.name || '';
+    };
+
+    displayServiceSubTypeFn = (serviceSubType: any): string => {
+        return serviceSubType?.name || '';
+    };
+
+    onCodeSelected(event: any) {
+        const selectedCode = event.option.value;
+
+        if (selectedCode.isNew) {
+            const existingCode = this.caseCodes.find((c: any) => c.code.toLowerCase() === selectedCode.code.toLowerCase());
+
+            if (existingCode) {
+                this.selectedCaseCode = existingCode.id;
+                this.selectedCaseCodeObject = existingCode;
+                this.codeControl.setValue(existingCode);
+                this.filteredCodes = [...this.caseCodes];
+                return;
+            }
+
+            this.callService
+                .createCaseCode({
+                    code: selectedCode.code,
+                    script: '',
+                    createdById: this.userData.userId,
+                })
+                .subscribe({
+                    next: (res: any) => {
+                        this.selectedCaseCodeObject = res;
+                        this.selectedCaseCode = res.id;
+                        this.codeControl.setValue(res);
+                        this.caseCodes.push(res);
+                        this.filteredCodes = [...this.caseCodes];
+                    },
+                    error: (error) => {
+                        console.error('Error creating case code:', error);
+                        this.sweetalertServices.handleError(error);
+                    },
+                });
+        } else {
+            this.selectedCaseCode = selectedCode.id;
+            this.selectedCaseCodeObject = selectedCode;
+        }
+    }
+
+    onCaseTypeSelected(event: any) {
+        const selectedCaseType = event.option.value;
+
+        if (selectedCaseType.isNew) {
+            const existingCaseType = this.caseTypes.find((t: any) => t.name.toLowerCase() === selectedCaseType.name.toLowerCase());
+
+            if (existingCaseType) {
+                this.selectedCaseType = existingCaseType.id;
+                this.caseTypeControl.setValue(existingCaseType);
+                this.filteredCaseTypes = [...this.caseTypes];
+                return;
+            }
+
+            this.callService
+                .createCaseType({
+                    name: selectedCaseType.name,
+                    createdById: this.userData.userId,
+                })
+                .subscribe({
+                    next: (res: any) => {
+                        this.selectedCaseType = res.id;
+                        this.caseTypeControl.setValue(res);
+                        this.caseTypes.push(res);
+                        this.filteredCaseTypes = [...this.caseTypes];
+                    },
+                    error: (error) => {
+                        console.error('Error creating case type:', error);
+                        this.sweetalertServices.handleError(error);
+                    },
+                });
+        } else {
+            this.selectedCaseType = selectedCaseType.id;
+        }
+    }
+
+    onServiceGroupSelected(event: any) {
+        const selectedServiceGroup = event.option.value;
+
+        if (selectedServiceGroup.isNew) {
+            const existingServiceGroup = this.serviceGroups.find(
+                (g: any) => g.name.toLowerCase() === selectedServiceGroup.name.toLowerCase(),
+            );
+
+            if (existingServiceGroup) {
+                this.selectedServiceGroup = existingServiceGroup.id;
+                this.serviceGroupControl.setValue(existingServiceGroup);
+                this.filteredServiceGroups = [...this.serviceGroups];
+                return;
+            }
+
+            this.callService
+                .createCaseServiceGroup({
+                    name: selectedServiceGroup.name,
+                    createdById: this.userData.userId,
+                })
+                .subscribe({
+                    next: (res: any) => {
+                        this.selectedServiceGroup = res.id;
+                        this.serviceGroupControl.setValue(res);
+                        this.serviceGroups.push(res);
+                        this.filteredServiceGroups = [...this.serviceGroups];
+                    },
+                    error: (error) => {
+                        console.error('Error creating service group:', error);
+                        this.sweetalertServices.handleError(error);
+                    },
+                });
+        } else {
+            this.selectedServiceGroup = selectedServiceGroup.id;
+        }
+    }
+
+    onServiceTypeSelected(event: any) {
+        const selectedServiceType = event.option.value;
+
+        if (selectedServiceType.isNew) {
+            const existingServiceType = this.serviceTypes.find((t: any) => t.name.toLowerCase() === selectedServiceType.name.toLowerCase());
+
+            if (existingServiceType) {
+                this.selectedServiceType = existingServiceType.id;
+                this.serviceTypeControl.setValue(existingServiceType);
+                this.filteredServiceTypes = [...this.serviceTypes];
+                return;
+            }
+
+            this.callService
+                .createCaseServiceType({
+                    name: selectedServiceType.name,
+                    createdById: this.userData.userId,
+                })
+                .subscribe({
+                    next: (res: any) => {
+                        this.selectedServiceType = res.id;
+                        this.serviceTypeControl.setValue(res);
+                        this.serviceTypes.push(res);
+                        this.filteredServiceTypes = [...this.serviceTypes];
+                    },
+                    error: (error) => {
+                        console.error('Error creating service type:', error);
+                        this.sweetalertServices.handleError(error);
+                    },
+                });
+        } else {
+            this.selectedServiceType = selectedServiceType.id;
+        }
+    }
+
+    onServiceSubTypeSelected(event: any) {
+        const selectedServiceSubType = event.option.value;
+
+        if (selectedServiceSubType.isNew) {
+            const existingServiceSubType = this.serviceSubTypes.find(
+                (st: any) => st.name.toLowerCase() === selectedServiceSubType.name.toLowerCase(),
+            );
+
+            if (existingServiceSubType) {
+                this.selectedServiceSubType = existingServiceSubType.id;
+                this.serviceSubTypeControl.setValue(existingServiceSubType);
+                this.filteredServiceSubTypes = [...this.serviceSubTypes];
+                return;
+            }
+
+            this.callService
+                .createServiceSubType({
+                    name: selectedServiceSubType.name,
+                    createdById: this.userData.userId,
+                })
+                .subscribe({
+                    next: (res: any) => {
+                        this.selectedServiceSubType = res.id;
+                        this.serviceSubTypeControl.setValue(res);
+                        this.serviceSubTypes.push(res);
+                        this.filteredServiceSubTypes = [...this.serviceSubTypes];
+                    },
+                    error: (error) => {
+                        console.error('Error creating service sub type:', error);
+                        this.sweetalertServices.handleError(error);
+                    },
+                });
+        } else {
+            this.selectedServiceSubType = selectedServiceSubType.id;
+        }
     }
 
     async getContactNumber(contactsId: string) {
@@ -1052,8 +1406,9 @@ export class CallComponent implements OnInit {
         });
     }
 
-    get hasSubjectsForSelectedTopic(): boolean {
-        if (!this.selectedCaseTopics) return false;
-        return this.casesubjects.some((subject) => subject.caseTopicId == this.selectedCaseTopics);
+    getSentiments() {
+        this.callService.getSentiment().subscribe((res: any) => {
+            this.sentiments = res;
+        });
     }
 }
