@@ -179,19 +179,29 @@
                                         <!-- Call Type -->
                                         <td>{{ caseItem.type || '-' }}</td>
                                         <!-- Case Code -->
-                                        <td class="text-primary fw-semibold">{{ caseItem.casecode || '-' }}</td>
+                                        <td class="fw-semibold">{{ caseItem.casecode || '-' }}</td>
                                         <!-- Assign Date -->
-                                        <td class="d-none d-md-table-cell">{{ caseItem.assignDate ? (caseItem.assignDate | date : 'dd/MM/yyyy HH:mm') : '-' }}</td>
+                                        <td class="d-none d-md-table-cell">
+                                            {{ caseItem.assignDate ? (caseItem.assignDate | date : 'dd/MM/yyyy HH:mm') : '-' }}
+                                        </td>
                                         <!-- Assign User -->
                                         <td class="d-none d-md-table-cell">{{ caseItem.agent || '-' }}</td>
                                         <!-- Case Type -->
-                                        <td class="text-truncate d-none d-lg-table-cell" style="max-width: 120px">{{ caseItem.casetype || '-' }}</td>
+                                        <td class="text-truncate d-none d-lg-table-cell" style="max-width: 120px">
+                                            {{ caseItem.casetype || '-' }}
+                                        </td>
                                         <!-- Service Group -->
-                                        <td class="text-truncate d-none d-lg-table-cell" style="max-width: 120px">{{ caseItem.caseServiceGroup || '-' }}</td>
+                                        <td class="text-truncate d-none d-lg-table-cell" style="max-width: 120px">
+                                            {{ caseItem.caseServiceGroup || '-' }}
+                                        </td>
                                         <!-- Service Type -->
-                                        <td class="text-truncate d-none d-xl-table-cell" style="max-width: 120px">{{ caseItem.caseServiceType || '-' }}</td>
+                                        <td class="text-truncate d-none d-xl-table-cell" style="max-width: 120px">
+                                            {{ caseItem.caseServiceType || '-' }}
+                                        </td>
                                         <!-- Service Sub Type -->
-                                        <td class="text-truncate d-none d-xl-table-cell" style="max-width: 120px">{{ caseItem.caseServiceSubType || '-' }}</td>
+                                        <td class="text-truncate d-none d-xl-table-cell" style="max-width: 120px">
+                                            {{ caseItem.caseServiceSubType || '-' }}
+                                        </td>
                                         <!-- Description -->
                                         <td
                                             class="text-truncate d-none d-xl-table-cell"
