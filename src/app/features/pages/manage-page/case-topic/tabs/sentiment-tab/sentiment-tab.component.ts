@@ -17,7 +17,7 @@ import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.serv
 export class SentimentTabComponent implements OnInit {
     title: string = 'sentiment';
     dataSource: MatTableDataSource<any> = new MatTableDataSource<any>([]);
-    displayedColumns: string[] = ['name'];
+    displayedColumns: string[] = ['name', 'type'];
     isAction: boolean = true;
     isShowTool: boolean = true;
     faGear = faGear;
