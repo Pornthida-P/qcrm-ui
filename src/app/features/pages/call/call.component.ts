@@ -1365,6 +1365,12 @@ export class CallComponent implements OnInit {
     onChannelChange(event: any) {
         this.currentChannel = event;
         console.log('currentChannel:', this.currentChannel);
+
+        if (event === '1') {
+            this.selectedCallTypeId = this.outbound;
+        } else if (event && event !== '3') {
+            this.selectedCallTypeId = this.inbound;
+        }
     }
 
     checkSupRole(): boolean {
@@ -1410,5 +1416,19 @@ export class CallComponent implements OnInit {
         this.callService.getSentiment().subscribe((res: any) => {
             this.sentiments = res;
         });
+    }
+
+    get filteredCallStatus(): any[] {
+        if (!this.callStatus) return [];
+
+        if (this.selectedCallTypeId === this.outbound) {
+            return this.callStatus.filter((status: any) => status.typeStatus === 'Outbound');
+        }
+
+        if (this.selectedCallTypeId === this.inbound) {
+            return this.callStatus.filter((status: any) => status.typeStatus === 'Inbound');
+        }
+
+        return this.callStatus;
     }
 }
