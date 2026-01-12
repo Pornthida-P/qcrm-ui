@@ -839,12 +839,15 @@ export class CallComponent implements OnInit {
                     status: this.selectedStatus,
                     comment: this.comment,
                     callStatus: this.selectedCallStatusId,
-                    statusChange: {
-                        from: this.statusList.find((s: any) => s.id === this.originalStatus)?.status || this.originalStatus,
-                        to: this.statusList.find((s: any) => s.id === this.selectedStatus)?.status || this.selectedStatus,
-                        changedAt: new Date().toISOString(),
-                        changedBy: userData.userId,
-                    },
+                    statusChange:
+                        this.selectedStatus !== this.originalStatus
+                            ? {
+                                  from: this.originalStatus,
+                                  to: this.selectedStatus,
+                                  changedAt: new Date().toISOString(),
+                                  changedBy: userData.userId,
+                              }
+                            : null,
                 };
                 console.log('Data: ', data);
                 this.callService

@@ -89,14 +89,6 @@ export class CallService {
         );
     }
 
-    getCaseTopic() {
-        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}${config.api.path.callList.caseTopics}`);
-    }
-
-    getCaseTopicByCode(code: string) {
-        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}${config.api.path.callList.caseTopics}/${code}`);
-    }
-
     getAllContacts() {
         return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}/all`);
     }
@@ -110,14 +102,6 @@ export class CallService {
             searchText = 'undefined';
         }
         return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}/${page}/${limit}/${sortId}/${searchText}/${createdBy}`);
-    }
-
-    getAllCaseSubjects() {
-        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}${config.api.path.callList.caseSubjects}`);
-    }
-
-    getCaseSubjectByCode(code: string) {
-        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}${config.api.path.callList.caseSubjects}/${code}`);
     }
 
     getAllChannels() {
@@ -158,30 +142,6 @@ export class CallService {
 
     createCase(data: any) {
         return this.http.post(`${this.baseUrl}${config.api.path.callList.baseUrl}`, data);
-    }
-
-    createCaseTopic(data: any) {
-        return this.http.post(`${this.baseUrl}${config.api.path.callList.baseUrl}${config.api.path.callList.caseTopics}`, data);
-    }
-
-    updateCaseTopic(data: any) {
-        return this.http.put(`${this.baseUrl}${config.api.path.callList.baseUrl}${config.api.path.callList.caseTopics}`, data);
-    }
-
-    deleteCaseTopic(id: string) {
-        return this.http.delete(`${this.baseUrl}${config.api.path.callList.baseUrl}${config.api.path.callList.caseTopics}/${id}`);
-    }
-
-    createCaseSubject(data: any) {
-        return this.http.post(`${this.baseUrl}${config.api.path.callList.baseUrl}${config.api.path.callList.caseSubjects}`, data);
-    }
-
-    updateCaseSubject(data: any) {
-        return this.http.put(`${this.baseUrl}${config.api.path.callList.baseUrl}${config.api.path.callList.caseSubjects}`, data);
-    }
-
-    deleteCaseSubject(id: string) {
-        return this.http.delete(`${this.baseUrl}${config.api.path.callList.baseUrl}${config.api.path.callList.caseSubjects}/${id}`);
     }
 
     // Case Code
