@@ -576,15 +576,14 @@
                                             </select>
                                         </div>
 
-                                        <!-- Call Type (Voice) -->
-                                        <div class="col-6" *ngIf="selectedChannels === '1' || selectedChannels === '2'">
+                                        <div class="col-6" *ngIf="selectedChannels">
                                             <label class="form-label form-label-sm fw-semibold mb-1">{{
                                                 'contact.callType' | translate
                                             }}</label>
                                             <input
                                                 type="text"
                                                 class="form-control form-control-sm"
-                                                [value]="outbound"
+                                                [value]="selectedChannels === '1' ? outbound : inbound"
                                                 readonly
                                                 [disabled]="isCallTypeDisabled"
                                             />
@@ -665,13 +664,13 @@
                                         </div>
 
                                         <!-- Call Status -->
-                                        <div class="col-12" *ngIf="selectedChannels === '1' || selectedChannels === '2'">
+                                        <div class="col-12" *ngIf="selectedChannels && selectedChannels !== '3'">
                                             <label class="form-label form-label-sm fw-semibold mb-1">{{
                                                 'contact.callStatus' | translate
                                             }}</label>
                                             <div class="call-status-selector">
                                                 <button
-                                                    *ngFor="let status of callStatus"
+                                                    *ngFor="let status of filteredCallStatus"
                                                     type="button"
                                                     class="status-chip"
                                                     [class.selected]="selectedCallStatusId === status.id"

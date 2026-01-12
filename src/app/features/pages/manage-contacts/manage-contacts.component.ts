@@ -557,8 +557,10 @@ export class ManageContactsComponent implements OnInit {
         this.currentChannel = event;
         console.log('currentChannel:', this.currentChannel);
 
-        if (event === '1' || event === '2') {
+        if (event === '1') {
             this.selectedCallTypeId = this.outbound;
+        } else if (event && event !== '3') {
+            this.selectedCallTypeId = this.inbound;
         }
     }
 
@@ -605,6 +607,12 @@ export class ManageContactsComponent implements OnInit {
                 }
             } else {
                 this.selectedChannels = this.currentChannel || '';
+            }
+
+            if (this.selectedChannels === '1') {
+                this.selectedCallTypeId = this.outbound;
+            } else if (this.selectedChannels && this.selectedChannels !== '3') {
+                this.selectedCallTypeId = this.inbound;
             }
         });
 
@@ -1518,5 +1526,19 @@ export class ManageContactsComponent implements OnInit {
         this.callListService.getHistory(caseId).subscribe((res: any) => {
             this.history = res;
         });
+    }
+
+    get filteredCallStatus(): any[] {
+        if (!this.callStatus) return [];
+
+        if (this.selectedCallTypeId === this.outbound) {
+            return this.callStatus.filter((status: any) => status.typeStatus === 'Outbound');
+        }
+
+        if (this.selectedCallTypeId === this.inbound) {
+            return this.callStatus.filter((status: any) => status.typeStatus === 'Inbound');
+        }
+
+        return this.callStatus;
     }
 }
