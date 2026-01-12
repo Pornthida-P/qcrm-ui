@@ -143,20 +143,29 @@
                         <table class="table table-hover custom-table mb-0 table-fixed-header">
                             <thead>
                                 <tr>
-                                    <th scope="col">{{ 'contact.createdAt' | translate }}</th>
-                                    <th scope="col">{{ 'dashboard.channel' | translate }}</th>
-                                    <th scope="col">{{ 'dashboard.contact' | translate }}</th>
-                                    <th scope="col" class="d-none d-md-table-cell">{{ 'dashboard.caseType' | translate }}</th>
-                                    <th scope="col" class="d-none d-lg-table-cell">{{ 'dashboard.caseTopic' | translate }}</th>
+                                    <th scope="col">{{ 'common.time' | translate }}</th>
+                                    <th scope="col">{{ 'contact.channel' | translate }}</th>
+                                    <th scope="col">{{ 'contact.callType' | translate }}</th>
+                                    <th scope="col">{{ 'contact.code' | translate }}</th>
+                                    <th scope="col" class="d-none d-md-table-cell">{{ 'contact.assignDate' | translate }}</th>
+                                    <th scope="col" class="d-none d-md-table-cell">{{ 'contact.assignUser' | translate }}</th>
+                                    <th scope="col" class="d-none d-lg-table-cell">{{ 'contact.caseType' | translate }}</th>
+                                    <th scope="col" class="d-none d-lg-table-cell">{{ 'contact.serviceGroup' | translate }}</th>
+                                    <th scope="col" class="d-none d-xl-table-cell">{{ 'contact.serviceType' | translate }}</th>
+                                    <th scope="col" class="d-none d-xl-table-cell">{{ 'contact.serviceSubType' | translate }}</th>
                                     <th scope="col" class="d-none d-xl-table-cell">{{ 'contact.description' | translate }}</th>
-                                    <th scope="col" class="d-none d-lg-table-cell">{{ 'dashboard.agent' | translate }}</th>
+                                    <th scope="col" class="d-none d-xl-table-cell">{{ 'contact.comment' | translate }}</th>
+                                    <th scope="col" class="d-none d-lg-table-cell">{{ 'contact.contact' | translate }}</th>
+                                    <th scope="col" class="d-none d-md-table-cell">{{ 'contact.callStatus' | translate }}</th>
                                     <th scope="col">{{ 'common.status' | translate }}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <ng-container *ngIf="filteredCases.length > 0; else tableNoData">
                                     <tr *ngFor="let caseItem of filteredCases" [class.row-overdue]="isOverOneDay(caseItem.createdAt)">
+                                        <!-- เวลา -->
                                         <td class="text-nowrap">{{ caseItem.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
+                                        <!-- Channel -->
                                         <td>
                                             <span
                                                 *ngIf="caseItem.channel; else noChannel"
@@ -167,11 +176,23 @@
                                             </span>
                                             <ng-template #noChannel>-</ng-template>
                                         </td>
-                                        <td class="text-nowrap">{{ caseItem.contact || '-' }}</td>
-                                        <td class="text-nowrap d-none d-md-table-cell">{{ caseItem.topic || '-' }}</td>
-                                        <td class="text-truncate d-none d-lg-table-cell" style="max-width: 120px">
-                                            {{ caseItem.subject || '-' }}
-                                        </td>
+                                        <!-- Call Type -->
+                                        <td>{{ caseItem.type || '-' }}</td>
+                                        <!-- Case Code -->
+                                        <td class="text-primary fw-semibold">{{ caseItem.casecode || '-' }}</td>
+                                        <!-- Assign Date -->
+                                        <td class="d-none d-md-table-cell">{{ caseItem.assignDate ? (caseItem.assignDate | date : 'dd/MM/yyyy HH:mm') : '-' }}</td>
+                                        <!-- Assign User -->
+                                        <td class="d-none d-md-table-cell">{{ caseItem.agent || '-' }}</td>
+                                        <!-- Case Type -->
+                                        <td class="text-truncate d-none d-lg-table-cell" style="max-width: 120px">{{ caseItem.casetype || '-' }}</td>
+                                        <!-- Service Group -->
+                                        <td class="text-truncate d-none d-lg-table-cell" style="max-width: 120px">{{ caseItem.caseServiceGroup || '-' }}</td>
+                                        <!-- Service Type -->
+                                        <td class="text-truncate d-none d-xl-table-cell" style="max-width: 120px">{{ caseItem.caseServiceType || '-' }}</td>
+                                        <!-- Service Sub Type -->
+                                        <td class="text-truncate d-none d-xl-table-cell" style="max-width: 120px">{{ caseItem.caseServiceSubType || '-' }}</td>
+                                        <!-- Description -->
                                         <td
                                             class="text-truncate d-none d-xl-table-cell"
                                             style="max-width: 150px"
@@ -182,7 +203,45 @@
                                         >
                                             {{ caseItem.description || '-' }}
                                         </td>
-                                        <td class="text-nowrap d-none d-lg-table-cell">{{ caseItem.agent || '-' }}</td>
+                                        <!-- Comment -->
+                                        <td
+                                            class="text-truncate d-none d-xl-table-cell"
+                                            style="max-width: 150px"
+                                            [ngbTooltip]="caseItem.comment"
+                                            [disableTooltip]="!caseItem.comment"
+                                            container="body"
+                                            placement="top"
+                                        >
+                                            {{ caseItem.comment || '-' }}
+                                        </td>
+                                        <!-- ผู้ติดต่อ (Contact) -->
+                                        <td class="text-nowrap d-none d-lg-table-cell">{{ caseItem.contact || '-' }}</td>
+                                        <!-- Call Status -->
+                                        <td class="d-none d-md-table-cell">
+                                            <span
+                                                *ngIf="caseItem.callStatusName; else noCallStatus"
+                                                class="badge"
+                                                [ngClass]="{
+                                                    'bg-success':
+                                                        caseItem.callStatusName?.includes('ติดต่อสำเร็จ') ||
+                                                        caseItem.callStatusName?.includes('สนทนาต่อ'),
+                                                    'bg-danger':
+                                                        caseItem.callStatusName?.includes('ไม่รับสาย') ||
+                                                        caseItem.callStatusName?.includes('ไม่สนทนาต่อ'),
+                                                    'bg-warning': caseItem.callStatusName?.includes('ไม่สะดวกสนทนา'),
+                                                    'bg-secondary':
+                                                        !caseItem.callStatusName?.includes('ติดต่อสำเร็จ') &&
+                                                        !caseItem.callStatusName?.includes('สนทนาต่อ') &&
+                                                        !caseItem.callStatusName?.includes('ไม่รับสาย') &&
+                                                        !caseItem.callStatusName?.includes('ไม่สนทนาต่อ') &&
+                                                        !caseItem.callStatusName?.includes('ไม่สะดวกสนทนา')
+                                                }"
+                                            >
+                                                {{ caseItem.callStatusName }}
+                                            </span>
+                                            <ng-template #noCallStatus>-</ng-template>
+                                        </td>
+                                        <!-- Case Status -->
                                         <td>
                                             <span
                                                 *ngIf="caseItem.status; else noStatus"
@@ -198,7 +257,7 @@
                                 </ng-container>
                                 <ng-template #tableNoData>
                                     <tr>
-                                        <td colspan="8" class="text-center py-5">
+                                        <td colspan="15" class="text-center py-5">
                                             <div class="empty-state">
                                                 <i class="fa-solid fa-inbox fa-3x text-muted mb-3"></i>
                                                 <p class="text-muted mb-0">{{ 'dashboard.noData' | translate }}</p>
