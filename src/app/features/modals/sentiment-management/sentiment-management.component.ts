@@ -19,7 +19,14 @@ export class SentimentManagementComponent implements OnInit {
 
     sentimentForm: FormGroup = new FormGroup({
         name: new FormControl(''),
+        type: new FormControl('neutral'),
     });
+
+    sentimentTypes = [
+        { value: 'positive', label: 'Positive' },
+        { value: 'neutral', label: 'Neutral' },
+        { value: 'negative', label: 'Negative' },
+    ];
 
     constructor(
         public dialogRef: MatDialogRef<SentimentManagementComponent>,
@@ -34,6 +41,7 @@ export class SentimentManagementComponent implements OnInit {
             case 'add':
                 this.sentimentForm.patchValue({
                     name: '',
+                    type: 'neutral',
                 });
                 break;
 
@@ -56,6 +64,7 @@ export class SentimentManagementComponent implements OnInit {
 
         this.sentimentForm.patchValue({
             name: sentiment.name || '',
+            type: sentiment.type || 'neutral',
         });
     }
 
@@ -71,6 +80,7 @@ export class SentimentManagementComponent implements OnInit {
             if (this.data.mode === 'add') {
                 const createData = {
                     name: formValue.name,
+                    type: formValue.type,
                     createdById: userData.userId,
                 };
                 this.callService.createSentiment(createData).subscribe({
@@ -89,6 +99,7 @@ export class SentimentManagementComponent implements OnInit {
             } else if (this.data.mode === 'edit') {
                 const updateData = {
                     name: formValue.name,
+                    type: formValue.type,
                     modifiedById: userData.userId,
                 };
                 this.callService.updateSentiment(this.data.sentiment.id, updateData).subscribe({
@@ -108,4 +119,3 @@ export class SentimentManagementComponent implements OnInit {
         }
     }
 }
-

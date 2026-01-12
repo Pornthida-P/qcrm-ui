@@ -40,6 +40,21 @@
                             {{ 'form.nameRequired' | translate }}
                         </div>
                     </div>
+                    <div class="col-12">
+                        <label for="type" class="form-label"
+                            >{{ 'form.type' | translate }} <span class="text-danger">*</span></label
+                        >
+                        <select
+                            class="form-select"
+                            id="type"
+                            formControlName="type"
+                            [attr.disabled]="data.mode === 'view' ? true : null"
+                        >
+                            <option *ngFor="let t of sentimentTypes" [value]="t.value">
+                                {{ t.label }}
+                            </option>
+                        </select>
+                    </div>
                 </div>
             </div>
 

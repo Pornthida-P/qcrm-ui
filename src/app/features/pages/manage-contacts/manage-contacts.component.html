@@ -746,49 +746,19 @@
                                                     type="button"
                                                     class="sentiment-btn"
                                                     [class.selected]="selectedSentiment === s.id"
-                                                    [class.positive]="
-                                                        s.name?.toLowerCase().includes('positive') ||
-                                                        s.name?.toLowerCase().includes('ดี') ||
-                                                        s.name?.toLowerCase().includes('พอใจ')
-                                                    "
-                                                    [class.neutral]="
-                                                        s.name?.toLowerCase().includes('neutral') ||
-                                                        s.name?.toLowerCase().includes('ปกติ') ||
-                                                        s.name?.toLowerCase().includes('เฉย')
-                                                    "
-                                                    [class.negative]="
-                                                        s.name?.toLowerCase().includes('negative') ||
-                                                        s.name?.toLowerCase().includes('ไม่ดี') ||
-                                                        s.name?.toLowerCase().includes('ไม่พอใจ')
-                                                    "
+                                                    [class.positive]="s.type === 'positive'"
+                                                    [class.neutral]="s.type === 'neutral'"
+                                                    [class.negative]="s.type === 'negative'"
                                                     (click)="selectedSentiment = s.id"
                                                     [title]="s.name"
                                                 >
                                                     <i
                                                         class="fa-solid"
                                                         [ngClass]="{
-                                                            'fa-face-smile':
-                                                                s.name?.toLowerCase().includes('positive') ||
-                                                                s.name?.toLowerCase().includes('ดี') ||
-                                                                s.name?.toLowerCase().includes('พอใจ'),
-                                                            'fa-face-meh':
-                                                                s.name?.toLowerCase().includes('neutral') ||
-                                                                s.name?.toLowerCase().includes('ปกติ') ||
-                                                                s.name?.toLowerCase().includes('เฉย'),
-                                                            'fa-face-frown':
-                                                                s.name?.toLowerCase().includes('negative') ||
-                                                                s.name?.toLowerCase().includes('ไม่ดี') ||
-                                                                s.name?.toLowerCase().includes('ไม่พอใจ'),
-                                                            'fa-face-meh-blank':
-                                                                !s.name?.toLowerCase().includes('positive') &&
-                                                                !s.name?.toLowerCase().includes('ดี') &&
-                                                                !s.name?.toLowerCase().includes('พอใจ') &&
-                                                                !s.name?.toLowerCase().includes('neutral') &&
-                                                                !s.name?.toLowerCase().includes('ปกติ') &&
-                                                                !s.name?.toLowerCase().includes('เฉย') &&
-                                                                !s.name?.toLowerCase().includes('negative') &&
-                                                                !s.name?.toLowerCase().includes('ไม่ดี') &&
-                                                                !s.name?.toLowerCase().includes('ไม่พอใจ')
+                                                            'fa-face-smile': s.type === 'positive',
+                                                            'fa-face-meh': s.type === 'neutral',
+                                                            'fa-face-frown': s.type === 'negative',
+                                                            'fa-face-meh-blank': !s.type
                                                         }"
                                                     ></i>
                                                     <span class="sentiment-label">{{ s.name }}</span>
