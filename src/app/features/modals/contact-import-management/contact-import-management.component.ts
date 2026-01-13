@@ -763,6 +763,63 @@ export class ContactImportManagementComponent implements OnInit {
             return;
         }
 
+        // Pre-process: Collect all unique codes and create caseCode mapping to prevent duplicates
+        const codeToCaseCodeIdMap: { [key: string]: string | null } = {};
+        const uniqueCodes = new Set<string>();
+
+        // Collect all unique codes from valid contacts
+        validContacts.forEach((contactObj: any) => {
+            const code = contactObj['Code'] || contactObj['code'];
+            if (code && code.trim()) {
+                uniqueCodes.add(code.trim());
+            }
+        });
+
+        // Get all existing caseCodes and create mapping
+        try {
+            const caseCodes: any = await firstValueFrom(this.callService.getCaseCode());
+            const parsedCodes = typeof caseCodes === 'string' ? JSON.parse(caseCodes) : caseCodes;
+            const existingCodes = Array.isArray(parsedCodes) ? parsedCodes : [];
+
+            // Map existing codes
+            existingCodes.forEach((cc: any) => {
+                if (cc.code && cc.id) {
+                    codeToCaseCodeIdMap[cc.code] = cc.id.toString();
+                }
+            });
+
+            // Create missing caseCodes sequentially to prevent duplicates
+            for (const code of uniqueCodes) {
+                if (!codeToCaseCodeIdMap[code]) {
+                    try {
+                        // Check again before creating (in case it was created by another process)
+                        const caseCodesCheck: any = await firstValueFrom(this.callService.getCaseCode());
+                        const parsedCodesCheck = typeof caseCodesCheck === 'string' ? JSON.parse(caseCodesCheck) : caseCodesCheck;
+                        const existingCodesCheck = Array.isArray(parsedCodesCheck) ? parsedCodesCheck : [];
+                        const matchedCode = existingCodesCheck.find((cc: any) => cc.code === code);
+
+                        if (matchedCode && matchedCode.id) {
+                            codeToCaseCodeIdMap[code] = matchedCode.id.toString();
+                        } else {
+                            // Create new caseCode if still not exists
+                            const newCaseCode = await firstValueFrom(
+                                this.callService.createCaseCode({ code, script: '', createdById: userData.userId }),
+                            );
+                            const parsedNewCode = typeof newCaseCode === 'string' ? JSON.parse(newCaseCode) : newCaseCode;
+                            if (parsedNewCode && parsedNewCode.id) {
+                                codeToCaseCodeIdMap[code] = parsedNewCode.id.toString();
+                            }
+                        }
+                    } catch (error) {
+                        console.error(`Error creating caseCode for code ${code}:`, error);
+                        // Continue with other codes even if one fails
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Error getting caseCodes:', error);
+        }
+
         // Round Robin: distribute leads to agents in rotation
         await Promise.all(
             validContacts.map(async (contactObj: any, index: number) => {
@@ -778,27 +835,11 @@ export class ContactImportManagementComponent implements OnInit {
                 );
                 const contactNumberId = (result as any[])[0]?.contactNumberId ?? null;
 
-                // Get caseCodeId from Code
+                // Get caseCodeId from Code using pre-built mapping
                 let caseCodeId: string | null = null;
                 const code = contactObj['Code'] || contactObj['code'];
-                if (code) {
-                    try {
-                        const caseCodes: any = await firstValueFrom(this.callService.getCaseCode());
-                        const parsedCodes = typeof caseCodes === 'string' ? JSON.parse(caseCodes) : caseCodes;
-                        const matchedCode = Array.isArray(parsedCodes) ? parsedCodes.find((cc: any) => cc.code === code) : null;
-                        if (matchedCode) {
-                            caseCodeId = matchedCode.id?.toString() || null;
-                        } else {
-                            // Create new caseCode if not exists
-                            const newCaseCode = await firstValueFrom(
-                                this.callService.createCaseCode({ code, script: '', createdById: userData.userId }),
-                            );
-                            const parsedNewCode = typeof newCaseCode === 'string' ? JSON.parse(newCaseCode) : newCaseCode;
-                            caseCodeId = parsedNewCode.id?.toString() || null;
-                        }
-                    } catch (error) {
-                        console.error('Error getting caseCode:', error);
-                    }
+                if (code && code.trim()) {
+                    caseCodeId = codeToCaseCodeIdMap[code.trim()] || null;
                 }
 
                 // Parse requestDateTime - use car's createdAt if available, otherwise use parsedCreatedDate
