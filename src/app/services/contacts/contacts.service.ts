@@ -120,4 +120,8 @@ export class ContactsService {
             `${this.baseUrl}${config.api.path.contacts.baseUrl}${config.api.path.contacts.contactNumberIdByPhone}/${phone}`,
         );
     }
+
+    getContactGroup() {
+        return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}${config.api.path.contacts.contactGroup}`);
+    }
 }

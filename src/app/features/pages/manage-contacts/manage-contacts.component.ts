@@ -150,6 +150,7 @@ export class ManageContactsComponent implements OnInit {
     filteredServiceSubTypes: any[] = [];
     partnerCode: any;
     contactGroupId: any;
+    contactGroup: any;
 
     constructor(
         private contactsService: ContactsService,
@@ -264,6 +265,7 @@ export class ManageContactsComponent implements OnInit {
         this.getStatusList();
         this.getCallStatus();
         this.getSentiments();
+        this.getContactGroup();
     }
 
     getStatusList() {
@@ -382,6 +384,8 @@ export class ManageContactsComponent implements OnInit {
             gender: this.contactGender || 'unknown',
             modifiedById: userData.userId,
             contactNumNew: this.contactNumNew,
+            contactGroupId: this.contactGroupId,
+            email: this.contactEmail,
         };
         console.log('data: ', data);
         this.contactsService
@@ -420,6 +424,8 @@ export class ManageContactsComponent implements OnInit {
             chatType: this.chatType,
             displayName: this.displayName,
             issue: this.issue,
+            contactGroupId: this.contactGroupId,
+            email: this.contactEmail,
         };
 
         this.contactsService
@@ -1546,5 +1552,12 @@ export class ManageContactsComponent implements OnInit {
         }
 
         return this.callStatus;
+    }
+
+    getContactGroup() {
+        this.contactsService.getContactGroup().subscribe((res: any) => {
+            console.log('contactGroup: ', res);
+            this.contactGroup = res;
+        });
     }
 }
