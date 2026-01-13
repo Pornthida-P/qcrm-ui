@@ -52,22 +52,6 @@
         </button>
         <button
             class="btn btn-sm"
-            [class.btn-warning]="activeFilter === 'pending'"
-            [class.btn-outline-warning]="activeFilter !== 'pending'"
-            (click)="switchFilter('pending')"
-        >
-            {{ 'leadManagement.filterPending' | translate }}
-        </button>
-        <button
-            class="btn btn-sm"
-            [class.btn-danger]="activeFilter === 'no-answer'"
-            [class.btn-outline-danger]="activeFilter !== 'no-answer'"
-            (click)="switchFilter('no-answer')"
-        >
-            {{ 'leadManagement.filterNoAnswer' | translate }}
-        </button>
-        <button
-            class="btn btn-sm"
             [class.btn-secondary]="activeFilter === 'unassigned'"
             [class.btn-outline-secondary]="activeFilter !== 'unassigned'"
             (click)="switchFilter('unassigned')"
@@ -78,7 +62,12 @@
         <!-- Agent Filter -->
         <div class="ms-auto d-flex align-items-center gap-2">
             <label class="text-muted small mb-0">{{ 'leadManagement.filterByAgent' | translate }}:</label>
-            <select class="form-select form-select-sm" [(ngModel)]="filterAgent" (ngModelChange)="onAgentFilterChange()" style="width: 150px">
+            <select
+                class="form-select form-select-sm"
+                [(ngModel)]="filterAgent"
+                (ngModelChange)="onAgentFilterChange()"
+                style="width: 150px"
+            >
                 <option value="">{{ 'leadManagement.allAgents' | translate }}</option>
                 <option *ngFor="let agent of agents" [value]="agent.userId">{{ agent.username }}</option>
             </select>
@@ -109,14 +98,19 @@
                         <th *ngIf="activeTab === 'leads'" style="width: 40px">
                             <input type="checkbox" [(ngModel)]="selectAll" (change)="toggleSelectAll()" class="form-check-input" />
                         </th>
-                        <th>{{ 'common.time' | translate }}</th>
-                        <th>{{ 'contact.contact' | translate }}</th>
-                        <th>{{ 'contact.phoneNumber' | translate }}</th>
-                        <th>{{ 'contact.topic' | translate }}</th>
-                        <th>{{ 'contact.callStatus' | translate }}</th>
-                        <th class="text-center">{{ 'callList.attempts' | translate }}</th>
-                        <th>{{ 'contact.assignUser' | translate }}</th>
-                        <th class="text-center">{{ 'callList.action' | translate }}</th>
+                        <th class="text-nowrap">{{ 'contact-import-management.created-date' | translate }}</th>
+                        <th class="text-nowrap">{{ 'contact-import-management.dealer-name' | translate }}</th>
+                        <th class="text-nowrap">{{ 'contact-import-management.contact-email' | translate }}</th>
+                        <th class="text-nowrap">{{ 'contact-import-management.contact-mobile' | translate }}</th>
+                        <th class="text-nowrap">{{ 'contact-import-management.dealer-id' | translate }}</th>
+                        <th class="text-nowrap">{{ 'contact-import-management.code' | translate }}</th>
+                        <th class="text-nowrap">{{ 'contact-import-management.license-plate' | translate }}</th>
+                        <th class="text-nowrap">{{ 'contact-import-management.car-brand-model' | translate }}</th>
+                        <th class="text-nowrap">{{ 'contact-import-management.car-status' | translate }}</th>
+                        <th class="text-nowrap">{{ 'contact.callStatus' | translate }}</th>
+                        <th class="text-center text-nowrap">{{ 'callList.attempts' | translate }}</th>
+                        <th class="text-nowrap">{{ 'contact.assignUser' | translate }}</th>
+                        <th class="text-center text-nowrap">{{ 'callList.action' | translate }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -130,14 +124,24 @@
                             />
                         </td>
                         <td>{{ lead.requestDateTime | date : 'dd/MM/yyyy HH:mm' }}</td>
-                        <td>{{ lead.fullname || '-' }}</td>
-                        <td>
+                        <td>{{ lead.dealerName || lead.fullname || '-' }}</td>
+                        <td>{{ lead.email || '-' }}</td>
+                        <td class="font-monospace">
                             <span *ngIf="lead.contactNumber" class="phone-text">
                                 <i class="fa-solid fa-phone me-1"></i>{{ lead.contactNumber }}
                             </span>
                             <span *ngIf="!lead.contactNumber">-</span>
                         </td>
-                        <td>{{ lead.topic || '-' }}</td>
+                        <td class="font-monospace small">{{ lead.dealerId || lead.partnerCode || '-' }}</td>
+                        <td class="font-monospace">{{ lead.casecode || lead.carCode || '-' }}</td>
+                        <td class="font-monospace small">{{ lead.licensePlateNumber || '-' }}</td>
+                        <td>
+                            <span *ngIf="lead.carBrand || lead.carModel">
+                                {{ (lead.carBrand || '') + (lead.carBrand && lead.carModel ? ' ' : '') + (lead.carModel || '') }}
+                            </span>
+                            <span *ngIf="!lead.carBrand && !lead.carModel">-</span>
+                        </td>
+                        <td>{{ lead.carStatusDescription || '-' }}</td>
                         <td>
                             <span *ngIf="lead.callStatus" class="call-status-badge" [ngClass]="getCallStatusClass(lead.callStatus)">
                                 {{ lead.callStatus }}
@@ -185,7 +189,7 @@
                         </td>
                     </tr>
                     <tr *ngIf="paginatedLeads.length === 0">
-                        <td [attr.colspan]="activeTab === 'leads' ? 9 : 8" class="text-center py-4">
+                        <td [attr.colspan]="activeTab === 'leads' ? 14 : 13" class="text-center py-4">
                             <div class="empty-state">
                                 <i class="fa-solid fa-inbox fa-2x mb-2"></i>
                                 <p class="text-muted mb-0">{{ 'common.dataNotFound' | translate }}</p>
@@ -195,7 +199,6 @@
                 </tbody>
             </table>
         </div>
-
     </div>
 
     <!-- Pagination -->
@@ -239,31 +242,28 @@
                 <div class="card workload-card">
                     <div class="card-body py-3">
                         <div class="d-flex align-items-center mb-2">
-                            <div class="agent-avatar me-2" style="width: 40px; height: 40px; font-size: 1rem;">
+                            <div class="agent-avatar me-2" style="width: 40px; height: 40px; font-size: 1rem">
                                 <i class="fa-solid fa-user"></i>
                             </div>
                             <h6 class="card-title mb-0">{{ agent.username }}</h6>
                         </div>
-                        <div class="workload-stats" style="padding-top: 0.75rem;">
+                        <div class="workload-stats" style="padding-top: 0.75rem">
                             <div class="stat-item">
-                                <span class="stat-value text-primary" style="font-size: 1.25rem;">{{ agent.totalLeads || 0 }}</span>
+                                <span class="stat-value text-primary" style="font-size: 1.25rem">{{ agent.totalLeads || 0 }}</span>
                                 <span class="stat-label">{{ 'leadManagement.totalLeads' | translate }}</span>
                             </div>
                             <div class="stat-item">
-                                <span class="stat-value text-warning" style="font-size: 1.25rem;">{{ agent.pendingLeads || 0 }}</span>
+                                <span class="stat-value text-warning" style="font-size: 1.25rem">{{ agent.pendingLeads || 0 }}</span>
                                 <span class="stat-label">{{ 'leadManagement.pendingLeads' | translate }}</span>
                             </div>
                             <div class="stat-item">
-                                <span class="stat-value text-danger" style="font-size: 1.25rem;">{{ agent.deadPoolLeads || 0 }}</span>
+                                <span class="stat-value text-danger" style="font-size: 1.25rem">{{ agent.deadPoolLeads || 0 }}</span>
                                 <span class="stat-label">{{ 'leadManagement.deadPoolLeads' | translate }}</span>
                             </div>
                         </div>
                         <!-- Reassign from this agent button -->
                         <div class="card-actions mt-3 pt-2 border-top" *ngIf="agent.totalLeads > 0">
-                            <button
-                                class="btn btn-outline-primary btn-sm w-100"
-                                (click)="openReassignFromAgentModal(agent)"
-                            >
+                            <button class="btn btn-outline-primary btn-sm w-100" (click)="openReassignFromAgentModal(agent)">
                                 <i class="fa-solid fa-shuffle me-1"></i>
                                 {{ 'leadManagement.reassignFromAgent' | translate }}
                             </button>
@@ -336,7 +336,12 @@
             <button type="button" class="btn btn-secondary btn-sm" (click)="closeAutoReassignModal()">
                 {{ 'common.cancel' | translate }}
             </button>
-            <button type="button" class="btn btn-primary btn-sm" (click)="confirmAutoReassign()" [disabled]="selectedAgentsForReassign.size === 0">
+            <button
+                type="button"
+                class="btn btn-primary btn-sm"
+                (click)="confirmAutoReassign()"
+                [disabled]="selectedAgentsForReassign.size === 0"
+            >
                 <i class="fa-solid fa-shuffle me-1"></i>
                 {{ 'leadManagement.autoReassign' | translate }}
             </button>
@@ -356,7 +361,7 @@
             <!-- Source Agent Info -->
             <div class="source-agent-info mb-3 p-3 bg-light rounded">
                 <div class="d-flex align-items-center">
-                    <div class="agent-avatar me-2" style="width: 36px; height: 36px; font-size: 0.9rem;">
+                    <div class="agent-avatar me-2" style="width: 36px; height: 36px; font-size: 0.9rem">
                         <i class="fa-solid fa-user"></i>
                     </div>
                     <div>
@@ -412,7 +417,12 @@
             <button type="button" class="btn btn-secondary btn-sm" (click)="closeReassignFromAgentModal()">
                 {{ 'common.cancel' | translate }}
             </button>
-            <button type="button" class="btn btn-primary btn-sm" (click)="confirmReassignFromAgent()" [disabled]="selectedTargetAgents.size === 0">
+            <button
+                type="button"
+                class="btn btn-primary btn-sm"
+                (click)="confirmReassignFromAgent()"
+                [disabled]="selectedTargetAgents.size === 0"
+            >
                 <i class="fa-solid fa-shuffle me-1"></i>
                 {{ 'leadManagement.reassign' | translate }}
             </button>
