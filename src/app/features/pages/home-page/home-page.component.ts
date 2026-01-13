@@ -27,15 +27,15 @@ export class HomePageComponent implements OnInit {
     totalPages = 1;
     totalCount = 0;
     createdById = '';
-    selectedCaseTopic = '';
+    selectedCaseCode = '';
     selectedCaseChannel = '';
-    caseTopicList: any[] = [];
+    caseCodeList: any[] = [];
     caseChannelList: any[] = [];
     caseChannel: any[] = [];
-    caseTopic: any[] = [];
+    caseCode: any[] = [];
     contactCount: number = 0;
     caseChannelCount: number = 0;
-    caseTopicCount: number = 0;
+    caseCodeCount: number = 0;
     channelPercentage: any[] = [];
     statusList: any[] = [];
     allContactCount: number = 0;
@@ -187,16 +187,16 @@ export class HomePageComponent implements OnInit {
         (this.contactChartOptions.tooltip as any).valueSuffix = ` (${this.translate.instant('dashboard.contact')})`;
 
         this.getDataUser();
-        this.getCaseTopic();
+        this.getCaseCode();
         this.getCaseChannel();
-        this.initChart(this.caseChannel, this.caseTopic);
+        this.initChart(this.caseChannel, this.caseCode);
         this.getAllContactCount();
     }
 
-    initChart(caseChannelCount: any[], caseTopicCount: any[]) {
+    initChart(caseChannelCount: any[], caseCodeCount: any[]) {
         (this.caseChartOptions.series as any)[0].data = caseChannelCount.map((item) => ({ name: item.name, y: item.value }));
-        (this.contactChartOptions.xAxis as any).categories = caseTopicCount.map((item) => item.code);
-        (this.contactChartOptions.series as any)[0].data = caseTopicCount.map((item) => item.value);
+        (this.contactChartOptions.xAxis as any).categories = caseCodeCount.map((item) => item.code);
+        (this.contactChartOptions.series as any)[0].data = caseCodeCount.map((item) => item.value);
         this.updateFlag = true;
     }
 
@@ -247,23 +247,21 @@ export class HomePageComponent implements OnInit {
                         value: (item.value / this.allCases.length) * 100,
                     }));
 
-                    // Calculate and store topic counts
-                    this.caseTopic = Object.values(
+                    // Calculate and store case code counts
+                    this.caseCode = Object.values(
                         this.allCases.reduce((acc, item) => {
-                            const topic = item.topic;
-                            const code = item.topicCode;
-                            if (topic) {
-                                if (!acc[topic]) {
-                                    acc[topic] = { code: code, name: topic, value: 0 };
+                            const code = item.casecode;
+                            if (code) {
+                                if (!acc[code]) {
+                                    acc[code] = { code: code, name: code, value: 0 };
                                 }
 
-                                acc[topic].value += 1;
-                                acc[topic].code = code;
+                                acc[code].value += 1;
                             }
                             return acc;
                         }, {}),
                     );
-                    this.caseTopicCount = this.caseTopic.length;
+                    this.caseCodeCount = this.caseCode.length;
                     this.contactCount = [...new Set(this.allCases.map((item) => item.contactId))].length;
 
                     // เรียก filterCases เพื่อ filter และ paginate จาก allCases
@@ -287,9 +285,9 @@ export class HomePageComponent implements OnInit {
 
             const matchesChannel = !this.selectedCaseChannel || caseItem.channel === this.selectedCaseChannel;
 
-            const matchesTopic = !this.selectedCaseTopic || caseItem.topicCode === this.selectedCaseTopic;
+            const matchesCode = !this.selectedCaseCode || caseItem.casecode === this.selectedCaseCode;
 
-            const hasAnyFilter = this.selectedStatus || this.selectedCaseChannel || this.selectedCaseTopic;
+            const hasAnyFilter = this.selectedStatus || this.selectedCaseChannel || this.selectedCaseCode;
 
             if (!hasAnyFilter) {
                 return true;
@@ -303,8 +301,8 @@ export class HomePageComponent implements OnInit {
             if (this.selectedCaseChannel) {
                 matches = matches && matchesChannel;
             }
-            if (this.selectedCaseTopic) {
-                matches = matches && matchesTopic;
+            if (this.selectedCaseCode) {
+                matches = matches && matchesCode;
             }
 
             return matches;
@@ -314,7 +312,7 @@ export class HomePageComponent implements OnInit {
         this.totalPages = Math.ceil(this.totalCount / this.pageSize);
         this.calculatePages();
 
-        if (this.selectedStatus && !this.selectedCaseChannel && !this.selectedCaseTopic) {
+        if (this.selectedStatus && !this.selectedCaseChannel && !this.selectedCaseCode) {
             this.getStatusList(this.allCases);
         } else {
             this.getStatusList(filteredAllCases);
@@ -343,24 +341,22 @@ export class HomePageComponent implements OnInit {
             value: filteredAllCases.length > 0 ? (item.value / filteredAllCases.length) * 100 : 0,
         }));
 
-        let caseTopic = Object.values(
+        let caseCode = Object.values(
             filteredAllCases.reduce((acc, item) => {
-                const topic = item.topic;
-                const code = item.topicCode;
-                if (topic) {
-                    if (!acc[topic]) {
-                        acc[topic] = { code: code, name: topic, value: 0 };
+                const code = item.casecode;
+                if (code) {
+                    if (!acc[code]) {
+                        acc[code] = { code: code, name: code, value: 0 };
                     }
 
-                    acc[topic].value += 1;
-                    acc[topic].code = code;
+                    acc[code].value += 1;
                 }
                 return acc;
             }, {}),
         );
-        this.caseTopicCount = caseTopic.length;
+        this.caseCodeCount = caseCode.length;
         this.contactCount = [...new Set(filteredAllCases.map((item) => item.contactId))].length;
-        this.initChart(caseChannel, caseTopic);
+        this.initChart(caseChannel, caseCode);
     }
 
     isOverOneDay(createdAt: string): boolean {
@@ -381,12 +377,12 @@ export class HomePageComponent implements OnInit {
         }, 300);
     }
 
-    getCaseTopic() {
-        this.callService.getCaseTopic().subscribe((res: any) => {
-            this.caseTopicList = res.map((item: any) => ({
-                id: item.caseTopicId,
+    getCaseCode() {
+        this.callService.getCaseCode().subscribe((res: any) => {
+            this.caseCodeList = res.map((item: any) => ({
+                id: item.id,
                 code: item.code,
-                name: `${item.code} - ${item.name}`,
+                name: item.code,
                 value: item.code,
             }));
         });
