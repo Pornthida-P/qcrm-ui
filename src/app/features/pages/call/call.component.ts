@@ -105,8 +105,6 @@ export class CallComponent implements OnInit {
     attachmentShowing: boolean = false;
     cType: string = '';
     callId: string = '';
-    selectedCasesubject: any;
-    selectedCaseTopics: string | null = null;
     selectedChannels: any;
     currentChannel: any;
     channels: any;
@@ -483,52 +481,112 @@ export class CallComponent implements OnInit {
         if (this.selectValue.length != 0) {
             this.selectedCalls = this.calls.filter((calls: any) => this.selectValue.includes(calls.caseId));
         } else {
-            this.selectedCalls = [];
+            this.selectedCalls = this.calls;
         }
         if (this.selectedCalls.length != 0) {
-            const processedForms = this.selectedCalls.reduce(
-                (acc: any, cur: any) => [
-                    ...acc,
-                    {
-                        createdAt: cur.createdAt,
-                        channel: cur.channel,
-                        callType: cur.type,
-                        caseCode: cur.casecode,
-                        assignDate: cur.assignDate,
-                        assignUser: cur.agent,
-                        caseType: cur.casetype,
-                        serviceGroup: cur.caseServiceGroup,
-                        serviceType: cur.caseServiceType,
-                        serviceSubType: cur.caseServiceSubType,
-                        description: cur.description,
-                        comment: cur.comment,
-                        contact: cur.contact,
-                        callStatus: cur.callStatusName,
-                        caseStatus: cur.status,
-                    },
-                ],
-                [],
-            );
+            const processedForms = this.selectedCalls.map((cur: any) => {
+                // Parse date and time
+                const dateTime = cur.requestDateTime || cur.createdAt;
+                const dateObj = moment(dateTime);
+                const dateStr = dateObj.format('D/M/YYYY');
+                const timeDecimal = dateObj.format('H.mm');
+                const time12Hour = dateObj.format('h:mm A');
+                const monthStr = dateObj.format('MMM-YY');
+
+                // Determine time period (Morning/Afternoon)
+                const hour = dateObj.hour();
+                const timePeriod = hour < 12 ? 'Morning' : 'Afternoon';
+
+                // Format assign date
+                const assignDateStr = cur.assignDate ? moment(cur.assignDate).format('D/M/YYYY') : '';
+
+                // Get sentiment name
+                const sentimentName = cur.sentiment || '';
+
+                // Get contact information - try multiple sources
+                const contactName = cur.contact || cur.contactName || cur.firstName || cur.lastName || '';
+                const partnerCode = cur.partnerCode || cur.dealerId || '';
+                const displayName = cur.displayName || cur.contact || cur.firstName || cur.lastName || '';
+
+                // Get car ID
+                const carId = cur.carId || '';
+
+                // Get satisfaction (if available)
+                const satisfaction = cur.satisfaction || '';
+
+                // Service Detail (from description)
+                const serviceDetail = cur.description || '';
+
+                // Note (from comment)
+                const note = cur.comment || '';
+
+                // Customer Group - from contactType (Seller/Buyer)
+                const customerGroup = cur.contactGroupName || '';
+
+                // ประเภทของการติดต่อ - from caseType
+                const contactCategory = cur.caseType || cur.casetype || '';
+
+                return {
+                    date: dateStr,
+                    time: timeDecimal,
+                    time2: time12Hour,
+                    month: monthStr,
+                    timePeriod: timePeriod,
+                    caseId: cur.caseId || '',
+                    channel: cur.channel || '',
+                    contactType: cur.type || '',
+                    campaignCode: cur.casecode || '',
+                    assignDate: assignDateStr,
+                    customerGroup: customerGroup,
+                    contactCategory: contactCategory,
+                    serviceGroup: cur.caseServiceGroup || '',
+                    serviceType: cur.caseServiceType || '',
+                    serviceSubType: cur.caseServiceSubType || '',
+                    serviceDetail: serviceDetail,
+                    note: note,
+                    contactTime: timeDecimal,
+                    sentiment: sentimentName,
+                    dealerName: contactName,
+                    partnerCode: partnerCode,
+                    profileName: displayName,
+                    callStatus: cur.callStatusName || '',
+                    status: cur.status || '',
+                    satisfaction: satisfaction,
+                    carId: carId,
+                };
+            });
 
             const columns = [
                 [
-                    this.translate.instant('common.time'),
-                    this.translate.instant('contact.channel'),
-                    this.translate.instant('contact.callType'),
-                    this.translate.instant('contact.code'),
-                    this.translate.instant('contact.assignDate'),
-                    this.translate.instant('contact.assignUser'),
-                    this.translate.instant('contact.caseType'),
-                    this.translate.instant('contact.serviceGroup'),
-                    this.translate.instant('contact.serviceType'),
-                    this.translate.instant('contact.serviceSubType'),
-                    this.translate.instant('contact.description'),
-                    this.translate.instant('contact.comment'),
-                    this.translate.instant('contact.contact'),
-                    this.translate.instant('contact.callStatus'),
-                    this.translate.instant('common.status'),
+                    'วันที่',
+                    'เวลา',
+                    'เวลา 2',
+                    'เดือน',
+                    'ช่วงเวลาการติดต่อ',
+                    'Case ID',
+                    'Channel',
+                    'Contact Type',
+                    'Campaign Code - Outbound',
+                    'Assign Date - Outbound',
+                    'Customer Group',
+                    'ประเภทของการติดต่อ',
+                    'หัวข้อการติดต่อ\n(Service Group)',
+                    'เรื่องที่ติดต่อ\n(Service Type)',
+                    'เรื่องที่ติดต่อ\n(Service Sub-Type)',
+                    'Service Detail',
+                    'Note',
+                    'เวลาติดต่อ',
+                    'Sentiment',
+                    'Dealer Name / Seller Name',
+                    'Partner Code',
+                    'ชื่อโปรไฟล์',
+                    'สถานะการติดต่อ',
+                    'สถานะ\n(Status)',
+                    'ความพึงพอใจ',
+                    'CAR ID',
                 ],
             ];
+
             const wb = XLSX.utils.book_new();
             const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet([]);
             XLSX.utils.sheet_add_aoa(ws, columns);
@@ -537,7 +595,7 @@ export class CallComponent implements OnInit {
 
             XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
 
-            XLSX.writeFile(wb, `ประวัติการโทร${this.fileType}`);
+            XLSX.writeFile(wb, `ประวัติการโทร_${moment().format('DD-MM-YYYY_HH-mm-ss')}${this.fileType}`);
         }
     }
 
@@ -650,6 +708,9 @@ export class CallComponent implements OnInit {
         // this.serviceGroupControl.disable();
         // this.serviceTypeControl.disable();
         // this.serviceSubTypeControl.disable();
+
+        // Disable form controls for agent
+        this.disableFormControlsForAgent();
 
         this.callService.getCaseCode().subscribe((caseCodes: any) => {
             this.caseCodes = caseCodes;
@@ -1378,6 +1439,27 @@ export class CallComponent implements OnInit {
             return true;
         } else {
             return false;
+        }
+    }
+
+    isAgent(): boolean {
+        // Agent role หรือ role อื่นๆ ที่ไม่ใช่ admin/super admin
+        return !this.checkSupRole();
+    }
+
+    disableFormControlsForAgent(): void {
+        if (this.isAgent()) {
+            this.codeControl.disable();
+            this.caseTypeControl.disable();
+            this.serviceGroupControl.disable();
+            this.serviceTypeControl.disable();
+            this.serviceSubTypeControl.disable();
+        } else {
+            this.codeControl.enable();
+            this.caseTypeControl.enable();
+            this.serviceGroupControl.enable();
+            this.serviceTypeControl.enable();
+            this.serviceSubTypeControl.enable();
         }
     }
 

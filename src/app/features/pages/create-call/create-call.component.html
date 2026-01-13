@@ -1,180 +1,394 @@
-<div class="">
-    <div class="bg-white rounded shadow w-100 h-100">
-        <div class="p-4 d-flex flex-column justify-content-between gap-4 w-100">
-            <div class="d-flex justify-content-between mg-bt">
-                <button type="button" (click)="prev()" class="btn btn-outline-danger">{{ 'common.back' | translate }}</button>
-                <button type="button" (click)="submit()" class="btn btn-primary rounded text-white">{{ 'common.save' | translate }}</button>
+<div class="h-100">
+    <div class="bg-white rounded shadow w-100 h-100 overflow-auto">
+        <div class="p-3 p-md-4">
+            <!-- Header -->
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+                <h5 class="m-0 fw-semibold">{{ 'contact.createContact' | translate }}</h5>
+                <div class="d-flex gap-2">
+                    <button type="button" (click)="prev()" class="btn btn-outline-secondary">
+                        <i class="fa-solid fa-arrow-left me-1"></i>{{ 'common.back' | translate }}
+                    </button>
+                    <button type="button" (click)="submit()" class="btn btn-primary">
+                        <i class="fa-solid fa-save me-1"></i>{{ 'common.save' | translate }}
+                    </button>
+                </div>
             </div>
-            <p class="fs-5 mg-bt-0">{{ 'contact.createContact' | translate }}</p>
-            <form class="row g-3">
-                <!-- ผู้ติดต่อ -->
-                <div class="col-12 col-md-6">
-                    <label for="inputContact" class="form-label">{{ 'contact.contact' | translate }}</label>
-                    <div
-                        class="form-control d-flex align-items-center"
-                        (click)="showSideBarContact()"
-                        data-bs-toggle="offcanvas"
-                        data-bs-target="#offcanvasRight"
-                        style="cursor: pointer; min-height: 38px"
-                    >
-                        {{ contactName || ('contact.selectContact' | translate) }}
+
+            <form class="case-form">
+                <!-- Contact Section -->
+                <div class="form-section mb-3">
+                    <div class="section-header mb-2">
+                        <i class="fa-solid fa-user me-2"></i>
+                        <span class="fw-semibold">{{ 'contact.contactInfo' | translate }}</span>
                     </div>
-                </div>
-
-                <!-- หัวข้อที่ติดต่อ -->
-                <div class="col-12 col-md-6">
-                  <label for="inputTopic" class="form-label fw-semibold">{{ 'contact.topic' | translate }}<span class="color-red">*</span></label>
-
-                    <mat-form-field class="w-100" appearance="outline">
-                        <input
-                            type="text"
-                            matInput
-                            [formControl]="topicControl"
-                            [matAutocomplete]="autoTopic"
-                            (input)="filterTopics()"
-                            (focus)="filterTopics()"
-                            [placeholder]="'contact.searchTopic' | translate"
-                        />
-                        <mat-autocomplete
-                            #autoTopic="matAutocomplete"
-                            [displayWith]="displayTopicFn"
-                            (optionSelected)="onTopicSelected($event)"
-                        >
-                            <mat-option *ngFor="let topic of filteredTopics" [value]="topic">
-                                {{ topic.code }} - {{ topic.name }}
-                            </mat-option>
-                        </mat-autocomplete>
-                    </mat-form-field>
-                </div>
-
-                <!-- เรื่องที่ติดต่อ -->
-                <div class="col-12 col-md-6">
-                    <label for="inputCaseSubject" class="form-label fw-semibold">{{ 'contact.subject' | translate }}</label>
-                  <mat-form-field class="w-100" appearance="outline">
-                        <input
-                            type="text"
-                            matInput
-                            [formControl]="subjectControl"
-                            [matAutocomplete]="autoSubject"
-                            (input)="filterSubjects()"
-                            (focus)="filterSubjects()"
-                            [placeholder]="'contact.searchSubject' | translate"
-                        />
-                        <mat-autocomplete
-                            #autoSubject="matAutocomplete"
-                            [displayWith]="displaySubjectFn"
-                            (optionSelected)="onSubjectSelected($event)"
-                        >
-                            <mat-option *ngFor="let subject of filteredSubjects" [value]="subject">
-                                {{ subject.name }}
-                            </mat-option>
-                        </mat-autocomplete>
-                    </mat-form-field>
-                </div>
-
-                <!-- สถานะ -->
-                <div class="col-12 col-md-6">
-                    <label for="inputStatus" class="form-label fw-semibold">{{ 'common.status' | translate }}</label>
-                    <select id="inputStatus" class="form-select" name="selectedStatus" [(ngModel)]="selectedStatus">
-                        <option disabled value="">{{ 'common.pleaseSelect' | translate }}</option>
-                        <option *ngFor="let status of statusList" [value]="status.id">{{ status.status }}</option>
-                    </select>
-                </div>
-
-                <!-- ช่องทางติดต่อ -->
-                <div class="col-12 col-md-6">
-                    <label for="inputChannel" class="form-label fw-semibold">{{ 'contact.channel' | translate }}</label>
-                    <select id="inputChannel" class="form-select" name="selectedChannels" [(ngModel)]="selectedChannels">
-                        <option disabled value="">{{ 'common.pleaseSelect' | translate }}</option>
-                        <option *ngFor="let channel of channels" [value]="channel.channelId">{{ channel.name }}</option>
-                    </select>
-                </div>
-
-                <!-- ประเภทสาย/อีเมล -->
-                <div class="col-12 col-md-6" *ngIf="selectedChannels === '1' || selectedChannels === '2' || selectedChannels === '3'">
-                    <label for="inputCallType" class="form-label fw-semibold">
-                        {{ selectedChannels === '3' ? ('contact.emailType' | translate) : ('contact.callType' | translate) }}
-                    </label>
-                    <select id="inputCallType" class="form-select" name="selectedCallTypeId" [(ngModel)]="selectedCallTypeId">
-                        <option disabled value="">{{ 'common.pleaseSelect' | translate }}</option>
-                        <option *ngFor="let callType of callTypes" [value]="callType.name">{{ callType.name }}</option>
-                    </select>
-                </div>
-
-                <!-- เบอร์ติดต่อ -->
-                <div class="col-12 col-md-6" *ngIf="selectedChannels === '1' || selectedChannels === '2'">
-                    <label for="inputContactNumber" class="form-label fw-semibold">{{ 'contact.phoneNumber' | translate }}<span class="text-danger">*</span></label>
-                    <select id="inputContactNumber" class="form-select" name="selectedContactNumber" [(ngModel)]="selectedContactNumber">
-                        <option disabled [ngValue]="null">{{ 'common.pleaseSelect' | translate }}</option>
-                        <option
-                            *ngFor="let contactNumbers of contactNumber"
-                            [ngValue]="{ contactNumber: contactNumbers.contactNumber, contactNumberId: contactNumbers.contactNumberId }"
-                        >
-                            {{ contactNumbers.contactNumber }}
-                        </option>
-                    </select>
-                </div>
-
-                <!-- ไฟล์แนบ -->
-                <div class="col-12 col-md-6">
-                    <label for="formFileSm" class="form-label fw-semibold">{{ 'contact.attachment' | translate }}</label>
-                    <input class="form-control" id="formFileSm" type="file" multiple (change)="onFileSelected($event)" />
-                </div>
-
-                <!-- วันที่และเวลา -->
-                <div class="col-12 col-md-6">
-                    <label for="inputDateTime" class="form-label fw-semibold">{{ 'contact.dateTime' | translate }}</label>
-                    <div class="d-flex flex-wrap gap-1 align-items-center">
-                        <div class="input-group" style="width: auto; min-width: 180px">
-                            <input
-                                matInput
-                                [matDatepicker]="picker1"
-                                name="startTime"
-                                [(ngModel)]="startTime"
-                                required
-                                class="form-control"
-                                [placeholder]="'common.selectDate' | translate"
-                                style="width: 120px"
-                            />
-                            <span class="input-group-text">
-                                <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-                                <mat-datepicker #picker1></mat-datepicker>
-                            </span>
+                    <div class="section-content">
+                        <div class="row g-2">
+                            <div class="col-12 col-md-6">
+                                <label for="inputContact" class="form-label form-label-sm fw-semibold mb-1">
+                                    {{ 'contact.contact' | translate }}<span class="color-red">*</span>
+                                </label>
+                                <div
+                                    class="form-control form-control-sm d-flex align-items-center"
+                                    (click)="showSideBarContact()"
+                                    data-bs-toggle="offcanvas"
+                                    data-bs-target="#offcanvasRight"
+                                    style="cursor: pointer; min-height: 38px"
+                                >
+                                    <i class="fa-solid fa-user me-2 text-muted"></i>
+                                    {{ contactName || ('contact.selectContact' | translate) }}
+                                </div>
+                            </div>
                         </div>
-                        <ngb-timepicker
-                            name="timepickStart"
-                            [(ngModel)]="timepickStart"
-                            [seconds]="seconds"
-                            [ngModelOptions]="{ standalone: true }"
-                            (ngModelChange)="onTimepickStartChange($event)"
-                        ></ngb-timepicker>
                     </div>
                 </div>
 
-                <!-- รายละเอียด -->
-                <div class="col-12">
-                    <label for="floatingTextarea" class="form-label fw-semibold">{{ 'contact.description' | translate }}</label>
-                    <textarea
-                        class="form-control"
-                        [placeholder]="'common.pleaseEnter' | translate"
-                        id="floatingTextarea"
-                        name="description"
-                        [(ngModel)]="description"
-                        rows="3"
-                    ></textarea>
+                <!-- Case Classification Section -->
+                <div class="form-section mb-3">
+                    <div class="section-header mb-2">
+                        <i class="fa-solid fa-folder-tree me-2"></i>
+                        <span class="fw-semibold">{{ 'contact.caseClassification' | translate }}</span>
+                    </div>
+                    <div class="section-content">
+                        <div class="row g-2">
+                            <!-- Row 1: Code & Case Type -->
+                            <div class="col-12 col-md-6">
+                                <label class="form-label form-label-sm fw-semibold mb-1">
+                                    {{ 'contact.code' | translate }}<span class="color-red">*</span>
+                                </label>
+                                <mat-form-field class="w-100 compact-field" appearance="outline">
+                                    <input
+                                        type="text"
+                                        matInput
+                                        [formControl]="codeControl"
+                                        [matAutocomplete]="autoCode"
+                                        (input)="filterCodes()"
+                                        (focus)="filterCodes()"
+                                        [placeholder]="'contact.searchCode' | translate"
+                                    />
+                                    <mat-autocomplete
+                                        #autoCode="matAutocomplete"
+                                        [displayWith]="displayCodeFn"
+                                        (optionSelected)="onCodeSelected($event)"
+                                    >
+                                        <mat-option *ngFor="let code of filteredCodes" [value]="code">
+                                            <ng-container *ngIf="code.isNew">
+                                                <i class="fa-solid fa-plus me-2 text-success"></i>
+                                                {{ 'common.create' | translate }}: "{{ code.code }}"
+                                            </ng-container>
+                                            <ng-container *ngIf="!code.isNew">
+                                                {{ code.code }}
+                                            </ng-container>
+                                        </mat-option>
+                                    </mat-autocomplete>
+                                </mat-form-field>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label form-label-sm fw-semibold mb-1">
+                                    {{ 'contact.caseType' | translate }}<span class="color-red">*</span>
+                                </label>
+                                <mat-form-field class="w-100 compact-field" appearance="outline">
+                                    <input
+                                        type="text"
+                                        matInput
+                                        [formControl]="caseTypeControl"
+                                        [matAutocomplete]="autoCaseType"
+                                        (input)="filterCaseTypes()"
+                                        (focus)="filterCaseTypes()"
+                                        [placeholder]="'contact.searchCaseType' | translate"
+                                    />
+                                    <mat-autocomplete
+                                        #autoCaseType="matAutocomplete"
+                                        [displayWith]="displayCaseTypeFn"
+                                        (optionSelected)="onCaseTypeSelected($event)"
+                                    >
+                                        <mat-option *ngFor="let caseType of filteredCaseTypes" [value]="caseType">
+                                            <ng-container *ngIf="caseType.isNew">
+                                                <i class="fa-solid fa-plus me-2 text-success"></i>
+                                                {{ 'common.create' | translate }}: "{{ caseType.name }}"
+                                            </ng-container>
+                                            <ng-container *ngIf="!caseType.isNew">
+                                                {{ caseType.name }}
+                                            </ng-container>
+                                        </mat-option>
+                                    </mat-autocomplete>
+                                </mat-form-field>
+                            </div>
+
+                            <!-- Row 2: Service Group & Service Type -->
+                            <div class="col-12 col-md-6">
+                                <label class="form-label form-label-sm fw-semibold mb-1">
+                                    {{ 'contact.serviceGroup' | translate }}<span class="color-red">*</span>
+                                </label>
+                                <mat-form-field class="w-100 compact-field" appearance="outline">
+                                    <input
+                                        type="text"
+                                        matInput
+                                        [formControl]="serviceGroupControl"
+                                        [matAutocomplete]="autoServiceGroup"
+                                        (input)="filterServiceGroups()"
+                                        (focus)="filterServiceGroups()"
+                                        [placeholder]="'contact.searchServiceGroup' | translate"
+                                    />
+                                    <mat-autocomplete
+                                        #autoServiceGroup="matAutocomplete"
+                                        [displayWith]="displayServiceGroupFn"
+                                        (optionSelected)="onServiceGroupSelected($event)"
+                                    >
+                                        <mat-option *ngFor="let serviceGroup of filteredServiceGroups" [value]="serviceGroup">
+                                            <ng-container *ngIf="serviceGroup.isNew">
+                                                <i class="fa-solid fa-plus me-2 text-success"></i>
+                                                {{ 'common.create' | translate }}: "{{ serviceGroup.name }}"
+                                            </ng-container>
+                                            <ng-container *ngIf="!serviceGroup.isNew">
+                                                {{ serviceGroup.name }}
+                                            </ng-container>
+                                        </mat-option>
+                                    </mat-autocomplete>
+                                </mat-form-field>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label form-label-sm fw-semibold mb-1">
+                                    {{ 'contact.serviceType' | translate }}<span class="color-red">*</span>
+                                </label>
+                                <mat-form-field class="w-100 compact-field" appearance="outline">
+                                    <input
+                                        type="text"
+                                        matInput
+                                        [formControl]="serviceTypeControl"
+                                        [matAutocomplete]="autoServiceType"
+                                        (input)="filterServiceTypes()"
+                                        (focus)="filterServiceTypes()"
+                                        [placeholder]="'contact.searchServiceType' | translate"
+                                    />
+                                    <mat-autocomplete
+                                        #autoServiceType="matAutocomplete"
+                                        [displayWith]="displayServiceTypeFn"
+                                        (optionSelected)="onServiceTypeSelected($event)"
+                                    >
+                                        <mat-option *ngFor="let serviceType of filteredServiceTypes" [value]="serviceType">
+                                            <ng-container *ngIf="serviceType.isNew">
+                                                <i class="fa-solid fa-plus me-2 text-success"></i>
+                                                {{ 'common.create' | translate }}: "{{ serviceType.name }}"
+                                            </ng-container>
+                                            <ng-container *ngIf="!serviceType.isNew">
+                                                {{ serviceType.name }}
+                                            </ng-container>
+                                        </mat-option>
+                                    </mat-autocomplete>
+                                </mat-form-field>
+                            </div>
+
+                            <!-- Row 3: Service Sub Type -->
+                            <div class="col-12 col-md-6">
+                                <label class="form-label form-label-sm fw-semibold mb-1">
+                                    {{ 'contact.serviceSubType' | translate }}<span class="color-red">*</span>
+                                </label>
+                                <mat-form-field class="w-100 compact-field" appearance="outline">
+                                    <input
+                                        type="text"
+                                        matInput
+                                        [formControl]="serviceSubTypeControl"
+                                        [matAutocomplete]="autoServiceSubType"
+                                        (input)="filterServiceSubTypes()"
+                                        (focus)="filterServiceSubTypes()"
+                                        [placeholder]="'contact.searchServiceSubType' | translate"
+                                    />
+                                    <mat-autocomplete
+                                        #autoServiceSubType="matAutocomplete"
+                                        [displayWith]="displayServiceSubTypeFn"
+                                        (optionSelected)="onServiceSubTypeSelected($event)"
+                                    >
+                                        <mat-option *ngFor="let serviceSubType of filteredServiceSubTypes" [value]="serviceSubType">
+                                            <ng-container *ngIf="serviceSubType.isNew">
+                                                <i class="fa-solid fa-plus me-2 text-success"></i>
+                                                {{ 'common.create' | translate }}: "{{ serviceSubType.name }}"
+                                            </ng-container>
+                                            <ng-container *ngIf="!serviceSubType.isNew">
+                                                {{ serviceSubType.name }}
+                                            </ng-container>
+                                        </mat-option>
+                                    </mat-autocomplete>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- ความคิดเห็น -->
-                <div class="col-12">
-                    <label for="floatingTextareaComment" class="form-label fw-semibold">{{ 'contact.comment' | translate }}</label>
-                    <textarea
-                        class="form-control"
-                        [placeholder]="'common.pleaseEnter' | translate"
-                        id="floatingTextareaComment"
-                        name="comment"
-                        [(ngModel)]="comment"
-                        rows="3"
-                    ></textarea>
+                <!-- Channel & Call Details Section -->
+                <div class="form-section mb-3">
+                    <div class="section-header mb-2">
+                        <i class="fa-solid fa-headset me-2"></i>
+                        <span class="fw-semibold">{{ 'contact.channelDetails' | translate }}</span>
+                    </div>
+                    <div class="section-content">
+                        <div class="row g-2">
+                            <!-- Status -->
+                            <div class="col-12 col-md-6">
+                                <label for="inputStatus" class="form-label form-label-sm fw-semibold mb-1">{{
+                                    'common.status' | translate
+                                }}</label>
+                                <select
+                                    id="inputStatus"
+                                    class="form-select form-select-sm"
+                                    name="selectedStatus"
+                                    [(ngModel)]="selectedStatus"
+                                >
+                                    <option disabled value="">{{ 'common.pleaseSelect' | translate }}</option>
+                                    <option *ngFor="let status of statusList" [value]="status.id">{{ status.status }}</option>
+                                </select>
+                            </div>
+
+                            <!-- Channel -->
+                            <div class="col-12 col-md-6">
+                                <label for="inputChannel" class="form-label form-label-sm fw-semibold mb-1">{{
+                                    'contact.channel' | translate
+                                }}</label>
+                                <select
+                                    id="inputChannel"
+                                    class="form-select form-select-sm"
+                                    name="selectedChannels"
+                                    [(ngModel)]="selectedChannels"
+                                >
+                                    <option disabled value="">{{ 'common.pleaseSelect' | translate }}</option>
+                                    <option *ngFor="let channel of channels" [value]="channel.channelId">{{ channel.name }}</option>
+                                </select>
+                            </div>
+
+                            <!-- Call Type / Email Type -->
+                            <div
+                                class="col-12 col-md-6"
+                                *ngIf="selectedChannels === '1' || selectedChannels === '2' || selectedChannels === '3'"
+                            >
+                                <label for="inputCallType" class="form-label form-label-sm fw-semibold mb-1">
+                                    {{ selectedChannels === '3' ? ('contact.emailType' | translate) : ('contact.callType' | translate) }}
+                                </label>
+                                <select
+                                    id="inputCallType"
+                                    class="form-select form-select-sm"
+                                    name="selectedCallTypeId"
+                                    [(ngModel)]="selectedCallTypeId"
+                                >
+                                    <option disabled value="">{{ 'common.pleaseSelect' | translate }}</option>
+                                    <option *ngFor="let callType of callTypes" [value]="callType.name">{{ callType.name }}</option>
+                                </select>
+                            </div>
+
+                            <!-- Phone Number -->
+                            <div class="col-12 col-md-6" *ngIf="selectedChannels === '1' || selectedChannels === '2'">
+                                <label for="inputContactNumber" class="form-label form-label-sm fw-semibold mb-1">
+                                    {{ 'contact.phoneNumber' | translate }}<span class="color-red">*</span>
+                                </label>
+                                <select
+                                    id="inputContactNumber"
+                                    class="form-select form-select-sm"
+                                    name="selectedContactNumber"
+                                    [(ngModel)]="selectedContactNumber"
+                                >
+                                    <option disabled [ngValue]="null">{{ 'common.pleaseSelect' | translate }}</option>
+                                    <option
+                                        *ngFor="let contactNumbers of contactNumber"
+                                        [ngValue]="{
+                                            contactNumber: contactNumbers.contactNumber,
+                                            contactNumberId: contactNumbers.contactNumberId
+                                        }"
+                                    >
+                                        {{ contactNumbers.contactNumber }}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Date Time -->
+                            <div class="col-12">
+                                <label for="inputDateTime" class="form-label form-label-sm fw-semibold mb-1">{{
+                                    'contact.dateTime' | translate
+                                }}</label>
+                                <div class="datetime-inline-wrapper compact">
+                                    <div class="date-input-section">
+                                        <div class="input-group input-group-sm">
+                                            <input
+                                                matInput
+                                                [matDatepicker]="picker1"
+                                                name="startTime"
+                                                [(ngModel)]="startTime"
+                                                required
+                                                class="form-control form-control-sm"
+                                                [placeholder]="'common.selectDate' | translate"
+                                            />
+                                            <span class="input-group-text">
+                                                <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                                                <mat-datepicker #picker1></mat-datepicker>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="time-input-section">
+                                        <ngb-timepicker
+                                            name="timepickStart"
+                                            [(ngModel)]="timepickStart"
+                                            [seconds]="seconds"
+                                            [ngModelOptions]="{ standalone: true }"
+                                            (ngModelChange)="onTimepickStartChange($event)"
+                                            class="time-picker-inline compact"
+                                        ></ngb-timepicker>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Attachment -->
+                            <div class="col-12 col-md-6">
+                                <label for="formFileSm" class="form-label form-label-sm fw-semibold mb-1">{{
+                                    'contact.attachment' | translate
+                                }}</label>
+                                <input
+                                    class="form-control form-control-sm"
+                                    id="formFileSm"
+                                    type="file"
+                                    multiple
+                                    (change)="onFileSelected($event)"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Description & Notes Section -->
+                <div class="form-section mb-3">
+                    <div class="section-header mb-2">
+                        <i class="fa-solid fa-pen-to-square me-2"></i>
+                        <span class="fw-semibold">{{ 'contact.notes' | translate }}</span>
+                    </div>
+                    <div class="section-content">
+                        <div class="row g-2">
+                            <!-- Description -->
+                            <div class="col-12">
+                                <label for="floatingTextarea" class="form-label form-label-sm fw-semibold mb-1">{{
+                                    'contact.description' | translate
+                                }}</label>
+                                <textarea
+                                    class="form-control form-control-sm"
+                                    [placeholder]="'common.pleaseEnter' | translate"
+                                    id="floatingTextarea"
+                                    name="description"
+                                    [(ngModel)]="description"
+                                    rows="3"
+                                ></textarea>
+                            </div>
+
+                            <!-- Comment -->
+                            <div class="col-12">
+                                <label for="floatingTextareaComment" class="form-label form-label-sm fw-semibold mb-1">{{
+                                    'contact.comment' | translate
+                                }}</label>
+                                <textarea
+                                    class="form-control form-control-sm"
+                                    [placeholder]="'common.pleaseEnter' | translate"
+                                    id="floatingTextareaComment"
+                                    name="comment"
+                                    [(ngModel)]="comment"
+                                    rows="3"
+                                ></textarea>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </form>
 

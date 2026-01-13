@@ -714,7 +714,12 @@ export class ContactImportManagementComponent implements OnInit {
         return new Promise<void>((resolve) => {
             this.userService.getAllUser().subscribe((res: any) => {
                 if (res && Array.isArray(res)) {
-                    this.agentAll = res.filter((agent: any) => agent.role.roleTitle.toLowerCase() === 'agent');
+                    // Filter only active agents
+                    this.agentAll = res.filter(
+                        (agent: any) =>
+                            agent.role.roleTitle.toLowerCase() === 'agent' &&
+                            agent.isActive === 1,
+                    );
                 }
                 resolve();
             });

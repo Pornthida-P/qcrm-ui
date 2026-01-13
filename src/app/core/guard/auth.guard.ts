@@ -58,18 +58,27 @@ export class AuthGuard {
                     if (!currentUser || currentUser.username !== response.user.username) {
                         this.userService.setDataUser(response.user);
                         this.tokenService.setDataToken(response.token);
+                        this.loginService.setLogined(true);
+                    } else {
+                        // ถ้า user เดียวกัน → อัพเดท token และ user data เพื่อ refresh session
+                        this.userService.setDataUser(response.user);
+                        this.tokenService.setDataToken(response.token);
+                        this.loginService.setLogined(true);
                     }
-                    // ถ้า user เดียวกัน → ใช้ต่อได้เลย (ไม่ต้อง update)
 
                     return true;
                 }
                 this.handleUnauthorized();
                 return false;
             }),
-            catchError(() => {
+            catchError((error) => {
                 // ถ้า cross-auth ล้มเหลว แต่มี token อยู่แล้ว → ใช้ต่อ
                 if (this.tokenService.isTokenValid()) {
-                    return of(true);
+                    const currentUserData = localStorage.getItem('userData');
+                    if (currentUserData) {
+                        // ถ้ามี user data อยู่แล้ว → ใช้ต่อได้
+                        return of(true);
+                    }
                 }
                 this.handleUnauthorized();
                 return of(false);

@@ -89,26 +89,6 @@ export class CallService {
         );
     }
 
-    // @deprecated - caseTopic ถูกลบออกแล้ว ใช้ caseCode แทน
-    getCaseTopic() {
-        return of([]);
-    }
-
-    // @deprecated - caseTopic ถูกลบออกแล้ว ใช้ caseCode แทน
-    getCaseTopicByCode(code: string) {
-        return of([]);
-    }
-
-    // @deprecated - caseSubject ถูกลบออกแล้ว
-    getAllCaseSubjects() {
-        return of([]);
-    }
-
-    // @deprecated - caseSubject ถูกลบออกแล้ว
-    getCaseSubjectByCode(code: string) {
-        return of([]);
-    }
-
     getAllContacts() {
         return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}/all`);
     }

@@ -259,34 +259,41 @@
                 <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo">
                     <div class="card-body p-0">
                         <div class="table-responsive custom-table-wrapper table-scroll-container">
-                            <table class="table table-hover custom-table mb-0 table-fixed-header">
+                            <table class="table table-hover custom-table mb-0 table-fixed-header responsive-table">
                                 <thead>
                                     <tr>
-                                        <th>{{ 'common.time' | translate }}</th>
-                                        <th>{{ 'contact.channel' | translate }}</th>
-                                        <th>{{ 'contact.callType' | translate }}</th>
-                                        <th>{{ 'contact.code' | translate }}</th>
-                                        <th>{{ 'contact.assignDate' | translate }}</th>
-                                        <th>{{ 'contact.assignUser' | translate }}</th>
-                                        <th>{{ 'contact.caseType' | translate }}</th>
-                                        <th>{{ 'contact.serviceGroup' | translate }}</th>
-                                        <th>{{ 'contact.serviceType' | translate }}</th>
-                                        <th>{{ 'contact.serviceSubType' | translate }}</th>
-                                        <th>{{ 'contact.description' | translate }}</th>
-                                        <th>{{ 'contact.comment' | translate }}</th>
-                                        <th>{{ 'contact.contact' | translate }}</th>
-                                        <th>{{ 'contact.callStatus' | translate }}</th>
-                                        <th>{{ 'common.status' | translate }}</th>
-                                        <th class="text-center">{{ 'common.manage' | translate }}</th>
+                                        <th class="col-time">{{ 'common.time' | translate }}</th>
+                                        <th class="col-channel">{{ 'contact.channel' | translate }}</th>
+                                        <th class="col-call-type d-none d-md-table-cell">{{ 'contact.callType' | translate }}</th>
+                                        <th class="col-code">{{ 'contact.code' | translate }}</th>
+                                        <th class="col-assign-date d-none d-lg-table-cell">{{ 'contact.assignDate' | translate }}</th>
+                                        <th class="col-assign-user d-none d-lg-table-cell">{{ 'contact.assignUser' | translate }}</th>
+                                        <th class="col-case-type d-none d-xl-table-cell">{{ 'contact.caseType' | translate }}</th>
+                                        <th class="col-service-group d-none d-xl-table-cell">{{ 'contact.serviceGroup' | translate }}</th>
+                                        <th class="col-service-type d-none d-xl-table-cell">{{ 'contact.serviceType' | translate }}</th>
+                                        <th class="col-service-subtype d-none d-xl-table-cell">
+                                            {{ 'contact.serviceSubType' | translate }}
+                                        </th>
+                                        <th class="col-description d-none d-md-table-cell">{{ 'contact.description' | translate }}</th>
+                                        <th class="col-comment d-none d-lg-table-cell">{{ 'contact.comment' | translate }}</th>
+                                        <th class="col-contact d-none d-md-table-cell">{{ 'contact.contact' | translate }}</th>
+                                        <th class="col-call-status">{{ 'contact.callStatus' | translate }}</th>
+                                        <th class="col-status">{{ 'common.status' | translate }}</th>
+                                        <th class="col-manage text-center">{{ 'common.manage' | translate }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <ng-container *ngIf="contactCall && contactCall.length > 0; else noDataTemplate">
                                         <tr *ngFor="let case of contactCall" class="table-row-hover">
                                             <!-- เวลา -->
-                                            <td>{{ case.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
+                                            <td class="col-time">
+                                                <div class="d-flex flex-column">
+                                                    <span class="fw-semibold">{{ case.createdAt | date : 'dd/MM/yyyy' }}</span>
+                                                    <small class="text-muted">{{ case.createdAt | date : 'HH:mm' }}</small>
+                                                </div>
+                                            </td>
                                             <!-- Channel -->
-                                            <td>
+                                            <td class="col-channel">
                                                 <span
                                                     *ngIf="case.channel; else noChannel"
                                                     class="badge channel-badge"
@@ -299,34 +306,46 @@
                                                 </ng-template>
                                             </td>
                                             <!-- Call Type -->
-                                            <td>{{ case.type || '-' }}</td>
+                                            <td class="col-call-type d-none d-md-table-cell">{{ case.type || '-' }}</td>
                                             <!-- Case Code -->
-                                            <td>
+                                            <td class="col-code">
                                                 <span
                                                     class="text-primary fw-semibold cursor-pointer"
                                                     data-bs-toggle="offcanvas"
                                                     data-bs-target="#offcanvasRight"
                                                     aria-controls="offcanvasRight"
                                                     (click)="editCall(case.caseId)"
+                                                    [ngbTooltip]="case.casecode"
+                                                    [disableTooltip]="!case.casecode"
                                                 >
                                                     {{ case.casecode || '-' }}
                                                 </span>
                                             </td>
                                             <!-- Assign Date -->
-                                            <td>{{ case.assignDate ? (case.assignDate | date : 'dd/MM/yyyy HH:mm') : '-' }}</td>
+                                            <td class="col-assign-date d-none d-lg-table-cell">
+                                                {{ case.assignDate ? (case.assignDate | date : 'dd/MM/yyyy HH:mm') : '-' }}
+                                            </td>
                                             <!-- Assign User -->
-                                            <td>{{ case.agent || '-' }}</td>
+                                            <td class="col-assign-user d-none d-lg-table-cell">{{ case.agent || '-' }}</td>
                                             <!-- Case Type -->
-                                            <td class="text-truncate" style="max-width: 120px">{{ case.casetype || '-' }}</td>
+                                            <td class="col-case-type d-none d-xl-table-cell text-truncate" style="max-width: 120px">
+                                                {{ case.casetype || '-' }}
+                                            </td>
                                             <!-- Service Group -->
-                                            <td class="text-truncate" style="max-width: 120px">{{ case.caseServiceGroup || '-' }}</td>
+                                            <td class="col-service-group d-none d-xl-table-cell text-truncate" style="max-width: 120px">
+                                                {{ case.caseServiceGroup || '-' }}
+                                            </td>
                                             <!-- Service Type -->
-                                            <td class="text-truncate" style="max-width: 120px">{{ case.caseServiceType || '-' }}</td>
+                                            <td class="col-service-type d-none d-xl-table-cell text-truncate" style="max-width: 120px">
+                                                {{ case.caseServiceType || '-' }}
+                                            </td>
                                             <!-- Service Sub Type -->
-                                            <td class="text-truncate" style="max-width: 120px">{{ case.caseServiceSubType || '-' }}</td>
+                                            <td class="col-service-subtype d-none d-xl-table-cell text-truncate" style="max-width: 120px">
+                                                {{ case.caseServiceSubType || '-' }}
+                                            </td>
                                             <!-- Description -->
                                             <td
-                                                class="text-truncate"
+                                                class="col-description d-none d-md-table-cell text-truncate"
                                                 style="max-width: 150px"
                                                 [ngbTooltip]="case.description"
                                                 [disableTooltip]="!case.description"
@@ -337,7 +356,7 @@
                                             </td>
                                             <!-- Comment -->
                                             <td
-                                                class="text-truncate"
+                                                class="col-comment d-none d-lg-table-cell text-truncate"
                                                 style="max-width: 150px"
                                                 [ngbTooltip]="case.comment"
                                                 [disableTooltip]="!case.comment"
@@ -347,9 +366,9 @@
                                                 {{ case.comment || '-' }}
                                             </td>
                                             <!-- ผู้ติดต่อ (Contact) -->
-                                            <td>{{ case.contact || '-' }}</td>
+                                            <td class="col-contact d-none d-md-table-cell">{{ case.contact || '-' }}</td>
                                             <!-- Call Status -->
-                                            <td>
+                                            <td class="col-call-status">
                                                 <span
                                                     *ngIf="case.callStatusName; else noCallStatus"
                                                     class="badge"
@@ -374,7 +393,7 @@
                                                 <ng-template #noCallStatus>-</ng-template>
                                             </td>
                                             <!-- Case Status -->
-                                            <td>
+                                            <td class="col-status">
                                                 <span
                                                     *ngIf="case.status; else noStatus"
                                                     class="badge status-badge"
@@ -388,7 +407,7 @@
                                                 </ng-template>
                                             </td>
                                             <!-- Manage -->
-                                            <td class="text-center">
+                                            <td class="col-manage text-center">
                                                 <button
                                                     class="btn btn-sm btn-outline-primary-custom btn-action"
                                                     data-bs-toggle="offcanvas"

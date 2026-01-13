@@ -33,10 +33,6 @@ export class CallListService {
         return this.http.get(`${this.baseUrl}${config.api.path.callList.comment}/${caseId}`);
     }
 
-    getCaseTopicId(caseId: string) {
-        return this.http.get(`${this.baseUrl}${config.api.path.callList.caseTopicId}/${caseId}`);
-    }
-
     getChatHistory(chatId: string) {
         return this.http.post(`${environment.api.urlQIM}${config.api.path.chatHistory}`, { chat_room_id: chatId });
     }
@@ -71,12 +67,12 @@ export class CallListService {
         return this.http.get(`${this.baseUrl}/leads-for-reassignment`);
     }
 
-    reassignLeads(agentIds?: string[]) {
-        return this.http.post(`${this.baseUrl}/reassign-leads`, { agentIds });
+    reassignLeads(agentIds?: string[], modifiedById?: string) {
+        return this.http.post(`${this.baseUrl}/reassign-leads`, { agentIds, modifiedById });
     }
 
-    reassignFromAgent(sourceAgentId: string, targetAgentIds: string[]) {
-        return this.http.post(`${this.baseUrl}/reassign-from-agent`, { sourceAgentId, targetAgentIds });
+    reassignFromAgent(sourceAgentId: string, targetAgentIds: string[], modifiedById?: string) {
+        return this.http.post(`${this.baseUrl}/reassign-from-agent`, { sourceAgentId, targetAgentIds, modifiedById });
     }
 
     reassignCase(caseId: string, newAgentId: string, modifiedById: string) {
