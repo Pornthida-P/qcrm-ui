@@ -55,6 +55,17 @@
                         </div>
 
                         <form class="row g-3">
+
+                          <div class="d-flex gap-3 mb-3" *ngIf="TableShowing">
+                            <span class="badge px-3 py-2" style="background-color: #1a889c;">
+                                <i class="fa-solid fa-tag me-1"></i> {{ 'contact.partner' | translate }}:
+                                <span>{{ partnerCode || '-' }}</span>
+                            </span>
+                            <span class="badge px-3 py-2" style="background-color: #1a889c;">
+                                <i class="fa-solid fa-layer-group me-1"></i> {{ 'contact.contactGroup' | translate }}:
+                                <span>{{ contactGroupId || '-' }}</span>
+                            </span>
+                        </div>
                             <div class="col-md-6">
                                 <label for="inputContactFirstName" class="form-label fw-semibold">
                                     {{ 'contact.firstName' | translate }}
@@ -187,6 +198,20 @@
                                     [placeholder]="'contact.phoneNumber' | translate"
                                 />
                             </div>
+                            <div class="col-md-6">
+                              <label for="inputcontactEmail" class="form-label fw-semibold mt-2">
+                                  {{ 'contact.email' | translate }}
+                              </label>
+                              <input
+                                  type="text"
+                                  class="form-control"
+                                  [(ngModel)]="contactEmail"
+                                  name="contactEmail"
+                                  id="inputContactEmail"
+                                  [disabled]="!checkRole()"
+                                  [placeholder]="'contact.email' | translate"
+                              />
+                          </div>
                         </form>
                     </div>
                 </div>

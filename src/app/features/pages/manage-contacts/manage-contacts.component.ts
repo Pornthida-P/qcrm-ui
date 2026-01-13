@@ -41,6 +41,7 @@ export class ManageContactsComponent implements OnInit {
     contactModifiedByID: string = '';
     contactModifiedAt: string = '';
     contactId: string = '';
+    contactEmail: string = '';
     state: string = '';
     detailItem: any = undefined;
     TableShowing: boolean = false;
@@ -147,6 +148,8 @@ export class ManageContactsComponent implements OnInit {
     filteredServiceTypes: any[] = [];
     filteredServiceGroups: any[] = [];
     filteredServiceSubTypes: any[] = [];
+    partnerCode: any;
+    contactGroupId: any;
 
     constructor(
         private contactsService: ContactsService,
@@ -294,6 +297,9 @@ export class ManageContactsComponent implements OnInit {
             this.contactCreatedAt = this.detailItem.created_at;
             this.contactModifiedByID = this.detailItem.modified_by;
             this.contactModifiedAt = this.detailItem.modified_at;
+            this.contactEmail = this.detailItem.email;
+            this.partnerCode = this.detailItem.partnerCode;
+            this.contactGroupId = this.detailItem.contactGroupId;
 
             if (this.contactOrg != '' && this.contactOrg != null && this.contactOrg != undefined) {
                 this.contactsService.getOrganizationById(this.contactOrg).subscribe((res: any) => {
