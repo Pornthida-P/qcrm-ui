@@ -25,6 +25,7 @@ export const config = {
                 paramsFide: '/params-fide',
                 call: '/call',
                 contactNumberIdByPhone: '/contact-number-id',
+                contactGroup: '/contact-group',
             },
             call: {
                 url: '/call',
