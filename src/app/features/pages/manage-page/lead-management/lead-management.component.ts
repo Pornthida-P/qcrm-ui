@@ -451,18 +451,18 @@ export class LeadManagementComponent implements OnInit {
         if (!callStatus) return 'status-not-called';
         const status = callStatus.trim();
 
-        // สีแดง - ไม่สามารถติดต่อได้ / ปฏิเสธ
-        if (status.includes('ไม่รับสาย') || status.includes('สายไม่ว่าง') || status.includes('ปฏิเสธสาย') || status.includes('แบคลิสต์')) {
+        // สีแดง - ไม่รับสาย, ไม่สนทนาต่อ
+        if (status === 'ไม่รับสาย' || status === 'ไม่สนทนาต่อ') {
             return 'status-no-answer';
         }
 
-        // สีส้ม - ต้องติดตาม / โทรอีกครั้ง
-        if (status.includes('ฝากข้อความ') || status.includes('โทรกลับภายหลัง') || status.includes('โทรซ้ำ')) {
+        // สีส้ม/เหลือง - ไม่สะดวกสนทนา (ต้องติดตาม)
+        if (status === 'ไม่สะดวกสนทนา') {
             return 'status-followup';
         }
 
-        // สีเขียว - สำเร็จ
-        if (status.includes('ติดต่อได้') || status.includes('สำเร็จ')) {
+        // สีเขียว - สนทนาต่อ, ติดต่อสำเร็จ
+        if (status === 'สนทนาต่อ' || status === 'ติดต่อสำเร็จ') {
             return 'status-success';
         }
 

@@ -738,10 +738,10 @@ export class ManageContactsComponent implements OnInit {
         this.isCommentsHistoryShowing = true;
 
         this.codeControl.disable();
-        this.caseTypeControl.disable();
-        this.serviceGroupControl.disable();
-        this.serviceTypeControl.disable();
-        this.serviceSubTypeControl.disable();
+        // this.caseTypeControl.disable();
+        // this.serviceGroupControl.disable();
+        // this.serviceTypeControl.disable();
+        // this.serviceSubTypeControl.disable();
         this.callServive.getContactNumbertById(this.contactId).subscribe((contactNumbers: any) => {
             if (contactNumbers && Array.isArray(contactNumbers) && contactNumbers.length > 0) {
                 this.contactNumber = contactNumbers;

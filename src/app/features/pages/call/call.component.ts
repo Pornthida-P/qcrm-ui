@@ -646,10 +646,10 @@ export class CallComponent implements OnInit {
         this.isDescriptionDisabled = false;
 
         this.codeControl.disable();
-        this.caseTypeControl.disable();
-        this.serviceGroupControl.disable();
-        this.serviceTypeControl.disable();
-        this.serviceSubTypeControl.disable();
+        // this.caseTypeControl.disable();
+        // this.serviceGroupControl.disable();
+        // this.serviceTypeControl.disable();
+        // this.serviceSubTypeControl.disable();
 
         this.callService.getCaseCode().subscribe((caseCodes: any) => {
             this.caseCodes = caseCodes;

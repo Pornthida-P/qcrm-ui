@@ -9,70 +9,55 @@
                 <table class="table table-hover custom-table mb-0 table-fixed-header">
                     <thead>
                         <tr>
-                            <th scope="col">{{ 'common.time' | translate }}</th>
-                            <th scope="col">{{ 'contact.contact' | translate }}</th>
-                            <th scope="col">{{ 'contact.phoneNumber' | translate }}</th>
-                            <th scope="col">{{ 'contact.channel' | translate }}</th>
-                            <th scope="col">{{ 'contact.subject' | translate }}</th>
-                            <th scope="col">{{ 'contact.topic' | translate }}</th>
-                            <th scope="col">{{ 'contact.description' | translate }}</th>
-                            <th scope="col">{{ 'common.status' | translate }}</th>
-                            <th scope="col">{{ 'contact.callStatus' | translate }}</th>
-                            <th scope="col" class="text-center">{{ 'callList.attempts' | translate }}</th>
-                            <th scope="col">{{ 'contact.assignUser' | translate }}</th>
-                            <th scope="col" class="text-center">{{ 'callList.action' | translate }}</th>
+                            <th class="text-nowrap">{{ 'contact-import-management.created-date' | translate }}</th>
+                            <th class="text-nowrap">{{ 'contact-import-management.dealer-name' | translate }}</th>
+                            <th class="text-nowrap">{{ 'contact-import-management.contact-email' | translate }}</th>
+                            <th class="text-nowrap">{{ 'contact-import-management.contact-mobile' | translate }}</th>
+                            <th class="text-nowrap">{{ 'contact-import-management.dealer-id' | translate }}</th>
+                            <th class="text-nowrap">{{ 'contact-import-management.code' | translate }}</th>
+                            <th class="text-nowrap">{{ 'contact-import-management.license-plate' | translate }}</th>
+                            <th class="text-nowrap">{{ 'contact-import-management.car-brand-model' | translate }}</th>
+                            <th class="text-nowrap">{{ 'contact-import-management.car-status' | translate }}</th>
+                            <th class="text-nowrap">{{ 'contact.callStatus' | translate }}</th>
+                            <th class="text-center text-nowrap">{{ 'callList.attempts' | translate }}</th>
+                            <th class="text-nowrap">{{ 'contact.assignUser' | translate }}</th>
+                            <th class="text-center text-nowrap">{{ 'callList.action' | translate }}</th>
                         </tr>
                     </thead>
                     <tbody>
                         <ng-container *ngIf="paginatedCalls.length > 0; else noDataTemplate">
                             <tr *ngFor="let caseList of paginatedCalls; let i = index">
                                 <td>{{ caseList.requestDateTime | date : 'dd/MM/yyyy HH:mm' }}</td>
-                                <td>{{ caseList.fullname || '-' }}</td>
-                                <td>
+                                <td>{{ caseList.dealerName || caseList.fullname || '-' }}</td>
+                                <td>{{ caseList.email || '-' }}</td>
+                                <td class="font-monospace">
                                     <span *ngIf="caseList.contactNumber" class="phone-text">
                                         <i class="fa-solid fa-phone me-1"></i>{{ caseList.contactNumber }}
                                     </span>
                                     <span *ngIf="!caseList.contactNumber">-</span>
                                 </td>
+                                <td class="font-monospace small">{{ caseList.dealerId || caseList.partnerCode || '-' }}</td>
+                                <td class="font-monospace">{{ caseList.casecode || caseList.carCode || '-' }}</td>
+                                <td class="font-monospace small">{{ caseList.licensePlateNumber || '-' }}</td>
                                 <td>
-                                    <span
-                                        *ngIf="caseList.channel; else noChannel"
-                                        class="channel-badge"
-                                        [style.background-color]="statusService.getChannelBgColor(caseList.channel)"
-                                    >
-                                        {{ caseList.channel }}
+                                    <span *ngIf="caseList.carBrand || caseList.carModel">
+                                        {{
+                                            (caseList.carBrand || '') +
+                                                (caseList.carBrand && caseList.carModel ? ' ' : '') +
+                                                (caseList.carModel || '')
+                                        }}
                                     </span>
-                                    <ng-template #noChannel>-</ng-template>
+                                    <span *ngIf="!caseList.carBrand && !caseList.carModel">-</span>
                                 </td>
-                                <td class="text-truncate" style="max-width: 120px">{{ caseList.subject || '-' }}</td>
-                                <td class="text-truncate" style="max-width: 120px">{{ caseList.topic || '-' }}</td>
-                                <td
-                                    class="text-truncate"
-                                    style="max-width: 150px"
-                                    [ngbTooltip]="caseList.description"
-                                    [disableTooltip]="!caseList.description"
-                                    container="body"
-                                    placement="top"
-                                >
-                                    {{ caseList.description || '-' }}
-                                </td>
-                                <td>
-                                    <span
-                                        *ngIf="caseList.status; else noStatus"
-                                        class="status-badge"
-                                        [style.background-color]="statusService.getStatusBgColor(caseList.status)"
-                                    >
-                                        <i [class]="statusService.getStatusIcon(caseList.status)" class="me-1"></i>
-                                        {{ caseList.status }}
-                                    </span>
-                                    <ng-template #noStatus>-</ng-template>
-                                </td>
+                                <td>{{ caseList.carStatusDescription || '-' }}</td>
                                 <td>
                                     <span *ngIf="caseList.callStatus" class="call-status-badge">{{ caseList.callStatus }}</span>
-                                    <span *ngIf="!caseList.callStatus">-</span>
+                                    <span *ngIf="!caseList.callStatus" class="call-status-badge status-not-called">
+                                        {{ 'leadManagement.notCalled' | translate }}
+                                    </span>
                                 </td>
                                 <td class="text-center">
-                                    <span 
+                                    <span
                                         class="attempt-badge"
                                         [class.attempt-warning]="caseList.attemptCount >= 2"
                                         [class.attempt-danger]="caseList.attemptCount >= 3"
@@ -85,9 +70,6 @@
                                     <button
                                         type="button"
                                         class="btn btn-action btn-success"
-                                        data-bs-toggle="offcanvas"
-                                        data-bs-target="#offcanvasRight"
-                                        aria-controls="offcanvasRight"
                                         [ngbTooltip]="'callList.callAction' | translate"
                                         placement="top"
                                         (click)="clickCall(caseList.caseId, caseList.contactId)"
@@ -99,7 +81,7 @@
                         </ng-container>
                         <ng-template #noDataTemplate>
                             <tr>
-                                <td colspan="12" class="text-center py-5">
+                                <td colspan="13" class="text-center py-5">
                                     <div class="empty-state">
                                         <i class="fa-solid fa-inbox fa-3x text-muted mb-3"></i>
                                         <p class="text-muted mb-0">{{ 'common.dataNotFound' | translate }}</p>

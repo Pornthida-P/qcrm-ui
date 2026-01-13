@@ -37,7 +37,7 @@
                         {{ 'contact-import-management.supported-file-type' | translate }}
                     </p>
                 </div>
-                <input id="dropzone-file" type="file" class="d-none" (change)="onUploadFile($event)" accept=".xlsx,.xls" />
+                <input id="dropzone-file" type="file" class="d-none" (change)="onUploadFile($event)" accept=".xlsx,.xls,.csv" />
             </label>
         </div>
 
@@ -65,23 +65,38 @@
                 <table class="table table-hover table-sm">
                     <thead class="table-light">
                         <tr>
-                            <th scope="col" class="text-nowrap">{{ 'contact-import-management.name' | translate }}</th>
-                            <th scope="col" class="text-nowrap">{{ 'contact-import-management.lastname' | translate }}</th>
-                            <th scope="col" class="text-nowrap">{{ 'contact-import-management.phone-number' | translate }}</th>
-                            <th scope="col" class="text-nowrap">{{ 'contact-import-management.case-topic-code' | translate }}</th>
-                            <th scope="col" class="text-nowrap">{{ 'contact-import-management.case-subject-code' | translate }}</th>
-                            <th scope="col" class="text-nowrap">{{ 'contact-import-management.case-id' | translate }}</th>
+                            <th scope="col" class="text-nowrap">{{ 'contact-import-management.created-date' | translate }}</th>
+                            <th scope="col" class="text-nowrap">{{ 'contact-import-management.dealer-name' | translate }}</th>
+                            <th scope="col" class="text-nowrap">{{ 'contact-import-management.contact-email' | translate }}</th>
+                            <th scope="col" class="text-nowrap">{{ 'contact-import-management.contact-mobile' | translate }}</th>
+                            <th scope="col" class="text-nowrap">{{ 'contact-import-management.dealer-id' | translate }}</th>
+                            <th scope="col" class="text-nowrap">{{ 'contact-import-management.code' | translate }}</th>
+                            <th scope="col" class="text-nowrap">{{ 'contact-import-management.license-plate' | translate }}</th>
+                            <th scope="col" class="text-nowrap">{{ 'contact-import-management.car-brand-model' | translate }}</th>
+                            <th scope="col" class="text-nowrap">{{ 'contact-import-management.car-status' | translate }}</th>
                             <th scope="col" class="text-nowrap text-center">{{ 'contact-import-management.import-status' | translate }}</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr *ngFor="let contact of contactObjects; let i = index">
-                            <td>{{ contact['firstname'] || contact['firstName'] || '-' }}</td>
-                            <td>{{ contact['lastname'] || contact['lastName'] || '-' }}</td>
-                            <td class="font-monospace">{{ contact['phone_number'] || contact['phoneNumber'] || '-' }}</td>
-                            <td>{{ contact['caseTopicCode'] || '-' }}</td>
-                            <td>{{ contact['caseSubjectCode'] || '-' }}</td>
-                            <td class="font-monospace small">{{ contact['caseId'] || '-' }}</td>
+                            <td class="font-monospace small">{{ contact['Created Date'] || contact['parsedCreatedDate'] || '-' }}</td>
+                            <td>{{ contact['Dealer Name'] || '-' }}</td>
+                            <td>{{ contact['Contact Email'] || '-' }}</td>
+                            <td class="font-monospace">{{ contact['Contact Mobile'] || contact['phone_number'] || '-' }}</td>
+                            <td class="font-monospace small">{{ contact['Dealer ID'] || '-' }}</td>
+                            <td class="font-monospace">{{ contact['Code'] || '-' }}</td>
+                            <td class="font-monospace small">{{ contact['License Plate Number'] || '-' }}</td>
+                            <td>
+                                <span *ngIf="contact['Car Brand'] || contact['Car Model']">
+                                    {{
+                                        (contact['Car Brand'] || '') +
+                                            (contact['Car Brand'] && contact['Car Model'] ? ' ' : '') +
+                                            (contact['Car Model'] || '')
+                                    }}
+                                </span>
+                                <span *ngIf="!contact['Car Brand'] && !contact['Car Model']">-</span>
+                            </td>
+                            <td>{{ contact['Car Status Description'] || '-' }}</td>
                             <td class="text-center">
                                 <span [class]="'badge status-badge status-' + (contact['import-status'] || 'pending')">
                                     {{ getStatusLabel(contact['import-status']) }}

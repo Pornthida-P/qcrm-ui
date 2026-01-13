@@ -6,12 +6,14 @@ import { ContactsService } from 'src/app/services/contacts/contacts.service';
 import * as XLSX from 'xlsx';
 import { UserService } from 'src/app/services/user/user.service';
 import { CallService } from 'src/app/services/call/call.service';
+import { CarService } from 'src/app/services/car/car.service';
 import { firstValueFrom, forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { StatusService } from 'src/app/services/status/status.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { config } from 'src/app/config/config';
+import * as moment from 'moment';
 @Component({
     selector: 'app-contact-import-management',
     standalone: false,
@@ -42,6 +44,7 @@ export class ContactImportManagementComponent implements OnInit {
         private translate: TranslateService,
         private userService: UserService,
         private callService: CallService,
+        private carService: CarService,
         private sweetAlertService: SweetAlertService,
         public statusService: StatusService,
     ) {}
@@ -94,8 +97,78 @@ export class ContactImportManagementComponent implements OnInit {
                 await this.checkContactData();
                 this.isProcessing = false;
             }
+            this.isLoading = false;
         };
         reader.readAsArrayBuffer(file);
+    }
+
+    readCsvFile(file: File) {
+        this.isLoading = true;
+        const reader = new FileReader();
+        reader.onload = async (event: any) => {
+            try {
+                const csvText = event.target.result as string;
+
+                // Parse CSV - handle both quoted and unquoted values
+                const lines = csvText.split(/\r?\n/).filter((line: string) => line.trim().length > 0);
+                if (lines.length === 0) {
+                    this.isLoading = false;
+                    return;
+                }
+
+                // Parse CSV with proper handling of quoted fields
+                const parseCsvLine = (line: string): string[] => {
+                    const result: string[] = [];
+                    let current = '';
+                    let inQuotes = false;
+
+                    for (let i = 0; i < line.length; i++) {
+                        const char = line[i];
+                        const nextChar = line[i + 1];
+
+                        if (char === '"') {
+                            if (inQuotes && nextChar === '"') {
+                                // Escaped quote
+                                current += '"';
+                                i++; // Skip next quote
+                            } else {
+                                // Toggle quote state
+                                inQuotes = !inQuotes;
+                            }
+                        } else if (char === ',' && !inQuotes) {
+                            // End of field
+                            result.push(current.trim());
+                            current = '';
+                        } else {
+                            current += char;
+                        }
+                    }
+                    result.push(current.trim()); // Add last field
+                    return result;
+                };
+
+                // Convert CSV lines to array format (same as Excel)
+                const json: any[] = [];
+                lines.forEach((line: string, index: number) => {
+                    const parsedLine = parseCsvLine(line);
+                    json.push(parsedLine);
+                });
+
+                // Process the data to fix phone numbers and convert to array of objects
+                const processedData = this.processContactData(json);
+                this.contactObjects = this.convertToContactObjects(processedData);
+                if (this.contactObjects.length > 0) {
+                    this.isProcessing = true;
+                    await this.checkContactData();
+                    this.isProcessing = false;
+                }
+            } catch (error) {
+                console.error('Error reading CSV file:', error);
+            } finally {
+                this.isLoading = false;
+            }
+        };
+        reader.readAsText(file, 'UTF-8');
     }
 
     private processContactData(data: any[]): any[] {
@@ -141,12 +214,23 @@ export class ContactImportManagementComponent implements OnInit {
     onUploadFile(event: any) {
         const file = event.target.files[0];
         if (file) {
+            const fileName = file.name.toLowerCase();
+            const fileExtension = fileName.substring(fileName.lastIndexOf('.'));
             const fileType = file.type;
-            if (fileType != 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+
+            if (fileExtension === '.csv' || fileType === 'text/csv') {
+                this.readCsvFile(file);
+            } else if (
+                fileExtension === '.xlsx' ||
+                fileExtension === '.xls' ||
+                fileType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+                fileType === 'application/vnd.ms-excel'
+            ) {
+                this.readExcelFile(file);
+            } else {
+                console.warn('Unsupported file type:', fileType);
                 return;
             }
-
-            this.readExcelFile(file);
         }
     }
 
@@ -186,11 +270,61 @@ export class ContactImportManagementComponent implements OnInit {
                 }
             });
 
-            // Add name field by combining firstname + lastname
+            // Add name field by combining firstname + lastname or use Dealer Name
             const firstName = contactObj['firstname'] || contactObj['firstName'] || '';
             const lastName = contactObj['lastname'] || contactObj['lastName'] || '';
-            const fullName = [firstName, lastName].filter(Boolean).join(' ').trim();
+            const dealerName = contactObj['Dealer Name'] || contactObj['dealerName'] || '';
+            const fullName = [firstName, lastName].filter(Boolean).join(' ').trim() || dealerName;
             contactObj['name'] = fullName || null;
+
+            // Parse date for car (handle both formats: "30/12/2025 09:53" and "2026-01-07 15:39")
+            if (contactObj['Created Date']) {
+                const createdDate = contactObj['Created Date'];
+                let parsedDate: string;
+                if (createdDate.includes('/')) {
+                    // Format: "30/12/2025 09:53"
+                    const [datePart, timePart] = createdDate.split(' ');
+                    const [day, month, year] = datePart.split('/');
+                    parsedDate = `${year}-${month}-${day} ${timePart || '00:00:00'}`;
+                } else {
+                    // Format: "2026-01-07 15:39" or ISO format
+                    parsedDate = createdDate;
+                }
+                contactObj['parsedCreatedDate'] = parsedDate;
+            }
+
+            // Clean phone number (remove ="" wrapper)
+            if (contactObj['Contact Mobile']) {
+                let phone = String(contactObj['Contact Mobile'])
+                    .replace(/^="|"$/g, '')
+                    .replace(/=/g, '')
+                    .trim();
+                contactObj['Contact Mobile'] = phone;
+                contactObj['phone_number'] = phone; // For compatibility
+            }
+
+            // Clean AL Phone Number (remove ="" wrapper)
+            if (contactObj['AL Phone Number']) {
+                let alPhone = String(contactObj['AL Phone Number'])
+                    .replace(/^="|"$/g, '')
+                    .replace(/=/g, '')
+                    .trim();
+                contactObj['AL Phone Number'] = alPhone;
+            }
+
+            // Parse price fields (remove commas and convert to number)
+            if (contactObj['ราคาประกาศขาย']) {
+                const price = String(contactObj['ราคาประกาศขาย']).replace(/,/g, '');
+                contactObj['asking_price'] = price ? parseFloat(price) : null;
+            }
+            if (contactObj['ราคา bluebook']) {
+                const price = String(contactObj['ราคา bluebook']).replace(/,/g, '');
+                contactObj['bluebook_price'] = price ? parseFloat(price) : null;
+            }
+            if (contactObj['ราคาแนะนำ']) {
+                const price = String(contactObj['ราคาแนะนำ']).replace(/,/g, '');
+                contactObj['msrp_price'] = price ? parseFloat(price) : null;
+            }
 
             contactObjects.push(contactObj);
         }
@@ -202,24 +336,77 @@ export class ContactImportManagementComponent implements OnInit {
     async checkContactData() {
         for (const contactObject of this.contactObjects) {
             try {
-                const phone = contactObject['phone_number'];
+                // Check if has car data (for lead import)
+                const hasCarData = contactObject['Dealer ID'] || contactObject['dealerId'];
+                if (hasCarData) {
+                    contactObject['hasCarData'] = true;
+                }
+
+                const phone = contactObject['phone_number'] || contactObject['Contact Mobile'];
                 if (phone) {
                     const phoneRes: any = await this.contactService.getContactsByParamPhone(phone).toPromise();
                     const phoneContacts = typeof phoneRes === 'string' ? JSON.parse(phoneRes) : phoneRes;
                     if (phoneContacts && Array.isArray(phoneContacts) && phoneContacts.length > 0) {
                         contactObject['contact'] = phoneContacts[0];
-                        contactObject['import-status'] = 'found';
+                        // Check if partnerCode or email is different
+                        const dealerId = contactObject['Dealer ID'] || contactObject['dealerId'] || null;
+                        const existingPartnerCode = phoneContacts[0].partnerCode || null;
+                        const newEmail = contactObject['Contact Email'] || contactObject['email'] || null;
+                        const existingEmail = phoneContacts[0].email || null;
+                        // PartnerCode different: CSV has value and it's different from DB, or CSV has value but DB doesn't
+                        const partnerCodeDifferent = dealerId !== null && dealerId !== existingPartnerCode;
+                        // Email different: both have values and they're different
+                        const emailDifferent = newEmail !== null && existingEmail !== null && newEmail !== existingEmail;
+
+                        if (partnerCodeDifferent || emailDifferent) {
+                            contactObject['import-status'] = 'update';
+                        } else {
+                            contactObject['import-status'] = 'found';
+                        }
                         continue;
                     }
                 }
 
-                // If not found by phone, search by name
+                // If not found by phone, search by name or email
                 const name = contactObject['name'];
+                const email = contactObject['Contact Email'] || contactObject['email'];
+
+                if (email) {
+                    // Try to find by email first
+                    const emailContacts = await this.searchContactByEmail(email);
+                    if (emailContacts && emailContacts.length > 0) {
+                        contactObject['contact'] = emailContacts[0];
+                        // Check if partnerCode is different (email should be same since we found by email)
+                        const dealerId = contactObject['Dealer ID'] || contactObject['dealerId'] || null;
+                        const existingPartnerCode = emailContacts[0].partnerCode || null;
+                        // PartnerCode different: CSV has value and it's different from DB, or CSV has value but DB doesn't
+                        const partnerCodeDifferent = dealerId !== null && dealerId !== existingPartnerCode;
+
+                        if (partnerCodeDifferent) {
+                            contactObject['import-status'] = 'update';
+                        } else {
+                            contactObject['import-status'] = 'found';
+                        }
+                        continue;
+                    }
+                }
+
                 if (name) {
                     const nameContacts = await this.searchContactByName(name);
                     if (nameContacts && nameContacts.length > 0) {
                         contactObject['contact'] = nameContacts[0];
-                        if (nameContacts[0].contactNumber !== contactObject['phone_number']) {
+                        // Check if phone number, partnerCode, or email is different
+                        const phoneDifferent = nameContacts[0].contactNumber !== contactObject['phone_number'];
+                        const dealerId = contactObject['Dealer ID'] || contactObject['dealerId'] || null;
+                        const existingPartnerCode = nameContacts[0].partnerCode || null;
+                        // PartnerCode different: CSV has value and it's different from DB, or CSV has value but DB doesn't
+                        const partnerCodeDifferent = dealerId !== null && dealerId !== existingPartnerCode;
+                        const newEmail = contactObject['Contact Email'] || contactObject['email'] || null;
+                        const existingEmail = nameContacts[0].email || null;
+                        // Email different: both have values and they're different
+                        const emailDifferent = newEmail !== null && existingEmail !== null && newEmail !== existingEmail;
+
+                        if (phoneDifferent || partnerCodeDifferent || emailDifferent) {
                             contactObject['import-status'] = 'update';
                         } else {
                             contactObject['import-status'] = 'found';
@@ -240,6 +427,21 @@ export class ContactImportManagementComponent implements OnInit {
         this.isLoading = false;
     }
 
+    async searchContactByEmail(email: string): Promise<any[]> {
+        if (!email || email.trim() === '') {
+            return [];
+        }
+        try {
+            // Search contacts by email - you may need to add this method to ContactsService
+            const res: any = await this.contactService.getContactsByPage(0, 15, 'startTime,DESC', email.trim(), 'all').toPromise();
+            const contacts = typeof res === 'string' ? JSON.parse(res) : res;
+            return Array.isArray(contacts) ? contacts.filter((c: any) => c.email === email) : [];
+        } catch (error) {
+            console.error('Error searching contact by email:', error);
+            return [];
+        }
+    }
+
     // Actually import/update contacts by calling API
     async onClickConfirm() {
         if (this.isImporting) return;
@@ -252,8 +454,19 @@ export class ContactImportManagementComponent implements OnInit {
             for (const contactObject of this.contactObjects) {
                 let importStatus = contactObject['import-status'];
                 try {
+                    // Create or update car first (if has car data)
+                    if (contactObject['hasCarData']) {
+                        const car = await this.createOrUpdateCar(contactObject);
+                        if (car && car.id) {
+                            contactObject['car'] = car;
+                            contactObject['carId'] = car.id;
+                        } else {
+                            console.warn('Failed to create/update car for', contactObject['Dealer ID']);
+                        }
+                    }
+
                     if (importStatus === 'found') {
-                        // Already exists, skip
+                        // Already exists, skip contact creation but ensure car is created
                         successCount++;
                         continue;
                     }
@@ -315,13 +528,21 @@ export class ContactImportManagementComponent implements OnInit {
 
     async updateContact(contactObject: any): Promise<any> {
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        const contact = contactObject['contact'] || {};
         const data = {
-            contactId: contactObject['contact'].contactId,
-            firstName: contactObject['firstname'] || contactObject['firstName'] || contactObject['contact'].firstName || '',
-            lastName: contactObject['lastname'] || contactObject['lastName'] || contactObject['contact'].lastName || '',
-            contactNumber: contactObject['contact'].contactNumber || '',
-            contactNumNew: contactObject['phone_number'] || contactObject['phoneNumber'] || '',
+            contactId: contact.contactId,
+            firstName: contactObject['firstname'] || contactObject['firstName'] || contact.firstName || '',
+            lastName: contactObject['lastname'] || contactObject['lastName'] || contact.lastName || '',
+            gender: contactObject['gender'] || contact.gender || 'unknown',
+            organizationId: contactObject['organizationId'] || contact.organizationId || null,
+            contactType: contactObject['contactType'] || contact.contactType || 'Seller',
+            contactNumber: contact.contactNumber || '',
+            contactNumber2: contactObject['contactNumber2'] || contact.contactNumber2 || '',
+            province: contactObject['License Plate Province'] || contactObject['licensePlateProvince'] || contact.province || null,
             modifiedById: userData.userId || '',
+            contactNumNew: contactObject['phone_number'] || contactObject['phoneNumber'] || contactObject['Contact Mobile'] || '',
+            partnerCode: contactObject['Dealer ID'] || contactObject['dealerId'] || null, // Dealer ID is partnerCode
+            email: contactObject['Contact Email'] || contactObject['email'] || null,
         };
 
         try {
@@ -335,13 +556,33 @@ export class ContactImportManagementComponent implements OnInit {
 
     async createContact(contactObject: any): Promise<any> {
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-        const data = {
-            firstName: contactObject['firstname'] || contactObject['firstName'] || '',
-            lastName: contactObject['lastname'] || contactObject['lastName'] || '',
-            contactNumber: contactObject['phone_number'] || contactObject['phoneNumber'] || '',
-            gender: contactObject['gender'] || 'unknown',
 
+        // Split dealer name into first and last name if available
+        const dealerName = contactObject['Dealer Name'] || contactObject['dealerName'] || '';
+        let firstName = contactObject['firstname'] || contactObject['firstName'] || '';
+        let lastName = contactObject['lastname'] || contactObject['lastName'] || '';
+
+        if (!firstName && dealerName) {
+            const nameParts = dealerName.trim().split(/\s+/);
+            firstName = nameParts[0] || 'ไม่ทราบชื่อ';
+            lastName = nameParts.slice(1).join(' ') || null;
+        }
+
+        const data = {
+            firstName: firstName || 'ไม่ทราบชื่อ',
+            lastName: lastName || null,
+            gender: contactObject['gender'] || 'unknown',
+            organizationId: contactObject['organizationId'] || null,
+            contactType: 'Seller',
+            contactNumber: contactObject['phone_number'] || contactObject['phoneNumber'] || contactObject['Contact Mobile'] || '',
+            contactNumber2: contactObject['contactNumber2'] || '',
+            chatId: contactObject['chatId'] || '',
+            chatType: contactObject['chatType'] || '',
+            displayName: contactObject['displayName'] || dealerName || firstName || 'ไม่ทราบชื่อ',
+            province: contactObject['License Plate Province'] || contactObject['licensePlateProvince'] || null,
             createdById: userData.userId || '',
+            partnerCode: contactObject['Dealer ID'] || contactObject['dealerId'] || null, // Dealer ID is partnerCode
+            email: contactObject['Contact Email'] || contactObject['email'] || null,
         };
 
         try {
@@ -356,6 +597,67 @@ export class ContactImportManagementComponent implements OnInit {
             return null;
         } catch (error) {
             console.error('Error creating contact:', error);
+            return null;
+        }
+    }
+
+    /**
+     * Create or update car from contact object
+     */
+    async createOrUpdateCar(contactObject: any): Promise<any> {
+        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+
+        const dealerId = contactObject['Dealer ID'] || contactObject['dealerId'];
+        const carId = contactObject['Car ID'] || contactObject['carId'];
+
+        // Don't create car record if no dealerId or no carId
+        if (!dealerId || !carId) {
+            return null;
+        }
+
+        const carData = {
+            id: contactObject['Car ID'] || contactObject['carId'] || null,
+            licensePlateNumber: contactObject['License Plate Number'] || contactObject['licensePlateNumber'] || null,
+            licensePlateProvince: contactObject['License Plate Province'] || contactObject['licensePlateProvince'] || null,
+            dealerId: dealerId,
+            dealerName: contactObject['Dealer Name'] || contactObject['dealerName'] || '',
+            contactEmail: contactObject['Contact Email'] || contactObject['contactEmail'] || '',
+            contactMobile: contactObject['Contact Mobile'] || contactObject['contactMobile'] || '',
+            quickSaleId: contactObject['Quick Sale ID'] || contactObject['quickSaleId'] || null,
+            code: contactObject['Code'] || contactObject['code'] || '',
+            carStatusDescription: contactObject['Car Status Description'] || contactObject['carStatusDescription'] || null,
+            carBrand: contactObject['Car Brand'] || contactObject['carBrand'] || null,
+            carModel: contactObject['Car Model'] || contactObject['carModel'] || null,
+            asking_price:
+                contactObject['asking_price'] !== undefined
+                    ? contactObject['asking_price']
+                    : contactObject['ราคาประกาศขาย']
+                    ? parseFloat(String(contactObject['ราคาประกาศขาย']).replace(/,/g, '')) || null
+                    : null,
+            bluebook_price:
+                contactObject['bluebook_price'] !== undefined
+                    ? contactObject['bluebook_price']
+                    : contactObject['ราคา bluebook']
+                    ? parseFloat(String(contactObject['ราคา bluebook']).replace(/,/g, '')) || null
+                    : null,
+            msrp_price:
+                contactObject['msrp_price'] !== undefined
+                    ? contactObject['msrp_price']
+                    : contactObject['ราคาแนะนำ']
+                    ? parseFloat(String(contactObject['ราคาแนะนำ']).replace(/,/g, '')) || null
+                    : null,
+            alName: contactObject['AL Name'] || contactObject['alName'] || null,
+            alPhoneNumber: contactObject['AL Phone Number'] || contactObject['alPhoneNumber'] || null,
+            createdAt: contactObject['parsedCreatedDate'] || contactObject['Created Date'] || new Date().toISOString(),
+            createById: userData.userId || null, // ID of user who imports the data
+        };
+
+        try {
+            const res: any = await firstValueFrom(this.carService.createOrUpdateCar(carData));
+            const result = typeof res === 'string' ? JSON.parse(res) : res;
+            return result;
+        } catch (error) {
+            console.error('Error creating/updating car:', error);
             return null;
         }
     }
@@ -419,40 +721,6 @@ export class ContactImportManagementComponent implements OnInit {
         });
     }
 
-    getCaseTopicByCode(code: string): Promise<any[]> {
-        return new Promise((resolve) => {
-            if (!code) {
-                resolve([]);
-                return;
-            }
-            this.callService.getCaseTopicByCode(code).subscribe((res: any) => {
-                const parsedRes = typeof res === 'string' ? JSON.parse(res) : res;
-                if (parsedRes && Array.isArray(parsedRes) && parsedRes.length > 0) {
-                    resolve(parsedRes);
-                } else {
-                    resolve([]);
-                }
-            });
-        });
-    }
-
-    getCaseSubjectByCode(code: string): Promise<any[]> {
-        return new Promise((resolve) => {
-            if (!code) {
-                resolve([]);
-                return;
-            }
-            this.callService.getCaseSubjectByCode(code).subscribe((res: any) => {
-                const parsedRes = typeof res === 'string' ? JSON.parse(res) : res;
-                if (parsedRes && Array.isArray(parsedRes) && parsedRes.length > 0) {
-                    resolve(parsedRes);
-                } else {
-                    resolve([]);
-                }
-            });
-        });
-    }
-
     // Round Robin distribution of leads to agents
     async leadManagement(contactObjects: any[]) {
         if (!contactObjects || contactObjects.length === 0) {
@@ -473,9 +741,21 @@ export class ContactImportManagementComponent implements OnInit {
         const casePromises: any[] = [];
 
         // Filter only contacts that have been successfully imported (have contactId)
+        // For lead import: must have contactId and Dealer ID (carId is optional - lead can exist without car)
         const validContacts = contactObjects.filter((contactObj: any) => {
             const contact = contactObj['contact'] || contactObj;
-            return contact && contact.contactId;
+            const hasContactId = contact && contact.contactId;
+            const hasDealerId = contactObj['Dealer ID'] || contactObj['dealerId'];
+
+            // For lead import: must have contactId and dealerId (carId is optional)
+            // For regular contact import: just need contactId
+            if (hasDealerId) {
+                // This is a lead - must have contactId (carId is optional)
+                return hasContactId;
+            } else {
+                // Regular contact import - just need contactId
+                return hasContactId;
+            }
         });
 
         if (validContacts.length === 0) {
@@ -493,37 +773,90 @@ export class ContactImportManagementComponent implements OnInit {
                 const assignedAgent = this.agentAll[agentIndex];
 
                 // Map contact data to case data
-                const caseTopic: any[] = await this.getCaseTopicByCode(contactObj['caseTopicCode'] || contact['caseTopicCode'] || null);
-                const caseSubject: any[] = await this.getCaseSubjectByCode(
-                    contactObj['caseSubjectCode'] || contact['caseSubjectCode'] || null,
-                );
                 const result = await firstValueFrom(
                     this.contactService.getContactNumberIdByPhone(contactObj['phone_number'] || contact['phone_number'] || null),
                 );
                 const contactNumberId = (result as any[])[0]?.contactNumberId ?? null;
 
+                // Get caseCodeId from Code
+                let caseCodeId: string | null = null;
+                const code = contactObj['Code'] || contactObj['code'];
+                if (code) {
+                    try {
+                        const caseCodes: any = await firstValueFrom(this.callService.getCaseCode());
+                        const parsedCodes = typeof caseCodes === 'string' ? JSON.parse(caseCodes) : caseCodes;
+                        const matchedCode = Array.isArray(parsedCodes) ? parsedCodes.find((cc: any) => cc.code === code) : null;
+                        if (matchedCode) {
+                            caseCodeId = matchedCode.id?.toString() || null;
+                        } else {
+                            // Create new caseCode if not exists
+                            const newCaseCode = await firstValueFrom(
+                                this.callService.createCaseCode({ code, script: '', createdById: userData.userId }),
+                            );
+                            const parsedNewCode = typeof newCaseCode === 'string' ? JSON.parse(newCaseCode) : newCaseCode;
+                            caseCodeId = parsedNewCode.id?.toString() || null;
+                        }
+                    } catch (error) {
+                        console.error('Error getting caseCode:', error);
+                    }
+                }
+
+                // Parse requestDateTime - use car's createdAt if available, otherwise use parsedCreatedDate
+                let requestDateTime = contactObj['requestDateTime'] || contact['requestDateTime'] || nowISO;
+                if (contactObj['parsedCreatedDate']) {
+                    requestDateTime = moment(contactObj['parsedCreatedDate']).toISOString();
+                } else if (contactObj['car']?.createdAt) {
+                    requestDateTime = moment(contactObj['car'].createdAt).toISOString();
+                }
+
+                // Get carId - prioritize from car object, then from contactObj
+                const carId = contactObj['car']?.id || contactObj['carId'] || null;
+
+                // Build description for lead (include car info if available)
+                let description = contactObj['description'] || contact['description'] || '';
+                if (contactObj['hasCarData'] && carId) {
+                    const carInfo = [];
+                    if (contactObj['License Plate Number']) {
+                        carInfo.push(`ทะเบียน: ${contactObj['License Plate Number']}`);
+                    }
+                    if (contactObj['Car Brand'] && contactObj['Car Model']) {
+                        carInfo.push(`รถ: ${contactObj['Car Brand']} ${contactObj['Car Model']}`);
+                    }
+                    if (contactObj['Car Status Description']) {
+                        carInfo.push(`สถานะ: ${contactObj['Car Status Description']}`);
+                    }
+                    if (carInfo.length > 0) {
+                        description = description ? `${description}\n${carInfo.join(', ')}` : carInfo.join(', ');
+                    }
+                }
+
                 const caseData = {
                     caseId: null,
                     contactId: contact.contactId,
-                    channelId: contactObj['channelId'] || contact['channelId'] || 1,
-                    requestDateTime: contactObj['requestDateTime'] || contact['requestDateTime'] || nowISO,
-                    description: contactObj['description'] || contact['description'] || '',
-                    caseTopicId: caseTopic && caseTopic.length > 0 ? caseTopic[0].caseTopicId : null,
-                    caseTopicCode: contactObj['caseTopicCode'] || contact['caseTopicCode'] || contactObj['caseTopicCode'] || null,
-                    caseSubjectId: caseSubject && caseSubject.length > 0 ? caseSubject[0].caseSubjectId : null,
-                    operationType: contactObj['operationType'] || contact['operationType'] || this.outbound,
+                    carId: carId, // Link case to car for lead management
+                    channelId: contactObj['channelId'] || contact['channelId'] || 1, // 1 = Voice channel for leads
+                    requestDateTime: requestDateTime,
+                    description: description,
+                    caseCodeId: caseCodeId, // From Code column
+                    caseTypeId: contactObj['caseTypeId'] || contact['caseTypeId'] || null,
+                    caseServiceGroupId: contactObj['caseServiceGroupId'] || contact['caseServiceGroupId'] || null,
+                    caseServiceTypeId: contactObj['caseServiceTypeId'] || contact['caseServiceTypeId'] || null,
+                    caseServiceSubTypeId: contactObj['caseServiceSubTypeId'] || contact['caseServiceSubTypeId'] || null,
+                    operationType: contactObj['operationType'] || contact['operationType'] || this.outbound, // Outbound for leads
                     priority: contactObj['priority'] || contact['priority'] || null,
-                    status: contactObj['status'] || contact['status'] || 1,
+                    status: contactObj['status'] || contact['status'] || 1, // Default status = 1 (Open)
                     solution: contactObj['solution'] || contact['solution'] || null,
                     contactNumber: contactNumberId,
-                    source: contactObj['source'] || contact['source'] || null,
+                    source: contactObj['source'] || contact['source'] || 'Excel Import',
                     assignedAt: nowISO,
                     createdAt: nowISO,
                     createdById: userData.userId,
                     modifiedAt: nowISO,
                     modifiedById: userData.userId,
                     isDeleted: 0,
-                    assignedUserId: assignedAgent.userId,
+                    assignedUserId: assignedAgent.userId, // Round Robin assignment
+                    callStatus: null, // Initial call status is null (not called yet)
+                    attemptCount: 0, // Initial attempt count is 0
                     attachment: contactObj['attachment'] || contact['attachment'] || null,
                 };
 
