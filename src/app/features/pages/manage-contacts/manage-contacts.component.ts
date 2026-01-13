@@ -315,10 +315,10 @@ export class ManageContactsComponent implements OnInit {
         });
 
         await this.callServive.getContactNumbertById(contactId).subscribe((res: any) => {
-            this.contactNumbers = res.map((item: any) => ({
+            this.contactNumbers = res && Array.isArray(res) ? res.map((item: any) => ({
                 contactNumber: item.contactNumber,
                 contactNumberId: item.contactNumberId,
-            }));
+            })) : [];
         });
     }
 

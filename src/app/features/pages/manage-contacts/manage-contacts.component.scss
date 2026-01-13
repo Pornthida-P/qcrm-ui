@@ -121,6 +121,74 @@
 .custom-table-wrapper {
     border-radius: 0 0 12px 12px;
     overflow: hidden;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+
+    .responsive-table {
+        min-width: 1200px;
+        width: 100%;
+
+        // Column widths for better responsive behavior
+        .col-time {
+            min-width: 120px;
+            width: 120px;
+        }
+
+        .col-channel {
+            min-width: 100px;
+            width: 100px;
+        }
+
+        .col-code {
+            min-width: 100px;
+            width: 120px;
+        }
+
+        .col-call-status {
+            min-width: 120px;
+            width: 140px;
+        }
+
+        .col-status {
+            min-width: 100px;
+            width: 120px;
+        }
+
+        .col-manage {
+            min-width: 80px;
+            width: 80px;
+        }
+
+        // Responsive adjustments
+        @media (max-width: 1199.98px) {
+            min-width: 1000px;
+        }
+
+        @media (max-width: 991.98px) {
+            min-width: 800px;
+
+            th,
+            td {
+                font-size: 0.875rem;
+                padding: 0.5rem 0.4rem;
+            }
+        }
+
+        @media (max-width: 767.98px) {
+            min-width: 600px;
+
+            th,
+            td {
+                font-size: 0.8rem;
+                padding: 0.4rem 0.3rem;
+            }
+
+            .badge {
+                font-size: 0.75rem;
+                padding: 0.25rem 0.5rem;
+            }
+        }
+    }
 }
 
 .form-label {

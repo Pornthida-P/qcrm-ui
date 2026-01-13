@@ -1,50 +1,130 @@
-.mg-bt {
-    margin-bottom: 1%;
+// Form Section Styles
+.form-section {
+    background: #fff;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+    border: 1px solid #e9ecef;
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        padding-bottom: 12px;
+        margin-bottom: 16px;
+        border-bottom: 2px solid #f0f0f0;
+
+        i {
+            color: var(--color-blue-dark, #010966);
+            font-size: 1.1rem;
+        }
+
+        .fw-semibold {
+            color: #333;
+            font-size: 1rem;
+        }
+    }
+
+    .section-content {
+        .form-label-sm {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 6px;
+        }
+
+        .form-control-sm,
+        .form-select-sm {
+            font-size: 0.875rem;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #ced4da;
+            transition: all 0.2s ease;
+
+            &:focus {
+                border-color: var(--color-primary, #0d6efd);
+                box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+            }
+        }
+    }
 }
-.mg-bt-0 {
-    margin-bottom: 0%;
+
+.case-form {
+    .row {
+        margin: 0;
+    }
 }
-.mg-3 {
-    margin: 0 3% 3% 3%;
+
+.color-red {
+    color: #dc3545;
 }
-.dp-hidden {
-    width: 0;
-    margin: 0;
-    border: none;
-    padding: 0;
-}
-.custom-day {
-    text-align: center;
-    padding: 0.185rem 0.25rem;
-    display: inline-block;
-    height: 2rem;
-    width: 2rem;
-}
-.custom-day.focused {
-    background-color: #e6e6e6;
-}
-.custom-day.range,
-.custom-day:hover {
-    background-color: rgb(2, 117, 216);
-    color: white;
-}
-.custom-day.faded {
-    background-color: rgba(2, 117, 216, 0.5);
-}
-.date-pik {
+
+// Date Time Wrapper
+.datetime-inline-wrapper {
     display: flex;
+    flex-direction: row;
     align-items: center;
-    justify-content: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+
+    &.compact {
+        .date-input-section {
+            flex: 1;
+            min-width: 150px;
+            max-width: 200px;
+
+            .input-group-sm {
+                .form-control-sm {
+                    padding: 6px 10px;
+                    font-size: 0.875rem;
+                }
+            }
+        }
+
+        .time-input-section {
+            flex-shrink: 0;
+        }
+    }
 }
-.date-time {
-    margin-right: 7%;
+
+// Compact Field Styles
+.compact-field {
+    ::ng-deep .mat-mdc-form-field {
+        .mat-mdc-form-field-flex {
+            height: 38px;
+        }
+
+        .mat-mdc-form-field-infix {
+            min-height: 38px;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        input.mat-mdc-input-element {
+            font-size: 0.875rem;
+        }
+    }
 }
+
+.search-contact {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 8px;
+}
+
+.btn-search-contact {
+    flex-shrink: 0;
+    min-width: 100px;
+}
+
 .input-group-text {
     padding: 0;
     max-width: 38px !important;
     max-height: 38px !important;
     margin-right: 10px;
 }
+
 ::ng-deep {
     .mdc-icon-button {
         padding: 6px !important;
@@ -52,63 +132,14 @@
         max-height: 38px !important;
         margin: auto;
     }
-}
-.pd-l-50 {
-    padding-left: 50px;
-}
-.mg-b {
-    margin-bottom: 3px;
-}
-.div-form-check {
-    display: flex;
-    flex-direction: column;
-}
-.form-input-file {
-    display: flex;
-    align-items: center;
-}
-.form-check {
-    margin-right: 12px;
-}
-::ng-deep .chevron .ngb-tp-chevron {
-    display: none !important;
-}
-::ng-deep .date-pik .btn-link {
-    display: none !important;
-}
-.search-contact {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: stretch;
-}
-.btn-search-contact {
-    width: 20%;
-}
-.input-group input.form-control:focus {
-    border-color: #28a745;
-    box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25);
-}
-.table-smn {
-  // width: 400px;
-  table-layout: fixed;
-  border-collapse: collapse;
-}
-.table-smn tbody {
-  display:block;
-  overflow: auto;
-  height: 450px;
-}
-.table-smn thead tr {
-  display: block;
-}
-.table-smn th {
-  text-align: left;
-  width: 700px;
-}
-.submitTopic {
-  display: flex;
-  align-items: flex-end
+
+    .chevron .ngb-tp-chevron {
+        display: none !important;
+    }
+
+    .date-pik .btn-link {
+        display: none !important;
+    }
 }
 
 .display-none {
@@ -151,7 +182,7 @@
     }
 
     .mat-mdc-form-field-flex {
-        height: 42px;
+        height: 38px;
         align-items: center;
     }
 
@@ -172,19 +203,19 @@
     .mat-mdc-form-field-infix {
         padding-top: 0;
         padding-bottom: 0;
-        min-height: 42px;
+        min-height: 38px;
         display: flex;
         align-items: center;
     }
 
     input.mat-mdc-input-element {
-        font-size: 14px;
+        font-size: 0.875rem;
         margin-top: 0;
     }
 
     // Label styles - center vertically when not floating
     .mat-mdc-floating-label {
-        font-size: 14px;
+        font-size: 0.875rem;
         top: 50% !important;
         transform: translateY(-50%) !important;
     }
@@ -207,9 +238,90 @@
 
 ::ng-deep .mat-mdc-autocomplete-panel {
     max-height: 250px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 
     .mat-mdc-option {
-        font-size: 14px;
+        font-size: 0.875rem;
         min-height: 40px;
+        padding: 8px 16px;
+
+        &:hover {
+            background-color: #f8f9fa;
+        }
+
+        &.mdc-list-item--selected {
+            background-color: #e7f3ff;
+        }
+    }
+}
+
+// Time Picker Styles
+::ng-deep .time-picker-inline {
+    margin-left: 0 !important;
+
+    &.compact {
+        .ngb-tp {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 0;
+        }
+
+        .ngb-tp-input-container {
+            width: 50px;
+            padding: 0;
+        }
+
+        input.ngb-tp-input {
+            width: 100%;
+            text-align: center;
+            padding: 4px 6px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 0.875rem;
+        }
+
+        .ngb-tp-chevron-container {
+            display: none;
+        }
+
+        .ngb-tp-spacer {
+            width: auto;
+            padding: 0 4px;
+            font-size: 0.875rem;
+        }
+
+        .ngb-tp-hour,
+        .ngb-tp-minute,
+        .ngb-tp-second {
+            padding: 0;
+        }
+    }
+}
+
+// Responsive Styles
+@media (max-width: 575.98px) {
+    .datetime-inline-wrapper {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+
+        .date-input-section {
+            max-width: 100%;
+        }
+
+        .time-input-section {
+            align-self: flex-start;
+        }
+    }
+
+    .form-section {
+        padding: 12px;
+
+        .section-header {
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+        }
     }
 }

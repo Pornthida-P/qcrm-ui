@@ -59,6 +59,7 @@ export class LeadManagementComponent implements OnInit {
     ngOnInit(): void {
         this.loadAgents();
         this.loadLeads();
+        this.loadDeadPoolLeads();
         this.loadAgentWorkload();
     }
 
@@ -302,7 +303,7 @@ export class LeadManagementComponent implements OnInit {
 
         if (confirmed.isConfirmed) {
             const agentIds = Array.from(this.selectedAgentsForReassign);
-            this.callListService.reassignLeads(agentIds).subscribe({
+            this.callListService.reassignLeads(agentIds, this.userData.userId).subscribe({
                 next: (res: any) => {
                     const count = res.reassignedCount || 0;
                     const title = this.translate.instant('alert.success');
@@ -379,7 +380,7 @@ export class LeadManagementComponent implements OnInit {
 
         if (confirmed.isConfirmed) {
             const targetAgentIds = Array.from(this.selectedTargetAgents);
-            this.callListService.reassignFromAgent(this.sourceAgent.userId, targetAgentIds).subscribe({
+            this.callListService.reassignFromAgent(this.sourceAgent.userId, targetAgentIds, this.userData.userId).subscribe({
                 next: (res: any) => {
                     const count = res.reassignedCount || 0;
                     const title = this.translate.instant('alert.success');
