@@ -45,10 +45,10 @@
                         </select>
                     </div>
                     <div class="col-12 col-sm-6">
-                        <label class="fw-bold mb-2" for="selectedCaseTopic">{{ 'dashboard.caseTopic' | translate }}</label>
-                        <select class="form-select shadow-none" [(ngModel)]="selectedCaseTopic" (change)="filterCases()">
+                        <label class="fw-bold mb-2" for="selectedCaseCode">{{ 'dashboard.caseCode' | translate }}</label>
+                        <select class="form-select shadow-none" [(ngModel)]="selectedCaseCode" (change)="filterCases()">
                             <option value="">{{ 'dashboard.all' | translate }}</option>
-                            <option *ngFor="let caseTopic of caseTopicList" [value]="caseTopic.value">{{ caseTopic.name }}</option>
+                            <option *ngFor="let caseCode of caseCodeList" [value]="caseCode.value">{{ caseCode.name }}</option>
                         </select>
                     </div>
                 </div>
@@ -65,8 +65,8 @@
                     <div class="col-12 col-sm-4">
                         <div class="statistics-card h-100">
                             <div class="stat-item">
-                                <div class="stat-number">{{ caseTopicCount }}</div>
-                                <div class="stat-label">{{ 'dashboard.caseTopic' | translate }}</div>
+                                <div class="stat-number">{{ caseCodeCount }}</div>
+                                <div class="stat-label">{{ 'dashboard.caseCode' | translate }}</div>
                                 <div class="stat-relation">
                                     <i class="fa-solid fa-arrow-down me-1"></i>
                                     {{ 'dashboard.from' | translate }}
