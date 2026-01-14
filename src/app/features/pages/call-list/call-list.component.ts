@@ -134,6 +134,10 @@ export class CallListComponent implements OnInit {
         });
     }
 
+    isSuperAdmin(): boolean {
+        return this.userData?.role?.roleTitle?.toLowerCase() === 'super admin';
+    }
+
     getCallStatusClass(callStatus: string): string {
         if (!callStatus) return 'status-not-called';
         const status = callStatus.trim().toLowerCase();
