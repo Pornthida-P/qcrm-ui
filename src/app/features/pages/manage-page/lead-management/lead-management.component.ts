@@ -295,8 +295,8 @@ export class LeadManagementComponent implements OnInit {
 
         const confirmed = await this.sweetAlertService.confirmSwal(
             'warning',
-            this.translate.instant('leadManagement.confirmAutoReassign'),
-            this.translate.instant('leadManagement.selectedAgentsCount', { count: this.selectedAgentsForReassign.size }),
+            this.translate.instant('leadManagement.confirmAutoReassign', { count: this.selectedAgentsForReassign.size }),
+            '',
             this.translate.instant('alert.confirm'),
             this.translate.instant('alert.cancel'),
         );
@@ -307,7 +307,7 @@ export class LeadManagementComponent implements OnInit {
                 next: (res: any) => {
                     const count = res.reassignedCount || 0;
                     const title = this.translate.instant('alert.success');
-                    const text = this.translate.instant('leadManagement.autoReassignSuccess', { count });
+                    const text = '';
                     this.sweetAlertService.getSwal('success', title, text, false, '');
                     this.closeAutoReassignModal();
                     this.loadLeads();
@@ -373,7 +373,7 @@ export class LeadManagementComponent implements OnInit {
         const confirmed = await this.sweetAlertService.confirmSwal(
             'warning',
             this.translate.instant('leadManagement.confirmReassignFromAgent', { agent: this.sourceAgent.username }),
-            this.translate.instant('leadManagement.selectedAgentsCount', { count: this.selectedTargetAgents.size }),
+            '',
             this.translate.instant('alert.confirm'),
             this.translate.instant('alert.cancel'),
         );
@@ -384,7 +384,7 @@ export class LeadManagementComponent implements OnInit {
                 next: (res: any) => {
                     const count = res.reassignedCount || 0;
                     const title = this.translate.instant('alert.success');
-                    const text = this.translate.instant('leadManagement.reassignFromAgentSuccess', { count });
+                    const text = '';
                     this.sweetAlertService.getSwal('success', title, text, false, '');
                     this.closeReassignFromAgentModal();
                     this.loadLeads();

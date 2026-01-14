@@ -374,15 +374,11 @@
                                                                 [displayWith]="displayCodeFn"
                                                                 (optionSelected)="!isAgent() && onCodeSelected($event)"
                                                             >
-                                                                <mat-option *ngFor="let code of filteredCodes" [value]="code">
-                                                                    <ng-container *ngIf="code.isNew">
-                                                                        <i class="fa-solid fa-plus me-2 text-success"></i>
-                                                                        {{ 'common.create' | translate }}: "{{ code.code }}"
-                                                                    </ng-container>
-                                                                    <ng-container *ngIf="!code.isNew">
+                                                                <ng-container *ngFor="let code of filteredCodes">
+                                                                    <mat-option *ngIf="!code.isNew" [value]="code">
                                                                         {{ code.code }}
-                                                                    </ng-container>
-                                                                </mat-option>
+                                                                    </mat-option>
+                                                                </ng-container>
                                                             </mat-autocomplete>
                                                         </mat-form-field>
                                                     </div>
@@ -410,15 +406,11 @@
                                                                 [displayWith]="displayCaseTypeFn"
                                                                 (optionSelected)="!isAgent() && onCaseTypeSelected($event)"
                                                             >
-                                                                <mat-option *ngFor="let caseType of filteredCaseTypes" [value]="caseType">
-                                                                    <ng-container *ngIf="caseType.isNew">
-                                                                        <i class="fa-solid fa-plus me-2 text-success"></i>
-                                                                        {{ 'common.create' | translate }}: "{{ caseType.name }}"
-                                                                    </ng-container>
-                                                                    <ng-container *ngIf="!caseType.isNew">
+                                                                <ng-container *ngFor="let caseType of filteredCaseTypes">
+                                                                    <mat-option *ngIf="!caseType.isNew" [value]="caseType">
                                                                         {{ caseType.name }}
-                                                                    </ng-container>
-                                                                </mat-option>
+                                                                    </mat-option>
+                                                                </ng-container>
                                                             </mat-autocomplete>
                                                         </mat-form-field>
                                                     </div>
@@ -448,18 +440,11 @@
                                                                 [displayWith]="displayServiceGroupFn"
                                                                 (optionSelected)="!isAgent() && onServiceGroupSelected($event)"
                                                             >
-                                                                <mat-option
-                                                                    *ngFor="let serviceGroup of filteredServiceGroups"
-                                                                    [value]="serviceGroup"
-                                                                >
-                                                                    <ng-container *ngIf="serviceGroup.isNew">
-                                                                        <i class="fa-solid fa-plus me-2 text-success"></i>
-                                                                        {{ 'common.create' | translate }}: "{{ serviceGroup.name }}"
-                                                                    </ng-container>
-                                                                    <ng-container *ngIf="!serviceGroup.isNew">
+                                                                <ng-container *ngFor="let serviceGroup of filteredServiceGroups">
+                                                                    <mat-option *ngIf="!serviceGroup.isNew" [value]="serviceGroup">
                                                                         {{ serviceGroup.name }}
-                                                                    </ng-container>
-                                                                </mat-option>
+                                                                    </mat-option>
+                                                                </ng-container>
                                                             </mat-autocomplete>
                                                         </mat-form-field>
                                                     </div>
@@ -487,18 +472,11 @@
                                                                 [displayWith]="displayServiceTypeFn"
                                                                 (optionSelected)="!isAgent() && onServiceTypeSelected($event)"
                                                             >
-                                                                <mat-option
-                                                                    *ngFor="let serviceType of filteredServiceTypes"
-                                                                    [value]="serviceType"
-                                                                >
-                                                                    <ng-container *ngIf="serviceType.isNew">
-                                                                        <i class="fa-solid fa-plus me-2 text-success"></i>
-                                                                        {{ 'common.create' | translate }}: "{{ serviceType.name }}"
-                                                                    </ng-container>
-                                                                    <ng-container *ngIf="!serviceType.isNew">
+                                                                <ng-container *ngFor="let serviceType of filteredServiceTypes">
+                                                                    <mat-option *ngIf="!serviceType.isNew" [value]="serviceType">
                                                                         {{ serviceType.name }}
-                                                                    </ng-container>
-                                                                </mat-option>
+                                                                    </mat-option>
+                                                                </ng-container>
                                                             </mat-autocomplete>
                                                         </mat-form-field>
                                                     </div>
@@ -528,18 +506,11 @@
                                                                 [displayWith]="displayServiceSubTypeFn"
                                                                 (optionSelected)="!isAgent() && onServiceSubTypeSelected($event)"
                                                             >
-                                                                <mat-option
-                                                                    *ngFor="let serviceSubType of filteredServiceSubTypes"
-                                                                    [value]="serviceSubType"
-                                                                >
-                                                                    <ng-container *ngIf="serviceSubType.isNew">
-                                                                        <i class="fa-solid fa-plus me-2 text-success"></i>
-                                                                        {{ 'common.create' | translate }}: "{{ serviceSubType.name }}"
-                                                                    </ng-container>
-                                                                    <ng-container *ngIf="!serviceSubType.isNew">
+                                                                <ng-container *ngFor="let serviceSubType of filteredServiceSubTypes">
+                                                                    <mat-option *ngIf="!serviceSubType.isNew" [value]="serviceSubType">
                                                                         {{ serviceSubType.name }}
-                                                                    </ng-container>
-                                                                </mat-option>
+                                                                    </mat-option>
+                                                                </ng-container>
                                                             </mat-autocomplete>
                                                         </mat-form-field>
                                                     </div>
