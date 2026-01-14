@@ -370,9 +370,13 @@ export class LeadManagementComponent implements OnInit {
             return;
         }
 
+        // Get translation and manually replace {agent} placeholder
+        const translationKey = this.translate.instant('leadManagement.confirmReassignFromAgent');
+        const message = translationKey.replace('{agent}', this.sourceAgent.username);
+
         const confirmed = await this.sweetAlertService.confirmSwal(
             'warning',
-            this.translate.instant('leadManagement.confirmReassignFromAgent', { agent: this.sourceAgent.username }),
+            message,
             '',
             this.translate.instant('alert.confirm'),
             this.translate.instant('alert.cancel'),
