@@ -3,6 +3,20 @@
 
 // Component-specific styles (add overrides here if needed)
 
+.btn-action.btn-success:disabled {
+    background: #b0bec5 !important;
+    border-color: #b0bec5 !important;
+    color: #fff !important;
+    opacity: 0.65;
+    cursor: not-allowed;
+    pointer-events: none;
+
+    &:hover {
+        background: #b0bec5 !important;
+        border-color: #b0bec5 !important;
+    }
+}
+
 // Attempt count badge styles
 .attempt-badge {
     display: inline-block;
@@ -12,12 +26,12 @@
     border-radius: 0.375rem;
     background-color: #e8f5e9;
     color: #2e7d32;
-    
+
     &.attempt-warning {
         background-color: #fff3e0;
         color: #e65100;
     }
-    
+
     &.attempt-danger {
         background-color: #ffebee;
         color: #c62828;
