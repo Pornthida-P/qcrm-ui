@@ -1008,6 +1008,17 @@ label:has(+ input:required):after {
     }
 }
 
+// Disabled field styling
+.disabled-field {
+    pointer-events: none !important;
+    opacity: 0.7;
+
+    input {
+        background-color: #e9ecef !important;
+        cursor: not-allowed !important;
+    }
+}
+
 // Compact Mat Form Field for new layout
 ::ng-deep .compact-field {
     &.mat-mdc-form-field {
