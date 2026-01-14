@@ -19,6 +19,7 @@
                             <th class="text-nowrap">{{ 'contact-import-management.car-brand-model' | translate }}</th>
                             <th class="text-nowrap">{{ 'contact-import-management.car-status' | translate }}</th>
                             <th class="text-nowrap">{{ 'contact.callStatus' | translate }}</th>
+                            <th class="text-nowrap">{{ 'common.status' | translate }}</th>
                             <th class="text-center text-nowrap">{{ 'callList.attempts' | translate }}</th>
                             <th class="text-nowrap">{{ 'contact.assignUser' | translate }}</th>
                             <th class="text-center text-nowrap">{{ 'callList.action' | translate }}</th>
@@ -51,10 +52,31 @@
                                 </td>
                                 <td>{{ caseList.carStatusDescription || '-' }}</td>
                                 <td>
-                                    <span *ngIf="caseList.callStatus" class="call-status-badge">{{ caseList.callStatus }}</span>
-                                    <span *ngIf="!caseList.callStatus" class="call-status-badge status-not-called">
-                                        {{ 'leadManagement.notCalled' | translate }}
+                                    <span
+                                        *ngIf="caseList.callStatus; else noCallStatus"
+                                        class="call-status-badge"
+                                        [ngClass]="getCallStatusClass(caseList.callStatus)"
+                                    >
+                                        {{ caseList.callStatus }}
                                     </span>
+                                    <ng-template #noCallStatus>
+                                        <span class="call-status-badge status-not-called">
+                                            {{ 'leadManagement.notCalled' | translate }}
+                                        </span>
+                                    </ng-template>
+                                </td>
+                                <td>
+                                    <span
+                                        *ngIf="caseList.status; else noCaseStatus"
+                                        class="badge status-badge"
+                                        [style.background-color]="statusService.getStatusBgColor(caseList.status)"
+                                    >
+                                        <i [class]="statusService.getStatusIcon(caseList.status)" class="me-1"></i>
+                                        {{ caseList.status }}
+                                    </span>
+                                    <ng-template #noCaseStatus>
+                                        <span class="text-muted">-</span>
+                                    </ng-template>
                                 </td>
                                 <td class="text-center">
                                     <span
@@ -81,7 +103,7 @@
                         </ng-container>
                         <ng-template #noDataTemplate>
                             <tr>
-                                <td colspan="13" class="text-center py-5">
+                                <td colspan="14" class="text-center py-5">
                                     <div class="empty-state">
                                         <i class="fa-solid fa-inbox fa-3x text-muted mb-3"></i>
                                         <p class="text-muted mb-0">{{ 'common.dataNotFound' | translate }}</p>
