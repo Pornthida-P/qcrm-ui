@@ -124,6 +124,7 @@ export class ManageContactsComponent implements OnInit {
     caseId: any;
     comment: any;
     comments: any[] = [];
+    uuidLine: any;
 
     chatHistory: any[] = [];
     activeScriptTab: 'script' | 'chat' = 'script';
@@ -185,6 +186,7 @@ export class ManageContactsComponent implements OnInit {
                 this.displayName = params['displayName'];
                 this.issue = params['issue'];
                 this.caseId = params['caseId'];
+                this.uuidLine = params['userId'];
 
                 // React to the new contactId
                 if (this.contactId) {
@@ -315,10 +317,13 @@ export class ManageContactsComponent implements OnInit {
         });
 
         await this.callServive.getContactNumbertById(contactId).subscribe((res: any) => {
-            this.contactNumbers = res && Array.isArray(res) ? res.map((item: any) => ({
-                contactNumber: item.contactNumber,
-                contactNumberId: item.contactNumberId,
-            })) : [];
+            this.contactNumbers =
+                res && Array.isArray(res)
+                    ? res.map((item: any) => ({
+                          contactNumber: item.contactNumber,
+                          contactNumberId: item.contactNumberId,
+                      }))
+                    : [];
         });
     }
 
@@ -421,26 +426,28 @@ export class ManageContactsComponent implements OnInit {
             createdById: userData.userId,
             contactNumber2: this.contactNum2,
             chatId: this.chatId,
+            uuidLine: this.uuidLine,
             chatType: this.chatType,
             displayName: this.displayName,
             issue: this.issue,
             contactGroupId: this.contactGroupId,
             email: this.contactEmail,
         };
-
         this.contactsService
             .createContacts(data)
             .pipe(
                 tap((res: any) => {
                     if (res.success === true) {
-                        console.log('phone: ', res.contactNumber);
-                        console.log('chatId: ', res.chatId);
+                        // console.log('phone: ', res.contactNumber);
+                        // console.log('chatId: ', res.chatId);
+                        // console.log('uuidLine: ', res.uuidLine);
                         const contactId = res.contactId;
                         const contactNumber = data.contactNumber;
                         const chatId = data.chatId;
                         const chatType = data.chatType;
                         const displayName = data.displayName;
                         const issue = data.issue;
+                        const uuidLine = data.uuidLine;
 
                         Swal.fire({
                             icon: 'success',
@@ -457,6 +464,7 @@ export class ManageContactsComponent implements OnInit {
                                 chattype: chatType || '',
                                 displayName: displayName || '',
                                 issue: issue || '',
+                                uuidLine: uuidLine || '',
                             });
                             window.location.href = `${environment.subPath}/contacts/edit?${params.toString()}`;
                         });
