@@ -310,10 +310,6 @@ export class CreateCallComponent {
         const selectedDate = this.startTime ? this.formatDate(new Date(this.startTime)) : this.formatDate(new Date());
         const selectedTime = this.timepickStart ? this.formatTime(this.timepickStart) : this.formatTime(new Date());
 
-        const isChannelOne = this.selectedChannels === '1' || this.selectedChannels === '2' || this.selectedChannels === '3';
-
-        const selectedCallTypeId = isChannelOne ? this.selectedCallTypeId : null;
-
         if (this.selectedCaseCode) {
             // Format requestDateTime
             const requestDateTime = `${selectedDate} ${selectedTime}`;
@@ -332,7 +328,7 @@ export class CreateCallComponent {
                 caseServiceGroupId: this.selectedServiceGroup,
                 caseServiceTypeId: this.selectedServiceType,
                 caseServiceSubTypeId: this.selectedServiceSubType,
-                operationType: selectedCallTypeId,
+                operationType: this.selectedCallTypeId,
                 priority: null,
                 status: this.selectedStatus,
                 solution: this.solutions,
@@ -776,7 +772,11 @@ export class CreateCallComponent {
             // Create new serviceType
             const userData = JSON.parse(localStorage.getItem('userData') || '{}');
             this.callServive
-                .createCaseServiceType({ name: selectedServiceType.name, caseServiceGroupId: this.selectedServiceGroup, createdById: userData.userId })
+                .createCaseServiceType({
+                    name: selectedServiceType.name,
+                    caseServiceGroupId: this.selectedServiceGroup,
+                    createdById: userData.userId,
+                })
                 .subscribe({
                     next: (res: any) => {
                         const newType = typeof res === 'string' ? JSON.parse(res) : res;
@@ -814,7 +814,11 @@ export class CreateCallComponent {
             // Create new serviceSubType
             const userData = JSON.parse(localStorage.getItem('userData') || '{}');
             this.callServive
-                .createServiceSubType({ name: selectedServiceSubType.name, caseServiceTypeId: this.selectedServiceType, createdById: userData.userId })
+                .createServiceSubType({
+                    name: selectedServiceSubType.name,
+                    caseServiceTypeId: this.selectedServiceType,
+                    createdById: userData.userId,
+                })
                 .subscribe({
                     next: (res: any) => {
                         const newSubType = typeof res === 'string' ? JSON.parse(res) : res;
