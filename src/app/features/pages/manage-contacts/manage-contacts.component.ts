@@ -934,9 +934,6 @@ export class ManageContactsComponent implements OnInit {
         const defaultTime = { hour: now.getHours(), minute: now.getMinutes(), second: now.getSeconds() };
         const selectedTime = this.timepickStart ? this.formatTime(this.timepickStart) : this.formatTime(defaultTime);
 
-        const isChannelOne = this.selectedChannels === '1' || this.selectedChannels === '2' || this.selectedChannels === '3';
-        const selectedCallTypeId = isChannelOne ? this.selectedCallTypeId : null;
-
         if (!this.callId) {
             // Create new case
             if (this.selectedCaseCode) {
@@ -957,7 +954,7 @@ export class ManageContactsComponent implements OnInit {
                     caseServiceGroupId: this.selectedServiceGroup,
                     caseServiceTypeId: this.selectedServiceType,
                     caseServiceSubTypeId: this.selectedServiceSubType,
-                    operationType: selectedCallTypeId,
+                    operationType: this.selectedCallTypeId,
                     priority: null,
                     status: this.selectedStatus,
                     callStatus: this.selectedCallStatusId,
@@ -1025,7 +1022,7 @@ export class ManageContactsComponent implements OnInit {
                     description: this.description,
                     startTime: `${selectedDate} ${selectedTime}`,
                     modifiedById: userData.userId,
-                    operationType: selectedCallTypeId,
+                    operationType: this.selectedCallTypeId,
                     contactId: this.contactId,
                     status: this.selectedStatus,
                     comment: this.comment,

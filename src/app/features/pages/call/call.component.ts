@@ -934,9 +934,6 @@ export class CallComponent implements OnInit {
         const selectedDate = this.startTime ? this.formatDate(new Date(this.startTime)) : this.formatDate(new Date());
         const selectedTime = this.timepickStart ? this.formatTime(this.timepickStart) : this.formatTime(new Date());
 
-        const isChannelOne = this.selectedChannels === '1';
-        const selectedCallTypeId = isChannelOne ? this.selectedCallTypeId : null;
-
         if (!this.callId) {
             if (this.selectedCaseCode) {
                 const data = {
@@ -955,7 +952,7 @@ export class CallComponent implements OnInit {
                     createdById: userData.userId,
                     attachment: this.attachmentsId,
                     call_id: this.phoneCall,
-                    operationType: selectedCallTypeId,
+                    operationType: this.selectedCallTypeId,
                     comment: this.comment,
                     sentimentId: this.selectedSentiment,
                 };
@@ -1006,7 +1003,7 @@ export class CallComponent implements OnInit {
                     description: this.description,
                     startTime: `${selectedDate} ${selectedTime}`,
                     modifiedById: userData.userId,
-                    operationType: selectedCallTypeId,
+                    operationType: this.selectedCallTypeId,
                     status: this.selectedStatus,
                     comment: this.comment,
                     callStatus: this.selectedCallStatusId,
