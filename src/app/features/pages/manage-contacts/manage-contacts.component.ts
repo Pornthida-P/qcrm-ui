@@ -119,6 +119,8 @@ export class ManageContactsComponent implements OnInit {
     originalStatus: any;
     chatId: any;
     chatType: any;
+    originalChatId: any;
+    originalChatType: any;
     displayName: any;
     issue: any;
     caseId: any;
@@ -183,6 +185,8 @@ export class ManageContactsComponent implements OnInit {
                 this.contactNumParams = params['call_id'];
                 this.chatId = params['chatid'];
                 this.chatType = params['chattype'];
+                this.originalChatId = params['chatid'];
+                this.originalChatType = params['chattype'];
                 this.displayName = params['displayName'];
                 this.issue = params['issue'];
                 this.caseId = params['caseId'];
@@ -701,6 +705,9 @@ export class ManageContactsComponent implements OnInit {
         this.comments = [];
         this.history = [];
 
+        this.chatId = this.originalChatId;
+        this.chatType = this.originalChatType;
+
         // Reset autocomplete controls
         this.codeControl.setValue('');
         this.codeControl.enable();
@@ -810,6 +817,10 @@ export class ManageContactsComponent implements OnInit {
                         this.selectedCaseCode = null;
                         this.selectedCaseCodeObject = null;
                         this.codeControl.setValue('');
+                    }
+
+                    if (call.chatId) {
+                        this.chatId = call.chatId;
                     }
 
                     if (call.caseTypeId) {
@@ -936,7 +947,7 @@ export class ManageContactsComponent implements OnInit {
 
         if (!this.callId) {
             // Create new case
-            if (this.selectedCaseCode) {
+            if (this.selectedCaseCode || this.chatId || this.chatType) {
                 // Format requestDateTime
                 const requestDateTime = `${selectedDate} ${selectedTime}`;
 
@@ -1010,7 +1021,7 @@ export class ManageContactsComponent implements OnInit {
         } else if (this.callId && this.cType === 'case') {
             // Update existing case
             // console.log('iiiiiiiiiiiiiiiiii Edit Case:', this.callId);
-            if (this.selectedCaseCode) {
+            if (this.selectedCaseCode || this.chatId || this.chatType) {
                 const data = {
                     callId: this.callId,
                     caseCodeId: this.selectedCaseCode,
