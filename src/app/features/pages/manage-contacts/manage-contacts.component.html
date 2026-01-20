@@ -163,6 +163,8 @@
                                     id="inputContactNum"
                                     pattern="[0-9]*"
                                     inputmode="numeric"
+                                    minlength="9"
+                                    maxlength="10"
                                     onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                                     (input)="onInputChange($event, 'contactNum')"
                                     [placeholder]="'contact.phoneNumber' | translate"
@@ -178,6 +180,8 @@
                                     id="inputContactNumNew"
                                     pattern="[0-9]*"
                                     inputmode="numeric"
+                                    minlength="9"
+                                    maxlength="10"
                                     onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                                     (input)="onInputChange($event, 'contactNumNew')"
                                 />
@@ -191,6 +195,8 @@
                                         id="inputContactNum{{ i }}"
                                         pattern="[0-9]*"
                                         inputmode="numeric"
+                                        minlength="9"
+                                        maxlength="10"
                                         onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                                     />
                                 </div>
@@ -207,6 +213,8 @@
                                     id="inputContactNum2"
                                     pattern="[0-9]*"
                                     inputmode="numeric"
+                                    minlength="9"
+                                    maxlength="10"
                                     onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                                     (input)="onInputChange($event, 'contactNum2')"
                                     [placeholder]="'contact.phoneNumber' | translate"
