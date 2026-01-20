@@ -41,11 +41,22 @@ export class SweetAlertService {
         });
     }
 
-    contactSwal(icon: any, title: string, contacts: any): any {
-        const contactNum = localStorage.getItem('contactNum') || '{}';
+    contactSwal(icon: any, title: string, contacts: any, additionalParams?: any): any {
+        const contactNum = localStorage.getItem('contactNum') || '';
         let contactList = '';
         contacts.forEach((contact: any) => {
-            contactList += `<a href="contacts/edit?key=${contact.contactId}&call_id=${contactNum}">${contact.fullname}</a><br>`;
+            let url = `contacts/edit?key=${contact.contactId}&call_id=${contactNum}`;
+            
+            // Add additional params if provided (chatId, chatType, etc.)
+            if (additionalParams) {
+                if (additionalParams.chatid) url += `&chatid=${encodeURIComponent(additionalParams.chatid)}`;
+                if (additionalParams.chattype) url += `&chattype=${encodeURIComponent(additionalParams.chattype)}`;
+                if (additionalParams.displayName) url += `&displayName=${encodeURIComponent(additionalParams.displayName)}`;
+                if (additionalParams.issue) url += `&issue=${encodeURIComponent(additionalParams.issue)}`;
+                if (additionalParams.uuidLine) url += `&uuidLine=${encodeURIComponent(additionalParams.uuidLine)}`;
+            }
+            
+            contactList += `<a href="${url}">${contact.fullname}</a><br>`;
         });
         const orYouMean = this.translate.instant('alert.orYouMean');
         return Swal.fire({
