@@ -222,18 +222,14 @@ export class CallComponent implements OnInit {
         this.getUserData();
 
         this.userRole = this.userData.role.roleTitle.toLocaleLowerCase();
-        this.filterOption = [
-            { name: this.translate.instant('filter.all'), code: 'all' },
-            { name: this.translate.instant('filter.onlyMy'), code: this.userData.username },
-        ];
 
-        this.filterDate = [
-            { name: this.translate.instant('filter.pleaseSelectDate'), type: '' },
-            { name: this.translate.instant('filter.today'), type: 'toDay' },
-            { name: this.translate.instant('filter.thisWeek'), type: 'thisWeek' },
-            { name: this.translate.instant('filter.thisMonth'), type: 'thisMonth' },
-            { name: this.translate.instant('filter.customDate'), type: 'custom' },
-        ];
+        // Set initial filter options
+        this.updateFilterOptions();
+
+        // Subscribe to language changes to update filter options
+        this.translate.onLangChange.subscribe(() => {
+            this.updateFilterOptions();
+        });
 
         this.activeRoute.queryParams.subscribe((params) => {
             if (params['cb'] != undefined && params['cb'] != '') {
@@ -832,6 +828,7 @@ export class CallComponent implements OnInit {
 
                                     this.getComment(call.caseId);
                                     this.getChatHistory(call.chatId);
+                                    this.chatId = call.chatId || '';
                                     this.getHistory(call.caseId);
                                     this.selectedCallStatusId = call.callStatus;
                                     this.getCallStatusId(call.callStatusId?.toString() || '');
@@ -935,7 +932,7 @@ export class CallComponent implements OnInit {
         const selectedTime = this.timepickStart ? this.formatTime(this.timepickStart) : this.formatTime(new Date());
 
         if (!this.callId) {
-            if (this.selectedCaseCode) {
+            if (this.selectedCaseCode || this.chatId) {
                 const data = {
                     contactId: this.contactId,
                     name: userData.userId,
@@ -991,7 +988,7 @@ export class CallComponent implements OnInit {
             }
         } else if (this.callId && this.cType === 'case') {
             console.log('Edit Case:', this.callId);
-            if (this.selectedCaseCode) {
+            if (this.selectedCaseCode || this.chatId) {
                 const data = {
                     callId: this.callId,
                     caseCodeId: this.selectedCaseCode,
@@ -1509,5 +1506,20 @@ export class CallComponent implements OnInit {
         }
 
         return this.callStatus;
+    }
+
+    updateFilterOptions() {
+        this.filterOption = [
+            { name: this.translate.instant('filter.all'), code: 'all' },
+            { name: this.translate.instant('filter.onlyMy'), code: this.userData.username },
+        ];
+
+        this.filterDate = [
+            { name: this.translate.instant('filter.pleaseSelectDate'), type: '' },
+            { name: this.translate.instant('filter.today'), type: 'toDay' },
+            { name: this.translate.instant('filter.thisWeek'), type: 'thisWeek' },
+            { name: this.translate.instant('filter.thisMonth'), type: 'thisMonth' },
+            { name: this.translate.instant('filter.customDate'), type: 'custom' },
+        ];
     }
 }
