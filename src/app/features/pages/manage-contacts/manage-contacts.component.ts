@@ -154,6 +154,7 @@ export class ManageContactsComponent implements OnInit {
     partnerCode: any;
     contactGroupId: any;
     contactGroup: any;
+    contactChatId: any;
 
     constructor(
         private contactsService: ContactsService,
@@ -183,14 +184,41 @@ export class ManageContactsComponent implements OnInit {
                 this.caller_id = params['caller_id'];
                 this.contactNum = params['call_id'];
                 this.contactNumParams = params['call_id'];
-                this.chatId = params['chatid'];
-                this.chatType = params['chattype'];
-                this.originalChatId = params['chatid'];
-                this.originalChatType = params['chattype'];
+                this.chatId = params['chatid']?.trim();
+                this.chatType = params['chattype']?.trim();
+                this.originalChatId = params['chatid']?.trim();
+                this.originalChatType = params['chattype']?.trim();
                 this.displayName = params['displayName'];
                 this.issue = params['issue'];
                 this.caseId = params['caseId'];
                 this.uuidLine = params['userId'];
+
+                // Check if contact with chatId already exists (redirect if found)
+                if (this.chatId && !this.contactId) {
+                    const trimmedChatId = this.chatId.trim();
+                    this.contactsService.getContactsByParamPhone(trimmedChatId).subscribe({
+                        next: (result: any) => {
+                            // API returns array, get first contact if exists
+                            const existingContact = Array.isArray(result) ? result[0] : result;
+                            if (existingContact && existingContact.contactId) {
+                                // Contact exists → redirect to edit page with all params
+                                const redirectParams = new URLSearchParams({
+                                    key: existingContact.contactId,
+                                    chatid: this.chatId || '',
+                                    chattype: this.chatType || '',
+                                    displayName: this.displayName || '',
+                                    issue: this.issue || '',
+                                    uuidLine: this.uuidLine || ''
+                                });
+                                window.location.href = `${environment.subPath}/contacts/edit?${redirectParams.toString()}`;
+                            }
+                        },
+                        error: () => {
+                            // No existing contact found → allow create new
+                            console.log('No existing contact found for chatId, allow create new');
+                        }
+                    });
+                }
 
                 // React to the new contactId
                 if (this.contactId) {
@@ -272,6 +300,10 @@ export class ManageContactsComponent implements OnInit {
         this.getCallStatus();
         this.getSentiments();
         this.getContactGroup();
+
+        if(this.chatId && this.chatId !== '') {
+          this.getContactChatId(this.chatId);
+        }
     }
 
     getStatusList() {
@@ -479,6 +511,13 @@ export class ManageContactsComponent implements OnInit {
                                 'error',
                                 this.translate.instant('alert.duplicateField', { field: duplicatedFields }),
                                 res.duplicates,
+                                {
+                                    chatid: this.chatId,
+                                    chattype: this.chatType,
+                                    displayName: this.displayName,
+                                    issue: this.issue,
+                                    uuidLine: this.uuidLine
+                                }
                             );
                             return;
                         }
@@ -982,7 +1021,10 @@ export class ManageContactsComponent implements OnInit {
                     assignedUserId: null,
                     attachment: this.attachmentsId,
                     comment: this.comment,
-                    chatId: this.chatId,
+                    chatId: this.contactChatId,
+                    uuidLine: this.uuidLine,
+                    chatType: this.chatType,
+                    firstName: this.displayName,
                 };
                 console.log('Create Case Data: ', dataForm);
 
@@ -1576,4 +1618,10 @@ export class ManageContactsComponent implements OnInit {
             this.contactGroup = res;
         });
     }
+
+  getContactChatId(chatId: string) {
+    this.contactsService.getContactChatId(chatId).subscribe((res: any) => {
+      this.contactChatId = res[0].contactChatId;
+    });
+  }
 }

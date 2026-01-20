@@ -26,6 +26,7 @@ export const config = {
                 call: '/call',
                 contactNumberIdByPhone: '/contact-number-id',
                 contactGroup: '/contact-group',
+                contactChatId: '/contact-chat',
             },
             call: {
                 url: '/call',
