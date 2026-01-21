@@ -120,6 +120,11 @@ export class SweetAlertService {
                 errorMessage = error.error.message || this.translate.instant('alert.sessionExpired');
                 route = 'logout';
                 break;
+            case 409:
+                icon = 'warning';
+                title = this.translate.instant('alert.warning');
+                errorMessage = error.error.message || this.translate.instant('alert.emailAlreadyExists');
+                break;
             default:
                 icon = 'error';
                 title = this.translate.instant('alert.error');
