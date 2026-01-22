@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import * as moment from 'moment';
@@ -23,10 +23,11 @@ export class AccountProfileComponent {
     @Input() member?: User | null;
     @Input() mode?: 'add' | 'view' | 'edit';
     @ViewChild('imageElement') imageElement?: ElementRef<HTMLImageElement>;
+    @Input() isAction: boolean = false;
+    @Output() onSaveSuccess = new EventEmitter<void>();
 
     imageSrc?: File;
     roles: Role[] = [];
-    isAction: boolean = false;
     userDataForm: FormGroup = new FormGroup({});
     userData?: User | null;
 
@@ -50,6 +51,12 @@ export class AccountProfileComponent {
     ngOnInit(): void {
         this.findAllRoles();
         this.getDataUser();
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        console.log(changes);
+        this.isAction = changes['isAction'].currentValue;
+        console.log(this.isAction);
         this.initializeForm();
     }
 
@@ -64,7 +71,7 @@ export class AccountProfileComponent {
                 role: ['', Validators.required],
                 profile: [''],
                 lastLogin: [''],
-                isActive: [''],
+                isActive: [1], // Default to active (1) for new users
             });
         } else {
             this.userDataForm = this.fb.group({
@@ -74,7 +81,7 @@ export class AccountProfileComponent {
                 role: [{ value: this.member?.role?.roleId, disabled: isViewMode || !this.isAction }, Validators.required],
                 profile: [{ value: this.member?.profile, disabled: isViewMode }],
                 lastLogin: [{ value: this.member?.lastLogin, disabled: true }],
-                isActive: [{ value: this.member?.isActive, disabled: true }],
+                isActive: [{ value: this.member?.isActive ?? 1, disabled: isViewMode || !this.isAction }],
             });
         }
     }
@@ -85,7 +92,7 @@ export class AccountProfileComponent {
             .pipe(
                 tap((res: User | null) => {
                     this.userData = res;
-                    this.isAction = res?.role.roleTitle.toLowerCase() === 'admin' ? true : false;
+                    // this.isAction = res?.role.roleTitle.toLowerCase().includes('admin') ?? false;
                 }),
             )
             .subscribe(() => {});
@@ -205,9 +212,11 @@ export class AccountProfileComponent {
                         'Account',
                         '',
                         'Add',
-                        `Username : ${userData.username}, Role : ${userData.role.roleTitle}, Email : ${userData.email}`,
+                        `Username : ${userData.username}, Role : ${userData.role.roleTitle}, Email : ${userData.email}, isActive: ${userData.isActive}`,
                         `Success`,
                     );
+                    // Emit event to close dialog/modal
+                    this.onSaveSuccess.emit();
                 }),
                 catchError((err) => {
                     this.auditLogService.log('', 'Account', '', 'Add', `Username : ${userData.username}`, `Failed ${err}`);
@@ -232,9 +241,11 @@ export class AccountProfileComponent {
                     'Account',
                     '',
                     'Edit',
-                    `Username : ${userData.username}, Role : ${userData.role.roleTitle}, Email : ${userData.email}, Profile: ${userData.profile}`,
+                    `Username : ${userData.username}, Role : ${userData.role.roleTitle}, Email : ${userData.email}, Profile: ${userData.profile}, isActive: ${userData.isActive}`,
                     `Success`,
                 );
+                // Emit event to close dialog/modal
+                this.onSaveSuccess.emit();
             },
             (err) => {
                 this.auditLogService.log('', 'Account', '', 'Edit', `Username : ${userData.username}`, `Failed`);
@@ -251,5 +262,11 @@ export class AccountProfileComponent {
         if (event) {
             event.target.src = this.profileError;
         }
+    }
+
+    onIsActiveChange(event: any) {
+        const isChecked = event.target.checked;
+        this.userDataForm.get('isActive')?.setValue(isChecked ? 1 : 0);
+        this.userDataForm.markAsDirty();
     }
 }

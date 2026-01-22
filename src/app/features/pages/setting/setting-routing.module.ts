@@ -10,21 +10,21 @@ const routes: Routes = [
         component: SettingComponent,
         children: [
             {
-                path: 'menagement-account',
+                path: 'management-account',
                 loadChildren: () =>
                     import('../../components/menagement-account/menagement-account.module').then((m) => m.MenagementAccountModule),
-                title: 'Menagement Account',
+                title: 'Management Account',
             },
 
             {
-                path: 'menagement-password',
+                path: 'management-password',
                 loadChildren: () =>
                     import('../../components/menagement-password/menagement-password.module').then((m) => m.MenagementPasswordModule),
-                title: 'Menagement Password',
+                title: 'Management Password',
             },
             {
                 path: '',
-                redirectTo: 'menagement-account',
+                redirectTo: 'management-account',
                 pathMatch: 'full',
             },
             {
