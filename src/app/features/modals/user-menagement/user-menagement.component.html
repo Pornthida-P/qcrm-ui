@@ -9,6 +9,6 @@
             </a>
         </div>
 
-        <app-account-profile [member]="data.member" [mode]="data.mode"></app-account-profile>
+        <app-account-profile [member]="data.member" [mode]="data.mode" [isAction]="true" (onSaveSuccess)="onClickClose()"></app-account-profile>
     </div>
 </div>

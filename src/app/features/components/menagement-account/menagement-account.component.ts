@@ -9,7 +9,6 @@ import { User } from 'src/app/shared/interface/user.interface';
 })
 export class MenagementAccountComponent implements OnInit {
     userData?: User | null;
-    isAction: boolean = false;
     mode: 'add' | 'view' | 'edit' = 'edit';
 
     profileError: string = './assets/qcrm-ui/image/profile/user.jpg';
@@ -23,7 +22,6 @@ export class MenagementAccountComponent implements OnInit {
     getDataUser() {
         this.userService.getDataUser().subscribe((res: User | null) => {
             this.userData = res;
-            this.isAction = res?.role.roleTitle.toLowerCase() === 'admin';
         });
     }
 
