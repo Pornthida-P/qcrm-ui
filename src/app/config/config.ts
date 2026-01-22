@@ -54,7 +54,7 @@ export const config = {
         maxSize: 2 * 1024 * 1024,
         type: '.xlsx',
     },
-    roleCanAccessCUDForm: ['admin', 'system', 'super admin'],
+    roleCanAccessCUDForm: ['admin', 'system'],
     operationType: {
         inbound: 'Inbound',
         outbound: 'Outbound',

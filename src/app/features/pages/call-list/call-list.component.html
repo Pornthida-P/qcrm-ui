@@ -95,7 +95,7 @@
                                         [ngbTooltip]="'callList.callAction' | translate"
                                         placement="top"
                                         (click)="clickCall(caseList.caseId, caseList.contactId)"
-                                        [disabled]="isSuperAdmin()"
+                                        [disabled]="isAdmin()"
                                     >
                                         <i class="fa-solid fa-phone"></i>
                                     </button>

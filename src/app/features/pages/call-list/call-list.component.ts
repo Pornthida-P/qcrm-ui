@@ -26,7 +26,7 @@ export class CallListComponent implements OnInit {
         this.calculatePages();
         // this.getAllCaseList();
         // localStorage.setItem('userData', JSON.stringify(this.userData));
-        if (this.userData.role.roleTitle.toLowerCase() === 'super admin' || this.userData.role.roleTitle.toLowerCase() === 'admin') {
+        if (this.userData.role.roleTitle.toLowerCase().includes('admin')) {
             this.getCaseListByUserId('all');
         } else {
             this.getCaseListByUserId(this.userData.userId);
@@ -134,8 +134,8 @@ export class CallListComponent implements OnInit {
         });
     }
 
-    isSuperAdmin(): boolean {
-        return this.userData?.role?.roleTitle?.toLowerCase() === 'super admin';
+    isAdmin(): boolean {
+        return this.userData?.role?.roleTitle?.toLowerCase().includes('admin');
     }
 
     getCallStatusClass(callStatus: string): string {

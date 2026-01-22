@@ -203,7 +203,7 @@ export class HomePageComponent implements OnInit {
     getDataUser() {
         this.userService.getDataUser().subscribe((res: User | null) => {
             this.userData = res;
-            this.createdById = res?.role.roleTitle.toLowerCase() === 'super admin' ? 'all' : res?.userId ?? '';
+            this.createdById = res?.role.roleTitle.toLowerCase().includes('admin') ? 'all' : res?.userId ?? '';
             if (this.createdById) {
                 this.currentPage = 1;
                 this.loadTodayCases();
