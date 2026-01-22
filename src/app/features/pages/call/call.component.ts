@@ -1429,7 +1429,7 @@ export class CallComponent implements OnInit {
     }
 
     checkSupRole(): boolean {
-        if (this.userRole === 'super admin' || this.userRole === 'admin') {
+        if (this.userRole.toLowerCase().includes('admin')) {
             return true;
         } else {
             return false;
@@ -1437,7 +1437,7 @@ export class CallComponent implements OnInit {
     }
 
     isAgent(): boolean {
-        // Agent role หรือ role อื่นๆ ที่ไม่ใช่ admin/super admin
+        // Agent role หรือ role อื่นๆ ที่ไม่ใช่ admin
         return !this.checkSupRole();
     }
 
