@@ -93,6 +93,20 @@
                                     [placeholder]="'contact.lastName' | translate"
                                 />
                             </div>
+                            <div class="col-md-6" *ngIf="contactChatDisplayName || !contactId">
+                                <label for="inputContactDisplayName" class="form-label fw-semibold">
+                                    {{ 'contact.displayName' | translate }}
+                                </label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    [(ngModel)]="contactChatDisplayName"
+                                    name="contactChatDisplayName"
+                                    id="inputContactDisplayName"
+                                    [disabled]="!!contactId"
+                                    [placeholder]="'contact.displayName' | translate"
+                                />
+                            </div>
                             <div class="col-md-6">
                                 <label for="inputContactContactGroup" class="form-label fw-semibold">
                                     {{ 'contact.contactGroup' | translate }}
@@ -221,7 +235,7 @@
                                 />
                             </div>
                             <div class="col-md-6">
-                                <label for="inputcontactEmail" class="form-label fw-semibold mt-2">
+                                <label for="inputcontactEmail" class="form-label fw-semibold">
                                     {{ 'contact.email' | translate }}
                                 </label>
                                 <input
