@@ -29,6 +29,17 @@
                         [(ngModel)]="contactLastName"
                     />
                 </div>
+                <div class="col-md-6" *ngIf="contactChatDisplayName">
+                    <label for="inputContactDisplayName" class="form-label">{{ 'contact.displayName' | translate }}</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        name="contactChatDisplayName"
+                        id="inputContactDisplayName"
+                        [(ngModel)]="contactChatDisplayName"
+                        [disabled]="true"
+                    />
+                </div>
                 <div class="col-md-6">
                     <label for="inputContactOrg" class="form-label">{{ 'contact.companyStore' | translate }}</label>
                     <div class="col-md-6">

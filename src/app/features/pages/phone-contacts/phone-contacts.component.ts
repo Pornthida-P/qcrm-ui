@@ -85,6 +85,7 @@ export class PhoneContactsComponent {
 
     roleCanAccessCUDForm: string[] = config.roleCanAccessCUDForm;
     contactIdParams: any;
+    contactChatDisplayName: string = '';
 
     constructor(
         private _location: Location,
@@ -122,6 +123,7 @@ export class PhoneContactsComponent {
                     const nameParts = displayName.split(' ');
                     this.contactFirstName = nameParts[0] || '';
                     this.contactLastName = nameParts.slice(1).join(' ') || '';
+                    this.contactChatDisplayName = displayName;
                 }
 
                 this.contactsService.getContactsByParamPhone(identifier).subscribe((data: any) => {
@@ -231,6 +233,7 @@ export class PhoneContactsComponent {
                 this.contactType = detailItemByPhone.contactType;
                 this.contactNumber = detailItemByPhone.contactNumber;
                 this.contactProvince = detailItemByPhone.province;
+                this.contactChatDisplayName = detailItemByPhone.chatDisplayName || '';
 
                 if (this.contactOrg != '' && this.contactOrg != null && this.contactOrg != undefined) {
                     this.contactsService.getOrganizationById(this.contactOrg).subscribe((res: any) => {

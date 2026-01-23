@@ -155,6 +155,7 @@ export class ManageContactsComponent implements OnInit {
     contactGroupId: any;
     contactGroup: any;
     contactChatId: any;
+    contactChatDisplayName: string = '';
 
     constructor(
         private contactsService: ContactsService,
@@ -192,6 +193,11 @@ export class ManageContactsComponent implements OnInit {
                 this.issue = params['issue'];
                 this.caseId = params['caseId'];
                 this.uuidLine = params['userId'];
+
+                // Set contactChatDisplayName from URL param for new contacts
+                if (this.displayName && !this.contactId) {
+                    this.contactChatDisplayName = this.displayName;
+                }
 
                 // Check if contact with chatId already exists (redirect if found)
                 if (this.chatId && !this.contactId) {
@@ -340,6 +346,7 @@ export class ManageContactsComponent implements OnInit {
             this.contactEmail = this.detailItem.email;
             this.partnerCode = this.detailItem.partnerCode;
             this.contactGroupId = this.detailItem.contactGroupId;
+            this.contactChatDisplayName = this.detailItem.chatDisplayName || '';
 
             if (this.contactOrg != '' && this.contactOrg != null && this.contactOrg != undefined) {
                 this.contactsService.getOrganizationById(this.contactOrg).subscribe((res: any) => {
@@ -1621,7 +1628,10 @@ export class ManageContactsComponent implements OnInit {
 
   getContactChatId(chatId: string) {
     this.contactsService.getContactChatId(chatId).subscribe((res: any) => {
-      this.contactChatId = res[0].contactChatId;
+      if (res && res.length > 0) {
+        this.contactChatId = res[0].contactChatId;
+        this.contactChatDisplayName = res[0].displayName || '';
+      }
     });
   }
 }
