@@ -86,6 +86,8 @@ export class PhoneContactsComponent {
     roleCanAccessCUDForm: string[] = config.roleCanAccessCUDForm;
     contactIdParams: any;
     contactChatDisplayName: string = '';
+    facebookDisplayName: string = '';
+    lineDisplayName: string = '';
 
     constructor(
         private _location: Location,
@@ -124,6 +126,14 @@ export class PhoneContactsComponent {
                     this.contactFirstName = nameParts[0] || '';
                     this.contactLastName = nameParts.slice(1).join(' ') || '';
                     this.contactChatDisplayName = displayName;
+                    
+                    const chatTypeLower = chatType?.toLowerCase() || '';
+                    const chatIdLower = chatId?.toLowerCase() || '';
+                    if (chatTypeLower.includes('facebook') || chatTypeLower.includes('fb') || chatIdLower.startsWith('fb_')) {
+                        this.facebookDisplayName = displayName;
+                    } else if (chatTypeLower.includes('line') || chatIdLower.startsWith('line_')) {
+                        this.lineDisplayName = displayName;
+                    }
                 }
 
                 this.contactsService.getContactsByParamPhone(identifier).subscribe((data: any) => {
@@ -234,6 +244,8 @@ export class PhoneContactsComponent {
                 this.contactNumber = detailItemByPhone.contactNumber;
                 this.contactProvince = detailItemByPhone.province;
                 this.contactChatDisplayName = detailItemByPhone.chatDisplayName || '';
+                this.facebookDisplayName = detailItemByPhone.facebookDisplayName || '';
+                this.lineDisplayName = detailItemByPhone.lineDisplayName || '';
 
                 if (this.contactOrg != '' && this.contactOrg != null && this.contactOrg != undefined) {
                     this.contactsService.getOrganizationById(this.contactOrg).subscribe((res: any) => {

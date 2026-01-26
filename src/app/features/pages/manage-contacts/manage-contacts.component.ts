@@ -156,6 +156,8 @@ export class ManageContactsComponent implements OnInit {
     contactGroup: any;
     contactChatId: any;
     contactChatDisplayName: string = '';
+    facebookDisplayName: string = '';
+    lineDisplayName: string = '';
 
     constructor(
         private contactsService: ContactsService,
@@ -197,6 +199,13 @@ export class ManageContactsComponent implements OnInit {
                 // Set contactChatDisplayName from URL param for new contacts
                 if (this.displayName && !this.contactId) {
                     this.contactChatDisplayName = this.displayName;
+                    const chatTypeLower = this.chatType?.toLowerCase() || '';
+                    const chatIdLower = this.chatId?.toLowerCase() || '';
+                    if (chatTypeLower.includes('facebook') || chatTypeLower.includes('fb') || chatIdLower.startsWith('fb_')) {
+                        this.facebookDisplayName = this.displayName;
+                    } else if (chatTypeLower.includes('line') || chatIdLower.startsWith('line_')) {
+                        this.lineDisplayName = this.displayName;
+                    }
                 }
 
                 // Check if contact with chatId already exists (redirect if found)
@@ -347,6 +356,8 @@ export class ManageContactsComponent implements OnInit {
             this.partnerCode = this.detailItem.partnerCode;
             this.contactGroupId = this.detailItem.contactGroupId;
             this.contactChatDisplayName = this.detailItem.chatDisplayName || '';
+            this.facebookDisplayName = this.detailItem.facebookDisplayName || '';
+            this.lineDisplayName = this.detailItem.lineDisplayName || '';
 
             if (this.contactOrg != '' && this.contactOrg != null && this.contactOrg != undefined) {
                 this.contactsService.getOrganizationById(this.contactOrg).subscribe((res: any) => {
@@ -458,6 +469,14 @@ export class ManageContactsComponent implements OnInit {
     }
 
     submitContact(organizationId: string, userData: any) {
+        // Update displayName based on chatType before submitting
+        const chatTypeLower = this.chatType?.toLowerCase() || '';
+        if (chatTypeLower.includes('facebook')) {
+            this.displayName = this.facebookDisplayName;
+        } else if (chatTypeLower.includes('line')) {
+            this.displayName = this.lineDisplayName;
+        }
+
         const data = {
             firstName: this.contactFirstName,
             lastName: this.contactLastName,
@@ -1630,6 +1649,12 @@ export class ManageContactsComponent implements OnInit {
     this.contactsService.getContactChatId(chatId).subscribe((res: any) => {
       if (res && res.length > 0) {
         this.contactChatId = res[0].contactChatId;
+        const channelName = res[0].channelName?.toLowerCase() || '';
+        if (channelName.includes('facebook')) {
+          this.facebookDisplayName = res[0].displayName || '';
+        } else if (channelName.includes('line')) {
+          this.lineDisplayName = res[0].displayName || '';
+        }
         this.contactChatDisplayName = res[0].displayName || '';
       }
     });

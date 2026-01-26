@@ -29,15 +29,26 @@
                         [(ngModel)]="contactLastName"
                     />
                 </div>
-                <div class="col-md-6" *ngIf="contactChatDisplayName">
-                    <label for="inputContactDisplayName" class="form-label">{{ 'contact.displayName' | translate }}</label>
+                <div class="col-md-6" *ngIf="facebookDisplayName || !contactId">
+                    <label for="inputFacebookDisplayName" class="form-label">{{ 'contact.facebookDisplayName' | translate }}</label>
                     <input
                         type="text"
                         class="form-control"
-                        name="contactChatDisplayName"
-                        id="inputContactDisplayName"
-                        [(ngModel)]="contactChatDisplayName"
-                        [disabled]="true"
+                        name="facebookDisplayName"
+                        id="inputFacebookDisplayName"
+                        [(ngModel)]="facebookDisplayName"
+                        [disabled]="!!contactId"
+                    />
+                </div>
+                <div class="col-md-6" *ngIf="lineDisplayName || !contactId">
+                    <label for="inputLineDisplayName" class="form-label">{{ 'contact.lineDisplayName' | translate }}</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        name="lineDisplayName"
+                        id="inputLineDisplayName"
+                        [(ngModel)]="lineDisplayName"
+                        [disabled]="!!contactId"
                     />
                 </div>
                 <div class="col-md-6">

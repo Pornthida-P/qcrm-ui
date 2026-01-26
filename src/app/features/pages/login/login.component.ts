@@ -8,6 +8,8 @@ import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.serv
 import { TokenService } from 'src/app/services/token/token.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { User } from 'src/app/shared/interface/user.interface';
+import { IdleService } from 'src/app/services/idle/idle.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
     selector: 'app-login',
@@ -29,6 +31,7 @@ export class LoginComponent {
         private tokenServices: TokenService,
         private sweetalertServices: SweetAlertService,
         private auditLogService: AuditLogService,
+        private idleService: IdleService,
     ) {
         this.loginForm = this.fb.group({
             username: new FormControl('', [Validators.required]),
@@ -73,6 +76,12 @@ export class LoginComponent {
                     tap((res: { user: User; token: string }) => {
                         this.userServices.setDataUser(res.user);
                         this.tokenServices.setDataToken(res.token);
+                        
+                        // เริ่มต้น idle timeout หลังจาก login สำเร็จ
+                        const idleTimeoutMinutes = environment.idle?.timeoutMinutes || 30;
+                        this.idleService.setIdleTimeout(idleTimeoutMinutes);
+                        this.idleService.start();
+                        
                         this.router.navigate(['/home']);
                         this.auditLogService.log(
                             username,

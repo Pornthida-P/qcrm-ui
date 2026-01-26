@@ -7,6 +7,7 @@ import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
 import { TokenService } from 'src/app/services/token/token.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { User } from 'src/app/shared/interface/user.interface';
+import { IdleService } from 'src/app/services/idle/idle.service';
 
 @Component({
     selector: 'app-logout',
@@ -23,6 +24,7 @@ export class LogoutComponent implements OnInit {
         private socketIO: SocketIoService,
         private router: Router,
         private auditLogService: AuditLogService,
+        private idleService: IdleService,
     ) {}
 
     ngOnInit(): void {
@@ -46,6 +48,9 @@ export class LogoutComponent implements OnInit {
     }
 
     logout(): void {
+        // หยุด idle timeout เมื่อ logout
+        this.idleService.stop();
+        
         if (this.userData) {
             this.loginService.logout(this.userData).subscribe();
         }

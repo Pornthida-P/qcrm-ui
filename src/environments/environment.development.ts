@@ -29,4 +29,7 @@ export const environment = {
         urlQAgent: `ws://127.0.0.1:8748/QAgent`,
         dialPrefix: 'dial|9',
     },
+    idle: {
+        timeoutMinutes: 30,
+    },
 };
