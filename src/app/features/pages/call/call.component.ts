@@ -221,11 +221,6 @@ export class CallComponent implements OnInit {
     ngOnInit() {
         this.getUserData();
 
-        this.userRole = this.userData.role.roleTitle.toLocaleLowerCase();
-
-        // Set initial filter options
-        this.updateFilterOptions();
-
         // Subscribe to language changes to update filter options
         this.translate.onLangChange.subscribe(() => {
             this.updateFilterOptions();
@@ -241,14 +236,12 @@ export class CallComponent implements OnInit {
             }
         });
 
-        this.selectedFilter = this.filterOption[0].code;
+        this.selectedFilter = 'all';
         if (this.selectedFilter !== 'all') {
             this.userId = this.userData.userId;
         }
 
-        this.filterDateType = this.filterDate[0].type;
-
-        this.getCallsData((this.currentPage - 1) * this.currentPage, this.pageSize);
+        this.getCallsData((this.currentPage - 1) * this.pageSize, this.pageSize);
         this.getPage();
 
         this.dateRangeForm = this.fb.group({
@@ -306,10 +299,12 @@ export class CallComponent implements OnInit {
 
     async getCallsData(page: number, pageSize: number) {
         let userFilter = '';
+        console.log('selectedFilter: ', this.selectedFilter);
         if (this.selectedFilter === 'all') {
             userFilter = this.selectedFilter;
         } else {
-            userFilter = this.userData.userId;
+            // This handles the case where an agent's userId is selected
+            userFilter = this.selectedFilter;
         }
         await this.callService
             .getCasesPage(
@@ -323,6 +318,7 @@ export class CallComponent implements OnInit {
                 this.endDate,
             )
             .subscribe((res: any) => {
+                console.log('res: ', res);
                 this.calls = res;
                 this.calls.forEach((call) => {
                     if (call.type === 'I') {
@@ -339,11 +335,10 @@ export class CallComponent implements OnInit {
         if (this.selectedFilter === 'all') {
             userFilter = this.selectedFilter;
         } else {
-            userFilter = this.userData.userId;
+            userFilter = this.selectedFilter;
         }
-
-        console.log('user: ', userFilter);
         await this.callService
+
             .getCallsCount(this.valueSearch, userFilter, this.filterDateType, this.startDate, this.endDate)
             .subscribe((res: any) => {
                 this.totalItems = res.count;
@@ -470,6 +465,8 @@ export class CallComponent implements OnInit {
         this.userService.getDataUser().subscribe((res: User | null) => {
             this.userData = res;
             this.isAction = res?.role.roleTitle.toLocaleLowerCase() === 'admin' ? true : false;
+            this.userRole = res?.role.roleTitle.toLocaleLowerCase() || '';
+            this.updateFilterOptions();
         });
     }
 
@@ -1511,8 +1508,31 @@ export class CallComponent implements OnInit {
     updateFilterOptions() {
         this.filterOption = [
             { name: this.translate.instant('filter.all'), code: 'all' },
-            { name: this.translate.instant('filter.onlyMy'), code: this.userData.username },
         ];
+
+        // Add "Only My" option if userData is available
+        if (this.userData?.username) {
+            this.filterOption.push({
+                name: this.translate.instant('filter.onlyMy'),
+                code: this.userData.username,
+            });
+        }
+
+        // If admin, fetch all agents and add to filter options
+        if (this.checkSupRole()) {
+            this.userService.getAllUser().subscribe((users: User[]) => {
+                const agents = users.filter((user) => user.role?.roleTitle?.toLowerCase() === 'agent');
+                agents.forEach((agent) => {
+                    // Check if already exists to avoid duplicates
+                    if (!this.filterOption.find((op) => op.code === agent.userId)) {
+                        this.filterOption.push({
+                            name: agent.username,
+                            code: agent.userId,
+                        });
+                    }
+                });
+            });
+        }
 
         this.filterDate = [
             { name: this.translate.instant('filter.pleaseSelectDate'), type: '' },
@@ -1521,5 +1541,9 @@ export class CallComponent implements OnInit {
             { name: this.translate.instant('filter.thisMonth'), type: 'thisMonth' },
             { name: this.translate.instant('filter.customDate'), type: 'custom' },
         ];
+
+        if (!this.filterDateType && this.filterDate.length > 0) {
+            this.filterDateType = this.filterDate[0].type;
+        }
     }
 }

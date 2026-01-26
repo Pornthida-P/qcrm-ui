@@ -93,18 +93,32 @@
                                     [placeholder]="'contact.lastName' | translate"
                                 />
                             </div>
-                            <div class="col-md-6" *ngIf="contactChatDisplayName || !contactId">
-                                <label for="inputContactDisplayName" class="form-label fw-semibold">
-                                    {{ 'contact.displayName' | translate }}
+                            <div class="col-md-6" *ngIf="facebookDisplayName || !contactId">
+                                <label for="inputFacebookDisplayName" class="form-label fw-semibold">
+                                    {{ 'contact.facebookDisplayName' | translate }}
                                 </label>
                                 <input
                                     type="text"
                                     class="form-control"
-                                    [(ngModel)]="contactChatDisplayName"
-                                    name="contactChatDisplayName"
-                                    id="inputContactDisplayName"
+                                    [(ngModel)]="facebookDisplayName"
+                                    name="facebookDisplayName"
+                                    id="inputFacebookDisplayName"
                                     [disabled]="!!contactId"
-                                    [placeholder]="'contact.displayName' | translate"
+                                    [placeholder]="'contact.facebookDisplayName' | translate"
+                                />
+                            </div>
+                            <div class="col-md-6" *ngIf="lineDisplayName || !contactId">
+                                <label for="inputLineDisplayName" class="form-label fw-semibold">
+                                    {{ 'contact.lineDisplayName' | translate }}
+                                </label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    [(ngModel)]="lineDisplayName"
+                                    name="lineDisplayName"
+                                    id="inputLineDisplayName"
+                                    [disabled]="!!contactId"
+                                    [placeholder]="'contact.lineDisplayName' | translate"
                                 />
                             </div>
                             <div class="col-md-6">

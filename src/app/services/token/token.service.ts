@@ -29,7 +29,7 @@ export class TokenService {
         localStorage.removeItem(this.storageKey);
     }
 
-    isTokenExpired(): boolean {
+    isTokenExpired(bufferMinutes: number = 0): boolean {
         const token = this.getDataToken();
         if (!token) {
             return true;
@@ -42,7 +42,9 @@ export class TokenService {
             }
 
             const currentTime = Math.floor(Date.now() / 1000);
-            return payload.exp < currentTime;
+            const bufferSeconds = bufferMinutes * 60;
+            // ถ้า token หมดอายุแล้ว หรือเหลือเวลาไม่ถึง buffer time
+            return payload.exp < (currentTime + bufferSeconds);
         } catch (error) {
             console.error('Error decoding token:', error);
             return true;
@@ -66,6 +68,6 @@ export class TokenService {
 
     isTokenValid(): boolean {
         const token = this.getDataToken();
-        return !!token && !this.isTokenExpired();
+        return !!token && !this.isTokenExpired(0);
     }
 }

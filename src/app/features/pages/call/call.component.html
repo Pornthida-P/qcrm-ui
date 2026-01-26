@@ -131,8 +131,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <ng-container *ngIf="(calls | searchFilter : valueSearch : selectedFilter)?.length > 0; else noDataTemplate">
-                                <tr *ngFor="let calls of calls | searchFilter : valueSearch : selectedFilter; let i = index">
+                            <ng-container *ngIf="(calls | searchFilter : valueSearch : 'all')?.length > 0; else noDataTemplate">
+                                <tr *ngFor="let calls of calls | searchFilter : valueSearch : 'all'; let i = index">
                                     <td class="text-center" *ngIf="!isAgent()">
                                         <input
                                             type="checkbox"

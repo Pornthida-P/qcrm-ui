@@ -4,11 +4,17 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { TokenService } from 'src/app/services/token/token.service';
+import { UserService } from 'src/app/services/user/user.service';
 import { environment } from 'src/environments/environment';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
-    constructor(private tokenServices: TokenService, private router: Router, private ngZone: NgZone) {}
+    constructor(
+        private tokenServices: TokenService,
+        private userService: UserService,
+        private router: Router,
+        private ngZone: NgZone,
+    ) {}
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         const token = this.tokenServices.getDataToken();
@@ -16,16 +22,15 @@ export class TokenInterceptor implements HttpInterceptor {
         const isLogoutRequest = request.url.includes('/logout');
         const isAuditLogRequest = request.url.includes('/audit-log');
         const isVocabsRequest = request.url.includes('/vocabs');
-        const shouldSkipTokenCheck = isLogoutRequest || isAuditLogRequest || isVocabsRequest;
+        const isLoginRequest = request.url.includes('/login');
+        const isCrossAuthRequest = request.url.includes('/cross-auth');
+        const shouldSkipTokenCheck = isLogoutRequest || isAuditLogRequest || isVocabsRequest || isLoginRequest || isCrossAuthRequest;
 
-        // Skip token expiry check for logout and audit-log requests to prevent infinite loop
-        if (token && this.tokenServices.isTokenExpired() && !shouldSkipTokenCheck) {
-            console.warn('Token expired - blocking request:', request.url);
-            this.handleAuthError();
-            return throwError(() => new Error('Token expired'));
-        }
+        // Skip token expiry check in interceptor - let server handle it
+        // Only check when server returns 401/403 to avoid premature redirects
 
-        if (token && !isQimApi) {
+        // Add token to request if available, but skip for cross-auth (it's an auth endpoint itself)
+        if (token && !isQimApi && !isCrossAuthRequest) {
             request = request.clone({
                 setHeaders: {
                     Authorization: `Bearer ${token}`,
