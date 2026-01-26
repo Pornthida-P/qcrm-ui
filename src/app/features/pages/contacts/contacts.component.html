@@ -16,7 +16,7 @@
                         [placeholder]="'common.search' | translate"
                         aria-describedby="basic-addon1"
                         style="width: 70%"
-                        (change)="search()"
+                        (keyup.enter)="search()"
                     />
                     <button class="form-control btn-primary-color text-white shadow-none align-items-center" (click)="search()">
                         {{ 'common.search' | translate }}
@@ -37,54 +37,122 @@
             </div>
         </div>
         <div>
-            <!-- Card Grid Layout -->
-            <div class="row g-3 m-4">
-                <ng-container *ngIf="contacts?.length > 0; else noDataTemplate">
-                    <div class="col-12 col-sm-6 col-md-4 col-lg-3" *ngFor="let contact of contacts">
-                        <app-card
-                            [data]="contact"
-                            [showActions]="checkRole()"
-                            (onEdit)="edit($event)"
-                            (onDelete)="deletecontacts($event.contactId)">
-                        </app-card>
-                    </div>
-                </ng-container>
-                <ng-template #noDataTemplate>
-                    <div class="col-12 text-center py-5 text-muted">
-                        {{ 'common.dataNotFound' | translate }}
-                    </div>
-                </ng-template>
+            <!-- Table Layout -->
+            <div class="table-card">
+                <div class="table-scroll-container">
+                    <table class="table table-hover custom-table mb-0 table-fixed-header">
+                        <thead>
+                            <tr>
+                                <th scope="col">{{ 'contact.name' | translate }}</th>
+                                <th scope="col">{{ 'contact.displayName' | translate }}</th>
+                                <th scope="col">{{ 'contact.phoneNumber' | translate }}</th>
+                                <th scope="col">{{ 'contact.contactGroup' | translate }}</th>
+                                <th scope="col">{{ 'contact.partner' | translate }}</th>
+                                <th scope="col" class="text-center" *ngIf="checkRole()">{{ 'common.manage' | translate }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ng-container *ngIf="contacts?.length > 0; else noDataTemplate">
+                                <tr *ngFor="let contact of contacts">
+                                    <!-- ชื่อ -->
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar me-2">
+                                                {{ contact?.fullname?.charAt(0)?.toUpperCase() || '?' }}
+                                            </div>
+                                            <span class="fw-semibold">{{ contact?.fullname || '-' }}</span>
+                                        </div>
+                                    </td>
+                                    <!-- ชื่อโปรไฟล์ -->
+                                    <td>
+                                        <div class="d-flex flex-column gap-1">
+                                            <span
+                                                *ngIf="contact?.facebookDisplayName"
+                                                class="badge d-inline-flex align-items-center"
+                                                style="background-color: #1877f2; color: white; width: fit-content"
+                                            >
+                                                <i class="fa-brands fa-facebook me-1"></i>
+                                                {{ contact.facebookDisplayName }}
+                                            </span>
+                                            <span
+                                                *ngIf="contact?.lineDisplayName"
+                                                class="badge d-inline-flex align-items-center"
+                                                style="background-color: #06c755; color: white; width: fit-content"
+                                            >
+                                                <i class="fa-brands fa-line me-1"></i>
+                                                {{ contact.lineDisplayName }}
+                                            </span>
+                                            <span *ngIf="!contact?.facebookDisplayName && !contact?.lineDisplayName" class="text-muted">
+                                                -
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <!-- เบอร์โทรศัพท์ -->
+                                    <td>{{ contact?.contactNumber || '-' }}</td>
+                                    <!-- Contact Group -->
+                                    <td>{{ contact?.contactGroupName || '-' }}</td>
+                                    <!-- Partner Code -->
+                                    <td>{{ contact?.partnerCode || '-' }}</td>
+                                    <!-- จัดการ -->
+                                    <td class="text-center" *ngIf="checkRole()">
+                                        <button
+                                            type="button"
+                                            class="btn btn-action btn-outline-primary"
+                                            [ngbTooltip]="'common.edit' | translate"
+                                            placement="top"
+                                            (click)="edit(contact)"
+                                        >
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            <ng-template #noDataTemplate>
+                                <tr>
+                                    <td [attr.colspan]="checkRole() ? 6 : 5" class="text-center py-5">
+                                        <div class="empty-state">
+                                            <i class="fa-solid fa-inbox fa-3x text-muted mb-3"></i>
+                                            <p class="text-muted mb-0">{{ 'common.dataNotFound' | translate }}</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <ul class="pagination cursor-pointer justify-content-center">
-                <li class="page-item" [class.disabled]="currentPage == 1">
-                    <a class="page-link custom-link preBtn" (click)="pageChange(1)" aria-label="Previous">
-                        <i class="fa-solid fa-angles-left"></i>
-                    </a>
-                </li>
-                <li class="page-item" [class.disabled]="currentPage == 1">
-                    <a class="page-link custom-link" (click)="pageChange(currentPage - 1)" aria-label="Previous">
-                        <i class="fa-solid fa-angle-left"></i>
-                    </a>
-                </li>
-                <li *ngFor="let page of pages" class="page-item" [class.active]="currentPage == page">
-                    <a class="page-link custom-link" (click)="pageChange(page)">{{ page }}</a>
-                </li>
-                <li class="page-item" [class.disabled]="currentPage == totalPages">
-                    <a class="page-link custom-link" (click)="pageChange(currentPage + 1)" aria-label="Next">
-                        <i class="fa-solid fa-angle-right"></i>
-                    </a>
-                </li>
-                <li class="page-item" [class.disabled]="currentPage == totalPages">
-                    <a class="page-link custom-link nextBtn" (click)="pageChange(totalPages)" aria-label="Next">
-                        <i class="fa-solid fa-angles-right"></i>
-                    </a>
-                </li>
-                <li class="page-item ms-3">
-                    <select class="form-select" aria-label="Default select example" [(ngModel)]="pageSize" (change)="pageSizeChange()">
-                        <option class="dropdown-item" *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}</option>
-                    </select>
-                </li>
-            </ul>
+            <nav class="d-flex justify-content-center mt-4">
+                <ul class="pagination pagination-custom mb-0">
+                    <li class="page-item" [class.disabled]="currentPage == 1">
+                        <a class="page-link" (click)="pageChange(1)" aria-label="First">
+                            <i class="fa-solid fa-angles-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item" [class.disabled]="currentPage == 1">
+                        <a class="page-link" (click)="pageChange(currentPage - 1)" aria-label="Previous">
+                            <i class="fa-solid fa-angle-left"></i>
+                        </a>
+                    </li>
+                    <li *ngFor="let page of pages" class="page-item" [class.active]="currentPage == page">
+                        <a class="page-link" (click)="pageChange(page)">{{ page }}</a>
+                    </li>
+                    <li class="page-item" [class.disabled]="currentPage == totalPages">
+                        <a class="page-link" (click)="pageChange(currentPage + 1)" aria-label="Next">
+                            <i class="fa-solid fa-angle-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item" [class.disabled]="currentPage == totalPages">
+                        <a class="page-link" (click)="pageChange(totalPages)" aria-label="Last">
+                            <i class="fa-solid fa-angles-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item ms-3">
+                        <select class="form-select form-select-sm page-size-select" [(ngModel)]="pageSize" (change)="pageSizeChange()">
+                            <option *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}</option>
+                        </select>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
 </div>
