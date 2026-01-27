@@ -55,6 +55,10 @@ export class CallListService {
         return this.http.get(`${this.baseUrl}/agent-workload`);
     }
 
+    getAgentWorkloadWithOpenCases() {
+        return this.http.get(`${this.baseUrl}/agent-workload-open-cases`);
+    }
+
     getActiveAgents() {
         return this.http.get(`${this.baseUrl}/active-agents`);
     }
