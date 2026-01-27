@@ -5,6 +5,8 @@ import { User } from 'src/app/shared/interface/user.interface';
 import { UserService } from 'src/app/services/user/user.service';
 import { ContactsService } from 'src/app/services/contacts/contacts.service';
 import { StatusService } from 'src/app/services/status/status.service';
+import { CallListService } from 'src/app/services/call-list/call-list.service';
+import { Router } from '@angular/router';
 import * as Highcharts from 'highcharts';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -40,6 +42,8 @@ export class HomePageComponent implements OnInit {
     statusList: any[] = [];
     allContactCount: number = 0;
     statusListLoaded: boolean = false;
+    agentWorkload: any[] = [];
+    isAdmin: boolean = false;
 
     private searchTimeout: any;
     updateFlag: boolean = false;
@@ -176,6 +180,8 @@ export class HomePageComponent implements OnInit {
         private userService: UserService,
         private contactService: ContactsService,
         public statusService: StatusService,
+        private callListService: CallListService,
+        private router: Router,
         private translate: TranslateService,
     ) {}
 
@@ -203,10 +209,15 @@ export class HomePageComponent implements OnInit {
     getDataUser() {
         this.userService.getDataUser().subscribe((res: User | null) => {
             this.userData = res;
-            this.createdById = res?.role.roleTitle.toLowerCase().includes('admin') ? 'all' : res?.userId ?? '';
+            this.isAdmin = res?.role.roleTitle.toLowerCase().includes('admin') ?? false;
+            this.createdById = this.isAdmin ? 'all' : (res?.userId ?? '');
             if (this.createdById) {
                 this.currentPage = 1;
                 this.loadTodayCases();
+                // Load agent workload if admin
+                if (this.isAdmin) {
+                    this.loadAgentWorkload();
+                }
             }
         });
     }
@@ -484,6 +495,45 @@ export class HomePageComponent implements OnInit {
     getAllContactCount() {
         this.contactService.countByAssignedUserId(this.createdById === 'all' ? '' : this.createdById).subscribe((res: any) => {
             this.allContactCount = res.count ?? 0;
+        });
+    }
+
+    loadAgentWorkload() {
+        this.callListService.getAgentWorkloadWithOpenCases().subscribe({
+            next: (response: any) => {
+                const data = typeof response === 'string' ? JSON.parse(response) : response;
+                // Filter agents with open cases and sort by open cases count (descending)
+                this.agentWorkload = (data || [])
+                    .filter((agent: any) => agent.openCases > 0)
+                    .sort((a: any, b: any) => b.openCases - a.openCases);
+            },
+            error: (error) => {
+                console.error('Error loading agent workload:', error);
+                this.agentWorkload = [];
+            },
+        });
+    }
+
+    getWorkloadSeverity(pendingLeads: number): string {
+        return 'high';
+    }
+
+    getWorkloadBadgeClass(pendingLeads: number): string {
+        console.log('pendingLeads: ', pendingLeads);
+        const severity = this.getWorkloadSeverity(pendingLeads);
+        switch (severity) {
+            case 'high':
+                return 'bg-danger';
+            case 'medium':
+                return 'bg-warning';
+            default:
+                return 'bg-info';
+        }
+    }
+
+    navigateToCallWithAgentFilter(agentId: string) {
+        this.router.navigate(['/call'], {
+            queryParams: { agentId: agentId },
         });
     }
 }

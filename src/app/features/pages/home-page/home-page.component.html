@@ -4,6 +4,53 @@
         <h2 class="fw-bold mb-0">{{ 'dashboard.title' | translate }}</h2>
     </div>
 
+    <!-- Agent Workload Notification (Admin Only) -->
+    <div class="row mb-3 mb-md-4" *ngIf="isAdmin && agentWorkload.length > 0">
+        <div class="col-12">
+            <div class="agent-workload-alert bg-white rounded shadow p-3 p-md-4">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-bell text-warning fs-5"></i>
+                        <h5 class="mb-0 fw-bold">{{ 'dashboard.agentWorkloadAlert' | translate }}</h5>
+                        <span class="badge bg-warning text-dark ms-2">{{ agentWorkload.length }}</span>
+                    </div>
+                    <button
+                        class="btn btn-sm btn-link text-muted p-0"
+                        (click)="loadAgentWorkload()"
+                        aria-label="รีเฟรช"
+                        type="button"
+                        title="รีเฟรช"
+                    >
+                        <i class="fa-solid fa-rotate"></i>
+                    </button>
+                </div>
+                <div class="agent-workload-list">
+                    <div class="row g-2">
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3" *ngFor="let agent of agentWorkload">
+                            <div
+                                class="agent-workload-item p-2 rounded border"
+                                [class.border-danger]="getWorkloadSeverity(agent.openCases) === 'high'"
+                                (click)="navigateToCallWithAgentFilter(agent.userId)"
+                            >
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <div class="flex-grow-1">
+                                        <div class="fw-semibold text-truncate">
+                                            {{ agent.username }}
+                                        </div>
+                                        <div class="small text-muted">{{ 'dashboard.pendingTasks' | translate }}</div>
+                                    </div>
+                                    <span class="badge ms-2" [ngClass]="getWorkloadBadgeClass(agent.openCases)">
+                                        {{ agent.openCases }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Row 1: Case Status + Filters -->
     <div class="row g-3 g-md-4 mb-3 mb-md-4">
         <div class="col-12 col-lg-6">
@@ -164,7 +211,7 @@
                                 <ng-container *ngIf="filteredCases.length > 0; else tableNoData">
                                     <tr *ngFor="let caseItem of filteredCases" [class.row-overdue]="isOverOneDay(caseItem.createdAt)">
                                         <!-- เวลา -->
-                                        <td class="text-nowrap">{{ caseItem.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
+                                        <td class="text-nowrap">{{ caseItem.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
                                         <!-- Channel -->
                                         <td>
                                             <span
@@ -182,7 +229,7 @@
                                         <td class="fw-semibold">{{ caseItem.casecode || '-' }}</td>
                                         <!-- Assign Date -->
                                         <td class="d-none d-md-table-cell">
-                                            {{ caseItem.assignDate ? (caseItem.assignDate | date : 'dd/MM/yyyy HH:mm') : '-' }}
+                                            {{ caseItem.assignDate ? (caseItem.assignDate | date: 'dd/MM/yyyy HH:mm') : '-' }}
                                         </td>
                                         <!-- Assign User -->
                                         <td class="d-none d-md-table-cell">{{ caseItem.agent || '-' }}</td>
@@ -244,7 +291,7 @@
                                                         !caseItem.callStatusName?.includes('สนทนาต่อ') &&
                                                         !caseItem.callStatusName?.includes('ไม่รับสาย') &&
                                                         !caseItem.callStatusName?.includes('ไม่สนทนาต่อ') &&
-                                                        !caseItem.callStatusName?.includes('ไม่สะดวกสนทนา')
+                                                        !caseItem.callStatusName?.includes('ไม่สะดวกสนทนา'),
                                                 }"
                                             >
                                                 {{ caseItem.callStatusName }}

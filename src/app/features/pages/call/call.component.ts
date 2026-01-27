@@ -234,11 +234,32 @@ export class CallComponent implements OnInit {
                 this.totalItems = cbArray[2];
                 this.totalPages = cbArray[3];
             }
+
+            // Handle agentId filter from query params
+            if (params['agentId'] != undefined && params['agentId'] != '') {
+                this.selectedFilter = params['agentId'];
+                this.userId = params['agentId'];
+                // Reload data when agent filter is applied
+                this.currentPage = 1;
+                this.getCallsData((this.currentPage - 1) * this.pageSize, this.pageSize);
+                this.getPage();
+            } else if (!params['agentId']) {
+                // Only set default if agentId is not in params
+                if (this.selectedFilter === 'all' || !this.selectedFilter) {
+                    this.selectedFilter = 'all';
+                    this.userId = '';
+                }
+            }
         });
 
-        this.selectedFilter = 'all';
-        if (this.selectedFilter !== 'all') {
-            this.userId = this.userData.userId;
+        // Initialize with default or query param value
+        const agentIdParam = this.activeRoute.snapshot.queryParams['agentId'];
+        if (agentIdParam) {
+            this.selectedFilter = agentIdParam;
+            this.userId = agentIdParam;
+        } else {
+            this.selectedFilter = 'all';
+            this.userId = '';
         }
 
         this.getCallsData((this.currentPage - 1) * this.pageSize, this.pageSize);
