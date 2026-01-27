@@ -519,7 +519,6 @@ export class HomePageComponent implements OnInit {
     }
 
     getWorkloadBadgeClass(pendingLeads: number): string {
-        console.log('pendingLeads: ', pendingLeads);
         const severity = this.getWorkloadSeverity(pendingLeads);
         switch (severity) {
             case 'high':
