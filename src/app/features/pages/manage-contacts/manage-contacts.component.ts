@@ -388,9 +388,12 @@ export class ManageContactsComponent implements OnInit {
 
     submit() {
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        const hasPhoneOrChat = !!(this.contactNum || this.contactNum2 || this.contactNumNew || this.chatId);
         // if (userData && this.contactId && this.contactId !== '' && this.contact.components.length > 1) {
-        if (this.contactNum || this.contactNum2 || this.contactNumNew || this.chatId) {
-            if (this.detailItem && this.state != 'copy') {
+        if (this.detailItem && this.state != 'copy') {
+            if (!hasPhoneOrChat) {
+                return;
+            }
                 // Create or get organization if organization name is provided
                 let organizationId = this.contactOrg;
                 if (this.contactOrgName && this.contactOrgName.trim() !== '' && (!this.contactOrg || this.contactOrg === '')) {
@@ -408,24 +411,23 @@ export class ManageContactsComponent implements OnInit {
                 } else {
                     this.submitEditContact(organizationId, userData);
                 }
+        } else {
+            // Create or get organization if organization name is provided
+            let organizationId = this.contactOrg;
+            if (this.contactOrgName && this.contactOrgName.trim() !== '') {
+                this.contactsService
+                    .createOrg({
+                        name: this.contactOrgName,
+                        identification: '',
+                        createdById: userData.userId,
+                    })
+                    .subscribe((orgRes: any) => {
+                        organizationId = orgRes.organizationId;
+                        this.submitContact(organizationId, userData);
+                    });
+                return;
             } else {
-                // Create or get organization if organization name is provided
-                let organizationId = this.contactOrg;
-                if (this.contactOrgName && this.contactOrgName.trim() !== '') {
-                    this.contactsService
-                        .createOrg({
-                            name: this.contactOrgName,
-                            identification: '',
-                            createdById: userData.userId,
-                        })
-                        .subscribe((orgRes: any) => {
-                            organizationId = orgRes.organizationId;
-                            this.submitContact(organizationId, userData);
-                        });
-                    return;
-                } else {
-                    this.submitContact(organizationId, userData);
-                }
+                this.submitContact(organizationId, userData);
             }
         }
     }
@@ -468,7 +470,7 @@ export class ManageContactsComponent implements OnInit {
             .subscribe();
     }
 
-    submitContact(organizationId: string, userData: any) {
+  submitContact(organizationId: string, userData: any) {
         // Update displayName based on chatType before submitting
         const chatTypeLower = this.chatType?.toLowerCase() || '';
         if (chatTypeLower.includes('facebook')) {
