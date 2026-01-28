@@ -205,6 +205,7 @@
                                     <th scope="col" class="d-none d-lg-table-cell">{{ 'contact.contact' | translate }}</th>
                                     <th scope="col" class="d-none d-md-table-cell">{{ 'contact.callStatus' | translate }}</th>
                                     <th scope="col">{{ 'common.status' | translate }}</th>
+                                    <th scope="col" class="text-center">{{ 'common.manage' | translate }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -226,7 +227,14 @@
                                         <!-- Call Type -->
                                         <td>{{ caseItem.type || '-' }}</td>
                                         <!-- Case Code -->
-                                        <td class="fw-semibold">{{ caseItem.casecode || '-' }}</td>
+                                        <td
+                                            class="cursor-pointer"
+                                            (click)="navigateToEditCase(caseItem.caseId, caseItem.contactId)"
+                                            [ngbTooltip]="'common.edit' | translate"
+                                            placement="bottom"
+                                        >
+                                            <span class="text-primary fw-semibold">{{ caseItem.casecode || '-' }}</span>
+                                        </td>
                                         <!-- Assign Date -->
                                         <td class="d-none d-md-table-cell">
                                             {{ caseItem.assignDate ? (caseItem.assignDate | date: 'dd/MM/yyyy HH:mm') : '-' }}
@@ -310,11 +318,23 @@
                                             </span>
                                             <ng-template #noStatus>-</ng-template>
                                         </td>
+                                        <!-- Manage Button -->
+                                        <td class="text-center">
+                                            <button
+                                                type="button"
+                                                class="btn btn-action btn-outline-primary"
+                                                [ngbTooltip]="'common.edit' | translate"
+                                                placement="top"
+                                                (click)="navigateToEditCase(caseItem.caseId, caseItem.contactId)"
+                                            >
+                                                <i class="fa-solid fa-pen-to-square"></i>
+                                            </button>
+                                        </td>
                                     </tr>
                                 </ng-container>
                                 <ng-template #tableNoData>
                                     <tr>
-                                        <td colspan="15" class="text-center py-5">
+                                        <td [attr.colspan]="16" class="text-center py-5">
                                             <div class="empty-state">
                                                 <i class="fa-solid fa-inbox fa-3x text-muted mb-3"></i>
                                                 <p class="text-muted mb-0">{{ 'dashboard.noData' | translate }}</p>

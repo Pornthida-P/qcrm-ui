@@ -535,4 +535,10 @@ export class HomePageComponent implements OnInit {
             queryParams: { agentId: agentId },
         });
     }
+
+    navigateToEditCase(caseId: string, contactId: string) {
+        this.router.navigate(['/contacts/edit'], {
+            queryParams: { caseId, key: contactId },
+        });
+    }
 }
