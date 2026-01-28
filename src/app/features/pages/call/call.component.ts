@@ -1531,11 +1531,11 @@ export class CallComponent implements OnInit {
             { name: this.translate.instant('filter.all'), code: 'all' },
         ];
 
-        // Add "Only My" option if userData is available
-        if (this.userData?.username) {
+        // Add "Only My" option if userData is available (use userId - API filters by assignedUserId/createdById)
+        if (this.userData?.userId) {
             this.filterOption.push({
                 name: this.translate.instant('filter.onlyMy'),
-                code: this.userData.username,
+                code: this.userData.userId,
             });
         }
 
