@@ -190,6 +190,7 @@
                         <table class="table table-hover custom-table mb-0 table-fixed-header">
                             <thead>
                                 <tr>
+                                    <th scope="col">{{ 'contact.caseIdForReport' | translate }}</th>
                                     <th scope="col">{{ 'common.time' | translate }}</th>
                                     <th scope="col">{{ 'contact.channel' | translate }}</th>
                                     <th scope="col">{{ 'contact.callType' | translate }}</th>
@@ -211,6 +212,7 @@
                             <tbody>
                                 <ng-container *ngIf="filteredCases.length > 0; else tableNoData">
                                     <tr *ngFor="let caseItem of filteredCases" [class.row-overdue]="isOverOneDay(caseItem.createdAt)">
+                                        <td>{{ caseItem.caseIdForReport || '-' }}</td>
                                         <!-- เวลา -->
                                         <td class="text-nowrap">{{ caseItem.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
                                         <!-- Channel -->

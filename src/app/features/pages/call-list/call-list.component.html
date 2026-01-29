@@ -9,6 +9,7 @@
                 <table class="table table-hover custom-table mb-0 table-fixed-header">
                     <thead>
                         <tr>
+                            <th class="text-nowrap">{{ 'contact.caseIdForReport' | translate }}</th>
                             <th class="text-nowrap">{{ 'contact-import-management.created-date' | translate }}</th>
                             <th class="text-nowrap">{{ 'contact-import-management.dealer-name' | translate }}</th>
                             <th class="text-nowrap">{{ 'contact-import-management.contact-email' | translate }}</th>
@@ -28,6 +29,7 @@
                     <tbody>
                         <ng-container *ngIf="paginatedCalls.length > 0; else noDataTemplate">
                             <tr *ngFor="let caseList of paginatedCalls; let i = index">
+                                <td>{{ caseList.caseIdForReport || '-' }}</td>
                                 <td>{{ caseList.requestDateTime | date : 'dd/MM/yyyy HH:mm' }}</td>
                                 <td>{{ caseList.dealerName || caseList.fullname || '-' }}</td>
                                 <td>{{ caseList.email || '-' }}</td>
