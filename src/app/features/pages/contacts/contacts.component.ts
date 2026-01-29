@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Pipe, PipeTransform } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ContactsService } from 'src/app/services/contacts/contacts.service';
 import { catchError, tap } from 'rxjs';
@@ -6,6 +6,27 @@ import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.serv
 import Swal from 'sweetalert2';
 import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
 import { TranslateService } from '@ngx-translate/core';
+
+@Pipe({
+    name: 'contactSearchFilter',
+})
+export class ContactSearchFilterPipe implements PipeTransform {
+    transform(value: any, args: any, filter: any): any {
+        if (!value) return [];
+        const searchTerm = args && args.toString().toLocaleLowerCase();
+        return value.filter((val: any) => {
+            if (filter === 'all') {
+                if (!searchTerm) return true;
+                return Object.values(val).some(
+                    (field) => field && field.toString().toLocaleLowerCase().includes(searchTerm),
+                );
+            }
+            return Object.values(val).some(
+                (field) => field && field.toString().toLocaleLowerCase().includes(filter),
+            );
+        });
+    }
+}
 
 @Component({
     selector: 'app-contacts',
@@ -177,6 +198,7 @@ export class ContactsComponent implements OnInit {
         } else {
             this.userId = '';
         }
+        this.currentPage = 1;
         this.getContacts((this.currentPage - 1) * this.pageSize, this.pageSize);
         this.getPage();
     }
