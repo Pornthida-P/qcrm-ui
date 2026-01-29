@@ -132,8 +132,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <ng-container *ngIf="(calls | searchFilter : valueSearch : 'all')?.length > 0; else noDataTemplate">
-                                <tr *ngFor="let calls of calls | searchFilter : valueSearch : 'all'; let i = index">
+                            <ng-container *ngIf="(calls | searchFilter: valueSearch : 'all')?.length > 0; else noDataTemplate">
+                                <tr *ngFor="let calls of calls | searchFilter: valueSearch : 'all'; let i = index">
                                     <td class="text-center" *ngIf="!isAgent()">
                                         <input
                                             type="checkbox"
@@ -148,7 +148,7 @@
                                     <td>{{ calls.caseIdForReport || '-' }}</td>
 
                                     <!-- วันที่ -->
-                                    <td>{{ calls.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
+                                    <td>{{ calls.requestDateTime | date: 'dd/MM/yyyy HH:mm' }}</td>
                                     <!-- Channel -->
                                     <td>
                                         <span
@@ -175,7 +175,7 @@
                                         </span>
                                     </td>
                                     <!-- Assign Date -->
-                                    <td>{{ calls.assignDate ? (calls.assignDate | date : 'dd/MM/yyyy HH:mm') : '-' }}</td>
+                                    <td>{{ calls.assignDate ? (calls.assignDate | date: 'dd/MM/yyyy HH:mm') : '-' }}</td>
                                     <!-- Assign User -->
                                     <td>{{ calls.agent || '-' }}</td>
                                     <!-- Case Type -->
@@ -228,7 +228,7 @@
                                                     !calls.callStatusName?.includes('สนทนาต่อ') &&
                                                     !calls.callStatusName?.includes('ไม่รับสาย') &&
                                                     !calls.callStatusName?.includes('ไม่สนทนาต่อ') &&
-                                                    !calls.callStatusName?.includes('ไม่สะดวกสนทนา')
+                                                    !calls.callStatusName?.includes('ไม่สะดวกสนทนา'),
                                             }"
                                         >
                                             {{ calls.callStatusName }}
@@ -340,7 +340,7 @@
                                 class="edit-contact-column"
                                 [ngClass]="{
                                     'col-12 col-lg-6': !attachmentShowing && (selectedCaseCodeObject?.script || chatHistory.length),
-                                    'col-12': attachmentShowing || (!selectedCaseCodeObject?.script && !chatHistory.length)
+                                    'col-12': attachmentShowing || (!selectedCaseCodeObject?.script && !chatHistory.length),
                                 }"
                             >
                                 <div class="edit-contact-form-scroll">
@@ -697,7 +697,7 @@
                                                                             !status.callStatus?.includes('สนทนาต่อ') &&
                                                                             !status.callStatus?.includes('ไม่รับสาย') &&
                                                                             !status.callStatus?.includes('ไม่สนทนาต่อ') &&
-                                                                            !status.callStatus?.includes('ไม่สะดวกสนทนา')
+                                                                            !status.callStatus?.includes('ไม่สะดวกสนทนา'),
                                                                     }"
                                                                 ></i>
                                                                 {{ status.callStatus }}
@@ -754,7 +754,7 @@
                                                                         'fa-face-smile': s.type === 'positive',
                                                                         'fa-face-meh': s.type === 'neutral',
                                                                         'fa-face-frown': s.type === 'negative',
-                                                                        'fa-face-meh-blank': !s.type
+                                                                        'fa-face-meh-blank': !s.type,
                                                                     }"
                                                                 ></i>
                                                                 <span class="sentiment-label">{{ s.name }}</span>
@@ -812,7 +812,7 @@
                                                                 <p class="mb-0 small">{{ comment.comment }}</p>
                                                                 <small class="text-muted">
                                                                     {{ comment.username }} |
-                                                                    {{ comment.createdAt | date : 'dd/MM/yyyy HH:mm' }}
+                                                                    {{ comment.createdAt | date: 'dd/MM/yyyy HH:mm' }}
                                                                 </small>
                                                             </div>
                                                         </div>
@@ -828,7 +828,7 @@
                                                                 <p class="mb-0 small">{{ item.status }}</p>
                                                                 <small class="text-muted">
                                                                     {{ item.username || item.createdById }} |
-                                                                    {{ item.createdAt | date : 'dd/MM/yyyy HH:mm' }}
+                                                                    {{ item.createdAt | date: 'dd/MM/yyyy HH:mm' }}
                                                                 </small>
                                                             </div>
                                                         </div>
@@ -878,7 +878,7 @@
                                                 <div *ngIf="chat.message_type === 'system-text'" class="system-message">
                                                     <hr class="system-line" />
                                                     <span class="system-text">{{ chat.message_text }}</span>
-                                                    <span class="system-time">{{ chat.timestamp | date : 'HH:mm' }}</span>
+                                                    <span class="system-time">{{ chat.timestamp | date: 'HH:mm' }}</span>
                                                 </div>
                                                 <!-- Normal Message -->
                                                 <div
@@ -886,7 +886,7 @@
                                                     class="message-row"
                                                     [ngClass]="{
                                                         me: chat.direction === 'out',
-                                                        contact: chat.direction === 'in'
+                                                        contact: chat.direction === 'in',
                                                     }"
                                                 >
                                                     <div class="bubble">
@@ -894,7 +894,7 @@
                                                     </div>
                                                     <div class="message-info" [ngClass]="{ 'text-end': chat.direction === 'out' }">
                                                         <span class="sender-name">{{ chat.sender_name }}</span>
-                                                        <span class="timestamp">{{ chat.timestamp | date : 'dd/MM/yyyy HH:mm' }}</span>
+                                                        <span class="timestamp">{{ chat.timestamp | date: 'dd/MM/yyyy HH:mm' }}</span>
                                                     </div>
                                                 </div>
                                             </ng-container>
@@ -959,7 +959,7 @@
                                                         <div *ngIf="chat.message_type === 'system-text'" class="system-message">
                                                             <hr class="system-line" />
                                                             <span class="system-text">{{ chat.message_text }}</span>
-                                                            <span class="system-time">{{ chat.timestamp | date : 'HH:mm' }}</span>
+                                                            <span class="system-time">{{ chat.timestamp | date: 'HH:mm' }}</span>
                                                         </div>
                                                         <!-- Normal Message -->
                                                         <div
@@ -967,7 +967,7 @@
                                                             class="message-row"
                                                             [ngClass]="{
                                                                 me: chat.direction === 'out',
-                                                                contact: chat.direction === 'in'
+                                                                contact: chat.direction === 'in',
                                                             }"
                                                         >
                                                             <div class="bubble">
@@ -976,7 +976,7 @@
                                                             <div class="message-info" [ngClass]="{ 'text-end': chat.direction === 'out' }">
                                                                 <span class="sender-name">{{ chat.sender_name }}</span>
                                                                 <span class="timestamp">{{
-                                                                    chat.timestamp | date : 'dd/MM/yyyy HH:mm'
+                                                                    chat.timestamp | date: 'dd/MM/yyyy HH:mm'
                                                                 }}</span>
                                                             </div>
                                                         </div>
