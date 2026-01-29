@@ -193,7 +193,7 @@
                                     inputmode="numeric"
                                     minlength="9"
                                     maxlength="10"
-                                    onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                                    onkeypress="return event.charCode >= 48 && event.charCode <= 57;"
                                     (input)="onInputChange($event, 'contactNum')"
                                     [placeholder]="'contact.phoneNumber' | translate"
                                 />
@@ -210,7 +210,7 @@
                                     inputmode="numeric"
                                     minlength="9"
                                     maxlength="10"
-                                    onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                                    onkeypress="return event.charCode >= 48 && event.charCode <= 57;"
                                     (input)="onInputChange($event, 'contactNumNew')"
                                 />
                                 <!-- Existing Phone Numbers -->
@@ -225,7 +225,7 @@
                                         inputmode="numeric"
                                         minlength="9"
                                         maxlength="10"
-                                        onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                                        onkeypress="return event.charCode >= 48 && event.charCode <= 57;"
                                     />
                                 </div>
                             </div>
@@ -243,7 +243,7 @@
                                     inputmode="numeric"
                                     minlength="9"
                                     maxlength="10"
-                                    onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                                    onkeypress="return event.charCode >= 48 && event.charCode <= 57;"
                                     (input)="onInputChange($event, 'contactNum2')"
                                     [placeholder]="'contact.phoneNumber' | translate"
                                 />
@@ -322,14 +322,13 @@
                                 <tbody>
                                     <ng-container *ngIf="contactCall && contactCall.length > 0; else noDataTemplate">
                                         <tr *ngFor="let case of contactCall" class="table-row-hover">
-
                                             <td class="col-case-id">{{ case.caseIdForReport || '-' }}</td>
 
                                             <!-- เวลา -->
                                             <td class="col-time">
                                                 <div class="d-flex flex-column">
-                                                    <span class="fw-semibold">{{ case.createdAt | date : 'dd/MM/yyyy' }}</span>
-                                                    <small class="text-muted">{{ case.createdAt | date : 'HH:mm' }}</small>
+                                                    <span class="fw-semibold">{{ case.createdAt | date: 'dd/MM/yyyy' }}</span>
+                                                    <small class="text-muted">{{ case.createdAt | date: 'HH:mm' }}</small>
                                                 </div>
                                             </td>
                                             <!-- Channel -->
@@ -363,7 +362,7 @@
                                             </td>
                                             <!-- Assign Date -->
                                             <td class="col-assign-date d-none d-lg-table-cell">
-                                                {{ case.assignDate ? (case.assignDate | date : 'dd/MM/yyyy HH:mm') : '-' }}
+                                                {{ case.assignDate ? (case.assignDate | date: 'dd/MM/yyyy HH:mm') : '-' }}
                                             </td>
                                             <!-- Assign User -->
                                             <td class="col-assign-user d-none d-lg-table-cell">{{ case.agent || '-' }}</td>
@@ -425,7 +424,7 @@
                                                             !case.callStatusName?.includes('สนทนาต่อ') &&
                                                             !case.callStatusName?.includes('ไม่รับสาย') &&
                                                             !case.callStatusName?.includes('ไม่สนทนาต่อ') &&
-                                                            !case.callStatusName?.includes('ไม่สะดวกสนทนา')
+                                                            !case.callStatusName?.includes('ไม่สะดวกสนทนา'),
                                                     }"
                                                 >
                                                     {{ case.callStatusName }}
@@ -504,7 +503,7 @@
                     class="edit-contact-column"
                     [ngClass]="{
                         'col-12 col-lg-6': !attachmentShowing && (selectedCaseCodeObject?.script || chatHistory.length),
-                        'col-12': attachmentShowing || (!selectedCaseCodeObject?.script && !chatHistory.length)
+                        'col-12': attachmentShowing || (!selectedCaseCodeObject?.script && !chatHistory.length),
                     }"
                 >
                     <div class="edit-contact-form-scroll">
@@ -562,7 +561,11 @@
                                                     </ng-container>
                                                 </mat-autocomplete>
                                             </mat-form-field>
-                                            <mat-form-field class="w-100 compact-field disabled-field" appearance="outline" *ngIf="chatId || chatType">
+                                            <mat-form-field
+                                                class="w-100 compact-field disabled-field"
+                                                appearance="outline"
+                                                *ngIf="chatId || chatType"
+                                            >
                                                 <input
                                                     type="text"
                                                     matInput
@@ -676,18 +679,11 @@
                                                     [displayWith]="displayServiceSubTypeFn"
                                                     (optionSelected)="onServiceSubTypeSelected($event)"
                                                 >
-                                                    <mat-option
-                                                        *ngFor="let serviceSubType of filteredServiceSubTypes"
-                                                        [value]="serviceSubType"
-                                                    >
-                                                        <ng-container *ngIf="serviceSubType.isNew">
-                                                            <i class="fa-solid fa-plus me-2 text-success"></i>
-                                                            {{ 'common.create' | translate }}: "{{ serviceSubType.name }}"
-                                                        </ng-container>
-                                                        <ng-container *ngIf="!serviceSubType.isNew">
+                                                    <ng-container *ngFor="let serviceSubType of filteredServiceSubTypes">
+                                                        <mat-option *ngIf="!serviceSubType.isNew" [value]="serviceSubType">
                                                             {{ serviceSubType.name }}
-                                                        </ng-container>
-                                                    </mat-option>
+                                                        </mat-option>
+                                                    </ng-container>
                                                 </mat-autocomplete>
                                             </mat-form-field>
                                         </div>
@@ -861,7 +857,7 @@
                                                                 !status.callStatus?.includes('สนทนาต่อ') &&
                                                                 !status.callStatus?.includes('ไม่รับสาย') &&
                                                                 !status.callStatus?.includes('ไม่สนทนาต่อ') &&
-                                                                !status.callStatus?.includes('ไม่สะดวกสนทนา')
+                                                                !status.callStatus?.includes('ไม่สะดวกสนทนา'),
                                                         }"
                                                     ></i>
                                                     {{ status.callStatus }}
@@ -917,7 +913,7 @@
                                                             'fa-face-smile': s.type === 'positive',
                                                             'fa-face-meh': s.type === 'neutral',
                                                             'fa-face-frown': s.type === 'negative',
-                                                            'fa-face-meh-blank': !s.type
+                                                            'fa-face-meh-blank': !s.type,
                                                         }"
                                                     ></i>
                                                     <span class="sentiment-label">{{ s.name }}</span>
@@ -969,7 +965,7 @@
                                                 <div class="history-item" *ngFor="let comment of comments">
                                                     <p class="mb-0 small">{{ comment.comment }}</p>
                                                     <small class="text-muted">
-                                                        {{ comment.username }} | {{ comment.createdAt | date : 'dd/MM/yyyy HH:mm' }}
+                                                        {{ comment.username }} | {{ comment.createdAt | date: 'dd/MM/yyyy HH:mm' }}
                                                     </small>
                                                 </div>
                                             </div>
@@ -985,7 +981,7 @@
                                                     <p class="mb-0 small">{{ item.status }}</p>
                                                     <small class="text-muted">
                                                         {{ item.username || item.createdById }} |
-                                                        {{ item.createdAt | date : 'dd/MM/yyyy HH:mm' }}
+                                                        {{ item.createdAt | date: 'dd/MM/yyyy HH:mm' }}
                                                     </small>
                                                 </div>
                                             </div>
@@ -1027,7 +1023,7 @@
                                     <div *ngIf="chat.message_type === 'system-text'" class="system-message">
                                         <hr class="system-line" />
                                         <span class="system-text">{{ chat.message_text }}</span>
-                                        <span class="system-time">{{ chat.timestamp | date : 'HH:mm' }}</span>
+                                        <span class="system-time">{{ chat.timestamp | date: 'HH:mm' }}</span>
                                     </div>
                                     <!-- Normal Message -->
                                     <div
@@ -1035,7 +1031,7 @@
                                         class="message-row"
                                         [ngClass]="{
                                             me: chat.direction === 'out',
-                                            contact: chat.direction === 'in'
+                                            contact: chat.direction === 'in',
                                         }"
                                     >
                                         <div class="bubble">
@@ -1043,7 +1039,7 @@
                                         </div>
                                         <div class="message-info" [ngClass]="{ 'text-end': chat.direction === 'out' }">
                                             <span class="sender-name">{{ chat.sender_name }}</span>
-                                            <span class="timestamp">{{ chat.timestamp | date : 'dd/MM/yyyy HH:mm' }}</span>
+                                            <span class="timestamp">{{ chat.timestamp | date: 'dd/MM/yyyy HH:mm' }}</span>
                                         </div>
                                     </div>
                                 </ng-container>
@@ -1105,7 +1101,7 @@
                                             <div *ngIf="chat.message_type === 'system-text'" class="system-message">
                                                 <hr class="system-line" />
                                                 <span class="system-text">{{ chat.message_text }}</span>
-                                                <span class="system-time">{{ chat.timestamp | date : 'HH:mm' }}</span>
+                                                <span class="system-time">{{ chat.timestamp | date: 'HH:mm' }}</span>
                                             </div>
                                             <!-- Normal Message -->
                                             <div
@@ -1113,7 +1109,7 @@
                                                 class="message-row"
                                                 [ngClass]="{
                                                     me: chat.direction === 'out',
-                                                    contact: chat.direction === 'in'
+                                                    contact: chat.direction === 'in',
                                                 }"
                                             >
                                                 <div class="bubble">
@@ -1121,7 +1117,7 @@
                                                 </div>
                                                 <div class="message-info" [ngClass]="{ 'text-end': chat.direction === 'out' }">
                                                     <span class="sender-name">{{ chat.sender_name }}</span>
-                                                    <span class="timestamp">{{ chat.timestamp | date : 'dd/MM/yyyy HH:mm' }}</span>
+                                                    <span class="timestamp">{{ chat.timestamp | date: 'dd/MM/yyyy HH:mm' }}</span>
                                                 </div>
                                             </div>
                                         </ng-container>
