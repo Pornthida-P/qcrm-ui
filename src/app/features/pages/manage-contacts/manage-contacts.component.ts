@@ -68,7 +68,7 @@ export class ManageContactsComponent implements OnInit {
     description: string = '';
     timepickStart: { hour: number; minute: number; second: number } = { hour: 0, minute: 0, second: 0 };
     newDateTime: any;
-    startTime: string = '';
+    startTime: Date | null = null;
 
     seconds = true;
 
@@ -172,7 +172,7 @@ export class ManageContactsComponent implements OnInit {
         public statusService: StatusService,
     ) {
         this.contact = { components: [] };
-        this.startTime = this.formatDate(new Date());
+        this.startTime = new Date();
     }
 
     ngOnInit(): void {
@@ -747,7 +747,7 @@ export class ManageContactsComponent implements OnInit {
         this.callId = '';
         this.selectedChannels = '';
         const date = new Date();
-        this.startTime = date.toISOString().split('T')[0];
+        this.startTime = date;
         this.description = '';
         this.solutions = '';
         this.selectedCallTypeId = '';
@@ -804,7 +804,7 @@ export class ManageContactsComponent implements OnInit {
         this.cType = '';
         this.callId = '';
         this.selectedChannels = '';
-        this.startTime = '';
+        this.startTime = null;
         this.description = '';
         this.solutions = '';
         this.selectedCallTypeId = '';
@@ -853,8 +853,8 @@ export class ManageContactsComponent implements OnInit {
                     this.selectedCallStatusId = call.callStatus;
                     this.originalCallStatusId = call.callStatus;
                     this.selectedSentiment = call.sentimentId;
-                    this.startTime = call.requestDateTime;
                     const date = new Date(call.requestDateTime);
+                    this.startTime = isNaN(date.getTime()) ? null : date;
                     this.timepickStart = {
                         hour: date.getHours(),
                         minute: date.getMinutes(),
@@ -1007,7 +1007,7 @@ export class ManageContactsComponent implements OnInit {
     submitCall() {
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
         this.attachmentsId = this.attachments.map((attachment) => attachment.attachmentId.toString());
-        const selectedDate = this.startTime ? this.formatDate(new Date(this.startTime)) : this.formatDate(new Date());
+        const selectedDate = this.startTime ? this.formatDate(this.startTime) : this.formatDate(new Date());
         const now = new Date();
         const defaultTime = { hour: now.getHours(), minute: now.getMinutes(), second: now.getSeconds() };
         const selectedTime = this.timepickStart ? this.formatTime(this.timepickStart) : this.formatTime(defaultTime);
