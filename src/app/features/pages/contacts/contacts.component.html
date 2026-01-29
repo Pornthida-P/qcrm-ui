@@ -52,8 +52,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <ng-container *ngIf="contacts?.length > 0; else noDataTemplate">
-                                <tr *ngFor="let contact of contacts">
+                            <ng-container *ngIf="(contacts | contactSearchFilter : valueSearch : 'all')?.length > 0; else noDataTemplate">
+                                <tr *ngFor="let contact of contacts | contactSearchFilter : valueSearch : 'all'">
                                     <!-- ชื่อ -->
                                     <td>
                                         <div class="d-flex align-items-center">

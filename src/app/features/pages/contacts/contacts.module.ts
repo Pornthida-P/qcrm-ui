@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ContactsComponent } from './contacts.component';
+import { ContactsComponent, ContactSearchFilterPipe } from './contacts.component';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -11,7 +11,7 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { CardComponent } from '../../components/card/card.component';
 @NgModule({
-    declarations: [ContactsComponent],
+    declarations: [ContactsComponent, ContactSearchFilterPipe],
     imports: [
         CommonModule,
         FormsModule,
