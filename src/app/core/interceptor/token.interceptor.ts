@@ -29,8 +29,8 @@ export class TokenInterceptor implements HttpInterceptor {
         // Skip token expiry check in interceptor - let server handle it
         // Only check when server returns 401/403 to avoid premature redirects
 
-        // Add token to request if available, but skip for cross-auth (it's an auth endpoint itself)
-        if (token && !isQimApi && !isCrossAuthRequest) {
+        // Add token to request if available; skip for login/cross-auth (they use Basic/OTT, not Bearer)
+        if (token && !isQimApi && !isCrossAuthRequest && !isLoginRequest) {
             request = request.clone({
                 setHeaders: {
                     Authorization: `Bearer ${token}`,
