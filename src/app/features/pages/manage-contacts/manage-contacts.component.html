@@ -298,6 +298,7 @@
                             <table class="table table-hover custom-table mb-0 table-fixed-header responsive-table">
                                 <thead>
                                     <tr>
+                                        <th class="col-case-id">{{ 'contact.caseIdForReport' | translate }}</th>
                                         <th class="col-time">{{ 'common.time' | translate }}</th>
                                         <th class="col-channel">{{ 'contact.channel' | translate }}</th>
                                         <th class="col-call-type d-none d-md-table-cell">{{ 'contact.callType' | translate }}</th>
@@ -321,6 +322,9 @@
                                 <tbody>
                                     <ng-container *ngIf="contactCall && contactCall.length > 0; else noDataTemplate">
                                         <tr *ngFor="let case of contactCall" class="table-row-hover">
+
+                                            <td class="col-case-id">{{ case.caseIdForReport || '-' }}</td>
+
                                             <!-- เวลา -->
                                             <td class="col-time">
                                                 <div class="d-flex flex-column">

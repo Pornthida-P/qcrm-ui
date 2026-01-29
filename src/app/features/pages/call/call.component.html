@@ -112,6 +112,7 @@
                                         (change)="checkAll($event)"
                                     />
                                 </th>
+                                <th scope="col">{{ 'contact.caseIdForReport' | translate }}</th>
                                 <th scope="col">{{ 'common.time' | translate }}</th>
                                 <th scope="col">{{ 'contact.channel' | translate }}</th>
                                 <th scope="col">{{ 'contact.callType' | translate }}</th>
@@ -143,6 +144,9 @@
                                             (change)="selectCheckbox(calls.caseId)"
                                         />
                                     </td>
+
+                                    <td>{{ calls.caseIdForReport || '-' }}</td>
+
                                     <!-- วันที่ -->
                                     <td>{{ calls.createdAt | date : 'dd/MM/yyyy HH:mm' }}</td>
                                     <!-- Channel -->
