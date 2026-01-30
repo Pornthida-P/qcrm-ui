@@ -223,7 +223,7 @@ export class ManageContactsComponent implements OnInit {
                                     chattype: this.chatType || '',
                                     displayName: this.displayName || '',
                                     issue: this.issue || '',
-                                    uuidLine: this.uuidLine || ''
+                                    uuidLine: this.uuidLine || '',
                                 });
                                 window.location.href = `${environment.subPath}/contacts/edit?${redirectParams.toString()}`;
                             }
@@ -231,7 +231,7 @@ export class ManageContactsComponent implements OnInit {
                         error: () => {
                             // No existing contact found → allow create new
                             console.log('No existing contact found for chatId, allow create new');
-                        }
+                        },
                     });
                 }
 
@@ -316,8 +316,8 @@ export class ManageContactsComponent implements OnInit {
         this.getSentiments();
         this.getContactGroup();
 
-        if(this.chatId && this.chatId !== '') {
-          this.getContactChatId(this.chatId);
+        if (this.chatId && this.chatId !== '') {
+            this.getContactChatId(this.chatId);
         }
     }
 
@@ -389,23 +389,23 @@ export class ManageContactsComponent implements OnInit {
     submit() {
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
         if (this.detailItem && this.state != 'copy') {
-                // Create or get organization if organization name is provided
-                let organizationId = this.contactOrg;
-                if (this.contactOrgName && this.contactOrgName.trim() !== '' && (!this.contactOrg || this.contactOrg === '')) {
-                    this.contactsService
-                        .createOrg({
-                            name: this.contactOrgName,
-                            identification: '',
-                            createdById: userData.userId,
-                        })
-                        .subscribe((orgRes: any) => {
-                            organizationId = orgRes.organizationId;
-                            this.submitEditContact(organizationId, userData);
-                        });
-                    return;
-                } else {
-                    this.submitEditContact(organizationId, userData);
-                }
+            // Create or get organization if organization name is provided
+            let organizationId = this.contactOrg;
+            if (this.contactOrgName && this.contactOrgName.trim() !== '' && (!this.contactOrg || this.contactOrg === '')) {
+                this.contactsService
+                    .createOrg({
+                        name: this.contactOrgName,
+                        identification: '',
+                        createdById: userData.userId,
+                    })
+                    .subscribe((orgRes: any) => {
+                        organizationId = orgRes.organizationId;
+                        this.submitEditContact(organizationId, userData);
+                    });
+                return;
+            } else {
+                this.submitEditContact(organizationId, userData);
+            }
         } else {
             // Create or get organization if organization name is provided
             let organizationId = this.contactOrg;
@@ -428,30 +428,18 @@ export class ManageContactsComponent implements OnInit {
     }
 
     submitEditContact(organizationId: string, userData: any) {
-        // Sync from contactNumbers (edited in form) so original number can be updated
-        if (this.contactNumbers && this.contactNumbers.length > 0) {
-            this.contactNum = this.contactNumbers[0]?.contactNumber?.trim().replace(/"/g, '') ?? this.contactNum;
-            if (this.contactNumbers.length > 1) {
-                this.contactNum2 = this.contactNumbers[1]?.contactNumber?.trim().replace(/"/g, '') ?? this.contactNum2;
-            } else {
-                this.contactNum2 = '';
-            }
-        } else {
-            this.contactNum = '';
-            this.contactNum2 = '';
-        }
         const data = {
             contactId: this.contactId,
             firstName: this.contactFirstName,
             lastName: this.contactLastName,
             organizationId: organizationId,
             contactType: this.contactType,
-            contactNumber: this.contactNum || '',
-            contactNumber2: this.contactNum2 || '',
+            contactNumber: this.contactNum,
+            contactNumber2: this.contactNum2,
             province: this.contactProvince,
             gender: this.contactGender || 'unknown',
             modifiedById: userData.userId,
-            contactNumNew: this.contactNumNew || '',
+            contactNumNew: this.contactNumNew,
             contactGroupId: this.contactGroupId,
             email: this.contactEmail,
         };
@@ -477,7 +465,7 @@ export class ManageContactsComponent implements OnInit {
             .subscribe();
     }
 
-  submitContact(organizationId: string, userData: any) {
+    submitContact(organizationId: string, userData: any) {
         // Update displayName based on chatType before submitting
         const chatTypeLower = this.chatType?.toLowerCase() || '';
         if (chatTypeLower.includes('facebook')) {
@@ -491,12 +479,12 @@ export class ManageContactsComponent implements OnInit {
             lastName: this.contactLastName,
             organizationId: organizationId,
             contactType: this.contactType,
-            contactNumber: this.contactNum || '',
+            contactNumber: this.contactNum,
             province: this.contactProvince,
             gender: this.contactGender || 'unknown',
             createdById: userData.userId,
-            contactNumber2: this.contactNum2 || '',
-            chatId: this.chatId || '',
+            contactNumber2: this.contactNum2,
+            chatId: this.chatId,
             uuidLine: this.uuidLine,
             chatType: this.chatType,
             displayName: this.displayName,
@@ -551,8 +539,8 @@ export class ManageContactsComponent implements OnInit {
                                     chattype: this.chatType,
                                     displayName: this.displayName,
                                     issue: this.issue,
-                                    uuidLine: this.uuidLine
-                                }
+                                    uuidLine: this.uuidLine,
+                                },
                             );
                             return;
                         }
@@ -1654,18 +1642,18 @@ export class ManageContactsComponent implements OnInit {
         });
     }
 
-  getContactChatId(chatId: string) {
-    this.contactsService.getContactChatId(chatId).subscribe((res: any) => {
-      if (res && res.length > 0) {
-        this.contactChatId = res[0].contactChatId;
-        const channelName = res[0].channelName?.toLowerCase() || '';
-        if (channelName.includes('facebook')) {
-          this.facebookDisplayName = res[0].displayName || '';
-        } else if (channelName.includes('line')) {
-          this.lineDisplayName = res[0].displayName || '';
-        }
-        this.contactChatDisplayName = res[0].displayName || '';
-      }
-    });
-  }
+    getContactChatId(chatId: string) {
+        this.contactsService.getContactChatId(chatId).subscribe((res: any) => {
+            if (res && res.length > 0) {
+                this.contactChatId = res[0].contactChatId;
+                const channelName = res[0].channelName?.toLowerCase() || '';
+                if (channelName.includes('facebook')) {
+                    this.facebookDisplayName = res[0].displayName || '';
+                } else if (channelName.includes('line')) {
+                    this.lineDisplayName = res[0].displayName || '';
+                }
+                this.contactChatDisplayName = res[0].displayName || '';
+            }
+        });
+    }
 }
