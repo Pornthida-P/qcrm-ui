@@ -717,7 +717,7 @@ export class ContactImportManagementComponent implements OnInit {
                     // Filter only active agents
                     this.agentAll = res.filter(
                         (agent: any) =>
-                            agent.role.roleTitle.toLowerCase() === 'agent' &&
+                            agent.role?.roleTitle?.toLowerCase() === 'agent' &&
                             agent.isActive === 1,
                     );
                 }

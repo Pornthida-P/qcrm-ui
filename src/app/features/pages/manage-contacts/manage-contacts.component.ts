@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ContactsService } from 'src/app/services/contacts/contacts.service';
-import { catchError, finalize, tap } from 'rxjs';
+import { catchError, finalize, of, switchMap, tap } from 'rxjs';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { CallService } from 'src/app/services/call/call.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -107,7 +107,8 @@ export class ManageContactsComponent implements OnInit {
     contactNumParams: any;
 
     contactNumber: any;
-    contactNumbers: { contactNumber: string }[] = [];
+    contactNumbers: { contactNumber: string; contactNumberId?: string; contactType?: string; primary?: number }[] = [];
+    originalContactNumbers: { contactNumber: string; contactNumberId?: string; contactType?: string; primary?: number }[] = [];
     selectedContactNumber: { contactNumber: string; contactNumberId: string } | null = null;
 
     contactNumNew: string = '';
@@ -376,8 +377,11 @@ export class ManageContactsComponent implements OnInit {
                     ? res.map((item: any) => ({
                           contactNumber: item.contactNumber,
                           contactNumberId: item.contactNumberId,
+                          contactType: item.contactType,
+                          primary: item.primary,
                       }))
                     : [];
+            this.originalContactNumbers = this.cloneContactNumbers(this.contactNumbers);
         });
     }
 
@@ -440,21 +444,32 @@ export class ManageContactsComponent implements OnInit {
             gender: this.contactGender || 'unknown',
             modifiedById: userData.userId,
             contactNumNew: this.contactNumNew,
+            contactNumbers: this.contactNumbers,
             contactGroupId: this.contactGroupId,
             email: this.contactEmail,
         };
         console.log('data: ', data);
+        let updatedContactId = this.contactId;
         this.contactsService
             .editContacts(data)
             .pipe(
                 tap((res: any) => {
+                    if (res?.contactId) {
+                        updatedContactId = res.contactId;
+                    }
+                }),
+                switchMap(() => {
+                    if (!this.hasContactNumberChanges()) {
+                        return of(null);
+                    }
+                    return this.contactsService.updateContactNumbers(updatedContactId, this.contactNumbers);
+                }),
+                tap(() => {
                     this.sweetalertServices.success('alert.saveSuccess', '/contacts/edit', {
-                        key: res.contactId,
+                        key: updatedContactId,
                     });
                     this.auditLogService.log('', 'Contact', '', 'Edit Contact', JSON.stringify(data), 'Success');
-                    if (this.contactId === res.contactId) {
-                        location.reload();
-                    }
+                    this.originalContactNumbers = this.cloneContactNumbers(this.contactNumbers);
                 }),
                 catchError((error) => {
                     this.sweetalertServices.handleError(error);
@@ -465,7 +480,7 @@ export class ManageContactsComponent implements OnInit {
             .subscribe();
     }
 
-    submitContact(organizationId: string, userData: any) {
+  submitContact(organizationId: string, userData: any) {
         // Update displayName based on chatType before submitting
         const chatTypeLower = this.chatType?.toLowerCase() || '';
         if (chatTypeLower.includes('facebook')) {
@@ -1255,7 +1270,38 @@ export class ManageContactsComponent implements OnInit {
             this.contactNum = inputValue;
         } else if (index === 'contactNum2') {
             this.contactNum2 = inputValue;
+        } else if (index === 'contactNumNew') {
+            this.contactNumNew = inputValue;
         }
+    }
+
+    private cloneContactNumbers(
+        numbers: { contactNumber: string; contactNumberId?: string; contactType?: string; primary?: number }[],
+    ): { contactNumber: string; contactNumberId?: string; contactType?: string; primary?: number }[] {
+        return (numbers || []).map((num) => ({
+            contactNumber: num.contactNumber,
+            contactNumberId: num.contactNumberId,
+            contactType: num.contactType,
+            primary: num.primary,
+        }));
+    }
+
+    private hasContactNumberChanges(): boolean {
+        const normalize = (
+            numbers: { contactNumber: string; contactNumberId?: string; contactType?: string; primary?: number }[],
+        ) => {
+            return (numbers || [])
+                .filter((num) => num && typeof num.contactNumber === 'string' && num.contactNumber.trim().length > 0)
+                .map((num) => ({
+                    id: num.contactNumberId || '',
+                    number: num.contactNumber.trim(),
+                    type: num.contactType || '',
+                    primary: Number(num.primary) === 1 ? 1 : 0,
+                }))
+                .sort((a, b) => `${a.id}-${a.number}`.localeCompare(`${b.id}-${b.number}`));
+        };
+
+        return JSON.stringify(normalize(this.contactNumbers)) !== JSON.stringify(normalize(this.originalContactNumbers));
     }
 
     async getContactNumber(contactId: string) {
