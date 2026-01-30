@@ -23,6 +23,13 @@ export class ContactsService {
         return this.http.put(`${this.baseUrl}${config.api.path.contacts.baseUrl}`, data);
     }
 
+    updateContactNumbers(contactId: string, contactNumbers: any[]) {
+        return this.http.put(`${this.baseUrl}${config.api.path.contacts.baseUrl}${config.api.path.contacts.updateContactNumbers}`, {
+            contactId,
+            contactNumbers,
+        });
+    }
+
     deleteContacts(data: any) {
         return this.http.delete(`${this.baseUrl}${config.api.path.contacts.baseUrl}`, data);
     }
