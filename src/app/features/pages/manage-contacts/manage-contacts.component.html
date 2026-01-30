@@ -727,7 +727,7 @@
                                                 name="selectedChannels"
                                                 [(ngModel)]="selectedChannels"
                                                 (ngModelChange)="onChannelChange($event)"
-                                                [disabled]="isChannelDisabled || isSocialChannelSelected"
+                                                [disabled]="isChannelDisabled"
                                             >
                                                 <option disabled value="">{{ 'common.pleaseSelect' | translate }}</option>
                                                 <option *ngFor="let channel of channels" [value]="channel.channelId">
