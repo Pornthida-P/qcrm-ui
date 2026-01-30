@@ -81,19 +81,66 @@
         </div>
         <div class="col-12 col-lg-6">
             <div class="bg-white rounded shadow p-3 p-md-4 h-100">
-                <div class="row g-3">
-                    <div class="col-12 col-sm-6">
-                        <label class="fw-bold mb-2" for="selectedCaseChannel">{{ 'dashboard.channel' | translate }}</label>
-                        <select class="form-select shadow-none" [(ngModel)]="selectedCaseChannel" (change)="filterCases()">
+                <div class="row g-3 dashboard-filters">
+                    <div class="col-12 col-md-6 col-lg">
+                        <label class="dashboard-filters__label" for="dateFilterType">{{ 'dashboard.dateRange' | translate }}</label>
+                        <select
+                            class="form-select shadow-none dashboard-filters__select"
+                            id="dateFilterType"
+                            [(ngModel)]="dateFilterType"
+                            (ngModelChange)="onDateFilterChange()"
+                        >
+                            <option *ngFor="let opt of filterDateOptions" [value]="opt.type">{{ opt.name }}</option>
+                        </select>
+                    </div>
+                    <ng-container *ngIf="dateFilterType === 'custom'" [formGroup]="dateRangeForm">
+                        <div class="col-12 col-md-6 col-lg dashboard-filters__date-wrap">
+                            <label class="dashboard-filters__label" for="dateRangeStart">{{ 'common.from' | translate }}</label>
+                            <div class="input-group dashboard-filters__date-input">
+                                <input
+                                    matInput
+                                    [matDatepicker]="pickerStartDate"
+                                    formControlName="startDate"
+                                    class="form-control shadow-none"
+                                    [placeholder]="'common.from' | translate"
+                                    id="dateRangeStart"
+                                />
+                                <span class="input-group-text">
+                                    <mat-datepicker-toggle matSuffix [for]="pickerStartDate"></mat-datepicker-toggle>
+                                    <mat-datepicker #pickerStartDate></mat-datepicker>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 col-lg dashboard-filters__date-wrap">
+                            <label class="dashboard-filters__label" for="dateRangeEnd">{{ 'common.to' | translate }}</label>
+                            <div class="input-group dashboard-filters__date-input">
+                                <input
+                                    matInput
+                                    [matDatepicker]="pickerEndDate"
+                                    formControlName="endDate"
+                                    class="form-control shadow-none"
+                                    [placeholder]="'common.to' | translate"
+                                    id="dateRangeEnd"
+                                />
+                                <span class="input-group-text">
+                                    <mat-datepicker-toggle matSuffix [for]="pickerEndDate"></mat-datepicker-toggle>
+                                    <mat-datepicker #pickerEndDate></mat-datepicker>
+                                </span>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <div class="col-12 col-md-6 col-lg">
+                        <label class="dashboard-filters__label" for="selectedCaseChannel">{{ 'dashboard.channel' | translate }}</label>
+                        <select class="form-select shadow-none dashboard-filters__select" [(ngModel)]="selectedCaseChannel" (change)="filterCases()">
                             <option value="">{{ 'dashboard.all' | translate }}</option>
                             <option *ngFor="let caseChannel of caseChannelList" [value]="caseChannel.value">
                                 {{ caseChannel.name }}
                             </option>
                         </select>
                     </div>
-                    <div class="col-12 col-sm-6">
-                        <label class="fw-bold mb-2" for="selectedCaseCode">{{ 'dashboard.caseCode' | translate }}</label>
-                        <select class="form-select shadow-none" [(ngModel)]="selectedCaseCode" (change)="filterCases()">
+                    <div class="col-12 col-md-6 col-lg">
+                        <label class="dashboard-filters__label" for="selectedCaseCode">{{ 'dashboard.caseCode' | translate }}</label>
+                        <select class="form-select shadow-none dashboard-filters__select" [(ngModel)]="selectedCaseCode" (change)="filterCases()">
                             <option value="">{{ 'dashboard.all' | translate }}</option>
                             <option *ngFor="let caseCode of caseCodeList" [value]="caseCode.value">{{ caseCode.name }}</option>
                         </select>
