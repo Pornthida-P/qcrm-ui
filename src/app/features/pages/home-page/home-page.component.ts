@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { CallService } from 'src/app/services/call/call.service';
 import * as moment from 'moment';
 import { User } from 'src/app/shared/interface/user.interface';
@@ -15,7 +16,7 @@ import { TranslateService } from '@ngx-translate/core';
     templateUrl: './home-page.component.html',
     styleUrls: ['./home-page.component.scss'],
 })
-export class HomePageComponent implements OnInit {
+export class HomePageComponent implements OnInit, OnDestroy {
     cases: any[] = [];
     allCases: any[] = []; // เก็บข้อมูลทั้งหมดสำหรับคำนวณตัวเลข
     filteredCases: any[] = [];
@@ -31,6 +32,11 @@ export class HomePageComponent implements OnInit {
     createdById = '';
     selectedCaseCode = '';
     selectedCaseChannel = '';
+    dateFilterType: string = 'toDay';
+    dateRangeStart: string = '';
+    dateRangeEnd: string = '';
+    dateRangeForm!: FormGroup;
+    filterDateOptions: { name: string; type: string }[] = [];
     caseCodeList: any[] = [];
     caseChannelList: any[] = [];
     caseChannel: any[] = [];
@@ -46,6 +52,7 @@ export class HomePageComponent implements OnInit {
     isAdmin: boolean = false;
 
     private searchTimeout: any;
+    private langChangeSub: any;
     updateFlag: boolean = false;
 
     Highcharts: typeof Highcharts = Highcharts;
@@ -183,6 +190,7 @@ export class HomePageComponent implements OnInit {
         private callListService: CallListService,
         private router: Router,
         private translate: TranslateService,
+        private fb: FormBuilder,
     ) {}
 
     ngOnInit(): void {
@@ -193,10 +201,39 @@ export class HomePageComponent implements OnInit {
         (this.contactChartOptions.tooltip as any).valueSuffix = ` (${this.translate.instant('dashboard.contact')})`;
 
         this.getDataUser();
+        this.updateFilterDateOptions();
+        this.langChangeSub = this.translate.onLangChange.subscribe(() => this.updateFilterDateOptions());
+        this.dateRangeForm = this.fb.group({
+            startDate: [''],
+            endDate: [''],
+        });
+        this.dateRangeForm.get('startDate')?.valueChanges.subscribe((value) => {
+            this.dateRangeStart = value ? moment(value).format('YYYY-MM-DD') : '';
+            this.onDateRangeChange();
+        });
+        this.dateRangeForm.get('endDate')?.valueChanges.subscribe((value) => {
+            this.dateRangeEnd = value ? moment(value).format('YYYY-MM-DD') : '';
+            this.onDateRangeChange();
+        });
         this.getCaseCode();
         this.getCaseChannel();
         this.initChart(this.caseChannel, this.caseCode);
         this.getAllContactCount();
+    }
+
+    ngOnDestroy(): void {
+        if (this.langChangeSub) {
+            this.langChangeSub.unsubscribe();
+        }
+    }
+
+    private updateFilterDateOptions(): void {
+        this.filterDateOptions = [
+            { name: this.translate.instant('filter.today'), type: 'toDay' },
+            { name: this.translate.instant('filter.thisWeek'), type: 'thisWeek' },
+            { name: this.translate.instant('filter.thisMonth'), type: 'thisMonth' },
+            { name: this.translate.instant('filter.customDate'), type: 'custom' },
+        ];
     }
 
     initChart(caseChannelCount: any[], caseCodeCount: any[]) {
@@ -227,9 +264,15 @@ export class HomePageComponent implements OnInit {
         const pageSize = this.pageSize;
         const sortId = 'createdAt,DESC';
         const searchTextParam = this.searchText && this.searchText.trim() ? this.searchText.trim() : 'undefined';
-        const dateFilterType = 'toDay';
-        const startDate = '';
-        const endDate = '';
+        const dateFilterType = this.dateFilterType || 'toDay';
+        let startDate = '';
+        let endDate = '';
+        if (dateFilterType === 'custom') {
+            const startVal = this.dateRangeForm?.get('startDate')?.value;
+            const endVal = this.dateRangeForm?.get('endDate')?.value;
+            startDate = startVal ? moment(startVal).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD');
+            endDate = endVal ? moment(endVal).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD');
+        }
 
         // ดึงข้อมูลทั้งหมดสำหรับคำนวณตัวเลข (ไม่มี pagination)
         this.callService
@@ -480,6 +523,29 @@ export class HomePageComponent implements OnInit {
 
     getStatusColor(statusName: string): string {
         return this.statusService.getStatusBgColor(statusName);
+    }
+
+    onDateFilterChange(): void {
+        this.currentPage = 1;
+        if (this.dateFilterType === 'custom') {
+            const startVal = this.dateRangeForm?.get('startDate')?.value;
+            const endVal = this.dateRangeForm?.get('endDate')?.value;
+            if (!startVal && !endVal) {
+                const today = new Date();
+                this.dateRangeForm?.patchValue({ startDate: today, endDate: today });
+                return; // valueChanges จะเรียก loadTodayCases
+            }
+        }
+        this.loadTodayCases();
+    }
+
+    onDateRangeChange(): void {
+        const startVal = this.dateRangeForm?.get('startDate')?.value;
+        const endVal = this.dateRangeForm?.get('endDate')?.value;
+        if (startVal && endVal) {
+            this.currentPage = 1;
+            this.loadTodayCases();
+        }
     }
 
     filterByStatus(statusName: string): void {
