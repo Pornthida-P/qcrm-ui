@@ -388,12 +388,7 @@ export class ManageContactsComponent implements OnInit {
 
     submit() {
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-        const hasPhoneOrChat = !!(this.contactNum || this.contactNum2 || this.contactNumNew || this.chatId);
-        // if (userData && this.contactId && this.contactId !== '' && this.contact.components.length > 1) {
         if (this.detailItem && this.state != 'copy') {
-            if (!hasPhoneOrChat) {
-                return;
-            }
                 // Create or get organization if organization name is provided
                 let organizationId = this.contactOrg;
                 if (this.contactOrgName && this.contactOrgName.trim() !== '' && (!this.contactOrg || this.contactOrg === '')) {
@@ -433,18 +428,30 @@ export class ManageContactsComponent implements OnInit {
     }
 
     submitEditContact(organizationId: string, userData: any) {
+        // Sync from contactNumbers (edited in form) so original number can be updated
+        if (this.contactNumbers && this.contactNumbers.length > 0) {
+            this.contactNum = this.contactNumbers[0]?.contactNumber?.trim().replace(/"/g, '') ?? this.contactNum;
+            if (this.contactNumbers.length > 1) {
+                this.contactNum2 = this.contactNumbers[1]?.contactNumber?.trim().replace(/"/g, '') ?? this.contactNum2;
+            } else {
+                this.contactNum2 = '';
+            }
+        } else {
+            this.contactNum = '';
+            this.contactNum2 = '';
+        }
         const data = {
             contactId: this.contactId,
             firstName: this.contactFirstName,
             lastName: this.contactLastName,
             organizationId: organizationId,
             contactType: this.contactType,
-            contactNumber: this.contactNum,
-            contactNumber2: this.contactNum2,
+            contactNumber: this.contactNum || '',
+            contactNumber2: this.contactNum2 || '',
             province: this.contactProvince,
             gender: this.contactGender || 'unknown',
             modifiedById: userData.userId,
-            contactNumNew: this.contactNumNew,
+            contactNumNew: this.contactNumNew || '',
             contactGroupId: this.contactGroupId,
             email: this.contactEmail,
         };
@@ -484,12 +491,12 @@ export class ManageContactsComponent implements OnInit {
             lastName: this.contactLastName,
             organizationId: organizationId,
             contactType: this.contactType,
-            contactNumber: this.contactNum,
+            contactNumber: this.contactNum || '',
             province: this.contactProvince,
             gender: this.contactGender || 'unknown',
             createdById: userData.userId,
-            contactNumber2: this.contactNum2,
-            chatId: this.chatId,
+            contactNumber2: this.contactNum2 || '',
+            chatId: this.chatId || '',
             uuidLine: this.uuidLine,
             chatType: this.chatType,
             displayName: this.displayName,
