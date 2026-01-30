@@ -24,6 +24,7 @@ import { StatusService } from 'src/app/services/status/status.service';
     styleUrls: ['./manage-contacts.component.scss'],
 })
 export class ManageContactsComponent implements OnInit {
+    private readonly socialChannelIds: string[] = ['4', '5'];
     MultiNumber: boolean = false;
     contactCall: any[] = [];
     contact: any = {};
@@ -665,6 +666,10 @@ export class ManageContactsComponent implements OnInit {
         }
     }
 
+    get isSocialChannelSelected(): boolean {
+        return this.socialChannelIds.includes(this.selectedChannels);
+    }
+
     showAddCall() {
         this.selectedChannels = '';
         this.AddCallShowing = true;
@@ -1024,7 +1029,7 @@ export class ManageContactsComponent implements OnInit {
 
         if (!this.callId) {
             // Create new case
-            if (this.selectedCaseCode || this.chatId || this.chatType) {
+            if (this.selectedCaseCode || this.chatId || this.chatType || this.isSocialChannelSelected) {
                 // Format requestDateTime
                 const requestDateTime = `${selectedDate} ${selectedTime}`;
 
@@ -1101,7 +1106,7 @@ export class ManageContactsComponent implements OnInit {
         } else if (this.callId && this.cType === 'case') {
             // Update existing case
             // console.log('iiiiiiiiiiiiiiiiii Edit Case:', this.callId);
-            if (this.selectedCaseCode || this.chatId || this.chatType) {
+            if (this.selectedCaseCode || this.chatId || this.chatType || this.isSocialChannelSelected) {
                 const data = {
                     callId: this.callId,
                     caseCodeId: this.selectedCaseCode,

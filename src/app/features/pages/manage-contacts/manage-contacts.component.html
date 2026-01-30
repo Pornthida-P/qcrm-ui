@@ -539,7 +539,11 @@
                                             <label class="form-label form-label-sm fw-semibold mb-1">
                                                 {{ 'contact.code' | translate }}<span class="color-red">*</span>
                                             </label>
-                                            <mat-form-field class="w-100 compact-field" appearance="outline" *ngIf="!(chatId || chatType)">
+                                            <mat-form-field
+                                                class="w-100 compact-field"
+                                                appearance="outline"
+                                                *ngIf="!(chatId || chatType || isSocialChannelSelected)"
+                                            >
                                                 <input
                                                     type="text"
                                                     matInput
@@ -564,7 +568,7 @@
                                             <mat-form-field
                                                 class="w-100 compact-field disabled-field"
                                                 appearance="outline"
-                                                *ngIf="chatId || chatType"
+                                                *ngIf="chatId || chatType || isSocialChannelSelected"
                                             >
                                                 <input
                                                     type="text"
@@ -723,7 +727,7 @@
                                                 name="selectedChannels"
                                                 [(ngModel)]="selectedChannels"
                                                 (ngModelChange)="onChannelChange($event)"
-                                                [disabled]="isChannelDisabled"
+                                                [disabled]="isChannelDisabled || isSocialChannelSelected"
                                             >
                                                 <option disabled value="">{{ 'common.pleaseSelect' | translate }}</option>
                                                 <option *ngFor="let channel of channels" [value]="channel.channelId">
