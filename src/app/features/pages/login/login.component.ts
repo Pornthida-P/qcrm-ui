@@ -76,37 +76,41 @@ export class LoginComponent {
                     tap((res: { user: User; token: string }) => {
                         this.userServices.setDataUser(res.user);
                         this.tokenServices.setDataToken(res.token);
-                        
+
                         // เริ่มต้น idle timeout หลังจาก login สำเร็จ
                         const idleTimeoutMinutes = environment.idle?.timeoutMinutes || 30;
                         this.idleService.setIdleTimeout(idleTimeoutMinutes);
                         this.idleService.start();
-                        
+
                         this.router.navigate(['/home']);
-                        this.auditLogService.log(
-                            username,
-                            'Login',
-                            '',
-                            'User Login',
-                            `User ${username} logged in successfully ${JSON.stringify({
-                                userId: res.user.userId,
-                                fullname: res.user.username,
-                                email: res.user.email,
-                                roles: res.user.role.roleTitle,
-                            })}`,
-                            'Success',
-                        );
+                        this.auditLogService
+                            .log(
+                                username,
+                                'Login',
+                                '',
+                                'User Login',
+                                `User ${username} logged in successfully ${JSON.stringify({
+                                    userId: res.user.userId,
+                                    fullname: res.user.username,
+                                    email: res.user.email,
+                                    roles: res.user.role.roleTitle,
+                                })}`,
+                                'Success',
+                            )
+                            .subscribe();
                     }),
                     catchError((error) => {
                         this.sweetalertServices.handleError(error);
-                        this.auditLogService.log(
-                            username,
-                            'Login',
-                            '',
-                            'User Login',
-                            `User ${username} login failed - ${error.error?.message || error}`,
-                            'Failed',
-                        );
+                        this.auditLogService
+                            .log(
+                                username,
+                                'Login',
+                                '',
+                                'User Login',
+                                `User ${username} login failed - ${error.error?.message || error}`,
+                                'Failed',
+                            )
+                            .subscribe();
                         return throwError(error);
                     }),
                 )

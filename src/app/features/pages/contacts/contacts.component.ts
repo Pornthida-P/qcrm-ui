@@ -7,6 +7,17 @@ import Swal from 'sweetalert2';
 import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
 import { TranslateService } from '@ngx-translate/core';
 
+/** เฉพาะ field ที่ใช้ค้น (ไม่รวม contactId, วันที่ ฯลฯ) เหมือน API */
+const CONTACT_SEARCH_KEYS = [
+    'fullname',
+    'contactNumber',
+    'contactGroupName',
+    'partnerCode',
+    'facebookDisplayName',
+    'lineDisplayName',
+    'organization',
+];
+
 @Pipe({
     name: 'contactSearchFilter',
 })
@@ -17,13 +28,15 @@ export class ContactSearchFilterPipe implements PipeTransform {
         return value.filter((val: any) => {
             if (filter === 'all') {
                 if (!searchTerm) return true;
-                return Object.values(val).some(
-                    (field) => field && field.toString().toLocaleLowerCase().includes(searchTerm),
-                );
+                return CONTACT_SEARCH_KEYS.some((key) => {
+                    const field = val[key];
+                    return field != null && field.toString().toLocaleLowerCase().includes(searchTerm);
+                });
             }
-            return Object.values(val).some(
-                (field) => field && field.toString().toLocaleLowerCase().includes(filter),
-            );
+            return CONTACT_SEARCH_KEYS.some((key) => {
+                const field = val[key];
+                return field != null && field.toString().toLocaleLowerCase().includes(filter);
+            });
         });
     }
 }
@@ -167,19 +180,24 @@ export class ContactsComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.success('alert.deleteSuccess');
-                            this.auditLogService.log('', 'Contact', contactId, 'Delete Contact', `Contact ID : ${contactId}`, `Success`);
-                            window.location.reload();
+                            this.auditLogService
+                                .log('', 'Contact', contactId, 'Delete Contact', `Contact ID : ${contactId}`, `Success`)
+                                .subscribe(() => {
+                                    window.location.reload();
+                                });
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
-                            this.auditLogService.log(
-                                '',
-                                'Contact',
-                                contactId,
-                                'Delete Contact',
-                                `Contact ID : ${contactId}`,
-                                `Failed, Error : ${error}`,
-                            );
+                            this.auditLogService
+                                .log(
+                                    '',
+                                    'Contact',
+                                    contactId,
+                                    'Delete Contact',
+                                    `Contact ID : ${contactId}`,
+                                    `Failed, Error : ${error}`,
+                                )
+                                .subscribe();
                             throw error;
                         }),
                     )
