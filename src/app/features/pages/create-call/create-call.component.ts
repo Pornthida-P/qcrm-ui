@@ -350,31 +350,35 @@ export class CreateCallComponent {
                 .pipe(
                     tap((res) => {
                         this.sweetalertServices.success('alert.saveSuccess', '/contacts');
-                        this.auditLogService.log(
-                            '',
-                            'Create Call',
-                            dataForm.caseId || '',
-                            'Create Case Call',
-                            `Detail Create call : ContactID : ${dataForm.contactId}
+                        this.auditLogService
+                            .log(
+                                '',
+                                'Create Call',
+                                dataForm.caseId || '',
+                                'Create Case Call',
+                                `Detail Create call : ContactID : ${dataForm.contactId}
                       ,RequestDateTime : ${dataForm.requestDateTime}
                       ,ChannelId : ${dataForm.channelId}
                       ,Type : ${dataForm.operationType}`,
-                            `Success`,
-                        );
+                                `Success`,
+                            )
+                            .subscribe();
                     }),
                     catchError((error) => {
                         this.sweetalertServices.handleError(error);
-                        this.auditLogService.log(
-                            '',
-                            'Create Call',
-                            dataForm.caseId || '',
-                            'Create Case Call',
-                            `Detail Create call : ContactID : ${dataForm.contactId}
+                        this.auditLogService
+                            .log(
+                                '',
+                                'Create Call',
+                                dataForm.caseId || '',
+                                'Create Case Call',
+                                `Detail Create call : ContactID : ${dataForm.contactId}
                       ,RequestDateTime : ${dataForm.requestDateTime}
                       ,ChannelId : ${dataForm.channelId}
                       ,Type : ${dataForm.operationType}`,
-                            `Failed, Error : ${error}`,
-                        );
+                                `Failed, Error : ${error}`,
+                            )
+                            .subscribe();
                         throw error;
                     }),
                 )

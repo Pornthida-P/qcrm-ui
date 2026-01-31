@@ -50,13 +50,16 @@ export class LogoutComponent implements OnInit {
     logout(): void {
         // หยุด idle timeout เมื่อ logout
         this.idleService.stop();
-        
+
         if (this.userData) {
             this.loginService.logout(this.userData).subscribe();
         }
-        this.auditLogService.log('', 'Logout', '', 'User Logout', `User ${this.userData?.username} logged out successfully`, `Success`);
-        this.userService.clearDataUser();
-        this.tokenService.clearDataToken();
-        this.router.navigate(['/login']);
+        this.auditLogService
+            .log('', 'Logout', '', 'User Logout', `User ${this.userData?.username} logged out successfully`, `Success`)
+            .subscribe(() => {
+                this.userService.clearDataUser();
+                this.tokenService.clearDataToken();
+                this.router.navigate(['/login']);
+            });
     }
 }

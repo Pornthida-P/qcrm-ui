@@ -469,19 +469,21 @@ export class ManageContactsComponent implements OnInit {
                     this.sweetalertServices.success('alert.saveSuccess', '/contacts/edit', {
                         key: updatedContactId,
                     });
-                    this.auditLogService.log('', 'Contact', '', 'Edit Contact', JSON.stringify(data), 'Success');
+                    this.auditLogService.log('', 'Contact', '', 'Edit Contact', JSON.stringify(data), 'Success').subscribe();
                     this.originalContactNumbers = this.cloneContactNumbers(this.contactNumbers);
                 }),
                 catchError((error) => {
                     this.sweetalertServices.handleError(error);
-                    this.auditLogService.log('', 'Contact', '', 'Edit Contact', JSON.stringify(data), `Failed, Error : ${error}`);
+                    this.auditLogService
+                        .log('', 'Contact', '', 'Edit Contact', JSON.stringify(data), `Failed, Error : ${error}`)
+                        .subscribe();
                     throw error;
                 }),
             )
             .subscribe();
     }
 
-  submitContact(organizationId: string, userData: any) {
+    submitContact(organizationId: string, userData: any) {
         // Update displayName based on chatType before submitting
         const chatTypeLower = this.chatType?.toLowerCase() || '';
         if (chatTypeLower.includes('facebook')) {
@@ -531,17 +533,20 @@ export class ManageContactsComponent implements OnInit {
                             timer: 1000,
                             timerProgressBar: true,
                         }).then(() => {
-                            this.auditLogService.log('', 'Contact', '', 'Create Contact', JSON.stringify(data), `Success`);
-                            const params = new URLSearchParams({
-                                key: contactId,
-                                call_id: contactNumber || '',
-                                chatid: chatId || '',
-                                chattype: chatType || '',
-                                displayName: displayName || '',
-                                issue: issue || '',
-                                uuidLine: uuidLine || '',
-                            });
-                            window.location.href = `${environment.subPath}/contacts/edit?${params.toString()}`;
+                            this.auditLogService
+                                .log('', 'Contact', '', 'Create Contact', JSON.stringify(data), `Success`)
+                                .subscribe(() => {
+                                    const params = new URLSearchParams({
+                                        key: contactId,
+                                        call_id: contactNumber || '',
+                                        chatid: chatId || '',
+                                        chattype: chatType || '',
+                                        displayName: displayName || '',
+                                        issue: issue || '',
+                                        uuidLine: uuidLine || '',
+                                    });
+                                    window.location.href = `${environment.subPath}/contacts/edit?${params.toString()}`;
+                                });
                         });
                     } else if (res.success === false && res.message === 'Duplicate' && this.MultiNumber === false) {
                         if (res.duplicates.length > 0) {
@@ -560,14 +565,16 @@ export class ManageContactsComponent implements OnInit {
                             );
                             return;
                         }
-                        this.auditLogService.log(
-                            '',
-                            'Contact',
-                            '',
-                            'Create Contact',
-                            JSON.stringify(data),
-                            `Failed, Error Duplicate: ${res.duplicates}`,
-                        );
+                        this.auditLogService
+                            .log(
+                                '',
+                                'Contact',
+                                '',
+                                'Create Contact',
+                                JSON.stringify(data),
+                                `Failed, Error Duplicate: ${res.duplicates}`,
+                            )
+                            .subscribe();
                     } else if (res.success === false && res.message === 'Duplicate' && this.MultiNumber === true) {
                         // Find existing contact by phone number or name
                         const existingContact = res.duplicates && res.duplicates.length > 0 ? res.duplicates[0] : null;
@@ -597,18 +604,22 @@ export class ManageContactsComponent implements OnInit {
                                         this.router.navigate(['/contacts/edit'], {
                                             queryParams: { key: contactId, call_id: contactNumber, chatid: chatId },
                                         });
-                                        this.auditLogService.log('', 'Contact', '', 'Edit Contact', JSON.stringify(updateData), 'Success');
+                                        this.auditLogService
+                                            .log('', 'Contact', '', 'Edit Contact', JSON.stringify(updateData), 'Success')
+                                            .subscribe();
                                     }),
                                     catchError((error) => {
                                         this.sweetalertServices.handleError(error);
-                                        this.auditLogService.log(
-                                            '',
-                                            'Contact',
-                                            '',
-                                            'Edit Contact',
-                                            JSON.stringify(updateData),
-                                            `Failed, Error : ${error}`,
-                                        );
+                                        this.auditLogService
+                                            .log(
+                                                '',
+                                                'Contact',
+                                                '',
+                                                'Edit Contact',
+                                                JSON.stringify(updateData),
+                                                `Failed, Error : ${error}`,
+                                            )
+                                            .subscribe();
                                         throw error;
                                     }),
                                 )
@@ -618,7 +629,9 @@ export class ManageContactsComponent implements OnInit {
                 }),
                 catchError((error) => {
                     this.sweetalertServices.handleError(error);
-                    this.auditLogService.log('', 'Contact', '', 'Create Contact', JSON.stringify(data), `Failed, Error : ${error}`);
+                    this.auditLogService
+                        .log('', 'Contact', '', 'Create Contact', JSON.stringify(data), `Failed, Error : ${error}`)
+                        .subscribe();
                     throw error;
                 }),
             )
@@ -993,26 +1006,31 @@ export class ManageContactsComponent implements OnInit {
                 this.contactsService.deleteCall(callId).subscribe(
                     (res: any) => {
                         this.sweetalertServices.success('alert.deleteSuccess');
-                        this.auditLogService.log(
-                            '',
-                            'Contact',
-                            callId,
-                            `Delete Call From ContactID : ${this.contactId}`,
-                            `Call ID : ${callId}`,
-                            `Success`,
-                        );
-                        window.location.reload();
+                        this.auditLogService
+                            .log(
+                                '',
+                                'Contact',
+                                callId,
+                                `Delete Call From ContactID : ${this.contactId}`,
+                                `Call ID : ${callId}`,
+                                `Success`,
+                            )
+                            .subscribe(() => {
+                                window.location.reload();
+                            });
                     },
                     (error: any) => {
                         this.sweetalertServices.handleError(error);
-                        this.auditLogService.log(
-                            '',
-                            'Contact',
-                            callId,
-                            `Delete Call From ContactID : ${this.contactId}`,
-                            `Call ID : ${callId}`,
-                            `Failed, Error : ${error}`,
-                        );
+                        this.auditLogService
+                            .log(
+                                '',
+                                'Contact',
+                                callId,
+                                `Delete Call From ContactID : ${this.contactId}`,
+                                `Call ID : ${callId}`,
+                                `Failed, Error : ${error}`,
+                            )
+                            .subscribe();
                     },
                 );
             }
@@ -1076,26 +1094,31 @@ export class ManageContactsComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.success('alert.saveSuccess');
-                            this.auditLogService.log(
-                                '',
-                                'Contact Create Case',
-                                this.caseId,
-                                'Contact Create Case',
-                                JSON.stringify(dataForm),
-                                `Success`,
-                            );
-                            window.location.href = `${environment.subPath}/contacts/edit?key=${this.contactId}`;
+                            this.auditLogService
+                                .log(
+                                    '',
+                                    'Contact Create Case',
+                                    this.caseId,
+                                    'Contact Create Case',
+                                    JSON.stringify(dataForm),
+                                    `Success`,
+                                )
+                                .subscribe(() => {
+                                    window.location.href = `${environment.subPath}/contacts/edit?key=${this.contactId}`;
+                                });
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
-                            this.auditLogService.log(
-                                '',
-                                'Contact Create Case',
-                                this.caseId,
-                                'Contact Create Case',
-                                JSON.stringify(dataForm),
-                                `Failed, Error : ${error}`,
-                            );
+                            this.auditLogService
+                                .log(
+                                    '',
+                                    'Contact Create Case',
+                                    this.caseId,
+                                    'Contact Create Case',
+                                    JSON.stringify(dataForm),
+                                    `Failed, Error : ${error}`,
+                                )
+                                .subscribe();
                             throw error;
                         }),
                     )
@@ -1141,26 +1164,31 @@ export class ManageContactsComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.success('alert.saveSuccess');
-                            this.auditLogService.log(
-                                '',
-                                'Contact Update Case',
-                                this.callId,
-                                'Contact Update Case ',
-                                JSON.stringify(data),
-                                `Success`,
-                            );
-                            window.location.href = `${environment.subPath}/contacts/edit?key=${this.contactId}`;
+                            this.auditLogService
+                                .log(
+                                    '',
+                                    'Contact Update Case',
+                                    this.callId,
+                                    'Contact Update Case ',
+                                    JSON.stringify(data),
+                                    `Success`,
+                                )
+                                .subscribe(() => {
+                                    window.location.href = `${environment.subPath}/contacts/edit?key=${this.contactId}`;
+                                });
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
-                            this.auditLogService.log(
-                                '',
-                                'Contact Update Case',
-                                this.callId,
-                                'Contact Update Case',
-                                JSON.stringify(data),
-                                `Failed, Error : ${error}`,
-                            );
+                            this.auditLogService
+                                .log(
+                                    '',
+                                    'Contact Update Case',
+                                    this.callId,
+                                    'Contact Update Case',
+                                    JSON.stringify(data),
+                                    `Failed, Error : ${error}`,
+                                )
+                                .subscribe();
                             throw error;
                         }),
                     )
@@ -1292,9 +1320,7 @@ export class ManageContactsComponent implements OnInit {
     }
 
     private hasContactNumberChanges(): boolean {
-        const normalize = (
-            numbers: { contactNumber: string; contactNumberId?: string; contactType?: string; primary?: number }[],
-        ) => {
+        const normalize = (numbers: { contactNumber: string; contactNumberId?: string; contactType?: string; primary?: number }[]) => {
             return (numbers || [])
                 .filter((num) => num && typeof num.contactNumber === 'string' && num.contactNumber.trim().length > 0)
                 .map((num) => ({

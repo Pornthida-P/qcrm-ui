@@ -509,7 +509,7 @@ export class CallComponent implements OnInit {
 
                 // Determine time period (Morning/Afternoon)
                 const hour = dateObj.hour();
-                const timePeriod = hour < 12 ? 'Morning' : 'Afternoon';
+                const timePeriod = hour < 12 ? 'Morning' : hour < 18 ? 'Afternoon' : 'Evening';
 
                 // Format assign date
                 const assignDateStr = cur.assignDate ? moment(cur.assignDate).format('D/M/YYYY') : '';
@@ -546,7 +546,7 @@ export class CallComponent implements OnInit {
                     time2: time12Hour,
                     month: monthStr,
                     timePeriod: timePeriod,
-                    caseId: cur.caseId || '',
+                    caseId: cur.caseIdForReport || '',
                     channel: cur.channel || '',
                     contactType: cur.type || '',
                     campaignCode: cur.casecode || '',
@@ -977,26 +977,31 @@ export class CallComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.success('alert.saveSuccess');
-                            this.auditLogService.log(
-                                '',
-                                'Contact Create Call',
-                                '',
-                                'Contact Create Case Call',
-                                JSON.stringify(data),
-                                `Success`,
-                            );
-                            window.location.reload();
+                            this.auditLogService
+                                .log(
+                                    '',
+                                    'Contact Create Call',
+                                    '',
+                                    'Contact Create Case Call',
+                                    JSON.stringify(data),
+                                    `Success`,
+                                )
+                                .subscribe(() => {
+                                    window.location.reload();
+                                });
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
-                            this.auditLogService.log(
-                                '',
-                                'Contact Create Call',
-                                '',
-                                'Contact Create Case Call',
-                                JSON.stringify(data),
-                                `Failed, Error : ${error}`,
-                            );
+                            this.auditLogService
+                                .log(
+                                    '',
+                                    'Contact Create Call',
+                                    '',
+                                    'Contact Create Case Call',
+                                    JSON.stringify(data),
+                                    `Failed, Error : ${error}`,
+                                )
+                                .subscribe();
                             throw error;
                         }),
                     )
@@ -1039,26 +1044,31 @@ export class CallComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.success('alert.saveSuccess');
-                            this.auditLogService.log(
-                                '',
-                                'Contact Update Case',
-                                this.callId,
-                                'Contact Update Case ',
-                                JSON.stringify(data),
-                                `Success`,
-                            );
-                            window.location.reload();
+                            this.auditLogService
+                                .log(
+                                    '',
+                                    'Contact Update Case',
+                                    this.callId,
+                                    'Contact Update Case ',
+                                    JSON.stringify(data),
+                                    `Success`,
+                                )
+                                .subscribe(() => {
+                                    window.location.reload();
+                                });
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
-                            this.auditLogService.log(
-                                '',
-                                'Contact Update Case',
-                                this.callId,
-                                'Contact Update Case',
-                                JSON.stringify(data),
-                                `Failed, Error : ${error}`,
-                            );
+                            this.auditLogService
+                                .log(
+                                    '',
+                                    'Contact Update Case',
+                                    this.callId,
+                                    'Contact Update Case',
+                                    JSON.stringify(data),
+                                    `Failed, Error : ${error}`,
+                                )
+                                .subscribe();
                             throw error;
                         }),
                     )
@@ -1409,26 +1419,31 @@ export class CallComponent implements OnInit {
                 this.contactsService.deleteCall(callId).subscribe(
                     (res: any) => {
                         this.sweetalertServices.success('alert.deleteSuccess');
-                        this.auditLogService.log(
-                            '',
-                            'Contact',
-                            callId,
-                            `Delete Call From ContactID : ${this.contactId}`,
-                            `Call ID : ${callId}`,
-                            `Success`,
-                        );
-                        window.location.reload();
+                        this.auditLogService
+                            .log(
+                                '',
+                                'Contact',
+                                callId,
+                                `Delete Call From ContactID : ${this.contactId}`,
+                                `Call ID : ${callId}`,
+                                `Success`,
+                            )
+                            .subscribe(() => {
+                                window.location.reload();
+                            });
                     },
                     (error: any) => {
                         this.sweetalertServices.handleError(error);
-                        this.auditLogService.log(
-                            '',
-                            'Contact',
-                            callId,
-                            `Delete Call From ContactID : ${this.contactId}`,
-                            `Call ID : ${callId}`,
-                            `Failed, Error : ${error}`,
-                        );
+                        this.auditLogService
+                            .log(
+                                '',
+                                'Contact',
+                                callId,
+                                `Delete Call From ContactID : ${this.contactId}`,
+                                `Call ID : ${callId}`,
+                                `Failed, Error : ${error}`,
+                            )
+                            .subscribe();
                     },
                 );
             }
@@ -1527,9 +1542,7 @@ export class CallComponent implements OnInit {
     }
 
     updateFilterOptions() {
-        this.filterOption = [
-            { name: this.translate.instant('filter.all'), code: 'all' },
-        ];
+        this.filterOption = [{ name: this.translate.instant('filter.all'), code: 'all' }];
 
         // Add "Only My" option if userData is available (use userId - API filters by assignedUserId/createdById)
         if (this.userData?.userId) {
