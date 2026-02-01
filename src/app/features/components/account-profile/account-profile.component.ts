@@ -190,9 +190,9 @@ export class AccountProfileComponent {
                     image.filepath = `${environment.api.url}${image.filepath}`;
                     this.userDataForm.get('profile')?.setValue(image.filepath);
                 }
-                this.auditLogService.log('', 'Account', '', 'Upload Image', `Path: ${image.filepath}`, `Success`).subscribe();
+                this.auditLogService.log('', 'Account', '', 'Upload Image', `Path: ${image.filepath}`, `Success`);
             } catch (err) {
-                this.auditLogService.log('', 'Account', '', 'Upload Image', `File Name : ${filename}`, `Failed ${err}`).subscribe();
+                this.auditLogService.log('', 'Account', '', 'Upload Image', `File Name : ${filename}`, `Failed ${err}`);
                 this.sweetalertServices.handleError(err);
             }
         }
@@ -207,21 +207,19 @@ export class AccountProfileComponent {
                     this.sweetalertServices.success('alert.userAddedSuccess');
                     this.userDataForm.markAsPristine();
                     this.userDataForm.markAsUntouched();
-                    this.auditLogService
-                        .log(
-                            '',
-                            'Account',
-                            '',
-                            'Add',
-                            `Username : ${userData.username}, Role : ${userData.role.roleTitle}, Email : ${userData.email}, isActive: ${userData.isActive}`,
-                            `Success`,
-                        )
-                        .subscribe();
+                    this.auditLogService.log(
+                        '',
+                        'Account',
+                        '',
+                        'Add',
+                        `Username : ${userData.username}, Role : ${userData.role.roleTitle}, Email : ${userData.email}, isActive: ${userData.isActive}`,
+                        `Success`,
+                    );
                     // Emit event to close dialog/modal
                     this.onSaveSuccess.emit();
                 }),
                 catchError((err) => {
-                    this.auditLogService.log('', 'Account', '', 'Add', `Username : ${userData.username}`, `Failed ${err}`).subscribe();
+                    this.auditLogService.log('', 'Account', '', 'Add', `Username : ${userData.username}`, `Failed ${err}`);
                     this.sweetalertServices.handleError(err);
                     throw err;
                 }),
@@ -238,21 +236,19 @@ export class AccountProfileComponent {
                 this.sweetalertServices.success('alert.userUpdatedSuccess');
                 this.userDataForm.markAsPristine();
                 this.userDataForm.markAsUntouched();
-                this.auditLogService
-                    .log(
-                        '',
-                        'Account',
-                        '',
-                        'Edit',
-                        `Username : ${userData.username}, Role : ${userData.role.roleTitle}, Email : ${userData.email}, Profile: ${userData.profile}, isActive: ${userData.isActive}`,
-                        `Success`,
-                    )
-                    .subscribe();
+                this.auditLogService.log(
+                    '',
+                    'Account',
+                    '',
+                    'Edit',
+                    `Username : ${userData.username}, Role : ${userData.role.roleTitle}, Email : ${userData.email}, Profile: ${userData.profile}, isActive: ${userData.isActive}`,
+                    `Success`,
+                );
                 // Emit event to close dialog/modal
                 this.onSaveSuccess.emit();
             },
             (err) => {
-                this.auditLogService.log('', 'Account', '', 'Edit', `Username : ${userData.username}`, `Failed`).subscribe();
+                this.auditLogService.log('', 'Account', '', 'Edit', `Username : ${userData.username}`, `Failed`);
                 this.sweetalertServices.handleError(err);
             },
         );
