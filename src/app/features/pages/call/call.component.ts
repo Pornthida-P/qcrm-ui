@@ -977,31 +977,26 @@ export class CallComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.success('alert.saveSuccess');
-                            this.auditLogService
-                                .log(
-                                    '',
-                                    'Contact Create Call',
-                                    '',
-                                    'Contact Create Case Call',
-                                    JSON.stringify(data),
-                                    `Success`,
-                                )
-                                .subscribe(() => {
-                                    window.location.reload();
-                                });
+                            this.auditLogService.log(
+                                '',
+                                'Contact Create Call',
+                                '',
+                                'Contact Create Case Call',
+                                JSON.stringify(data),
+                                `Success`,
+                            );
+                            window.location.reload();
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
-                            this.auditLogService
-                                .log(
-                                    '',
-                                    'Contact Create Call',
-                                    '',
-                                    'Contact Create Case Call',
-                                    JSON.stringify(data),
-                                    `Failed, Error : ${error}`,
-                                )
-                                .subscribe();
+                            this.auditLogService.log(
+                                '',
+                                'Contact Create Call',
+                                '',
+                                'Contact Create Case Call',
+                                JSON.stringify(data),
+                                `Failed, Error : ${error}`,
+                            );
                             throw error;
                         }),
                     )
@@ -1044,31 +1039,26 @@ export class CallComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.success('alert.saveSuccess');
-                            this.auditLogService
-                                .log(
-                                    '',
-                                    'Contact Update Case',
-                                    this.callId,
-                                    'Contact Update Case ',
-                                    JSON.stringify(data),
-                                    `Success`,
-                                )
-                                .subscribe(() => {
-                                    window.location.reload();
-                                });
+                            this.auditLogService.log(
+                                '',
+                                'Contact Update Case',
+                                this.callId,
+                                'Contact Update Case ',
+                                JSON.stringify(data),
+                                `Success`,
+                            );
+                            window.location.reload();
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
-                            this.auditLogService
-                                .log(
-                                    '',
-                                    'Contact Update Case',
-                                    this.callId,
-                                    'Contact Update Case',
-                                    JSON.stringify(data),
-                                    `Failed, Error : ${error}`,
-                                )
-                                .subscribe();
+                            this.auditLogService.log(
+                                '',
+                                'Contact Update Case',
+                                this.callId,
+                                'Contact Update Case',
+                                JSON.stringify(data),
+                                `Failed, Error : ${error}`,
+                            );
                             throw error;
                         }),
                     )
@@ -1419,31 +1409,26 @@ export class CallComponent implements OnInit {
                 this.contactsService.deleteCall(callId).subscribe(
                     (res: any) => {
                         this.sweetalertServices.success('alert.deleteSuccess');
-                        this.auditLogService
-                            .log(
-                                '',
-                                'Contact',
-                                callId,
-                                `Delete Call From ContactID : ${this.contactId}`,
-                                `Call ID : ${callId}`,
-                                `Success`,
-                            )
-                            .subscribe(() => {
-                                window.location.reload();
-                            });
+                        this.auditLogService.log(
+                            '',
+                            'Contact',
+                            callId,
+                            `Delete Call From ContactID : ${this.contactId}`,
+                            `Call ID : ${callId}`,
+                            `Success`,
+                        );
+                        window.location.reload();
                     },
                     (error: any) => {
                         this.sweetalertServices.handleError(error);
-                        this.auditLogService
-                            .log(
-                                '',
-                                'Contact',
-                                callId,
-                                `Delete Call From ContactID : ${this.contactId}`,
-                                `Call ID : ${callId}`,
-                                `Failed, Error : ${error}`,
-                            )
-                            .subscribe();
+                        this.auditLogService.log(
+                            '',
+                            'Contact',
+                            callId,
+                            `Delete Call From ContactID : ${this.contactId}`,
+                            `Call ID : ${callId}`,
+                            `Failed, Error : ${error}`,
+                        );
                     },
                 );
             }

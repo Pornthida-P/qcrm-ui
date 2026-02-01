@@ -180,24 +180,19 @@ export class ContactsComponent implements OnInit {
                     .pipe(
                         tap((res) => {
                             this.sweetalertServices.success('alert.deleteSuccess');
-                            this.auditLogService
-                                .log('', 'Contact', contactId, 'Delete Contact', `Contact ID : ${contactId}`, `Success`)
-                                .subscribe(() => {
-                                    window.location.reload();
-                                });
+                            this.auditLogService.log('', 'Contact', contactId, 'Delete Contact', `Contact ID : ${contactId}`, `Success`);
+                            window.location.reload();
                         }),
                         catchError((error) => {
                             this.sweetalertServices.handleError(error);
-                            this.auditLogService
-                                .log(
-                                    '',
-                                    'Contact',
-                                    contactId,
-                                    'Delete Contact',
-                                    `Contact ID : ${contactId}`,
-                                    `Failed, Error : ${error}`,
-                                )
-                                .subscribe();
+                            this.auditLogService.log(
+                                '',
+                                'Contact',
+                                contactId,
+                                'Delete Contact',
+                                `Contact ID : ${contactId}`,
+                                `Failed, Error : ${error}`,
+                            );
                             throw error;
                         }),
                     )

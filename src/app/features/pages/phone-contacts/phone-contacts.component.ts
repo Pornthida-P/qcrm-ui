@@ -296,29 +296,25 @@ export class PhoneContactsComponent {
                                 queryParams: { contactId: this.contactId, caller_id: this.caller_id, call_id: this.call_id },
                             });
                         });
-                        this.auditLogService
-                            .log(
-                                '',
-                                'Phone Contact',
-                                '',
-                                'Edit Phone Contact',
-                                `Detail Phone Contact : ContactID : ${data.contactId}, call_id : ${data.call_id}, caller_id : ${data.caller_id}, Contact Number : ${data.contactNumber}, FirstName : ${data.firstName}, LastName : ${data.lastName} `,
-                                `Success`,
-                            )
-                            .subscribe();
+                        this.auditLogService.log(
+                            '',
+                            'Phone Contact',
+                            '',
+                            'Edit Phone Contact',
+                            `Detail Phone Contact : ContactID : ${data.contactId}, call_id : ${data.call_id}, caller_id : ${data.caller_id}, Contact Number : ${data.contactNumber}, FirstName : ${data.firstName}, LastName : ${data.lastName} `,
+                            `Success`,
+                        );
                     }),
                     catchError((error) => {
                         this.sweetalertServices.handleError(error);
-                        this.auditLogService
-                            .log(
-                                '',
-                                'Phone Contact',
-                                '',
-                                'Edit Phone Contact',
-                                `Detail Phone Contact : ContactID : ${data.contactId}, call_id : ${data.call_id}, caller_id : ${data.caller_id}, Contact Number : ${data.contactNumber}, FirstName : ${data.firstName}, LastName : ${data.lastName} `,
-                                `Failed, Error : ${error}`,
-                            )
-                            .subscribe();
+                        this.auditLogService.log(
+                            '',
+                            'Phone Contact',
+                            '',
+                            'Edit Phone Contact',
+                            `Detail Phone Contact : ContactID : ${data.contactId}, call_id : ${data.call_id}, caller_id : ${data.caller_id}, Contact Number : ${data.contactNumber}, FirstName : ${data.firstName}, LastName : ${data.lastName} `,
+                            `Failed, Error : ${error}`,
+                        );
                         throw error;
                     }),
                 )
@@ -341,29 +337,25 @@ export class PhoneContactsComponent {
                 .pipe(
                     tap((res) => {
                         this.sweetalertServices.success('alert.saveSuccess', '/call/create-call');
-                        this.auditLogService
-                            .log(
-                                '',
-                                'Phone Contact',
-                                '',
-                                'Create Phone Contact',
-                                `Detail Phone Contact : Contact Number : ${data.contactNumber},FirstName : ${data.firstName},LastName : ${data.lastName},Create By : ${data.createdById}`,
-                                `Success`,
-                            )
-                            .subscribe();
+                        this.auditLogService.log(
+                            '',
+                            'Phone Contact',
+                            '',
+                            'Create Phone Contact',
+                            `Detail Phone Contact : Contact Number : ${data.contactNumber},FirstName : ${data.firstName},LastName : ${data.lastName},Create By : ${data.createdById}`,
+                            `Success`,
+                        );
                     }),
                     catchError((error) => {
                         this.sweetalertServices.handleError(error);
-                        this.auditLogService
-                            .log(
-                                '',
-                                'Phone Contact',
-                                '',
-                                'Create Phone Contact',
-                                `Detail Phone Contact : Contact Number : ${data.contactNumber},FirstName : ${data.firstName},LastName : ${data.lastName},Create By : ${data.createdById}`,
-                                `Failed, Error : ${error}`,
-                            )
-                            .subscribe();
+                        this.auditLogService.log(
+                            '',
+                            'Phone Contact',
+                            '',
+                            'Create Phone Contact',
+                            `Detail Phone Contact : Contact Number : ${data.contactNumber},FirstName : ${data.firstName},LastName : ${data.lastName},Create By : ${data.createdById}`,
+                            `Failed, Error : ${error}`,
+                        );
                         throw error;
                     }),
                 )
