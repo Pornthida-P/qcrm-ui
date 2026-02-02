@@ -775,7 +775,7 @@
                                                             rows="2"
                                                         ></textarea>
                                                     </div>
-                                                    <div class="col-12" *ngIf="attachmentShowing">
+                                                    <div class="col-12" *ngIf="canUploadAttachments">
                                                         <label class="form-label form-label-sm fw-semibold mb-1">{{
                                                             'contact.attachment' | translate
                                                         }}</label>
@@ -786,6 +786,20 @@
                                                             [disabled]="isAgent()"
                                                             (change)="!isAgent() && onFileSelected($event)"
                                                         />
+                                                    </div>
+                                                    <div class="col-12" *ngIf="attachments && attachments.length > 0">
+                                                        <label class="form-label form-label-sm fw-semibold mb-1">{{
+                                                            'contact.attachment' | translate
+                                                        }}</label>
+                                                        <div class="d-flex flex-column gap-2">
+                                                            <app-attachments
+                                                                *ngFor="let attachment of attachments"
+                                                                [attachment]="attachment"
+                                                                [isShowToolbar]="true"
+                                                                mode="edit"
+                                                                (deleteAttachmentId)="onDeleteAttachment($event)"
+                                                            ></app-attachments>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

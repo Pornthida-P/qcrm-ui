@@ -14,6 +14,7 @@ import { NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { MAT_DATE_LOCALE } from '@angular/material/core'
 import { NgSelectModule } from '@ng-select/ng-select';
 import { TranslateModule } from '@ngx-translate/core';
+import { AttachmentsModule } from 'src/app/features/components/attachments/attachments.module';
 
 @NgModule({
     declarations: [CallComponent, SearchPipe],
@@ -35,7 +36,8 @@ import { TranslateModule } from '@ngx-translate/core';
       MatAutocompleteModule,
       NgbTimepickerModule,
       NgSelectModule,
-      TranslateModule
+      TranslateModule,
+      AttachmentsModule
 
   ],
   providers: [
