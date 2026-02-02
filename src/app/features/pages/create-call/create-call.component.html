@@ -55,7 +55,7 @@
                                 <label class="form-label form-label-sm fw-semibold mb-1">
                                     {{ 'contact.code' | translate }}<span class="color-red">*</span>
                                 </label>
-                                <mat-form-field class="w-100 compact-field" appearance="outline">
+                                <mat-form-field class="w-100 compact-field" appearance="outline" *ngIf="!isSocialChannelSelected">
                                     <input
                                         type="text"
                                         matInput
@@ -76,6 +76,15 @@
                                             </mat-option>
                                         </ng-container>
                                     </mat-autocomplete>
+                                </mat-form-field>
+                                <mat-form-field class="w-100 compact-field disabled-field" appearance="outline" *ngIf="isSocialChannelSelected">
+                                    <input
+                                        type="text"
+                                        matInput
+                                        [value]="displayCodeFn(codeControl.value)"
+                                        [placeholder]="'contact.searchCode' | translate"
+                                        [disabled]="true"
+                                    />
                                 </mat-form-field>
                             </div>
                             <div class="col-12 col-md-6">
@@ -228,6 +237,7 @@
                                     class="form-select form-select-sm"
                                     name="selectedChannels"
                                     [(ngModel)]="selectedChannels"
+                                    (ngModelChange)="onChannelChange($event)"
                                 >
                                     <option disabled value="">{{ 'common.pleaseSelect' | translate }}</option>
                                     <option *ngFor="let channel of channels" [value]="channel.channelId">{{ channel.name }}</option>

@@ -22,6 +22,7 @@ import { config } from 'src/app/config/config';
     styleUrl: './create-call.component.scss',
 })
 export class CreateCallComponent {
+    private readonly socialChannelIds: string[] = ['4', '5'];
     selectedDate: Date | undefined;
     contactId: string = '';
     caseCodes: any[] = [];
@@ -310,7 +311,7 @@ export class CreateCallComponent {
         const selectedDate = this.startTime ? this.formatDate(new Date(this.startTime)) : this.formatDate(new Date());
         const selectedTime = this.timepickStart ? this.formatTime(this.timepickStart) : this.formatTime(new Date());
 
-        if (this.selectedCaseCode) {
+        if (this.selectedCaseCode || this.isSocialChannelSelected) {
             // Format requestDateTime
             const requestDateTime = `${selectedDate} ${selectedTime}`;
 
@@ -382,6 +383,18 @@ export class CreateCallComponent {
         } else {
             this.sweetalertServices.error('alert.pleaseEnterCode');
         }
+    }
+
+    onChannelChange(channelId: string) {
+        if (this.socialChannelIds.includes(channelId)) {
+            this.selectedCaseCode = null;
+            this.selectedCaseCodeObject = null;
+            this.codeControl.setValue('');
+        }
+    }
+
+    get isSocialChannelSelected(): boolean {
+        return this.socialChannelIds.includes(this.selectedChannels);
     }
 
     showSideBarContact() {
