@@ -760,6 +760,7 @@ export class ManageContactsComponent implements OnInit {
         this.attachmentShowing = true;
         this.cType = '';
         this.callId = '';
+        this.attachments = [];
         this.selectedChannels = '';
         const date = new Date();
         this.startTime = date;
@@ -818,6 +819,7 @@ export class ManageContactsComponent implements OnInit {
         console.log('Edit Case:', caseId);
         this.cType = '';
         this.callId = '';
+        this.attachments = [];
         this.selectedChannels = '';
         this.startTime = null;
         this.description = '';
@@ -879,6 +881,11 @@ export class ManageContactsComponent implements OnInit {
                     this.currentChannel = call.channelId;
                     this.selectedCallTypeId = call.operationType;
                     this.selectedStatus = call.statusId;
+                    const rawAttachments =
+                        call.attachment ||
+                        call.attachments ||
+                        (call.filePath || call.fileName || call.fullname ? call : []);
+                    this.attachments = this.normalizeAttachments(rawAttachments);
 
                     if (call.contactNumber && call.contactNumberId) {
                         this.selectedContactNumber = {
@@ -1124,6 +1131,7 @@ export class ManageContactsComponent implements OnInit {
                     comment: this.comment,
                     callStatus: this.selectedCallStatusId,
                     sentimentId: this.selectedSentiment,
+                    attachment: this.attachmentsId,
                     statusChangedAt: this.selectedCallStatusId !== this.originalCallStatusId ? new Date().toISOString() : null,
                     statusChange:
                         this.selectedStatus !== this.originalStatus
@@ -1277,6 +1285,62 @@ export class ManageContactsComponent implements OnInit {
             this.contactNum2 = inputValue;
         } else if (index === 'contactNumNew') {
             this.contactNumNew = inputValue;
+        }
+    }
+
+    onDeleteAttachment(attachmentId: string) {
+        this.attachments = this.attachments.filter((attachment) => attachment.attachmentId !== attachmentId);
+    }
+
+    get canUploadAttachments(): boolean {
+        return this.attachmentShowing || this.cType === 'case';
+    }
+
+    private normalizeAttachments(raw: any): Attachment[] {
+        if (!raw) {
+            return [];
+        }
+
+        const parsed = this.tryParseAttachment(raw);
+        const list = Array.isArray(parsed) ? parsed : [parsed];
+
+        return list
+            .filter((item) => item && typeof item === 'object')
+            .map((item: any) => {
+                const filepath = item.filepath || item.filePath || item.path || item.url || '';
+                const fallbackFilename = filepath ? filepath.split('/').pop() || '' : '';
+
+                return {
+                    attachmentId: item.attachmentId || item.id || item.attachment_id || '',
+                    caseId: item.caseId || item.case_id || this.callId || '',
+                    filename: item.filename || item.fileName || item.name || item.fullname || fallbackFilename,
+                    filepath: filepath,
+                    fileType: item.fileType || item.mimeType || item.mimetype || null,
+                    fileSize: item.fileSize || item.size || null,
+                    createdAt: item.createdAt || item.created_at || null,
+                    createdById: item.createdById || item.created_by || null,
+                    modifiedAt: item.modifiedAt || item.modified_at || null,
+                    modifiedById: item.modifiedById || item.modified_by || null,
+                    isDeleted: item.isDeleted ?? item.is_deleted ?? null,
+                };
+            })
+            .filter((attachment) => !!(attachment.filename || attachment.filepath));
+    }
+
+    private tryParseAttachment(raw: any): any {
+        if (typeof raw !== 'string') {
+            return raw;
+        }
+
+        const trimmed = raw.trim();
+        if (!trimmed) {
+            return null;
+        }
+
+        try {
+            return JSON.parse(trimmed);
+        } catch {
+            return { filePath: trimmed };
         }
     }
 

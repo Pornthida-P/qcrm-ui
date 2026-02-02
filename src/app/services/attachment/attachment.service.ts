@@ -14,12 +14,24 @@ export class AttachmentService {
     }
 
     download(attachmentPath: string) {
-        const link = document.createElement('a');
-        link.href = `${environment.api.url}${attachmentPath}`;
-        link.download = attachmentPath.substr(attachmentPath.lastIndexOf('/') + 1);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        const url = `${environment.api.url}${attachmentPath}`;
+        const filename = attachmentPath.substr(attachmentPath.lastIndexOf('/') + 1);
+
+        this.http.get(url, { responseType: 'blob' }).subscribe({
+            next: (blob) => {
+                const objectUrl = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = objectUrl;
+                link.download = filename || 'download';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(objectUrl);
+            },
+            error: () => {
+                window.open(url, '_blank');
+            },
+        });
     }
 
     upload(file: File, filename: string, createdAt: string, createdById: string) {
