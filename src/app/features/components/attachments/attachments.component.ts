@@ -78,21 +78,27 @@ export class AttachmentsComponent implements OnInit {
         }
     }
 
-    onClickDeleteAttachment(attachment: Attachment) {
-        if (attachment.attachmentId) {
-            this.attachmentService
-                .delete(attachment.attachmentId)
-                .pipe(
-                    catchError((error) => {
-                        this.sweetalertServices.handleError(error);
-                        throw error;
-                    }),
-                )
-                .subscribe(() => {
-                    this.deleteAttachmentId.emit(attachment.attachmentId);
-                });
-        } else {
+    async onClickDeleteAttachment(attachment: Attachment) {
+        if (!attachment.attachmentId) {
             this.sweetalertServices.warning('alert.internetProblem');
+            return;
         }
+
+        const confirmed = await this.sweetalertServices.confirmDelete();
+        if (!confirmed?.isConfirmed) {
+            return;
+        }
+
+        this.attachmentService
+            .delete(attachment.attachmentId)
+            .pipe(
+                catchError((error) => {
+                    this.sweetalertServices.handleError(error);
+                    throw error;
+                }),
+            )
+            .subscribe(() => {
+                this.deleteAttachmentId.emit(attachment.attachmentId);
+            });
     }
 }

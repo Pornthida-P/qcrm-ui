@@ -13,6 +13,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ContactsService } from 'src/app/services/contacts/contacts.service';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
+import { AttachmentsModule } from 'src/app/features/components/attachments/attachments.module';
 
 @NgModule({
     declarations: [ManageContactsComponent],
@@ -35,6 +36,7 @@ import { TranslateModule } from '@ngx-translate/core';
         NgSelectModule,
         NgbTooltipModule,
         TranslateModule,
+        AttachmentsModule,
     ],
     providers: [ContactsService, DecimalPipe],
 })

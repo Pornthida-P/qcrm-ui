@@ -1,10 +1,10 @@
-<div class="row g-2 p-2 align-items-center attachment-container" *ngIf="attachment">
+<div class="row g-2 p-2 align-items-center attachment-container" *ngIf="attachment && (attachment.filename || attachment.filepath)">
     <div class="col-auto m-0 px-3">
         <div class="attachment">
             <fa-icon class="color-primary fs-3" [icon]="getIconClass(attachment.fileType || '')"></fa-icon>
         </div>
     </div>
-    <div class="col m-0">
+    <div class="col m-0" *ngIf="attachment.fileSize != null">
         <div class="attachment-info cursor-default">
             <a class="label cursor-pointer color-primary text-decoration-none fs-7" (click)="onClickViewAttachment(attachment)">{{
                 attachment.filename
