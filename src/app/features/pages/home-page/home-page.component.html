@@ -73,7 +73,9 @@
                         </div>
                         <div class="content">
                             <p>{{ status.name }}</p>
-                            <p>{{ status.caseCount }}</p>
+                            <p>
+                                {{ status.caseCount }} <span>{{ 'dashboard.case' | translate }}</span>
+                            </p>
                         </div>
                     </li>
                 </ol>
@@ -131,7 +133,11 @@
                     </ng-container>
                     <div class="col-12 col-md-6 col-lg">
                         <label class="dashboard-filters__label" for="selectedCaseChannel">{{ 'dashboard.channel' | translate }}</label>
-                        <select class="form-select shadow-none dashboard-filters__select" [(ngModel)]="selectedCaseChannel" (change)="filterCases()">
+                        <select
+                            class="form-select shadow-none dashboard-filters__select"
+                            [(ngModel)]="selectedCaseChannel"
+                            (change)="filterCases()"
+                        >
                             <option value="">{{ 'dashboard.all' | translate }}</option>
                             <option *ngFor="let caseChannel of caseChannelList" [value]="caseChannel.value">
                                 {{ caseChannel.name }}
@@ -140,7 +146,11 @@
                     </div>
                     <div class="col-12 col-md-6 col-lg">
                         <label class="dashboard-filters__label" for="selectedCaseCode">{{ 'dashboard.caseCode' | translate }}</label>
-                        <select class="form-select shadow-none dashboard-filters__select" [(ngModel)]="selectedCaseCode" (change)="filterCases()">
+                        <select
+                            class="form-select shadow-none dashboard-filters__select"
+                            [(ngModel)]="selectedCaseCode"
+                            (change)="filterCases()"
+                        >
                             <option value="">{{ 'dashboard.all' | translate }}</option>
                             <option *ngFor="let caseCode of caseCodeList" [value]="caseCode.value">{{ caseCode.name }}</option>
                         </select>
@@ -151,48 +161,40 @@
     </div>
 
     <!-- Row 2: Contact Chart + Channel Chart -->
-    <div class="row g-3 g-md-4 mb-3 mb-md-4">
+    <div class="row g-3 g-md-4 mb-3 mb-md-4 dashboard-charts-row">
         <div class="col-12 col-lg-6">
-            <div class="bg-white rounded shadow p-3 p-md-4 h-100">
-                <p class="mb-3 mb-md-4 fw-bold text-left">{{ 'dashboard.contact' | translate }}</p>
-                <div class="row g-3 g-md-4">
-                    <div class="col-12 col-sm-4">
+            <div class="bg-white rounded shadow p-3 p-md-4 h-100 dashboard-card dashboard-card--contact">
+                <p class="dashboard-card__title mb-3 mb-md-4 fw-bold text-left">{{ 'dashboard.contact' | translate }}</p>
+                <div class="row g-3 g-md-4 contact-chart-row">
+                    <div class="col-12 col-sm-6 col-md-4 order-2 order-sm-1">
                         <div class="statistics-card h-100">
                             <div class="stat-item">
                                 <div class="stat-number">{{ caseCodeCount }}</div>
-                                <div class="stat-label">{{ 'dashboard.caseCode' | translate }}</div>
-                                <div class="stat-relation">
-                                    <i class="fa-solid fa-arrow-down me-1"></i>
-                                    {{ 'dashboard.from' | translate }}
+                                <div class="stat-label">
+                                    {{ 'dashboard.caseCode' | translate }} <span class="text-muted small">(Outbound)</span>
                                 </div>
                             </div>
                             <div class="stat-divider"></div>
                             <div class="stat-item">
                                 <div class="stat-number">{{ contactCount }}</div>
-                                <div class="stat-label">{{ 'dashboard.contact' | translate }}</div>
-                                <div class="stat-relation">
-                                    <i class="fa-solid fa-arrow-down me-1"></i>
-                                    {{ 'dashboard.from' | translate }}
+                                <div class="stat-label">
+                                    {{ 'dashboard.contact' | translate }}
+                                    <span class="text-muted small">({{ 'dashboard.unitContact' | translate }})</span>
                                 </div>
-                            </div>
-                            <div class="stat-divider"></div>
-                            <div class="stat-item">
-                                <div class="stat-number">{{ allContactCount }}</div>
-                                <div class="stat-label">{{ 'dashboard.allContact' | translate }}</div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-12 col-sm-8 d-flex justify-content-center align-items-center min-height-chart">
+                    <div class="col-12 col-sm-6 col-md-8 order-1 order-sm-2 d-flex justify-content-center align-items-center min-height-chart contact-chart-wrap">
                         <highcharts-chart
                             *ngIf="hasContactChartData; else contactChartNoData"
                             [Highcharts]="Highcharts"
                             [options]="contactChartOptions"
                             [(update)]="updateFlag"
-                            style="width: 100%; display: block; margin: auto"
+                            class="contact-chart"
                         ></highcharts-chart>
                         <ng-template #contactChartNoData>
-                            <div class="text-center">
-                                <p>{{ 'dashboard.noData' | translate }}</p>
+                            <div class="text-center py-3">
+                                <p class="mb-0">{{ 'dashboard.noData' | translate }}</p>
                             </div>
                         </ng-template>
                     </div>
@@ -200,29 +202,31 @@
             </div>
         </div>
         <div class="col-12 col-lg-6">
-            <div class="bg-white rounded shadow p-3 p-md-4 h-100">
-                <p class="mb-3 mb-md-4 fw-bold text-left">{{ 'dashboard.channel' | translate }}</p>
-                <highcharts-chart
-                    *ngIf="hasCaseChartData; else caseChartNoData"
-                    [Highcharts]="Highcharts"
-                    [options]="caseChartOptions"
-                    [(update)]="updateFlag"
-                    style="width: 100%; display: block"
-                ></highcharts-chart>
-                <div class="channel-legend d-flex flex-wrap gap-2 gap-md-3 mt-3 justify-content-center">
+            <div class="bg-white rounded shadow p-3 p-md-4 h-100 dashboard-card dashboard-card--channel">
+                <p class="dashboard-card__title mb-3 mb-md-4 fw-bold text-left">{{ 'dashboard.channel' | translate }}</p>
+                <div class="channel-chart-wrap min-height-chart d-flex align-items-center">
+                    <highcharts-chart
+                        *ngIf="hasCaseChartData; else caseChartNoData"
+                        [Highcharts]="Highcharts"
+                        [options]="caseChartOptions"
+                        [(update)]="updateFlag"
+                        class="channel-chart w-100"
+                    ></highcharts-chart>
+                </div>
+                <ng-template #caseChartNoData>
+                    <div class="text-center py-3 min-height-chart d-flex align-items-center justify-content-center">
+                        <p class="mb-0">{{ 'dashboard.noData' | translate }}</p>
+                    </div>
+                </ng-template>
+                <div class="channel-legend d-flex flex-wrap gap-2 gap-md-3 mt-3 justify-content-center justify-content-md-center">
                     <div *ngFor="let item of channelPercentage; let i = index" class="channel-item">
                         <div class="channel-indicator" [style.background-color]="getChannelColor(i)"></div>
                         <div class="channel-info">
-                            <p class="channel-name">{{ item.name }}</p>
-                            <p class="channel-value">{{ item.value.toFixed(2) }}%</p>
+                            <p class="channel-name mb-0">{{ item.name }}</p>
+                            <p class="channel-value mb-0">{{ item.value.toFixed(2) }}%</p>
                         </div>
                     </div>
                 </div>
-                <ng-template #caseChartNoData>
-                    <div class="text-center">
-                        <p>{{ 'dashboard.noData' | translate }}</p>
-                    </div>
-                </ng-template>
             </div>
         </div>
     </div>
