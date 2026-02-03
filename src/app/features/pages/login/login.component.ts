@@ -22,6 +22,10 @@ export class LoginComponent {
     loginForm: FormGroup;
     userData?: User | null;
     showPassword: boolean = false;
+    showUsernamePatternError: boolean = false;
+    showPasswordPatternError: boolean = false;
+
+    private static readonly ALLOWED_PATTERN = /^[\x20-\x7E]*$/;
 
     constructor(
         private fb: FormBuilder,
@@ -34,9 +38,21 @@ export class LoginComponent {
         private idleService: IdleService,
     ) {
         this.loginForm = this.fb.group({
-            username: new FormControl('', [Validators.required]),
-            password: new FormControl('', [Validators.required]),
+            username: new FormControl('', [Validators.required, Validators.pattern(LoginComponent.ALLOWED_PATTERN)]),
+            password: new FormControl('', [Validators.required, Validators.pattern(LoginComponent.ALLOWED_PATTERN)]),
         });
+    }
+
+    filterLoginInput(fieldName: 'username' | 'password', value: string): void {
+        const filtered = value.replace(/[^\x20-\x7E]/g, '');
+        if (filtered !== value) {
+            this.loginForm.patchValue({ [fieldName]: filtered }, { emitEvent: false });
+            if (fieldName === 'username') this.showUsernamePatternError = true;
+            if (fieldName === 'password') this.showPasswordPatternError = true;
+        } else {
+            if (fieldName === 'username') this.showUsernamePatternError = false;
+            if (fieldName === 'password') this.showPasswordPatternError = false;
+        }
     }
 
     get username() {

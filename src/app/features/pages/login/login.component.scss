@@ -1,0 +1,15 @@
+.position-relative {
+    .password-toggle-icon {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+        height: 1em;
+        cursor: pointer;
+        z-index: 2;
+    }
+}

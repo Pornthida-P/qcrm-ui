@@ -7,6 +7,8 @@ import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.serv
 import { UserService } from 'src/app/services/user/user.service';
 import { User } from 'src/app/shared/interface/user.interface';
 
+const PASSWORD_PATTERN = /^[\x20-\x7E]*$/;
+
 @Component({
     selector: 'app-menagement-password',
     templateUrl: './menagement-password.component.html',
@@ -21,6 +23,9 @@ export class MenagementPasswordComponent implements OnInit {
     showOldPassword: boolean = false;
     showNewPassword: boolean = false;
     showVerifyPassword: boolean = false;
+    showCurrentPasswordPatternError: boolean = false;
+    showNewPasswordPatternError: boolean = false;
+    showVerifyPasswordPatternError: boolean = false;
 
     passwordForm: FormGroup = new FormGroup({});
 
@@ -39,10 +44,24 @@ export class MenagementPasswordComponent implements OnInit {
 
     initializeForm(): void {
         this.passwordForm = this.fb.group({
-            currentPassword: ['', [Validators.required, Validators.minLength(8)]],
-            newPassword: ['', [Validators.required, Validators.minLength(8)]],
-            verifyPassword: ['', [Validators.required, Validators.minLength(8)]],
+            currentPassword: ['', [Validators.required, Validators.minLength(8), Validators.pattern(PASSWORD_PATTERN)]],
+            newPassword: ['', [Validators.required, Validators.minLength(8), Validators.pattern(PASSWORD_PATTERN)]],
+            verifyPassword: ['', [Validators.required, Validators.minLength(8), Validators.pattern(PASSWORD_PATTERN)]],
         });
+    }
+
+    filterPasswordInput(fieldName: 'currentPassword' | 'newPassword' | 'verifyPassword', value: string): void {
+        const filtered = value.replace(/[^\x20-\x7E]/g, '');
+        if (filtered !== value) {
+            this.passwordForm.patchValue({ [fieldName]: filtered }, { emitEvent: false });
+            if (fieldName === 'currentPassword') this.showCurrentPasswordPatternError = true;
+            if (fieldName === 'newPassword') this.showNewPasswordPatternError = true;
+            if (fieldName === 'verifyPassword') this.showVerifyPasswordPatternError = true;
+        } else {
+            if (fieldName === 'currentPassword') this.showCurrentPasswordPatternError = false;
+            if (fieldName === 'newPassword') this.showNewPasswordPatternError = false;
+            if (fieldName === 'verifyPassword') this.showVerifyPasswordPatternError = false;
+        }
     }
 
     getUserData(): void {
@@ -82,6 +101,9 @@ export class MenagementPasswordComponent implements OnInit {
             .subscribe(() => {
                 this.sweetalertService.success('alert.passwordUpdated');
                 this.passwordForm.reset();
+                this.showCurrentPasswordPatternError = false;
+                this.showNewPasswordPatternError = false;
+                this.showVerifyPasswordPatternError = false;
                 this.auditLogService.log('', 'Account', '', 'Change Password', ``, `Success`);
                 this.router.navigate(['/logout']);
             });
