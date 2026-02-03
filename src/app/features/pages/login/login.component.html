@@ -16,9 +16,17 @@
                                     type="text"
                                     formControlName="username"
                                     class="form-control w-100"
+                                    [class.is-invalid]="username.invalid && username.touched"
                                     [placeholder]="'login.usernamePlaceholder' | translate"
+                                    (input)="filterLoginInput('username', $any($event.target).value)"
                                     required
                                 />
+                                <div
+                                    class="invalid-feedback d-block"
+                                    *ngIf="username.invalid && username.touched && username.errors?.['pattern']"
+                                >
+                                    {{ 'login.usernamePattern' | translate }}
+                                </div>
                             </div>
                             <div class="mb-3">
                                 <label for="password" class="form-label">{{ 'login.password' | translate }}</label>
@@ -29,22 +37,32 @@
                                         formControlName="password"
                                         class="form-control w-100"
                                         name="password"
+                                        [class.is-invalid]="(password.invalid && password.touched) || showPasswordPatternError"
                                         [placeholder]="'login.passwordPlaceholder' | translate"
+                                        (input)="filterLoginInput('password', $any($event.target).value)"
                                     />
                                     <i
-                                        class="fa-solid fa-eye position-absolute top-50 end-0 translate-middle-y me-2"
+                                        class="fa-solid fa-eye password-toggle-icon"
                                         (click)="togglePassword()"
                                         *ngIf="!showPassword"
                                     ></i>
                                     <i
-                                        class="fa-solid fa-eye-slash position-absolute top-50 end-0 translate-middle-y me-2"
+                                        class="fa-solid fa-eye-slash password-toggle-icon"
                                         (click)="togglePassword()"
                                         *ngIf="showPassword"
                                     ></i>
                                 </div>
+                                <div
+                                    class="invalid-feedback d-block"
+                                    *ngIf="password.invalid && password.touched || showPasswordPatternError"
+                                >
+                                    <span *ngIf="password.errors?.['pattern'] || showPasswordPatternError">{{ 'login.passwordPattern' | translate }}</span>
+                                </div>
                             </div>
 
-                            <button type="submit" class="border-0 rounded p-2 w-100 btn-primary-color text-white">{{ 'login.submit' | translate }}</button>
+                            <button type="submit" class="border-0 rounded p-2 w-100 btn-primary-color text-white">
+                                {{ 'login.submit' | translate }}
+                            </button>
                         </div>
                     </div>
                 </div>
