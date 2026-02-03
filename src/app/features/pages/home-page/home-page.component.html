@@ -178,13 +178,15 @@
                             <div class="stat-item">
                                 <div class="stat-number">{{ contactCount }}</div>
                                 <div class="stat-label">
-                                    {{ 'dashboard.contact' | translate }}
+                                    {{ 'dashboard.allContact' | translate }}
                                     <span class="text-muted small">({{ 'dashboard.unitContact' | translate }})</span>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-12 col-sm-6 col-md-8 order-1 order-sm-2 d-flex justify-content-center align-items-center min-height-chart contact-chart-wrap">
+                    <div
+                        class="col-12 col-sm-6 col-md-8 order-1 order-sm-2 d-flex justify-content-center align-items-center min-height-chart contact-chart-wrap"
+                    >
                         <highcharts-chart
                             *ngIf="hasContactChartData; else contactChartNoData"
                             [Highcharts]="Highcharts"
