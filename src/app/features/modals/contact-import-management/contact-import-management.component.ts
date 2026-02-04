@@ -527,7 +527,8 @@ export class ContactImportManagementComponent implements OnInit {
     }
 
     async updateContact(contactObject: any): Promise<any> {
-        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        const currentUser = await firstValueFrom(this.userService.getDataUser());
+        const userId = currentUser?.userId ?? '';
         const contact = contactObject['contact'] || {};
         const data = {
             contactId: contact.contactId,
@@ -539,7 +540,7 @@ export class ContactImportManagementComponent implements OnInit {
             contactNumber: contact.contactNumber || '',
             contactNumber2: contactObject['contactNumber2'] || contact.contactNumber2 || '',
             province: contactObject['License Plate Province'] || contactObject['licensePlateProvince'] || contact.province || null,
-            modifiedById: userData.userId || '',
+            modifiedById: userId,
             contactNumNew: contactObject['phone_number'] || contactObject['phoneNumber'] || contactObject['Contact Mobile'] || '',
             partnerCode: contactObject['Dealer ID'] || contactObject['dealerId'] || null, // Dealer ID is partnerCode
             email: contactObject['Contact Email'] || contactObject['email'] || null,
@@ -555,7 +556,8 @@ export class ContactImportManagementComponent implements OnInit {
     }
 
     async createContact(contactObject: any): Promise<any> {
-        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        const currentUser = await firstValueFrom(this.userService.getDataUser());
+        const userId = currentUser?.userId ?? '';
 
         // Split dealer name into first and last name if available
         const dealerName = contactObject['Dealer Name'] || contactObject['dealerName'] || '';
@@ -580,7 +582,7 @@ export class ContactImportManagementComponent implements OnInit {
             chatType: contactObject['chatType'] || '',
             displayName: contactObject['displayName'] || dealerName || firstName || 'ไม่ทราบชื่อ',
             province: contactObject['License Plate Province'] || contactObject['licensePlateProvince'] || null,
-            createdById: userData.userId || '',
+            createdById: userId,
             partnerCode: contactObject['Dealer ID'] || contactObject['dealerId'] || null, // Dealer ID is partnerCode
             email: contactObject['Contact Email'] || contactObject['email'] || null,
         };
@@ -605,7 +607,8 @@ export class ContactImportManagementComponent implements OnInit {
      * Create or update car from contact object
      */
     async createOrUpdateCar(contactObject: any): Promise<any> {
-        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        const currentUser = await firstValueFrom(this.userService.getDataUser());
+        const userId = currentUser?.userId ?? null;
 
         const dealerId = contactObject['Dealer ID'] || contactObject['dealerId'];
         const carId = contactObject['Car ID'] || contactObject['carId'];
@@ -649,7 +652,7 @@ export class ContactImportManagementComponent implements OnInit {
             alName: contactObject['AL Name'] || contactObject['alName'] || null,
             alPhoneNumber: contactObject['AL Phone Number'] || contactObject['alPhoneNumber'] || null,
             createdAt: contactObject['parsedCreatedDate'] || contactObject['Created Date'] || new Date().toISOString(),
-            createById: userData.userId || null, // ID of user who imports the data
+            createById: userId, // ID of user who imports the data (QCRM user, รองรับ cross-auth จาก QIM)
         };
 
         try {
@@ -741,7 +744,8 @@ export class ContactImportManagementComponent implements OnInit {
             return;
         }
 
-        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        const currentUser = await firstValueFrom(this.userService.getDataUser());
+        const userId = currentUser?.userId ?? '';
         const nowISO = new Date().toISOString();
         const casePromises: any[] = [];
 
@@ -808,7 +812,7 @@ export class ContactImportManagementComponent implements OnInit {
                         } else {
                             // Create new caseCode if still not exists
                             const newCaseCode = await firstValueFrom(
-                                this.callService.createCaseCode({ code, script: '', createdById: userData.userId }),
+                                this.callService.createCaseCode({ code, script: '', createdById: userId }),
                             );
                             const parsedNewCode = typeof newCaseCode === 'string' ? JSON.parse(newCaseCode) : newCaseCode;
                             if (parsedNewCode && parsedNewCode.id) {
@@ -896,9 +900,9 @@ export class ContactImportManagementComponent implements OnInit {
                     source: contactObj['source'] || contact['source'] || 'Excel Import',
                     assignedAt: nowISO,
                     createdAt: nowISO,
-                    createdById: userData.userId,
+                    createdById: userId,
                     modifiedAt: nowISO,
-                    modifiedById: userData.userId,
+                    modifiedById: userId,
                     isDeleted: 0,
                     assignedUserId: assignedAgent.userId, // Round Robin assignment
                     callStatus: null, // Initial call status is null (not called yet)

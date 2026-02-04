@@ -3,7 +3,8 @@ import { Location } from '@angular/common';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { CallService } from 'src/app/services/call/call.service';
-import { catchError, debounceTime, distinctUntilChanged, map, Observable, OperatorFunction, tap, throwError } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, map, Observable, OperatorFunction, take, tap, throwError } from 'rxjs';
+import { UserService } from 'src/app/services/user/user.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { ContactsService } from 'src/app/services/contacts/contacts.service';
 import { faArrowLeft, faArrowRight, faPenToSquare, faTrashCan, faCircleXmark, faEye, faClipboard } from '@fortawesome/free-solid-svg-icons';
@@ -167,6 +168,7 @@ export class CreateCallComponent {
         private auditLogService: AuditLogService,
         private callListService: CallListService,
         private translate: TranslateService,
+        private userService: UserService,
     ) {
         this.startTime = this.formatDate(new Date());
     }
@@ -306,83 +308,96 @@ export class CreateCallComponent {
     }
 
     submit() {
-        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
         this.attachmentsId = this.attachments.map((attachment) => attachment.attachmentId.toString());
         const selectedDate = this.startTime ? this.formatDate(new Date(this.startTime)) : this.formatDate(new Date());
         const selectedTime = this.timepickStart ? this.formatTime(this.timepickStart) : this.formatTime(new Date());
 
         if (this.selectedCaseCode || this.isSocialChannelSelected) {
-            // Format requestDateTime
-            const requestDateTime = `${selectedDate} ${selectedTime}`;
-
-            // Get current timestamp for createdAt and modifiedAt
-            const now = new Date().toISOString();
-
-            const dataForm = {
-                caseId: this.callIdEdit || null,
-                contactId: this.contactIdSelect,
-                channelId: this.selectedChannels,
-                requestDateTime: requestDateTime,
-                description: this.description,
-                caseCodeId: this.selectedCaseCode,
-                caseTypeId: this.selectedCaseType,
-                caseServiceGroupId: this.selectedServiceGroup,
-                caseServiceTypeId: this.selectedServiceType,
-                caseServiceSubTypeId: this.selectedServiceSubType,
-                operationType: this.selectedCallTypeId,
-                priority: null,
-                status: this.selectedStatus,
-                solution: this.solutions,
-                contactNumber: this.selectedContactNumber ? this.selectedContactNumber.contactNumberId : null,
-                source: null,
-                assignedAt: null,
-                createdAt: now,
-                createdById: userData.userId,
-                modifiedAt: now,
-                modifiedById: null,
-                isDeleted: 0,
-                assignedUserId: null,
-                attachment: this.attachmentsId,
-                comment: this.comment,
-            };
-
-            this.callServive
-                .createCase(dataForm)
-                .pipe(
-                    tap((res) => {
-                        this.sweetalertServices.success('alert.saveSuccess', '/contacts');
-                        this.auditLogService.log(
-                            '',
-                            'Create Call',
-                            dataForm.caseId || '',
-                            'Create Case Call',
-                            `Detail Create call : ContactID : ${dataForm.contactId}
-                      ,RequestDateTime : ${dataForm.requestDateTime}
-                      ,ChannelId : ${dataForm.channelId}
-                      ,Type : ${dataForm.operationType}`,
-                            `Success`,
-                        );
-                    }),
-                    catchError((error) => {
-                        this.sweetalertServices.handleError(error);
-                        this.auditLogService.log(
-                            '',
-                            'Create Call',
-                            dataForm.caseId || '',
-                            'Create Case Call',
-                            `Detail Create call : ContactID : ${dataForm.contactId}
-                      ,RequestDateTime : ${dataForm.requestDateTime}
-                      ,ChannelId : ${dataForm.channelId}
-                      ,Type : ${dataForm.operationType}`,
-                            `Failed, Error : ${error}`,
-                        );
-                        throw error;
-                    }),
-                )
-                .subscribe();
+            this.userService.getDataUser().pipe(take(1)).subscribe((currentUser) => {
+                let createdById = currentUser?.userId ?? '';
+                if (!createdById) {
+                    this.userService.refreshFromStorage();
+                    this.userService.getDataUser().pipe(take(1)).subscribe((userAgain) => {
+                        createdById = userAgain?.userId ?? '';
+                        if (!createdById) {
+                            this.sweetalertServices.error('alert.error');
+                            return;
+                        }
+                        this.submitCreateCase(createdById, selectedDate, selectedTime);
+                    });
+                    return;
+                }
+                this.submitCreateCase(createdById, selectedDate, selectedTime);
+            });
         } else {
             this.sweetalertServices.error('alert.pleaseEnterCode');
         }
+    }
+
+    private submitCreateCase(createdById: string, selectedDate: string, selectedTime: string): void {
+        const requestDateTime = `${selectedDate} ${selectedTime}`;
+        const now = new Date().toISOString();
+        const dataForm = {
+            caseId: this.callIdEdit || null,
+            contactId: this.contactIdSelect,
+            channelId: this.selectedChannels,
+            requestDateTime,
+            description: this.description,
+            caseCodeId: this.selectedCaseCode,
+            caseTypeId: this.selectedCaseType,
+            caseServiceGroupId: this.selectedServiceGroup,
+            caseServiceTypeId: this.selectedServiceType,
+            caseServiceSubTypeId: this.selectedServiceSubType,
+            operationType: this.selectedCallTypeId,
+            priority: null,
+            status: this.selectedStatus,
+            solution: this.solutions,
+            contactNumber: this.selectedContactNumber ? this.selectedContactNumber.contactNumberId : null,
+            source: null,
+            assignedAt: null,
+            createdAt: now,
+            createdById,
+            modifiedAt: now,
+            modifiedById: null,
+            isDeleted: 0,
+            assignedUserId: null,
+            attachment: this.attachmentsId,
+            comment: this.comment,
+        };
+        this.callServive
+            .createCase(dataForm)
+            .pipe(
+                tap((res) => {
+                    this.sweetalertServices.success('alert.saveSuccess', '/contacts');
+                    this.auditLogService.log(
+                        '',
+                        'Create Call',
+                        dataForm.caseId || '',
+                        'Create Case Call',
+                        `Detail Create call : ContactID : ${dataForm.contactId}
+                      ,RequestDateTime : ${dataForm.requestDateTime}
+                      ,ChannelId : ${dataForm.channelId}
+                      ,Type : ${dataForm.operationType}`,
+                        `Success`,
+                    );
+                }),
+                catchError((error) => {
+                    this.sweetalertServices.handleError(error);
+                    this.auditLogService.log(
+                        '',
+                        'Create Call',
+                        dataForm.caseId || '',
+                        'Create Case Call',
+                        `Detail Create call : ContactID : ${dataForm.contactId}
+                      ,RequestDateTime : ${dataForm.requestDateTime}
+                      ,ChannelId : ${dataForm.channelId}
+                      ,Type : ${dataForm.operationType}`,
+                        `Failed, Error : ${error}`,
+                    );
+                    throw error;
+                }),
+            )
+            .subscribe();
     }
 
     onChannelChange(channelId: string) {
@@ -676,9 +691,10 @@ export class CreateCallComponent {
                 return;
             }
 
-            // สร้าง code ใหม่
-            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-            this.callServive.createCaseCode({ code: selectedCode.code, script: '', createdById: userData.userId }).subscribe({
+            // สร้าง code ใหม่ (ใช้ user จาก UserService เพื่อรองรับ cross-auth จาก QIM)
+            this.userService.getDataUser().pipe(take(1)).subscribe((currentUser) => {
+                const createdById = currentUser?.userId ?? '';
+                this.callServive.createCaseCode({ code: selectedCode.code, script: '', createdById }).subscribe({
                 next: (res: any) => {
                     const newCode = typeof res === 'string' ? JSON.parse(res) : res;
                     this.selectedCaseCode = newCode.id;
@@ -691,6 +707,7 @@ export class CreateCallComponent {
                 error: (err) => {
                     this.sweetalertServices.handleError(err);
                 },
+            });
             });
         } else {
             this.selectedCaseCode = selectedCode.id;
@@ -712,9 +729,10 @@ export class CreateCallComponent {
                 return;
             }
 
-            // Create new caseType
-            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-            this.callServive.createCaseType({ name: selectedCaseType.name, createdById: userData.userId }).subscribe({
+            // Create new caseType (ใช้ user จาก UserService เพื่อรองรับ cross-auth จาก QIM)
+            this.userService.getDataUser().pipe(take(1)).subscribe((currentUser) => {
+                const createdById = currentUser?.userId ?? '';
+                this.callServive.createCaseType({ name: selectedCaseType.name, createdById }).subscribe({
                 next: (res: any) => {
                     const newType = typeof res === 'string' ? JSON.parse(res) : res;
                     this.selectedCaseType = newType.id;
@@ -726,6 +744,7 @@ export class CreateCallComponent {
                 error: (err) => {
                     this.sweetalertServices.handleError(err);
                 },
+            });
             });
         } else {
             this.selectedCaseType = selectedCaseType.id;
@@ -748,9 +767,10 @@ export class CreateCallComponent {
                 return;
             }
 
-            // Create new serviceGroup
-            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-            this.callServive.createCaseServiceGroup({ name: selectedServiceGroup.name, createdById: userData.userId }).subscribe({
+            // Create new serviceGroup (ใช้ user จาก UserService เพื่อรองรับ cross-auth จาก QIM)
+            this.userService.getDataUser().pipe(take(1)).subscribe((currentUser) => {
+                const createdById = currentUser?.userId ?? '';
+                this.callServive.createCaseServiceGroup({ name: selectedServiceGroup.name, createdById }).subscribe({
                 next: (res: any) => {
                     const newGroup = typeof res === 'string' ? JSON.parse(res) : res;
                     this.selectedServiceGroup = newGroup.id;
@@ -762,6 +782,7 @@ export class CreateCallComponent {
                 error: (err) => {
                     this.sweetalertServices.handleError(err);
                 },
+            });
             });
         } else {
             this.selectedServiceGroup = selectedServiceGroup.id;
@@ -782,14 +803,15 @@ export class CreateCallComponent {
                 return;
             }
 
-            // Create new serviceType
-            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-            this.callServive
-                .createCaseServiceType({
-                    name: selectedServiceType.name,
-                    caseServiceGroupId: this.selectedServiceGroup,
-                    createdById: userData.userId,
-                })
+            // Create new serviceType (ใช้ user จาก UserService เพื่อรองรับ cross-auth จาก QIM)
+            this.userService.getDataUser().pipe(take(1)).subscribe((currentUser) => {
+                const createdById = currentUser?.userId ?? '';
+                this.callServive
+                    .createCaseServiceType({
+                        name: selectedServiceType.name,
+                        caseServiceGroupId: this.selectedServiceGroup,
+                        createdById,
+                    })
                 .subscribe({
                     next: (res: any) => {
                         const newType = typeof res === 'string' ? JSON.parse(res) : res;
@@ -803,6 +825,7 @@ export class CreateCallComponent {
                         this.sweetalertServices.handleError(err);
                     },
                 });
+            });
         } else {
             this.selectedServiceType = selectedServiceType.id;
         }
@@ -824,14 +847,15 @@ export class CreateCallComponent {
                 return;
             }
 
-            // Create new serviceSubType
-            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-            this.callServive
-                .createServiceSubType({
-                    name: selectedServiceSubType.name,
-                    caseServiceTypeId: this.selectedServiceType,
-                    createdById: userData.userId,
-                })
+            // Create new serviceSubType (ใช้ user จาก UserService เพื่อรองรับ cross-auth จาก QIM)
+            this.userService.getDataUser().pipe(take(1)).subscribe((currentUser) => {
+                const createdById = currentUser?.userId ?? '';
+                this.callServive
+                    .createServiceSubType({
+                        name: selectedServiceSubType.name,
+                        caseServiceTypeId: this.selectedServiceType,
+                        createdById,
+                    })
                 .subscribe({
                     next: (res: any) => {
                         const newSubType = typeof res === 'string' ? JSON.parse(res) : res;
@@ -845,6 +869,7 @@ export class CreateCallComponent {
                         this.sweetalertServices.handleError(err);
                     },
                 });
+            });
         } else {
             this.selectedServiceSubType = selectedServiceSubType.id;
         }
