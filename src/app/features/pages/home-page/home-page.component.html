@@ -282,12 +282,7 @@
                                         <!-- Call Type -->
                                         <td>{{ caseItem.type || '-' }}</td>
                                         <!-- Case Code -->
-                                        <td
-                                            class="cursor-pointer"
-                                            (click)="navigateToEditCase(caseItem.caseId, caseItem.contactId)"
-                                            [ngbTooltip]="'common.edit' | translate"
-                                            placement="bottom"
-                                        >
+                                        <td class="cursor-pointer" (click)="navigateToEditCase(caseItem.caseId, caseItem.contactId)">
                                             <span class="text-primary fw-semibold">{{ caseItem.casecode || '-' }}</span>
                                         </td>
                                         <!-- Assign Date -->
