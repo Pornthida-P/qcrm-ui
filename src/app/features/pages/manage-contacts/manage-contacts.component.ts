@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ContactsService } from 'src/app/services/contacts/contacts.service';
-import { catchError, finalize, of, switchMap, tap } from 'rxjs';
+import { catchError, finalize, of, switchMap, take, tap } from 'rxjs';
+import { UserService } from 'src/app/services/user/user.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { CallService } from 'src/app/services/call/call.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -172,12 +173,22 @@ export class ManageContactsComponent implements OnInit {
         private translate: TranslateService,
         private callListService: CallListService,
         public statusService: StatusService,
+        private userService: UserService,
     ) {
         this.contact = { components: [] };
         this.startTime = new Date();
     }
 
     ngOnInit(): void {
+        //  sync userData จาก UserService เพื่อให้ได้ QCRM user ล่าสุด (รองรับ cross-auth จาก QIM)
+        this.userService.getDataUser().pipe(take(1)).subscribe((u) => {
+            if (u) {
+                this.userData = u;
+                this.userId = u.userId ?? '';
+                if (u.role?.roleTitle) this.userRole = u.role.roleTitle.toLocaleLowerCase();
+            }
+        });
+
         const state = history.state;
         if (state.itemId) {
             this.contactId = state.itemId;
@@ -297,11 +308,11 @@ export class ManageContactsComponent implements OnInit {
         }
 
         const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-        this.userRole = userData.role.roleTitle.toLocaleLowerCase();
+        this.userRole = userData?.role?.roleTitle?.toLocaleLowerCase() ?? '';
 
         this.selectedFilter = 'all';
         if (this.selectedFilter !== 'all') {
-            this.userId = this.userData.userId;
+            this.userId = this.userData?.userId ?? '';
         }
         this.connect();
 

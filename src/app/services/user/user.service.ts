@@ -36,6 +36,18 @@ export class UserService {
         return this.userDataSubject.asObservable();
     }
 
+    refreshFromStorage(): void {
+        const stored = localStorage.getItem(this.storageKey);
+        if (stored) {
+            try {
+                const parsed = JSON.parse(stored) as User;
+                this.userDataSubject.next(parsed);
+            } catch {
+                // ignore parse error
+            }
+        }
+    }
+
     userIsRefresh() {
         const userData = this.userDataSubject.getValue();
         this.http
