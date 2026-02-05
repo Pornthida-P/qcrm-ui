@@ -415,8 +415,27 @@ export class ManageContactsComponent implements OnInit {
                         createdById: userData.userId,
                     })
                     .subscribe((orgRes: any) => {
-                        organizationId = orgRes.organizationId;
+                        const parsedOrgRes = typeof orgRes === 'string' ? JSON.parse(orgRes) : orgRes;
+                        organizationId = parsedOrgRes?.organizationId;
                         this.submitEditContact(organizationId, userData);
+                    });
+                return;
+            } else if (this.contactOrgName && this.contactOrgName.trim() !== '' && this.contactOrg) {
+                this.contactsService
+                    .updateOrg({
+                        organizationId: this.contactOrg,
+                        name: this.contactOrgName,
+                        identification: '',
+                        modifiedById: userData.userId,
+                    })
+                    .pipe(
+                        catchError((error) => {
+                            this.sweetalertServices.handleError(error);
+                            throw error;
+                        }),
+                    )
+                    .subscribe(() => {
+                        this.submitEditContact(this.contactOrg, userData);
                     });
                 return;
             } else {
@@ -433,8 +452,27 @@ export class ManageContactsComponent implements OnInit {
                         createdById: userData.userId,
                     })
                     .subscribe((orgRes: any) => {
-                        organizationId = orgRes.organizationId;
+                        const parsedOrgRes = typeof orgRes === 'string' ? JSON.parse(orgRes) : orgRes;
+                        organizationId = parsedOrgRes?.organizationId;
                         this.submitContact(organizationId, userData);
+                    });
+                return;
+            } else if (this.contactOrgName && this.contactOrgName.trim() !== '' && this.contactOrg) {
+                this.contactsService
+                    .updateOrg({
+                        organizationId: this.contactOrg,
+                        name: this.contactOrgName,
+                        identification: '',
+                        modifiedById: userData.userId,
+                    })
+                    .pipe(
+                        catchError((error) => {
+                            this.sweetalertServices.handleError(error);
+                            throw error;
+                        }),
+                    )
+                    .subscribe(() => {
+                        this.submitContact(this.contactOrg, userData);
                     });
                 return;
             } else {
