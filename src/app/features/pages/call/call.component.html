@@ -250,7 +250,7 @@
                                         </ng-template>
                                     </td>
                                     <!-- Manage Button -->
-                                    <td class="text-center" *ngIf="checkSupRole()">
+                                    <td class="text-center d-flex gap-2" *ngIf="checkSupRole()">
                                         <button
                                             type="button"
                                             class="btn btn-action btn-outline-primary"
@@ -262,6 +262,15 @@
                                             (click)="editCall(calls.caseId, calls.contactId)"
                                         >
                                             <i class="fa-solid fa-pen-to-square"></i>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class="btn btn-action btn-outline-danger"
+                                            [ngbTooltip]="'common.delete' | translate"
+                                            placement="top"
+                                            (click)="deleteCall(calls.caseId, calls.caseIdForReport)"
+                                        >
+                                            <i class="fa-solid fa-trash"></i>
                                         </button>
                                     </td>
                                 </tr>

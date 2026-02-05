@@ -1456,11 +1456,12 @@ export class CallComponent implements OnInit {
         }
     }
 
-    deleteCall(callId: string) {
+    deleteCall(callId: string, caseIdForReport: string) {
         console.log('Delete Call:', callId);
         Swal.fire({
             icon: 'warning',
             title: this.translate.instant('alert.deleteConfirm'),
+            text: caseIdForReport,
             showCancelButton: true,
             confirmButtonText: this.translate.instant('alert.ok'),
             cancelButtonText: this.translate.instant('alert.cancel'),
