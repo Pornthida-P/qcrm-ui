@@ -1547,8 +1547,31 @@ export class CallComponent implements OnInit {
 
     getChatHistory(chatId: string) {
         this.callListService.getChatHistory(chatId).subscribe((res: any) => {
-            this.chatHistory = res;
+            this.chatHistory = (res || []).map((chat: any) => this.normalizeChatMessageData(chat));
         });
+    }
+
+    private normalizeChatMessageData(chat: any): any {
+        if (!chat) return chat;
+        let msgData = chat.message_data;
+        if (typeof msgData === 'string') {
+            try {
+                msgData = JSON.parse(msgData);
+            } catch {
+                return chat;
+            }
+        }
+        chat.message_data = msgData || {};
+        const md = chat.message_data;
+        const isLine = (chat.channel_type || chat.channel_name || '').toString().toLowerCase().includes('line');
+        if (chat.message_type === 'sticker' && isLine && md.sticker_id && !md.originalContentUrl) {
+            md.originalContentUrl = `https://stickershop.line-scdn.net/stickershop/v1/sticker/${md.sticker_id}/android/sticker.png`;
+        }
+        return chat;
+    }
+
+    isRatingMessage(chat: any): boolean {
+        return !!(chat?.message_text && chat.message_text.startsWith('rating'));
     }
 
     getCallStatus() {
