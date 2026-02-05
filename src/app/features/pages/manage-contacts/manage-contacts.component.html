@@ -1036,109 +1036,49 @@
                         <div class="card-body chat-history-container flex-grow-1">
                             <div class="chat-messages">
                                 <ng-container *ngFor="let chat of chatHistory">
-                                    <!-- System Message -->
-                                    <div *ngIf="chat.message_type === 'system-text'" class="system-message">
+                                    <div *ngIf="chat.message_type === 'system-text' && !isRatingMessage(chat)" class="system-message">
                                         <hr class="system-line" />
                                         <span class="system-text">{{ chat.message_text }}</span>
                                         <span class="system-time">{{ chat.timestamp | date: 'HH:mm' }}</span>
                                     </div>
-                                    <!-- Normal Message (text) -->
                                     <div
-                                        *ngIf="chat.message_type !== 'system-text' && chat.message_type !== 'image' && chat.message_type !== 'video' && chat.message_type !== 'file' && chat.message_type !== 'document'"
+                                        *ngIf="chat.message_type !== 'system-text' && !isRatingMessage(chat)"
                                         class="message-row"
-                                        [ngClass]="{
-                                            me: chat.direction === 'out',
-                                            contact: chat.direction === 'in',
-                                        }"
+                                        [ngClass]="{ me: chat.direction === 'out', contact: chat.direction === 'in' }"
                                     >
                                         <div class="bubble">
-                                            <div class="message">{{ chat.message_text }}</div>
-                                        </div>
-                                        <div class="message-info" [ngClass]="{ 'text-end': chat.direction === 'out' }">
-                                            <span class="sender-name">{{ chat.sender_name }}</span>
-                                            <span class="timestamp">{{ chat.timestamp | date: 'dd/MM/yyyy HH:mm' }}</span>
-                                        </div>
-                                    </div>
-                                    <!-- Image Message -->
-                                    <div
-                                        *ngIf="chat.message_type === 'image'"
-                                        class="message-row"
-                                        [ngClass]="{
-                                            me: chat.direction === 'out',
-                                            contact: chat.direction === 'in',
-                                        }"
-                                    >
-                                        <div class="bubble">
-                                            <div class="message image-content" *ngIf="chat.message_text">
-                                                {{ chat.message_text }}
-                                            </div>
-                                            <img
-                                                *ngIf="chat.message_data?.originalContentUrl"
-                                                class="message image-content"
-                                                style="max-width: 100%; height: auto; border-radius: 8px;"
-                                                [src]="chat.message_data.originalContentUrl"
-                                                alt=""
-                                            />
-                                        </div>
-                                        <div class="message-info" [ngClass]="{ 'text-end': chat.direction === 'out' }">
-                                            <span class="sender-name">{{ chat.sender_name }}</span>
-                                            <span class="timestamp">{{ chat.timestamp | date: 'dd/MM/yyyy HH:mm' }}</span>
-                                        </div>
-                                    </div>
-                                    <!-- Video Message -->
-                                    <div
-                                        *ngIf="chat.message_type === 'video'"
-                                        class="message-row"
-                                        [ngClass]="{
-                                            me: chat.direction === 'out',
-                                            contact: chat.direction === 'in',
-                                        }"
-                                    >
-                                        <div class="bubble">
-                                            <video
-                                                *ngIf="chat.message_data?.originalContentUrl"
-                                                controls
-                                                class="message video-content"
-                                                style="max-width: 100%; border-radius: 8px;"
-                                            >
-                                                <source [src]="chat.message_data.originalContentUrl" type="video/mp4" />
-                                            </video>
-                                        </div>
-                                        <div class="message-info" [ngClass]="{ 'text-end': chat.direction === 'out' }">
-                                            <span class="sender-name">{{ chat.sender_name }}</span>
-                                            <span class="timestamp">{{ chat.timestamp | date: 'dd/MM/yyyy HH:mm' }}</span>
-                                        </div>
-                                    </div>
-                                    <!-- File / Document Message -->
-                                    <div
-                                        *ngIf="chat.message_type === 'file' || chat.message_type === 'document'"
-                                        class="message-row"
-                                        [ngClass]="{
-                                            me: chat.direction === 'out',
-                                            contact: chat.direction === 'in',
-                                        }"
-                                    >
-                                        <div class="bubble">
-                                            <div class="message" *ngIf="chat.message_text">{{ chat.message_text }}</div>
-                                            <div class="message d-flex flex-column align-items-center gap-2">
-                                                <span
-                                                    *ngIf="chat.message_data?.file_name"
-                                                    class="text-start w-100"
-                                                    style="overflow-wrap: anywhere;"
-                                                >
-                                                    {{ chat.message_data.file_name }}
-                                                </span>
-                                                <a
-                                                    *ngIf="chat.message_data?.originalContentUrl"
-                                                    [href]="chat.message_data.originalContentUrl"
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    download
-                                                    class="btn btn-sm btn-outline-primary"
-                                                >
-                                                    <i class="fa-solid fa-cloud-download me-1"></i>Download
-                                                </a>
-                                            </div>
+                                            <ng-container [ngSwitch]="chat.message_type">
+                                                <ng-container *ngSwitchDefault>
+                                                    <div class="message">{{ chat.message_text }}</div>
+                                                </ng-container>
+                                                <ng-container *ngSwitchCase="'image'">
+                                                    <div class="message image-content" *ngIf="chat.message_text">{{ chat.message_text }}</div>
+                                                    <img *ngIf="chat.message_data?.originalContentUrl" class="message image-content" style="max-width: 100%; height: auto; border-radius: 8px" [src]="chat.message_data.originalContentUrl" alt="" />
+                                                </ng-container>
+                                                <ng-container *ngSwitchCase="'sticker'">
+                                                    <label *ngIf="!chat.message_data?.originalContentUrl" class="message sticker-content">Sticker</label>
+                                                    <img *ngIf="chat.message_data?.originalContentUrl" class="message sticker-content" style="max-width: 100%; height: auto; border-radius: 8px" [src]="chat.message_data.originalContentUrl" alt="" />
+                                                </ng-container>
+                                                <ng-container *ngSwitchCase="'video'">
+                                                    <video *ngIf="chat.message_data?.originalContentUrl" controls class="message video-content" style="max-width: 100%; border-radius: 8px">
+                                                        <source [src]="chat.message_data.originalContentUrl" type="video/mp4" />
+                                                    </video>
+                                                </ng-container>
+                                                <ng-container *ngSwitchCase="'file'">
+                                                    <div class="message" *ngIf="chat.message_text">{{ chat.message_text }}</div>
+                                                    <div class="message d-flex flex-column align-items-center gap-2">
+                                                        <span *ngIf="chat.message_data?.file_name" class="text-start w-100" style="overflow-wrap: anywhere">{{ chat.message_data.file_name }}</span>
+                                                        <a *ngIf="chat.message_data?.originalContentUrl" [href]="chat.message_data.originalContentUrl" target="_blank" rel="noopener noreferrer" download class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-cloud-download me-1"></i>Download</a>
+                                                    </div>
+                                                </ng-container>
+                                                <ng-container *ngSwitchCase="'document'">
+                                                    <div class="message" *ngIf="chat.message_text">{{ chat.message_text }}</div>
+                                                    <div class="message d-flex flex-column align-items-center gap-2">
+                                                        <span *ngIf="chat.message_data?.file_name" class="text-start w-100" style="overflow-wrap: anywhere">{{ chat.message_data.file_name }}</span>
+                                                        <a *ngIf="chat.message_data?.originalContentUrl" [href]="chat.message_data.originalContentUrl" target="_blank" rel="noopener noreferrer" download class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-cloud-download me-1"></i>Download</a>
+                                                    </div>
+                                                </ng-container>
+                                            </ng-container>
                                         </div>
                                         <div class="message-info" [ngClass]="{ 'text-end': chat.direction === 'out' }">
                                             <span class="sender-name">{{ chat.sender_name }}</span>
@@ -1200,109 +1140,47 @@
                                 >
                                     <div class="chat-messages">
                                         <ng-container *ngFor="let chat of chatHistory">
-                                            <!-- System Message -->
-                                            <div *ngIf="chat.message_type === 'system-text'" class="system-message">
+                                            <div *ngIf="chat.message_type === 'system-text' && !isRatingMessage(chat)" class="system-message">
                                                 <hr class="system-line" />
                                                 <span class="system-text">{{ chat.message_text }}</span>
                                                 <span class="system-time">{{ chat.timestamp | date: 'HH:mm' }}</span>
                                             </div>
-                                            <!-- Normal Message (text) -->
                                             <div
-                                                *ngIf="chat.message_type !== 'system-text' && chat.message_type !== 'image' && chat.message_type !== 'video' && chat.message_type !== 'file' && chat.message_type !== 'document'"
+                                                *ngIf="chat.message_type !== 'system-text' && !isRatingMessage(chat)"
                                                 class="message-row"
-                                                [ngClass]="{
-                                                    me: chat.direction === 'out',
-                                                    contact: chat.direction === 'in',
-                                                }"
+                                                [ngClass]="{ me: chat.direction === 'out', contact: chat.direction === 'in' }"
                                             >
                                                 <div class="bubble">
-                                                    <div class="message">{{ chat.message_text }}</div>
-                                                </div>
-                                                <div class="message-info" [ngClass]="{ 'text-end': chat.direction === 'out' }">
-                                                    <span class="sender-name">{{ chat.sender_name }}</span>
-                                                    <span class="timestamp">{{ chat.timestamp | date: 'dd/MM/yyyy HH:mm' }}</span>
-                                                </div>
-                                            </div>
-                                            <!-- Image Message -->
-                                            <div
-                                                *ngIf="chat.message_type === 'image'"
-                                                class="message-row"
-                                                [ngClass]="{
-                                                    me: chat.direction === 'out',
-                                                    contact: chat.direction === 'in',
-                                                }"
-                                            >
-                                                <div class="bubble">
-                                                    <div class="message image-content" *ngIf="chat.message_text">
-                                                        {{ chat.message_text }}
-                                                    </div>
-                                                    <img
-                                                        *ngIf="chat.message_data?.originalContentUrl"
-                                                        class="message image-content"
-                                                        style="max-width: 100%; height: auto; border-radius: 8px;"
-                                                        [src]="chat.message_data.originalContentUrl"
-                                                        alt=""
-                                                    />
-                                                </div>
-                                                <div class="message-info" [ngClass]="{ 'text-end': chat.direction === 'out' }">
-                                                    <span class="sender-name">{{ chat.sender_name }}</span>
-                                                    <span class="timestamp">{{ chat.timestamp | date: 'dd/MM/yyyy HH:mm' }}</span>
-                                                </div>
-                                            </div>
-                                            <!-- Video Message -->
-                                            <div
-                                                *ngIf="chat.message_type === 'video'"
-                                                class="message-row"
-                                                [ngClass]="{
-                                                    me: chat.direction === 'out',
-                                                    contact: chat.direction === 'in',
-                                                }"
-                                            >
-                                                <div class="bubble">
-                                                    <video
-                                                        *ngIf="chat.message_data?.originalContentUrl"
-                                                        controls
-                                                        class="message video-content"
-                                                        style="max-width: 100%; border-radius: 8px;"
-                                                    >
-                                                        <source [src]="chat.message_data.originalContentUrl" type="video/mp4" />
-                                                    </video>
-                                                </div>
-                                                <div class="message-info" [ngClass]="{ 'text-end': chat.direction === 'out' }">
-                                                    <span class="sender-name">{{ chat.sender_name }}</span>
-                                                    <span class="timestamp">{{ chat.timestamp | date: 'dd/MM/yyyy HH:mm' }}</span>
-                                                </div>
-                                            </div>
-                                            <!-- File / Document Message -->
-                                            <div
-                                                *ngIf="chat.message_type === 'file' || chat.message_type === 'document'"
-                                                class="message-row"
-                                                [ngClass]="{
-                                                    me: chat.direction === 'out',
-                                                    contact: chat.direction === 'in',
-                                                }"
-                                            >
-                                                <div class="bubble">
-                                                    <div class="message" *ngIf="chat.message_text">{{ chat.message_text }}</div>
-                                                    <div class="message d-flex flex-column align-items-center gap-2">
-                                                        <span
-                                                            *ngIf="chat.message_data?.file_name"
-                                                            class="text-start w-100"
-                                                            style="overflow-wrap: anywhere;"
-                                                        >
-                                                            {{ chat.message_data.file_name }}
-                                                        </span>
-                                                        <a
-                                                            *ngIf="chat.message_data?.originalContentUrl"
-                                                            [href]="chat.message_data.originalContentUrl"
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            download
-                                                            class="btn btn-sm btn-outline-primary"
-                                                        >
-                                                            <i class="fa-solid fa-cloud-download me-1"></i>Download
-                                                        </a>
-                                                    </div>
+                                                    <ng-container [ngSwitch]="chat.message_type">
+                                                        <ng-container *ngSwitchDefault><div class="message">{{ chat.message_text }}</div></ng-container>
+                                                        <ng-container *ngSwitchCase="'image'">
+                                                            <div class="message image-content" *ngIf="chat.message_text">{{ chat.message_text }}</div>
+                                                            <img *ngIf="chat.message_data?.originalContentUrl" class="message image-content" style="max-width: 100%; height: auto; border-radius: 8px" [src]="chat.message_data.originalContentUrl" alt="" />
+                                                        </ng-container>
+                                                        <ng-container *ngSwitchCase="'sticker'">
+                                                            <label *ngIf="!chat.message_data?.originalContentUrl" class="message sticker-content">Sticker</label>
+                                                            <img *ngIf="chat.message_data?.originalContentUrl" class="message sticker-content" style="max-width: 100%; height: auto; border-radius: 8px" [src]="chat.message_data.originalContentUrl" alt="" />
+                                                        </ng-container>
+                                                        <ng-container *ngSwitchCase="'video'">
+                                                            <video *ngIf="chat.message_data?.originalContentUrl" controls class="message video-content" style="max-width: 100%; border-radius: 8px">
+                                                                <source [src]="chat.message_data.originalContentUrl" type="video/mp4" />
+                                                            </video>
+                                                        </ng-container>
+                                                        <ng-container *ngSwitchCase="'file'">
+                                                            <div class="message" *ngIf="chat.message_text">{{ chat.message_text }}</div>
+                                                            <div class="message d-flex flex-column align-items-center gap-2">
+                                                                <span *ngIf="chat.message_data?.file_name" class="text-start w-100" style="overflow-wrap: anywhere">{{ chat.message_data.file_name }}</span>
+                                                                <a *ngIf="chat.message_data?.originalContentUrl" [href]="chat.message_data.originalContentUrl" target="_blank" rel="noopener noreferrer" download class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-cloud-download me-1"></i>Download</a>
+                                                            </div>
+                                                        </ng-container>
+                                                        <ng-container *ngSwitchCase="'document'">
+                                                            <div class="message" *ngIf="chat.message_text">{{ chat.message_text }}</div>
+                                                            <div class="message d-flex flex-column align-items-center gap-2">
+                                                                <span *ngIf="chat.message_data?.file_name" class="text-start w-100" style="overflow-wrap: anywhere">{{ chat.message_data.file_name }}</span>
+                                                                <a *ngIf="chat.message_data?.originalContentUrl" [href]="chat.message_data.originalContentUrl" target="_blank" rel="noopener noreferrer" download class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-cloud-download me-1"></i>Download</a>
+                                                            </div>
+                                                        </ng-container>
+                                                    </ng-container>
                                                 </div>
                                                 <div class="message-info" [ngClass]="{ 'text-end': chat.direction === 'out' }">
                                                     <span class="sender-name">{{ chat.sender_name }}</span>

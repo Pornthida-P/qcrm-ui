@@ -181,13 +181,16 @@ export class ManageContactsComponent implements OnInit {
 
     ngOnInit(): void {
         //  sync userData จาก UserService เพื่อให้ได้ QCRM user ล่าสุด (รองรับ cross-auth จาก QIM)
-        this.userService.getDataUser().pipe(take(1)).subscribe((u) => {
-            if (u) {
-                this.userData = u;
-                this.userId = u.userId ?? '';
-                if (u.role?.roleTitle) this.userRole = u.role.roleTitle.toLocaleLowerCase();
-            }
-        });
+        this.userService
+            .getDataUser()
+            .pipe(take(1))
+            .subscribe((u) => {
+                if (u) {
+                    this.userData = u;
+                    this.userId = u.userId ?? '';
+                    if (u.role?.roleTitle) this.userRole = u.role.roleTitle.toLocaleLowerCase();
+                }
+            });
 
         const state = history.state;
         if (state.itemId) {
@@ -931,9 +934,7 @@ export class ManageContactsComponent implements OnInit {
                     this.selectedCallTypeId = call.operationType;
                     this.selectedStatus = call.statusId;
                     const rawAttachments =
-                        call.attachment ||
-                        call.attachments ||
-                        (call.filePath || call.fileName || call.fullname ? call : []);
+                        call.attachment || call.attachments || (call.filePath || call.fileName || call.fullname ? call : []);
                     this.attachments = this.normalizeAttachments(rawAttachments);
 
                     if (call.contactNumber && call.contactNumberId) {
@@ -1754,8 +1755,31 @@ export class ManageContactsComponent implements OnInit {
 
     getChatHistory(chatId: string) {
         this.callListService.getChatHistory(chatId).subscribe((res: any) => {
-            this.chatHistory = res;
+            this.chatHistory = (res || []).map((chat: any) => this.normalizeChatMessageData(chat));
         });
+    }
+
+    private normalizeChatMessageData(chat: any): any {
+        if (!chat) return chat;
+        let msgData = chat.message_data;
+        if (typeof msgData === 'string') {
+            try {
+                msgData = JSON.parse(msgData);
+            } catch {
+                return chat;
+            }
+        }
+        chat.message_data = msgData || {};
+        const md = chat.message_data;
+        const isLine = (chat.channel_type || chat.channel_name || '').toString().toLowerCase().includes('line');
+        if (chat.message_type === 'sticker' && isLine && md.sticker_id && !md.originalContentUrl) {
+            md.originalContentUrl = `https://stickershop.line-scdn.net/stickershop/v1/sticker/${md.sticker_id}/android/sticker.png`;
+        }
+        return chat;
+    }
+
+    isRatingMessage(chat: any): boolean {
+        return !!(chat?.message_text && chat.message_text.startsWith('rating'));
     }
 
     getCallStatus() {
