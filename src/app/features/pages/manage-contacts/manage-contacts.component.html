@@ -132,7 +132,6 @@
                                     name="contactGroupId"
                                     [disabled]="!checkRole()"
                                 >
-                                    <option value="">ไม่ระบุ</option>
                                     <option *ngFor="let group of contactGroup" [value]="group.id">{{ group.name }}</option>
                                 </select>
                             </div>
