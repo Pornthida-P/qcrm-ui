@@ -28,6 +28,7 @@ export const config = {
                 contactGroup: '/contact-group',
                 contactChatId: '/contact-chat',
                 updateContactNumbers: '/numbers',
+                organization: '/organization',
             },
             call: {
                 url: '/call',

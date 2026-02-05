@@ -112,6 +112,9 @@ export class ContactsService {
         return this.http.post(`${this.baseUrl}${config.api.path.contacts.baseUrl}/organization`, data);
     }
 
+    updateOrg(data: any) {
+        return this.http.put(`${this.baseUrl}${config.api.path.contacts.baseUrl}${config.api.path.contacts.organization}`, data);
+    }
 
     updateCalls(data: any) {
         return this.http.post(`${this.baseUrl}${config.api.path.contacts.baseUrl}/update-call`, data);
