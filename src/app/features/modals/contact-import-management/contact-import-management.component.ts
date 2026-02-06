@@ -635,20 +635,20 @@ export class ContactImportManagementComponent implements OnInit {
                 contactObject['asking_price'] !== undefined
                     ? contactObject['asking_price']
                     : contactObject['ราคาประกาศขาย']
-                    ? parseFloat(String(contactObject['ราคาประกาศขาย']).replace(/,/g, '')) || null
-                    : null,
+                      ? parseFloat(String(contactObject['ราคาประกาศขาย']).replace(/,/g, '')) || null
+                      : null,
             bluebook_price:
                 contactObject['bluebook_price'] !== undefined
                     ? contactObject['bluebook_price']
                     : contactObject['ราคา bluebook']
-                    ? parseFloat(String(contactObject['ราคา bluebook']).replace(/,/g, '')) || null
-                    : null,
+                      ? parseFloat(String(contactObject['ราคา bluebook']).replace(/,/g, '')) || null
+                      : null,
             msrp_price:
                 contactObject['msrp_price'] !== undefined
                     ? contactObject['msrp_price']
                     : contactObject['ราคาแนะนำ']
-                    ? parseFloat(String(contactObject['ราคาแนะนำ']).replace(/,/g, '')) || null
-                    : null,
+                      ? parseFloat(String(contactObject['ราคาแนะนำ']).replace(/,/g, '')) || null
+                      : null,
             alName: contactObject['AL Name'] || contactObject['alName'] || null,
             alPhoneNumber: contactObject['AL Phone Number'] || contactObject['alPhoneNumber'] || null,
             createdAt: contactObject['parsedCreatedDate'] || contactObject['Created Date'] || new Date().toISOString(),
@@ -718,11 +718,7 @@ export class ContactImportManagementComponent implements OnInit {
             this.userService.getAllUser().subscribe((res: any) => {
                 if (res && Array.isArray(res)) {
                     // Filter only active agents
-                    this.agentAll = res.filter(
-                        (agent: any) =>
-                            agent.role?.roleTitle?.toLowerCase() === 'agent' &&
-                            agent.isActive === 1,
-                    );
+                    this.agentAll = res.filter((agent: any) => agent.role?.roleTitle?.toLowerCase() === 'agent' && agent.isActive === 1);
                 }
                 resolve();
             });
@@ -744,8 +740,24 @@ export class ContactImportManagementComponent implements OnInit {
             return;
         }
 
-        const currentUser = await firstValueFrom(this.userService.getDataUser());
-        const userId = currentUser?.userId ?? '';
+        let currentUser = await firstValueFrom(this.userService.getDataUser());
+        let userId = currentUser?.userId ?? '';
+        if (!userId) {
+            this.userService.refreshFromStorage();
+            currentUser = await firstValueFrom(this.userService.getDataUser());
+            userId = currentUser?.userId ?? '';
+        }
+        if (!userId) {
+            this.sweetAlertService.getSwal(
+                'error',
+                this.translate.instant('alert.error'),
+                this.translate.instant('contact-import-management.error-user-required') ||
+                    'Unable to get current user. Please sign in again.',
+                true,
+                '',
+            );
+            return;
+        }
         const nowISO = new Date().toISOString();
         const casePromises: any[] = [];
 

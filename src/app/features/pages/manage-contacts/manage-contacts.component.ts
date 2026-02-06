@@ -406,7 +406,7 @@ export class ManageContactsComponent implements OnInit {
     }
 
     submit() {
-        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        const userData = this.userData || JSON.parse(localStorage.getItem('userData') || '{}');
         if (this.detailItem && this.state != 'copy') {
             // Create or get organization if organization name is provided
             let organizationId = this.contactOrg;
@@ -1077,7 +1077,7 @@ export class ManageContactsComponent implements OnInit {
     }
 
     submitCall() {
-        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        const userData = this.userData || JSON.parse(localStorage.getItem('userData') || '{}');
         this.attachmentsId = this.attachments.map((attachment) => attachment.attachmentId.toString());
         const selectedDate = this.startTime ? this.formatDate(this.startTime) : this.formatDate(new Date());
         const now = new Date();
