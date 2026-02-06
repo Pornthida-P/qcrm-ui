@@ -1006,7 +1006,7 @@ export class CallComponent implements OnInit {
     }
 
     submitCall() {
-        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        const userData = this.userData || JSON.parse(localStorage.getItem('userData') || '{}');
         this.attachmentsId = this.attachments.map((attachment) => attachment.attachmentId.toString());
         const selectedDate = this.startTime ? this.formatDate(new Date(this.startTime)) : this.formatDate(new Date());
         const selectedTime = this.timepickStart ? this.formatTime(this.timepickStart) : this.formatTime(new Date());
