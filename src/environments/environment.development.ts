@@ -30,6 +30,6 @@ export const environment = {
         dialPrefix: 'dial|9',
     },
     idle: {
-        timeoutMinutes: 30,
+        timeoutMinutes: 720,
     },
 };
