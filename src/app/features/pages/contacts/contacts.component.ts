@@ -205,6 +205,10 @@ export class ContactsComponent implements OnInit {
         this.router.navigate(['/contacts/new']);
     }
 
+    onSearchInput() {
+        this.search();
+    }
+
     search() {
         if (this.selectedFilter !== 'all') {
             this.userId = this.userData.userId;
