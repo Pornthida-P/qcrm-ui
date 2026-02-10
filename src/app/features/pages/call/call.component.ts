@@ -459,7 +459,7 @@ export class CallComponent implements OnInit {
         } else {
             this.userId = '';
         }
-        this.currentPage = 1; // ค้นหาทั้งหมด: เริ่มที่หน้า 1 ของผลลัพธ์
+        this.currentPage = 1;
         this.getCallsData((this.currentPage - 1) * this.pageSize, this.pageSize);
         this.getPage();
     }
