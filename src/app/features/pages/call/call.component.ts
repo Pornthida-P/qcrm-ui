@@ -449,12 +449,17 @@ export class CallComponent implements OnInit {
         }
     }
 
+    onSearchInput() {
+        this.search();
+    }
+
     search() {
         if (this.selectedFilter !== 'all') {
             this.userId = this.userData.userId;
         } else {
             this.userId = '';
         }
+        this.currentPage = 1; // ค้นหาทั้งหมด: เริ่มที่หน้า 1 ของผลลัพธ์
         this.getCallsData((this.currentPage - 1) * this.pageSize, this.pageSize);
         this.getPage();
     }

@@ -15,6 +15,7 @@
                         name="search"
                         [(ngModel)]="valueSearch"
                         [placeholder]="'common.search' | translate"
+                        (input)="onSearchInput()"
                         (keyup.enter)="search()"
                     />
                     <button class="btn btn-primary-color text-white" (click)="search()">{{ 'common.search' | translate }}</button>
@@ -132,8 +133,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <ng-container *ngIf="(calls | searchFilter: valueSearch : 'all')?.length > 0; else noDataTemplate">
-                                <tr *ngFor="let calls of calls | searchFilter: valueSearch : 'all'; let i = index">
+                            <ng-container *ngIf="calls.length > 0; else noDataTemplate">
+                                <tr *ngFor="let calls of calls; let i = index">
                                     <td class="text-center" *ngIf="!isAgent()">
                                         <input
                                             type="checkbox"
