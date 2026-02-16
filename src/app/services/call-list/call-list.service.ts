@@ -101,4 +101,9 @@ export class CallListService {
             modifiedById,
         });
     }
+
+    getCasePriority(caseId?: string) {
+        const suffix = caseId ? `/${caseId}` : '';
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.casePriority}${suffix}`);
+    }
 }

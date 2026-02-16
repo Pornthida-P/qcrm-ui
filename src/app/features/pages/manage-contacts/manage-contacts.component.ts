@@ -161,6 +161,9 @@ export class ManageContactsComponent implements OnInit {
     contactChatDisplayName: string = '';
     facebookDisplayName: string = '';
     lineDisplayName: string = '';
+    casePriority: any;
+    casePriorities: any[] = [];
+    selectedCasePriority: any;
 
     constructor(
         private contactsService: ContactsService,
@@ -335,6 +338,8 @@ export class ManageContactsComponent implements OnInit {
         if (this.chatId && this.chatId !== '') {
             this.getContactChatId(this.chatId);
         }
+
+        this.getCasePriority(this.caseId);
     }
 
     getStatusList() {
@@ -922,6 +927,7 @@ export class ManageContactsComponent implements OnInit {
                     this.selectedCallStatusId = call.callStatus;
                     this.originalCallStatusId = call.callStatus;
                     this.selectedSentiment = call.sentimentId;
+                    this.selectedCasePriority = call.priority || null;
                     const date = new Date(call.requestDateTime);
                     this.startTime = isNaN(date.getTime()) ? null : date;
                     this.timepickStart = {
@@ -1125,6 +1131,7 @@ export class ManageContactsComponent implements OnInit {
                     uuidLine: this.uuidLine,
                     chatType: this.chatType,
                     firstName: this.displayName,
+                    casePriority: this.selectedCasePriority || null,
                 };
                 console.log('Create Case Data: ', dataForm);
 
@@ -1192,6 +1199,7 @@ export class ManageContactsComponent implements OnInit {
                                   changedBy: userData.userId,
                               }
                             : null,
+                    casePriority: this.selectedCasePriority || null,
                 };
                 console.log('Update Case Data: ', data);
                 this.callServive
@@ -1842,4 +1850,31 @@ export class ManageContactsComponent implements OnInit {
             }
         });
     }
+
+  getCasePriority(caseId?: string) {
+    console.log('caseId: ', caseId);
+    this.callListService.getCasePriority(caseId || '').subscribe((res: any) => {
+      const parsed = typeof res === 'string' ? JSON.parse(res) : res;
+      if (caseId) {
+        this.casePriority = Array.isArray(parsed) ? parsed[0] || null : parsed;
+        this.selectedCasePriority =
+          this.casePriority?.id || this.casePriority?.priorityId || this.casePriority?.casePriorityId || null;
+      } else {
+        this.casePriorities = Array.isArray(parsed) ? parsed : [];
+      }
+      console.log('casePriority: ', this.casePriority);
+    });
+
+      if (caseId) {
+        this.callListService.getCasePriority('').subscribe((res: any) => {
+          const parsed = typeof res === 'string' ? JSON.parse(res) : res;
+          this.casePriorities = Array.isArray(parsed) ? parsed : [];
+          console.log('casePriorities: ', this.casePriorities);
+        });
+      }
+  }
+
+  isPendingStatus(): boolean {
+    return this.selectedStatus == 2;
+  }
 }

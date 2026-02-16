@@ -48,6 +48,7 @@ export const config = {
                 callStatus: '/call-status',
                 callStatusId: '/call-status-id',
                 history: '/history',
+                casePriority: '/case-priority',
             },
             chatHistory: '/chathistory/getchat',
         },

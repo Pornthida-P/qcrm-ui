@@ -879,6 +879,24 @@
                                 </div>
                                 <div class="section-content">
                                     <div class="row g-2">
+                                        <!-- Priority -->
+                                        <div
+                                            class="col-12"
+                                            *ngIf="isPendingStatus() && (casePriority || (casePriorities && casePriorities.length > 0))"
+                                        >
+                                            <label class="form-label form-label-sm fw-semibold mb-1">{{
+                                                'contact.priority' | translate
+                                            }}</label>
+                                            <select class="form-select form-select-sm" name="selectedCasePriority" [(ngModel)]="selectedCasePriority">
+                                                <option [ngValue]="null" disabled>ไม่ระบุ</option>
+                                                <option
+                                                    *ngFor="let priority of casePriorities"
+                                                    [value]="priority.id || priority.priorityId || priority.casePriorityId"
+                                                >
+                                                    {{ priority.name || priority.priority || priority.priorityName }}
+                                                </option>
+                                            </select>
+                                        </div>
                                         <div class="col-12">
                                             <label class="form-label form-label-sm fw-semibold mb-1">{{
                                                 'contact.description' | translate
