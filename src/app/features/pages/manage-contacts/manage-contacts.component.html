@@ -315,6 +315,7 @@
                                         <th class="col-contact d-none d-md-table-cell">{{ 'contact.contact' | translate }}</th>
                                         <th class="col-call-status">{{ 'contact.callStatus' | translate }}</th>
                                         <th class="col-status">{{ 'common.status' | translate }}</th>
+                                        <th class="col-sla">{{ 'contact.sla' | translate }}</th>
                                         <th class="col-manage text-center">{{ 'common.manage' | translate }}</th>
                                     </tr>
                                 </thead>
@@ -441,6 +442,21 @@
                                                     {{ case.status }}
                                                 </span>
                                                 <ng-template #noStatus>
+                                                    <span class="text-muted">-</span>
+                                                </ng-template>
+                                            </td>
+                                            <td class="col-sla">
+                                                <span
+                                                    *ngIf="case.status === 'Pending'"
+                                                    class="badge ms-1"
+                                                    [ngClass]="{
+                                                        'bg-danger': getSlaRemainingMinutes(case) !== null && getSlaRemainingMinutes(case)! <= 0,
+                                                        'bg-warning': getSlaRemainingMinutes(case) !== null && getSlaRemainingMinutes(case)! > 0,
+                                                    }"
+                                                >
+                                                    {{ formatSlaRemaining(case) }}
+                                                </span>
+                                                <ng-template #noSla>
                                                     <span class="text-muted">-</span>
                                                 </ng-template>
                                             </td>
@@ -887,7 +903,11 @@
                                             <label class="form-label form-label-sm fw-semibold mb-1">{{
                                                 'contact.priority' | translate
                                             }}</label>
-                                            <select class="form-select form-select-sm" name="selectedCasePriority" [(ngModel)]="selectedCasePriority">
+                                            <select
+                                                class="form-select form-select-sm"
+                                                name="selectedCasePriority"
+                                                [(ngModel)]="selectedCasePriority"
+                                            >
                                                 <option [ngValue]="null" disabled>ไม่ระบุ</option>
                                                 <option
                                                     *ngFor="let priority of casePriorities"
@@ -1070,30 +1090,77 @@
                                                     <div class="message">{{ chat.message_text }}</div>
                                                 </ng-container>
                                                 <ng-container *ngSwitchCase="'image'">
-                                                    <div class="message image-content" *ngIf="chat.message_text">{{ chat.message_text }}</div>
-                                                    <img *ngIf="chat.message_data?.originalContentUrl" class="message image-content" style="max-width: 100%; height: auto; border-radius: 8px" [src]="chat.message_data.originalContentUrl" alt="" />
+                                                    <div class="message image-content" *ngIf="chat.message_text">
+                                                        {{ chat.message_text }}
+                                                    </div>
+                                                    <img
+                                                        *ngIf="chat.message_data?.originalContentUrl"
+                                                        class="message image-content"
+                                                        style="max-width: 100%; height: auto; border-radius: 8px"
+                                                        [src]="chat.message_data.originalContentUrl"
+                                                        alt=""
+                                                    />
                                                 </ng-container>
                                                 <ng-container *ngSwitchCase="'sticker'">
-                                                    <label *ngIf="!chat.message_data?.originalContentUrl" class="message sticker-content">Sticker</label>
-                                                    <img *ngIf="chat.message_data?.originalContentUrl" class="message sticker-content" style="max-width: 100%; height: auto; border-radius: 8px" [src]="chat.message_data.originalContentUrl" alt="" />
+                                                    <label *ngIf="!chat.message_data?.originalContentUrl" class="message sticker-content"
+                                                        >Sticker</label
+                                                    >
+                                                    <img
+                                                        *ngIf="chat.message_data?.originalContentUrl"
+                                                        class="message sticker-content"
+                                                        style="max-width: 100%; height: auto; border-radius: 8px"
+                                                        [src]="chat.message_data.originalContentUrl"
+                                                        alt=""
+                                                    />
                                                 </ng-container>
                                                 <ng-container *ngSwitchCase="'video'">
-                                                    <video *ngIf="chat.message_data?.originalContentUrl" controls class="message video-content" style="max-width: 100%; border-radius: 8px">
+                                                    <video
+                                                        *ngIf="chat.message_data?.originalContentUrl"
+                                                        controls
+                                                        class="message video-content"
+                                                        style="max-width: 100%; border-radius: 8px"
+                                                    >
                                                         <source [src]="chat.message_data.originalContentUrl" type="video/mp4" />
                                                     </video>
                                                 </ng-container>
                                                 <ng-container *ngSwitchCase="'file'">
                                                     <div class="message" *ngIf="chat.message_text">{{ chat.message_text }}</div>
                                                     <div class="message d-flex flex-column align-items-center gap-2">
-                                                        <span *ngIf="chat.message_data?.file_name" class="text-start w-100" style="overflow-wrap: anywhere">{{ chat.message_data.file_name }}</span>
-                                                        <a *ngIf="chat.message_data?.originalContentUrl" [href]="chat.message_data.originalContentUrl" target="_blank" rel="noopener noreferrer" download class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-cloud-download me-1"></i>Download</a>
+                                                        <span
+                                                            *ngIf="chat.message_data?.file_name"
+                                                            class="text-start w-100"
+                                                            style="overflow-wrap: anywhere"
+                                                            >{{ chat.message_data.file_name }}</span
+                                                        >
+                                                        <a
+                                                            *ngIf="chat.message_data?.originalContentUrl"
+                                                            [href]="chat.message_data.originalContentUrl"
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            download
+                                                            class="btn btn-sm btn-outline-primary"
+                                                            ><i class="fa-solid fa-cloud-download me-1"></i>Download</a
+                                                        >
                                                     </div>
                                                 </ng-container>
                                                 <ng-container *ngSwitchCase="'document'">
                                                     <div class="message" *ngIf="chat.message_text">{{ chat.message_text }}</div>
                                                     <div class="message d-flex flex-column align-items-center gap-2">
-                                                        <span *ngIf="chat.message_data?.file_name" class="text-start w-100" style="overflow-wrap: anywhere">{{ chat.message_data.file_name }}</span>
-                                                        <a *ngIf="chat.message_data?.originalContentUrl" [href]="chat.message_data.originalContentUrl" target="_blank" rel="noopener noreferrer" download class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-cloud-download me-1"></i>Download</a>
+                                                        <span
+                                                            *ngIf="chat.message_data?.file_name"
+                                                            class="text-start w-100"
+                                                            style="overflow-wrap: anywhere"
+                                                            >{{ chat.message_data.file_name }}</span
+                                                        >
+                                                        <a
+                                                            *ngIf="chat.message_data?.originalContentUrl"
+                                                            [href]="chat.message_data.originalContentUrl"
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            download
+                                                            class="btn btn-sm btn-outline-primary"
+                                                            ><i class="fa-solid fa-cloud-download me-1"></i>Download</a
+                                                        >
                                                     </div>
                                                 </ng-container>
                                             </ng-container>
@@ -1158,7 +1225,10 @@
                                 >
                                     <div class="chat-messages">
                                         <ng-container *ngFor="let chat of chatHistory">
-                                            <div *ngIf="chat.message_type === 'system-text' && !isRatingMessage(chat)" class="system-message">
+                                            <div
+                                                *ngIf="chat.message_type === 'system-text' && !isRatingMessage(chat)"
+                                                class="system-message"
+                                            >
                                                 <hr class="system-line" />
                                                 <span class="system-text">{{ chat.message_text }}</span>
                                                 <span class="system-time">{{ chat.timestamp | date: 'HH:mm' }}</span>
@@ -1170,32 +1240,83 @@
                                             >
                                                 <div class="bubble">
                                                     <ng-container [ngSwitch]="chat.message_type">
-                                                        <ng-container *ngSwitchDefault><div class="message">{{ chat.message_text }}</div></ng-container>
+                                                        <ng-container *ngSwitchDefault
+                                                            ><div class="message">{{ chat.message_text }}</div></ng-container
+                                                        >
                                                         <ng-container *ngSwitchCase="'image'">
-                                                            <div class="message image-content" *ngIf="chat.message_text">{{ chat.message_text }}</div>
-                                                            <img *ngIf="chat.message_data?.originalContentUrl" class="message image-content" style="max-width: 100%; height: auto; border-radius: 8px" [src]="chat.message_data.originalContentUrl" alt="" />
+                                                            <div class="message image-content" *ngIf="chat.message_text">
+                                                                {{ chat.message_text }}
+                                                            </div>
+                                                            <img
+                                                                *ngIf="chat.message_data?.originalContentUrl"
+                                                                class="message image-content"
+                                                                style="max-width: 100%; height: auto; border-radius: 8px"
+                                                                [src]="chat.message_data.originalContentUrl"
+                                                                alt=""
+                                                            />
                                                         </ng-container>
                                                         <ng-container *ngSwitchCase="'sticker'">
-                                                            <label *ngIf="!chat.message_data?.originalContentUrl" class="message sticker-content">Sticker</label>
-                                                            <img *ngIf="chat.message_data?.originalContentUrl" class="message sticker-content" style="max-width: 100%; height: auto; border-radius: 8px" [src]="chat.message_data.originalContentUrl" alt="" />
+                                                            <label
+                                                                *ngIf="!chat.message_data?.originalContentUrl"
+                                                                class="message sticker-content"
+                                                                >Sticker</label
+                                                            >
+                                                            <img
+                                                                *ngIf="chat.message_data?.originalContentUrl"
+                                                                class="message sticker-content"
+                                                                style="max-width: 100%; height: auto; border-radius: 8px"
+                                                                [src]="chat.message_data.originalContentUrl"
+                                                                alt=""
+                                                            />
                                                         </ng-container>
                                                         <ng-container *ngSwitchCase="'video'">
-                                                            <video *ngIf="chat.message_data?.originalContentUrl" controls class="message video-content" style="max-width: 100%; border-radius: 8px">
+                                                            <video
+                                                                *ngIf="chat.message_data?.originalContentUrl"
+                                                                controls
+                                                                class="message video-content"
+                                                                style="max-width: 100%; border-radius: 8px"
+                                                            >
                                                                 <source [src]="chat.message_data.originalContentUrl" type="video/mp4" />
                                                             </video>
                                                         </ng-container>
                                                         <ng-container *ngSwitchCase="'file'">
                                                             <div class="message" *ngIf="chat.message_text">{{ chat.message_text }}</div>
                                                             <div class="message d-flex flex-column align-items-center gap-2">
-                                                                <span *ngIf="chat.message_data?.file_name" class="text-start w-100" style="overflow-wrap: anywhere">{{ chat.message_data.file_name }}</span>
-                                                                <a *ngIf="chat.message_data?.originalContentUrl" [href]="chat.message_data.originalContentUrl" target="_blank" rel="noopener noreferrer" download class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-cloud-download me-1"></i>Download</a>
+                                                                <span
+                                                                    *ngIf="chat.message_data?.file_name"
+                                                                    class="text-start w-100"
+                                                                    style="overflow-wrap: anywhere"
+                                                                    >{{ chat.message_data.file_name }}</span
+                                                                >
+                                                                <a
+                                                                    *ngIf="chat.message_data?.originalContentUrl"
+                                                                    [href]="chat.message_data.originalContentUrl"
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    download
+                                                                    class="btn btn-sm btn-outline-primary"
+                                                                    ><i class="fa-solid fa-cloud-download me-1"></i>Download</a
+                                                                >
                                                             </div>
                                                         </ng-container>
                                                         <ng-container *ngSwitchCase="'document'">
                                                             <div class="message" *ngIf="chat.message_text">{{ chat.message_text }}</div>
                                                             <div class="message d-flex flex-column align-items-center gap-2">
-                                                                <span *ngIf="chat.message_data?.file_name" class="text-start w-100" style="overflow-wrap: anywhere">{{ chat.message_data.file_name }}</span>
-                                                                <a *ngIf="chat.message_data?.originalContentUrl" [href]="chat.message_data.originalContentUrl" target="_blank" rel="noopener noreferrer" download class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-cloud-download me-1"></i>Download</a>
+                                                                <span
+                                                                    *ngIf="chat.message_data?.file_name"
+                                                                    class="text-start w-100"
+                                                                    style="overflow-wrap: anywhere"
+                                                                    >{{ chat.message_data.file_name }}</span
+                                                                >
+                                                                <a
+                                                                    *ngIf="chat.message_data?.originalContentUrl"
+                                                                    [href]="chat.message_data.originalContentUrl"
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    download
+                                                                    class="btn btn-sm btn-outline-primary"
+                                                                    ><i class="fa-solid fa-cloud-download me-1"></i>Download</a
+                                                                >
                                                             </div>
                                                         </ng-container>
                                                     </ng-container>

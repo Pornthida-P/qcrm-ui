@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ContactsService } from 'src/app/services/contacts/contacts.service';
 import { catchError, finalize, of, switchMap, take, tap } from 'rxjs';
@@ -24,7 +24,7 @@ import { StatusService } from 'src/app/services/status/status.service';
     templateUrl: './manage-contacts.component.html',
     styleUrls: ['./manage-contacts.component.scss'],
 })
-export class ManageContactsComponent implements OnInit {
+export class ManageContactsComponent implements OnInit, OnDestroy {
     private readonly socialChannelIds: string[] = ['4', '5'];
     MultiNumber: boolean = false;
     contactCall: any[] = [];
@@ -164,6 +164,8 @@ export class ManageContactsComponent implements OnInit {
     casePriority: any;
     casePriorities: any[] = [];
     selectedCasePriority: any;
+    private slaTimerId: any;
+    private slaNowMs: number = Date.now();
 
     constructor(
         private contactsService: ContactsService,
@@ -194,6 +196,11 @@ export class ManageContactsComponent implements OnInit {
                     if (u.role?.roleTitle) this.userRole = u.role.roleTitle.toLocaleLowerCase();
                 }
             });
+
+        this.slaNowMs = Date.now();
+        this.slaTimerId = setInterval(() => {
+            this.slaNowMs = Date.now();
+        }, 60000);
 
         const state = history.state;
         if (state.itemId) {
@@ -340,6 +347,12 @@ export class ManageContactsComponent implements OnInit {
         }
 
         this.getCasePriority(this.caseId);
+    }
+
+    ngOnDestroy(): void {
+        if (this.slaTimerId) {
+            clearInterval(this.slaTimerId);
+        }
     }
 
     getStatusList() {
@@ -1876,5 +1889,43 @@ export class ManageContactsComponent implements OnInit {
 
   isPendingStatus(): boolean {
     return this.selectedStatus == 2;
+  }
+
+    getSlaRemainingMinutes(caseItem: any): number | null {
+        if (!caseItem) {
+            return null;
+        }
+
+        if (caseItem.slaDueAt) {
+            const dueMs = new Date(caseItem.slaDueAt).getTime();
+            if (!Number.isNaN(dueMs)) {
+                return Math.ceil((dueMs - this.slaNowMs) / 60000);
+            }
+        }
+
+        if (caseItem.slaRemainingMinutes !== null && caseItem.slaRemainingMinutes !== undefined && caseItem.slaRemainingMinutes !== '') {
+            const fallback = Number(caseItem.slaRemainingMinutes);
+            return Number.isNaN(fallback) ? null : fallback;
+        }
+
+        return null;
+    }
+
+    formatSlaRemaining(caseItem: any): string {
+        const value = this.getSlaRemainingMinutes(caseItem);
+        if (value === null) {
+            return '-';
+        }
+
+        const isOverdue = value <= 0;
+        const absValue = Math.abs(value);
+    const hours = Math.floor(absValue / 60);
+    const mins = absValue % 60;
+    const prefix = isOverdue ? 'เกิน' : 'เหลือ';
+
+    if (hours > 0) {
+      return `${prefix} ${hours} ชม ${mins} นาที`;
+    }
+    return `${prefix} ${mins} นาที`;
   }
 }
