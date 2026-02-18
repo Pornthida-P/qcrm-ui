@@ -1,4 +1,4 @@
-import { Component, Pipe, PipeTransform, OnInit } from '@angular/core';
+import { Component, Pipe, PipeTransform, OnInit, OnDestroy } from '@angular/core';
 import { faPenToSquare, faTrashCan, faArrowRight, faArrowLeft, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { CallService } from 'src/app/services/call/call.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -44,7 +44,7 @@ export class SearchPipe implements PipeTransform {
     templateUrl: './call.component.html',
     styleUrls: ['./call.component.scss'],
 })
-export class CallComponent implements OnInit {
+export class CallComponent implements OnInit, OnDestroy {
     value: string | undefined;
 
     calls: any[] = [];
@@ -122,6 +122,9 @@ export class CallComponent implements OnInit {
     searchContactShowing: boolean = false;
 
     selectedCallTypeId: string = '';
+    private slaTimerId: any;
+    private slaNowMs: number = Date.now();
+    private slaStampedKeys: Set<string> = new Set();
     activityTypeById: any;
     activitiesTopic: any;
     selectedCheckboxIds: any;
@@ -157,6 +160,10 @@ export class CallComponent implements OnInit {
     contactNumber: any;
     statusList: any[] = [];
     selectedStatus: any;
+    casePriority: any;
+    casePriorities: any[] = [];
+    selectedCasePriority: any;
+    private pendingCasePriorityId: number | null = null;
 
     comment: any;
     comments: any[] = [];
@@ -226,6 +233,12 @@ export class CallComponent implements OnInit {
             this.updateFilterOptions();
         });
 
+        this.slaNowMs = Date.now();
+        this.slaTimerId = setInterval(() => {
+            this.slaNowMs = Date.now();
+            this.stampOverdueCases();
+        }, 60000);
+
         this.activeRoute.queryParams.subscribe((params) => {
             if (params['cb'] != undefined && params['cb'] != '') {
                 const cbArray = params['cb'].split(',').map(Number);
@@ -292,6 +305,12 @@ export class CallComponent implements OnInit {
         this.getSentiments();
     }
 
+    ngOnDestroy(): void {
+        if (this.slaTimerId) {
+            clearInterval(this.slaTimerId);
+        }
+    }
+
     getComment(caseId: string) {
         this.callListService.getComment(caseId).subscribe((res: any) => {
             this.comments = res;
@@ -348,6 +367,7 @@ export class CallComponent implements OnInit {
                         call.type = this.outbound;
                     }
                 });
+                this.stampOverdueCases();
             });
     }
 
@@ -686,6 +706,8 @@ export class CallComponent implements OnInit {
             this.channels = channels;
             this.selectedChannels = this.currentChannel || '';
         });
+
+        this.getCasePriority();
     }
 
     editCall(callId: string, contactId: string) {
@@ -695,6 +717,7 @@ export class CallComponent implements OnInit {
         this.attachmentShowing = false;
         this.cType = '';
         this.callId = '';
+        this.selectedCasePriority = null;
         this.attachments = [];
         this.selectedChannels = '';
         this.activityTypeId = '';
@@ -759,6 +782,7 @@ export class CallComponent implements OnInit {
                                         return;
                                     }
 
+                                    console.log('Edit Call: ', call);
                                     this.cType = 'case';
                                     this.callId = call.caseId;
                                     this.description = call.description;
@@ -781,6 +805,11 @@ export class CallComponent implements OnInit {
                                     }
                                     this.selectedStatus = call.statusId;
                                     this.selectedSentiment = call.sentimentId;
+                                    this.pendingCasePriorityId =
+                                        call.priority !== null && call.priority !== undefined ? Number(call.priority) : null;
+                                    this.selectedCasePriority = this.pendingCasePriorityId;
+                                    console.log('Edit Call priority:', call.priority, 'selectedCasePriority:', this.selectedCasePriority);
+                                    this.getCasePriority(call.caseId);
                                     const rawAttachments =
                                         call.attachment ||
                                         call.attachments ||
@@ -958,6 +987,87 @@ export class CallComponent implements OnInit {
         this.attachments = this.attachments.filter((attachment) => attachment.attachmentId !== attachmentId);
     }
 
+    isPendingStatus(): boolean {
+        return this.selectedStatus == 2;
+    }
+
+    toNumber(value: any): number {
+        const parsed = Number(value);
+        return Number.isNaN(parsed) ? 0 : parsed;
+    }
+
+    getCasePriority(caseId?: string) {
+        this.callListService.getCasePriority(caseId || '').subscribe((res: any) => {
+            const parsed = typeof res === 'string' ? JSON.parse(res) : res;
+            if (caseId) {
+                this.casePriority = Array.isArray(parsed) ? parsed[0] || null : parsed;
+            } else {
+                this.casePriorities = Array.isArray(parsed) ? parsed : [];
+                if (this.pendingCasePriorityId !== null && this.pendingCasePriorityId !== undefined) {
+                    this.selectedCasePriority = this.pendingCasePriorityId;
+                }
+            }
+        });
+
+        if (caseId) {
+            this.callListService.getCasePriority('').subscribe((res: any) => {
+                const parsed = typeof res === 'string' ? JSON.parse(res) : res;
+                this.casePriorities = Array.isArray(parsed) ? parsed : [];
+                if (this.pendingCasePriorityId !== null && this.pendingCasePriorityId !== undefined) {
+                    this.selectedCasePriority = this.pendingCasePriorityId;
+                }
+            });
+        }
+    }
+
+    private stampOverdueCases(): void {
+        if (!Array.isArray(this.calls) || this.calls.length === 0) {
+            return;
+        }
+
+        this.calls.forEach((caseItem: any) => {
+            if (!caseItem || caseItem.status !== 'Pending') {
+                return;
+            }
+
+            const priorityId = caseItem.priority || caseItem.priorityId || caseItem.casePriorityId;
+            if (!priorityId) {
+                return;
+            }
+
+            const hasSlaValue =
+                !!caseItem.slaDueAt ||
+                (caseItem.slaRemainingMinutes !== null &&
+                    caseItem.slaRemainingMinutes !== undefined &&
+                    caseItem.slaRemainingMinutes !== '');
+            if (!hasSlaValue) {
+                return;
+            }
+
+            const remaining = this.getSlaRemainingMinutes(caseItem);
+            if (remaining === null || remaining > 0) {
+                return;
+            }
+
+            const key = `${caseItem.caseId}:${priorityId}`;
+            if (this.slaStampedKeys.has(key)) {
+                return;
+            }
+
+            this.slaStampedKeys.add(key);
+            this.callListService
+                .getCasePriorityOverDue({ caseId: caseItem.caseId, priorityId })
+                .pipe(
+                    catchError((error) => {
+                        this.slaStampedKeys.delete(key);
+                        this.sweetalertServices.handleError(error);
+                        throw error;
+                    }),
+                )
+                .subscribe();
+        });
+    }
+
     get canUploadAttachments(): boolean {
         return this.attachmentShowing || this.cType === 'case';
     }
@@ -1037,6 +1147,7 @@ export class CallComponent implements OnInit {
                     operationType: this.selectedCallTypeId,
                     comment: this.comment,
                     sentimentId: this.selectedSentiment,
+                    casePriority: this.selectedCasePriority || null,
                 };
                 console.log('Data: ', data);
                 this.callService
@@ -1091,6 +1202,7 @@ export class CallComponent implements OnInit {
                     callStatus: this.selectedCallStatusId,
                     sentimentId: this.selectedSentiment,
                     attachment: this.attachmentsId,
+                    casePriority: this.selectedCasePriority || null,
                     statusChange:
                         this.selectedStatus !== this.originalStatus
                             ? {
@@ -1657,4 +1769,38 @@ export class CallComponent implements OnInit {
             this.filterDateType = this.filterDate[0].type;
         }
     }
+
+  getSlaRemainingMinutes(call: any): number | null {
+    if (!call) return null;
+
+    if (call.slaDueAt) {
+      const dueMs = new Date(call.slaDueAt).getTime();
+      if (!Number.isNaN(dueMs)) {
+        return Math.ceil((dueMs - this.slaNowMs) / 60000);
+      }
+    }
+
+    if (call.slaRemainingMinutes !== null && call.slaRemainingMinutes !== undefined && call.slaRemainingMinutes !== '') {
+      const fallback = Number(call.slaRemainingMinutes);
+      return Number.isNaN(fallback) ? null : fallback;
+    }
+
+    return null;
+  }
+
+  formatSlaRemaining(call: any): string {
+    const remaining = this.getSlaRemainingMinutes(call);
+    if (remaining === null) return '-';
+
+    const isOverdue = remaining <= 0;
+    const absValue = Math.abs(remaining);
+    const hours = Math.floor(absValue / 60);
+    const mins = absValue % 60;
+    const prefix = isOverdue ? 'เกิน' : 'เหลือ';
+
+    if (hours > 0) {
+      return `${prefix} ${hours} ชม ${mins} นาที`;
+    }
+    return `${prefix} ${mins} นาที`;
+  }
 }
