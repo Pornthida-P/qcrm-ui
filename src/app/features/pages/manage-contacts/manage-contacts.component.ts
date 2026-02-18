@@ -166,6 +166,7 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
     selectedCasePriority: any;
     private slaTimerId: any;
     private slaNowMs: number = Date.now();
+    private slaStampedKeys: Set<string> = new Set();
 
     constructor(
         private contactsService: ContactsService,
@@ -200,6 +201,7 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
         this.slaNowMs = Date.now();
         this.slaTimerId = setInterval(() => {
             this.slaNowMs = Date.now();
+            this.stampOverdueCases();
         }, 60000);
 
         const state = history.state;
@@ -402,6 +404,7 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
 
         await this.contactsService.getContactCall(contactId).subscribe((res: any) => {
             this.contactCall = res;
+            this.stampOverdueCases();
         });
 
         await this.callServive.getContactNumbertById(contactId).subscribe((res: any) => {
@@ -1928,4 +1931,52 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
     }
     return `${prefix} ${mins} นาที`;
   }
+
+    private stampOverdueCases(): void {
+        if (!Array.isArray(this.contactCall) || this.contactCall.length === 0) {
+            return;
+        }
+
+        this.contactCall.forEach((caseItem: any) => {
+            if (!caseItem || caseItem.status !== 'Pending') {
+                return;
+            }
+
+            const priorityId = caseItem.priority || caseItem.priorityId || caseItem.casePriorityId;
+            if (!priorityId) {
+                return;
+            }
+
+            const hasSlaValue =
+                !!caseItem.slaDueAt ||
+                (caseItem.slaRemainingMinutes !== null &&
+                    caseItem.slaRemainingMinutes !== undefined &&
+                    caseItem.slaRemainingMinutes !== '');
+            if (!hasSlaValue) {
+                return;
+            }
+
+            const remaining = this.getSlaRemainingMinutes(caseItem);
+            if (remaining === null || remaining > 0) {
+                return;
+            }
+
+            const key = `${caseItem.caseId}:${priorityId}`;
+            if (this.slaStampedKeys.has(key)) {
+                return;
+            }
+
+            this.slaStampedKeys.add(key);
+            this.callListService
+                .getCasePriorityOverDue({ caseId: caseItem.caseId, priorityId })
+                .pipe(
+                    catchError((error) => {
+                        this.slaStampedKeys.delete(key);
+                        this.sweetalertServices.handleError(error);
+                        throw error;
+                    }),
+                )
+                .subscribe();
+        });
+    }
 }

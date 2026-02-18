@@ -106,4 +106,8 @@ export class CallListService {
         const suffix = caseId ? `/${caseId}` : '';
         return this.http.get(`${this.baseUrl}${config.api.path.callList.casePriority}${suffix}`);
     }
+
+    getCasePriorityOverDue(body: any) {
+        return this.http.post(`${this.baseUrl}${config.api.path.callList.casePriorityOverDue}`, body);
+    }
 }
