@@ -140,6 +140,8 @@ export class CreateCallComponent {
     contactNumbers: any;
     selectedContactNumber: { contactNumber: string; contactNumberId: string } | null = null;
     statusList: any[] = [];
+    casePriorities: any[] = [];
+    selectedCasePriority: any = null;
 
     // Autocomplete controls
     codeControl = new FormControl('');
@@ -305,6 +307,7 @@ export class CreateCallComponent {
         ];
 
         this.getStatusList();
+        this.getCasePriority();
     }
 
     submit() {
@@ -363,6 +366,7 @@ export class CreateCallComponent {
             assignedUserId: null,
             attachment: this.attachmentsId,
             comment: this.comment,
+            casePriority: this.selectedCasePriority || null,
         };
         this.callServive
             .createCase(dataForm)
@@ -398,6 +402,17 @@ export class CreateCallComponent {
                 }),
             )
             .subscribe();
+    }
+
+    isPendingStatus(): boolean {
+        return this.selectedStatus == 2;
+    }
+
+    getCasePriority(caseId?: string) {
+        this.callListService.getCasePriority(caseId || '').subscribe((res: any) => {
+            const parsed = typeof res === 'string' ? JSON.parse(res) : res;
+            this.casePriorities = Array.isArray(parsed) ? parsed : [];
+        });
     }
 
     onChannelChange(channelId: string) {
