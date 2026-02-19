@@ -54,6 +54,8 @@ export class HomePageComponent implements OnInit, OnDestroy {
     private searchTimeout: any;
     private langChangeSub: any;
     updateFlag: boolean = false;
+    private slaTimerId: any;
+    private slaNowMs: number = Date.now();
 
     Highcharts: typeof Highcharts = Highcharts;
     caseChartOptions: Highcharts.Options = {
@@ -219,11 +221,19 @@ export class HomePageComponent implements OnInit, OnDestroy {
         this.getCaseChannel();
         this.initChart(this.caseChannel, this.caseCode);
         this.getAllContactCount();
+
+        this.slaNowMs = Date.now();
+        this.slaTimerId = setInterval(() => {
+            this.slaNowMs = Date.now();
+        }, 60000);
     }
 
     ngOnDestroy(): void {
         if (this.langChangeSub) {
             this.langChangeSub.unsubscribe();
+        }
+        if (this.slaTimerId) {
+            clearInterval(this.slaTimerId);
         }
     }
 
@@ -606,5 +616,41 @@ export class HomePageComponent implements OnInit, OnDestroy {
         this.router.navigate(['/contacts/edit'], {
             queryParams: { caseId, key: contactId },
         });
+    }
+
+    getSlaRemainingMinutes(caseItem: any): number | null {
+        if (!caseItem || caseItem.status !== 'Pending') {
+            return null;
+        }
+        if (caseItem.slaDueAt) {
+            const dueMs = new Date(caseItem.slaDueAt).getTime();
+            if (!Number.isNaN(dueMs)) {
+                return Math.ceil((dueMs - this.slaNowMs) / 60000);
+            }
+        }
+
+        if (caseItem.slaRemainingMinutes !== null && caseItem.slaRemainingMinutes !== undefined && caseItem.slaRemainingMinutes !== '') {
+            const fallback = Number(caseItem.slaRemainingMinutes);
+            return Number.isNaN(fallback) ? null : fallback;
+        }
+
+        return null;
+    }
+
+    formatSlaRemaining(caseItem: any): string {
+        const value = this.getSlaRemainingMinutes(caseItem);
+        if (value === null) {
+            return '-';
+        }
+        const isOverdue = value <= 0;
+        const absValue = Math.abs(value);
+        const hours = Math.floor(absValue / 60);
+        const mins = absValue % 60;
+        const prefix = isOverdue ? 'เกิน' : 'เหลือ';
+
+        if (hours > 0) {
+            return `${prefix} ${hours} ชม ${mins} นาที`;
+        }
+        return `${prefix} ${mins} นาที`;
     }
 }
