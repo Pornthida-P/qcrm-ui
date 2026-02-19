@@ -259,6 +259,7 @@
                                     <th scope="col" class="d-none d-lg-table-cell">{{ 'contact.contact' | translate }}</th>
                                     <th scope="col" class="d-none d-md-table-cell">{{ 'contact.callStatus' | translate }}</th>
                                     <th scope="col">{{ 'common.status' | translate }}</th>
+                                    <th scope="col">{{ 'contact.sla' | translate }}</th>
                                     <th scope="col" class="text-center">{{ 'common.manage' | translate }}</th>
                                 </tr>
                             </thead>
@@ -367,6 +368,14 @@
                                                 {{ caseItem.status }}
                                             </span>
                                             <ng-template #noStatus>-</ng-template>
+                                        </td>
+                                        <td>
+                                            <span *ngIf="caseItem.status === 'Pending'" class="badge ms-1" [ngClass]="{
+                                                'bg-danger': getSlaRemainingMinutes(caseItem) !== null && getSlaRemainingMinutes(caseItem)! <= 0,
+                                                'bg-warning': getSlaRemainingMinutes(caseItem) !== null && getSlaRemainingMinutes(caseItem)! > 0,
+                                            }">
+                                                {{ formatSlaRemaining(caseItem) }}
+                                            </span>
                                         </td>
                                         <!-- Manage Button -->
                                         <td class="text-center">
