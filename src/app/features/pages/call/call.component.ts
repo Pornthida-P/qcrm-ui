@@ -1184,7 +1184,7 @@ export class CallComponent implements OnInit, OnDestroy {
             }
         } else if (this.callId && this.cType === 'case') {
             console.log('Edit Case:', this.callId);
-            if (this.selectedCaseCode || this.chatId) {
+            if (this.selectedCaseCode || this.chatId || (this.callId && this.cType === 'case')) {
                 const data = {
                     callId: this.callId,
                     caseCodeId: this.selectedCaseCode,
