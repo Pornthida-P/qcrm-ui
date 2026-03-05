@@ -50,6 +50,11 @@ export class StatusService {
             backgroundColor: '#1877F2',
             icon: 'fa-brands fa-facebook-messenger',
         },
+        'facebook (comment)': {
+            color: '#ffffff',
+            backgroundColor: '#6a6ce2',
+            icon: 'fa-brands fa-facebook-f',
+        },
     };
 
     private defaultColors = ['#FB5F20', '#010966', '#006400', '#6c757d', '#ffc107', '#dc3545'];
