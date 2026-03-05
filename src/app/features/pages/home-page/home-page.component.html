@@ -239,6 +239,19 @@
             <div class="bg-white rounded shadow p-3 p-md-4">
                 <p class="mb-3 mb-md-4 fw-bold text-left">{{ 'dashboard.case' | translate }}</p>
                 <div class="table-card">
+                    <div class="input-group flex-grow-1" style="min-width: 180px">
+                        <input
+                            id="table-complete-search"
+                            type="text"
+                            class="form-control shadow-none"
+                            name="search"
+                            [(ngModel)]="valueSearch"
+                            [placeholder]="'common.search' | translate"
+                            (input)="onSearchInput()"
+                            (keyup.enter)="search()"
+                        />
+                        <button class="btn btn-primary-color text-white" (click)="search()">{{ 'common.search' | translate }}</button>
+                    </div>
                     <div class="table-scroll-container">
                         <table class="table table-hover custom-table mb-0 table-fixed-header">
                             <thead>
@@ -370,10 +383,16 @@
                                             <ng-template #noStatus>-</ng-template>
                                         </td>
                                         <td>
-                                            <span *ngIf="caseItem.status === 'Pending'" class="badge ms-1" [ngClass]="{
-                                                'bg-danger': getSlaRemainingMinutes(caseItem) !== null && getSlaRemainingMinutes(caseItem)! <= 0,
-                                                'bg-warning': getSlaRemainingMinutes(caseItem) !== null && getSlaRemainingMinutes(caseItem)! > 0,
-                                            }">
+                                            <span
+                                                *ngIf="caseItem.status === 'Pending'"
+                                                class="badge ms-1"
+                                                [ngClass]="{
+                                                    'bg-danger':
+                                                        getSlaRemainingMinutes(caseItem) !== null && getSlaRemainingMinutes(caseItem)! <= 0,
+                                                    'bg-warning':
+                                                        getSlaRemainingMinutes(caseItem) !== null && getSlaRemainingMinutes(caseItem)! > 0,
+                                                }"
+                                            >
                                                 {{ formatSlaRemaining(caseItem) }}
                                             </span>
                                         </td>
