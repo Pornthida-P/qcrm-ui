@@ -51,6 +51,8 @@ export class HomePageComponent implements OnInit, OnDestroy {
     agentWorkload: any[] = [];
     isAdmin: boolean = false;
 
+    valueSearch: string = '';
+
     private searchTimeout: any;
     private langChangeSub: any;
     updateFlag: boolean = false;
@@ -273,7 +275,10 @@ export class HomePageComponent implements OnInit, OnDestroy {
         const page = this.currentPage - 1; // Convert to 0-based index for API
         const pageSize = this.pageSize;
         const sortId = 'createdAt,DESC';
-        const searchTextParam = this.searchText && this.searchText.trim() ? this.searchText.trim() : 'undefined';
+        const searchTextParam =
+            this.valueSearch != null && String(this.valueSearch).trim() !== ''
+                ? String(this.valueSearch).trim()
+                : 'undefined';
         const dateFilterType = this.dateFilterType || 'toDay';
         let startDate = '';
         let endDate = '';
@@ -652,5 +657,10 @@ export class HomePageComponent implements OnInit, OnDestroy {
             return `${prefix} ${hours} ชม ${mins} นาที`;
         }
         return `${prefix} ${mins} นาที`;
+    }
+
+    search(): void {
+        this.currentPage = 1;
+        this.loadTodayCases();
     }
 }
