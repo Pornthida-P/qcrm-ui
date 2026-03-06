@@ -1051,6 +1051,32 @@ label:has(+ input:required):after {
     }
 }
 
+.reply-date-row {
+    .col-md-7,
+    .col-md-5 {
+        display: flex;
+        align-items: center;
+    }
+
+    .form-select-reply {
+        width: 100%;
+        min-height: 38px;
+        height: 38px;
+    }
+
+    .datetime-inline-wrapper.compact {
+        display: flex;
+        align-items: center;
+        min-height: 38px;
+
+        .date-input-section .input-group-sm .form-control,
+        .date-input-section .input-group-sm .input-group-text {
+            height: 38px;
+            min-height: 38px;
+        }
+    }
+}
+
 ::ng-deep .time-picker-inline.compact {
     .ngb-tp-input-container {
         width: 40px;

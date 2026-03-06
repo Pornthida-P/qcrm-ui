@@ -450,8 +450,10 @@
                                                     *ngIf="case.status === 'Pending'"
                                                     class="badge ms-1"
                                                     [ngClass]="{
-                                                        'bg-danger': getSlaRemainingMinutes(case) !== null && getSlaRemainingMinutes(case)! <= 0,
-                                                        'bg-warning': getSlaRemainingMinutes(case) !== null && getSlaRemainingMinutes(case)! > 0,
+                                                        'bg-danger':
+                                                            getSlaRemainingMinutes(case) !== null && getSlaRemainingMinutes(case)! <= 0,
+                                                        'bg-warning':
+                                                            getSlaRemainingMinutes(case) !== null && getSlaRemainingMinutes(case)! > 0,
                                                     }"
                                                 >
                                                     {{ formatSlaRemaining(case) }}
@@ -917,6 +919,189 @@
                                                 </option>
                                             </select>
                                         </div>
+
+                                        <!-- Send To + Date -->
+                                        <div
+                                            class="col-12"
+                                            *ngIf="
+                                                isPendingStatus() &&
+                                                (inspectionCompany || (inspectionCompany && inspectionCompany.length > 0))
+                                            "
+                                        >
+                                            <label class="form-label form-label-sm fw-semibold mb-1">{{
+                                                'contact.sendTo' | translate
+                                            }}</label>
+                                            <div class="row g-2 align-items-end">
+                                                <div class="col-md-7">
+                                                    <ng-select
+                                                        id="inputSendTo"
+                                                        [(ngModel)]="selectedInspectionCompanies"
+                                                        name="selectedInspectionCompanies"
+                                                        [multiple]="true"
+                                                        [placeholder]="'common.pleaseSelect' | translate"
+                                                    >
+                                                        <ng-option
+                                                            *ngFor="let company of inspectionCompany"
+                                                            [value]="company.id || company.companyId || company.inspectionCompanyId"
+                                                        >
+                                                            {{ company.name || company.company || company.inspectionCompanyName }}
+                                                        </ng-option>
+                                                    </ng-select>
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <div class="datetime-inline-wrapper compact">
+                                                        <div class="date-input-section">
+                                                            <div class="input-group input-group-sm">
+                                                                <input
+                                                                    matInput
+                                                                    [matDatepicker]="pickerInspection"
+                                                                    name="inspectionCompanyDate"
+                                                                    [(ngModel)]="inspectionCompanyDate"
+                                                                    class="form-control form-control-sm"
+                                                                    [placeholder]="'common.selectDate' | translate"
+                                                                />
+                                                                <span class="input-group-text">
+                                                                    <mat-datepicker-toggle matSuffix [for]="pickerInspection"></mat-datepicker-toggle>
+                                                                    <mat-datepicker #pickerInspection></mat-datepicker>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="time-input-section">
+                                                            <ngb-timepicker
+                                                                name="inspectionCompanyTime"
+                                                                [(ngModel)]="inspectionCompanyTime"
+                                                                [seconds]="seconds"
+                                                                [ngModelOptions]="{ standalone: true }"
+                                                                class="time-picker-inline compact"
+                                                            ></ngb-timepicker>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Reply (options = group 1 only) + Date -->
+                                        <div
+                                            class="col-12"
+                                            *ngIf="
+                                                isPendingStatus() &&
+                                                (inspectionCompany || (inspectionCompany && inspectionCompany.length > 0))
+                                            "
+                                        >
+                                            <label class="form-label form-label-sm fw-semibold mb-1">{{
+                                                'contact.reply' | translate
+                                            }} ({{ 'contact.ci' | translate }})</label>
+                                            <div class="row g-2 align-items-center reply-date-row">
+                                                <div class="col-md-7">
+                                                    <select
+                                                        class="form-select form-select-sm form-select-reply"
+                                                        name="selectedInspectionCompany"
+                                                        [(ngModel)]="selectedInspectionCompany"
+                                                    >
+                                                        <option [ngValue]="null" disabled>ไม่ระบุ</option>
+                                                        <option
+                                                            *ngFor="let company of inspectionCompanyGroup1"
+                                                            [value]="company.id || company.companyId || company.inspectionCompanyId"
+                                                        >
+                                                            {{ company.name || company.company || company.inspectionCompanyName }}
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <div class="datetime-inline-wrapper compact">
+                                                        <div class="date-input-section">
+                                                            <div class="input-group input-group-sm">
+                                                                <input
+                                                                    matInput
+                                                                    [matDatepicker]="pickerReply"
+                                                                    name="inspectionCompanyReplyDate"
+                                                                    [(ngModel)]="inspectionCompanyReplyDate"
+                                                                    class="form-control form-control-sm"
+                                                                    [placeholder]="'common.selectDate' | translate"
+                                                                    [disabled]="isDateDisabled"
+                                                                />
+                                                                <span class="input-group-text">
+                                                                    <mat-datepicker-toggle matSuffix [for]="pickerReply"></mat-datepicker-toggle>
+                                                                    <mat-datepicker #pickerReply></mat-datepicker>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="time-input-section">
+                                                            <ngb-timepicker
+                                                                name="inspectionCompanyReplyTime"
+                                                                [(ngModel)]="inspectionCompanyReplyTime"
+                                                                [seconds]="seconds"
+                                                                [ngModelOptions]="{ standalone: true }"
+                                                                class="time-picker-inline compact"
+                                                                [disabled]="isDateDisabled"
+                                                            ></ngb-timepicker>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Reply TTB (options = group 2 only) + Date -->
+                                        <div
+                                            class="col-12"
+                                            *ngIf="
+                                                isPendingStatus() &&
+                                                (inspectionCompany || (inspectionCompany && inspectionCompany.length > 0))
+                                            "
+                                        >
+                                            <label class="form-label form-label-sm fw-semibold mb-1">{{
+                                                'contact.reply' | translate
+                                            }} ({{ 'contact.ttb' | translate }})</label>
+                                            <div class="row g-2 align-items-center reply-date-row">
+                                                <div class="col-md-7">
+                                                    <select
+                                                        class="form-select form-select-sm form-select-reply"
+                                                        name="selectedInspectionCompanyTtb"
+                                                        [(ngModel)]="selectedInspectionCompanyTtb"
+                                                    >
+                                                        <option [ngValue]="null" disabled>ไม่ระบุ</option>
+                                                        <option
+                                                            *ngFor="let company of inspectionCompanyGroup2"
+                                                            [value]="company.id || company.companyId || company.inspectionCompanyId"
+                                                        >
+                                                            {{ company.name || company.company || company.inspectionCompanyName }}
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <div class="datetime-inline-wrapper compact">
+                                                        <div class="date-input-section">
+                                                            <div class="input-group input-group-sm">
+                                                                <input
+                                                                    matInput
+                                                                    [matDatepicker]="pickerReplyTtb"
+                                                                    name="inspectionCompanyReplyDateTtb"
+                                                                    [(ngModel)]="inspectionCompanyReplyDateTtb"
+                                                                    class="form-control form-control-sm"
+                                                                    [placeholder]="'common.selectDate' | translate"
+                                                                    [disabled]="isDateDisabled"
+                                                                />
+                                                                <span class="input-group-text">
+                                                                    <mat-datepicker-toggle matSuffix [for]="pickerReplyTtb"></mat-datepicker-toggle>
+                                                                    <mat-datepicker #pickerReplyTtb></mat-datepicker>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="time-input-section">
+                                                            <ngb-timepicker
+                                                                name="inspectionCompanyReplyTimeTtb"
+                                                                [(ngModel)]="inspectionCompanyReplyTimeTtb"
+                                                                [seconds]="seconds"
+                                                                [ngModelOptions]="{ standalone: true }"
+                                                                class="time-picker-inline compact"
+                                                                [disabled]="isDateDisabled"
+                                                            ></ngb-timepicker>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <div class="col-12">
                                             <label class="form-label form-label-sm fw-semibold mb-1">{{
                                                 'contact.description' | translate
