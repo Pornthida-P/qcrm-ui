@@ -167,6 +167,16 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
     private slaTimerId: any;
     private slaNowMs: number = Date.now();
     private slaStampedKeys: Set<string> = new Set();
+    inspectionCompany: any;
+    selectedInspectionCompany: any;
+    selectedInspectionCompanies: any;
+    inspectionCompanyDate: Date | null = null;
+    inspectionCompanyTime: { hour: number; minute: number; second: number } = { hour: 0, minute: 0, second: 0 };
+    inspectionCompanyReplyDate: Date | null = null;
+    inspectionCompanyReplyTime: { hour: number; minute: number; second: number } = { hour: 0, minute: 0, second: 0 };
+    selectedInspectionCompanyTtb: any = null;
+    inspectionCompanyReplyDateTtb: Date | null = null;
+    inspectionCompanyReplyTimeTtb: { hour: number; minute: number; second: number } = { hour: 0, minute: 0, second: 0 };
 
     constructor(
         private contactsService: ContactsService,
@@ -349,6 +359,7 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
         }
 
         this.getCasePriority(this.caseId);
+        this.getInspectionCompany();
     }
 
     ngOnDestroy(): void {
@@ -712,6 +723,31 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
         return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:${second.toString().padStart(2, '0')}`;
     }
 
+    formatInspectionDateTime(date: Date | null, time: { hour: number; minute: number; second: number } | null | undefined): string | null {
+        if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
+            return null;
+        }
+        const dateStr = this.formatDate(date);
+        const timeStr = time ? this.formatTime(time) : '00:00:00';
+        return `${dateStr} ${timeStr}`;
+    }
+
+    getSelectedInspectionCompaniesWithGroup(): { inspectionCompanyId: string | number; group: string | number }[] {
+        const ids = Array.isArray(this.selectedInspectionCompanies) ? this.selectedInspectionCompanies : [];
+        const list = this.inspectionCompany && Array.isArray(this.inspectionCompany) ? this.inspectionCompany : [];
+        return ids.map((id: string | number) => {
+            const c = list.find(
+                (x: any) =>
+                    x.id === id ||
+                    x.companyId === id ||
+                    x.inspectionCompanyId === id ||
+                    String(x.id) === String(id)
+            );
+            const group = c?.gruop ?? c?.group ?? c?.groupId ?? null;
+            return { inspectionCompanyId: id, group: group != null ? group : '' };
+        });
+    }
+
     onTimepickStartChange(event: any) {
         if (event) {
             const hour = event.hour;
@@ -851,6 +887,9 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
         this.selectedServiceGroup = null;
         this.selectedServiceType = null;
         this.selectedServiceSubType = null;
+        this.inspectionCompanyDate = null;
+        this.inspectionCompanyTime = { hour: 0, minute: 0, second: 0 };
+        this.selectedInspectionCompanies = [];
 
         // Reset contact number and status
         this.selectedContactNumber = null;
@@ -912,6 +951,8 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
         this.selectedServiceGroup = null;
         this.selectedServiceType = null;
         this.selectedServiceSubType = null;
+        this.inspectionCompanyDate = null;
+        this.inspectionCompanyTime = { hour: date.getHours(), minute: date.getMinutes(), second: date.getSeconds() };
 
         this.isStatusDisabled = false;
         this.isChannelDisabled = true;
@@ -1148,6 +1189,17 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
                     chatType: this.chatType,
                     firstName: this.displayName,
                     casePriority: this.selectedCasePriority || null,
+                    // Send To (inspection company) – array of { inspectionCompanyId, group }
+                    selectedInspectionCompanies: this.getSelectedInspectionCompaniesWithGroup(),
+                    inspectionCompanyDateTime: this.formatInspectionDateTime(this.inspectionCompanyDate, this.inspectionCompanyTime),
+                    // Reply CI (group 1)
+                    selectedInspectionCompany: this.selectedInspectionCompany ?? null,
+                    inspectionCompanyReplyGroup: 1,
+                    inspectionCompanyReplyDateTime: this.formatInspectionDateTime(this.inspectionCompanyReplyDate, this.inspectionCompanyReplyTime),
+                    // Reply TTB (group 2)
+                    selectedInspectionCompanyTtb: this.selectedInspectionCompanyTtb ?? null,
+                    inspectionCompanyReplyTtbGroup: 2,
+                    inspectionCompanyReplyDateTimeTtb: this.formatInspectionDateTime(this.inspectionCompanyReplyDateTtb, this.inspectionCompanyReplyTimeTtb),
                 };
                 console.log('Create Case Data: ', dataForm);
 
@@ -1216,6 +1268,17 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
                               }
                             : null,
                     casePriority: this.selectedCasePriority || null,
+                    // Send To (inspection company) – array of { inspectionCompanyId, group }
+                    selectedInspectionCompanies: this.getSelectedInspectionCompaniesWithGroup(),
+                    inspectionCompanyDateTime: this.formatInspectionDateTime(this.inspectionCompanyDate, this.inspectionCompanyTime),
+                    // Reply CI (group 1)
+                    selectedInspectionCompany: this.selectedInspectionCompany ?? null,
+                    inspectionCompanyReplyGroup: 1,
+                    inspectionCompanyReplyDateTime: this.formatInspectionDateTime(this.inspectionCompanyReplyDate, this.inspectionCompanyReplyTime),
+                    // Reply TTB (group 2)
+                    selectedInspectionCompanyTtb: this.selectedInspectionCompanyTtb ?? null,
+                    inspectionCompanyReplyTtbGroup: 2,
+                    inspectionCompanyReplyDateTimeTtb: this.formatInspectionDateTime(this.inspectionCompanyReplyDateTtb, this.inspectionCompanyReplyTimeTtb),
                 };
                 console.log('Update Case Data: ', data);
                 this.callServive
@@ -1979,4 +2042,45 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
                 .subscribe();
         });
     }
+
+  getInspectionCompany() {
+    this.callListService.getInspectionCompany().subscribe((res: any) => {
+      console.log('inspectionCompany: ', res);
+      this.inspectionCompany = res;
+    });
+  }
+
+  /** Inspection companies with group = 1 only (Reply CI). API uses "gruop" (typo). */
+  get inspectionCompanyGroup1(): any[] {
+    if (!this.inspectionCompany || !Array.isArray(this.inspectionCompany)) {
+      return [];
+    }
+    return this.inspectionCompany.filter(
+      (c: any) =>
+        c.gruop === 1 ||
+        c.gruop === '1' ||
+        c.group === 1 ||
+        c.groupId === 1 ||
+        c.inspectionCompanyGroup === 1 ||
+        String(c.group) === '1' ||
+        String(c.groupId) === '1'
+    );
+  }
+
+  /** Inspection companies with group = 2 only (Reply TTB). API uses "gruop" (typo). */
+  get inspectionCompanyGroup2(): any[] {
+    if (!this.inspectionCompany || !Array.isArray(this.inspectionCompany)) {
+      return [];
+    }
+    return this.inspectionCompany.filter(
+      (c: any) =>
+        c.gruop === 2 ||
+        c.gruop === '2' ||
+        c.group === 2 ||
+        c.groupId === 2 ||
+        c.inspectionCompanyGroup === 2 ||
+        String(c.group) === '2' ||
+        String(c.groupId) === '2'
+    );
+  }
 }
