@@ -119,4 +119,8 @@ export class CallListService {
       return this.http.get(`${this.baseUrl}${config.api.path.callList.inspectionCompanyById}/${caseId}`);
     }
 
+    getInspectionCompanySendReply(caseId: string) {
+      return this.http.get(`${this.baseUrl}${config.api.path.callList.inspectionCompanySendReply}/${caseId}`);
+    }
+
 }

@@ -177,7 +177,8 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
     selectedInspectionCompanyTtb: any = '';
     inspectionCompanyReplyDateTtb: Date | null = null;
     inspectionCompanyReplyTimeTtb: { hour: number; minute: number; second: number } = { hour: 0, minute: 0, second: 0 };
-  inspectionCompanyById: any;
+    inspectionCompanyById: any;
+    inspectionCompanySendReply: any;
 
     constructor(
         private contactsService: ContactsService,
@@ -362,6 +363,7 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
         this.getCasePriority(this.caseId);
         this.getInspectionCompany();
         this.getInspectionCompanyById(this.caseId);
+        this.getInspectionCompanySendReply(this.caseId);
     }
 
     ngOnDestroy(): void {
@@ -1090,6 +1092,7 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
                     this.getHistory(caseId);
 
                     this.loadInspectionCompanyByCaseId(caseId);
+                    this.getInspectionCompanySendReply(caseId);
                 },
                 (error) => {
                     console.error('Error fetching case:', error);
@@ -2175,5 +2178,90 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
         second: d.getSeconds(),
       },
     };
+  }
+
+  /** ชื่อบริษัทที่ส่ง (สำหรับแสดงข้อความ "ส่งแล้ว: ...") */
+  get inspectionCompanySendNames(): string {
+    const send = this.inspectionCompanySendReply?.send;
+    if (!Array.isArray(send) || send.length === 0) return '';
+    return send.map((s: any) => s.inspectionCompanyName || s.inspectionCompanyId || '').filter(Boolean).join(', ');
+  }
+
+  /** ชื่อบริษัทที่ตอบกลับ (สำหรับแสดงข้อความ "ตอบกลับแล้ว: ...") */
+  get inspectionCompanyReplyNames(): string {
+    const reply = this.inspectionCompanySendReply?.reply;
+    if (!Array.isArray(reply) || reply.length === 0) return '';
+    return reply.map((r: any) => r.inspectionCompanyName || r.inspectionCompanyId || '').filter(Boolean).join(', ');
+  }
+
+  /** ชื่อบริษัทที่ตอบกลับกลุ่ม 1 (Reply ซีไอ) */
+  get inspectionCompanyReplyNamesGroup1(): string {
+    const reply = this.inspectionCompanySendReply?.reply;
+    if (!Array.isArray(reply)) return '';
+    const group1 = reply.filter((r: any) => String(r.group) === '1' || r.group === 1);
+    return group1.map((r: any) => r.inspectionCompanyName || r.inspectionCompanyId || '').filter(Boolean).join(', ');
+  }
+
+  /** ชื่อบริษัทที่ตอบกลับกลุ่ม 2 (Reply ทีทีบี) */
+  get inspectionCompanyReplyNamesGroup2(): string {
+    const reply = this.inspectionCompanySendReply?.reply;
+    if (!Array.isArray(reply)) return '';
+    const group2 = reply.filter((r: any) => String(r.group) === '2' || r.group === 2);
+    return group2.map((r: any) => r.inspectionCompanyName || r.inspectionCompanyId || '').filter(Boolean).join(', ');
+  }
+
+  getInspectionCompanySendReply(caseId: string) {
+    this.callListService.getInspectionCompanySendReply(caseId).subscribe((res: any) => {
+      console.log('inspectionCompanySendReply: ', res);
+      this.inspectionCompanySendReply = res;
+      this.applyInspectionCompanySendReplyToForm(res);
+    });
+  }
+
+  private applyInspectionCompanySendReplyToForm(res: any) {
+    if (!res) return;
+    const toOptionId = (val: any) => {
+      if (val == null || val === '') return null;
+      const n = Number(val);
+      return Number.isNaN(n) ? val : n;
+    };
+
+    const sendList = Array.isArray(res.send) ? res.send : [];
+    const replyList = Array.isArray(res.reply) ? res.reply : [];
+
+    const sendIds = sendList
+      .map((item: any) => toOptionId(item.inspectionCompanyId ?? item.id))
+      .filter((id: any) => id != null);
+    this.selectedInspectionCompanies = sendIds.length > 0 ? [...sendIds] : [];
+    const firstSend = sendList[0];
+    if (firstSend?.sendTime) {
+      const dt = this.parseInspectionDateTime(firstSend.sendTime);
+      this.inspectionCompanyDate = dt.date;
+      this.inspectionCompanyTime = dt.time;
+    }
+
+    const reply1 = replyList.find((r: any) => String(r.group) === '1' || r.group === 1);
+    const reply2 = replyList.find((r: any) => String(r.group) === '2' || r.group === 2);
+    const hasReply1 = reply1 && reply1.replyTime != null && reply1.replyTime !== '';
+    const hasReply2 = reply2 && reply2.replyTime != null && reply2.replyTime !== '';
+    this.selectedInspectionCompany = hasReply1 ? (toOptionId(reply1.inspectionCompanyId ?? reply1.id) ?? '') : '';
+    this.selectedInspectionCompanyTtb = hasReply2 ? (toOptionId(reply2.inspectionCompanyId ?? reply2.id) ?? '') : '';
+
+    if (hasReply1 && reply1.replyTime) {
+      const dt2 = this.parseInspectionDateTime(reply1.replyTime);
+      this.inspectionCompanyReplyDate = dt2.date;
+      this.inspectionCompanyReplyTime = dt2.time;
+    } else {
+      this.inspectionCompanyReplyDate = null;
+      this.inspectionCompanyReplyTime = { hour: 0, minute: 0, second: 0 };
+    }
+    if (hasReply2 && reply2.replyTime) {
+      const dt3 = this.parseInspectionDateTime(reply2.replyTime);
+      this.inspectionCompanyReplyDateTtb = dt3.date;
+      this.inspectionCompanyReplyTimeTtb = dt3.time;
+    } else {
+      this.inspectionCompanyReplyDateTtb = null;
+      this.inspectionCompanyReplyTimeTtb = { hour: 0, minute: 0, second: 0 };
+    }
   }
 }

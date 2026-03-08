@@ -51,7 +51,8 @@ export const config = {
                 casePriority: '/case-priority',
                 casePriorityOverDue: '/case-priority-overdue',
                 inspectionCompany: '/inspection-company',
-                inspectionCompanyById: '/inspection-company/case'
+                inspectionCompanyById: '/inspection-company/case',
+                inspectionCompanySendReply: '/inspection-company-send-reply'
             },
             chatHistory: '/chathistory/getchat',
         },
