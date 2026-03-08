@@ -2180,21 +2180,18 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
     };
   }
 
-  /** ชื่อบริษัทที่ส่ง (สำหรับแสดงข้อความ "ส่งแล้ว: ...") */
   get inspectionCompanySendNames(): string {
     const send = this.inspectionCompanySendReply?.send;
     if (!Array.isArray(send) || send.length === 0) return '';
     return send.map((s: any) => s.inspectionCompanyName || s.inspectionCompanyId || '').filter(Boolean).join(', ');
   }
 
-  /** ชื่อบริษัทที่ตอบกลับ (สำหรับแสดงข้อความ "ตอบกลับแล้ว: ...") */
   get inspectionCompanyReplyNames(): string {
     const reply = this.inspectionCompanySendReply?.reply;
     if (!Array.isArray(reply) || reply.length === 0) return '';
     return reply.map((r: any) => r.inspectionCompanyName || r.inspectionCompanyId || '').filter(Boolean).join(', ');
   }
 
-  /** ชื่อบริษัทที่ตอบกลับกลุ่ม 1 (Reply ซีไอ) */
   get inspectionCompanyReplyNamesGroup1(): string {
     const reply = this.inspectionCompanySendReply?.reply;
     if (!Array.isArray(reply)) return '';
@@ -2202,7 +2199,6 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
     return group1.map((r: any) => r.inspectionCompanyName || r.inspectionCompanyId || '').filter(Boolean).join(', ');
   }
 
-  /** ชื่อบริษัทที่ตอบกลับกลุ่ม 2 (Reply ทีทีบี) */
   get inspectionCompanyReplyNamesGroup2(): string {
     const reply = this.inspectionCompanySendReply?.reply;
     if (!Array.isArray(reply)) return '';
