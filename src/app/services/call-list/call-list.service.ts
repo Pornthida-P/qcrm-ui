@@ -110,4 +110,13 @@ export class CallListService {
     getCasePriorityOverDue(body: any) {
         return this.http.post(`${this.baseUrl}${config.api.path.callList.casePriorityOverDue}`, body);
     }
+
+    getInspectionCompany() {
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.inspectionCompany}`);
+    }
+
+    getInspectionCompanyById(caseId: string) {
+      return this.http.get(`${this.baseUrl}${config.api.path.callList.inspectionCompanyById}/${caseId}`);
+    }
+
 }

@@ -168,15 +168,16 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
     private slaNowMs: number = Date.now();
     private slaStampedKeys: Set<string> = new Set();
     inspectionCompany: any;
-    selectedInspectionCompany: any;
+    selectedInspectionCompany: any = '';
     selectedInspectionCompanies: any;
     inspectionCompanyDate: Date | null = null;
     inspectionCompanyTime: { hour: number; minute: number; second: number } = { hour: 0, minute: 0, second: 0 };
     inspectionCompanyReplyDate: Date | null = null;
     inspectionCompanyReplyTime: { hour: number; minute: number; second: number } = { hour: 0, minute: 0, second: 0 };
-    selectedInspectionCompanyTtb: any = null;
+    selectedInspectionCompanyTtb: any = '';
     inspectionCompanyReplyDateTtb: Date | null = null;
     inspectionCompanyReplyTimeTtb: { hour: number; minute: number; second: number } = { hour: 0, minute: 0, second: 0 };
+  inspectionCompanyById: any;
 
     constructor(
         private contactsService: ContactsService,
@@ -360,6 +361,7 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
 
         this.getCasePriority(this.caseId);
         this.getInspectionCompany();
+        this.getInspectionCompanyById(this.caseId);
     }
 
     ngOnDestroy(): void {
@@ -890,6 +892,8 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
         this.inspectionCompanyDate = null;
         this.inspectionCompanyTime = { hour: 0, minute: 0, second: 0 };
         this.selectedInspectionCompanies = [];
+        this.selectedInspectionCompany = '';
+        this.selectedInspectionCompanyTtb = '';
 
         // Reset contact number and status
         this.selectedContactNumber = null;
@@ -953,6 +957,13 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
         this.selectedServiceSubType = null;
         this.inspectionCompanyDate = null;
         this.inspectionCompanyTime = { hour: date.getHours(), minute: date.getMinutes(), second: date.getSeconds() };
+        this.selectedInspectionCompanies = [];
+        this.selectedInspectionCompany = '';
+        this.selectedInspectionCompanyTtb = '';
+        this.inspectionCompanyReplyDate = null;
+        this.inspectionCompanyReplyTime = { hour: 0, minute: 0, second: 0 };
+        this.inspectionCompanyReplyDateTtb = null;
+        this.inspectionCompanyReplyTimeTtb = { hour: 0, minute: 0, second: 0 };
 
         this.isStatusDisabled = false;
         this.isChannelDisabled = true;
@@ -1077,6 +1088,8 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
                     this.getChatHistory(call.chatId);
                     this.getCallStatusId(this.selectedCallStatusId?.toString() || '');
                     this.getHistory(caseId);
+
+                    this.loadInspectionCompanyByCaseId(caseId);
                 },
                 (error) => {
                     console.error('Error fetching case:', error);
@@ -1193,11 +1206,11 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
                     selectedInspectionCompanies: this.getSelectedInspectionCompaniesWithGroup(),
                     inspectionCompanyDateTime: this.formatInspectionDateTime(this.inspectionCompanyDate, this.inspectionCompanyTime),
                     // Reply CI (group 1)
-                    selectedInspectionCompany: this.selectedInspectionCompany ?? null,
+                    selectedInspectionCompany: this.selectedInspectionCompany || null,
                     inspectionCompanyReplyGroup: 1,
                     inspectionCompanyReplyDateTime: this.formatInspectionDateTime(this.inspectionCompanyReplyDate, this.inspectionCompanyReplyTime),
                     // Reply TTB (group 2)
-                    selectedInspectionCompanyTtb: this.selectedInspectionCompanyTtb ?? null,
+                    selectedInspectionCompanyTtb: this.selectedInspectionCompanyTtb || null,
                     inspectionCompanyReplyTtbGroup: 2,
                     inspectionCompanyReplyDateTimeTtb: this.formatInspectionDateTime(this.inspectionCompanyReplyDateTtb, this.inspectionCompanyReplyTimeTtb),
                 };
@@ -1272,11 +1285,11 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
                     selectedInspectionCompanies: this.getSelectedInspectionCompaniesWithGroup(),
                     inspectionCompanyDateTime: this.formatInspectionDateTime(this.inspectionCompanyDate, this.inspectionCompanyTime),
                     // Reply CI (group 1)
-                    selectedInspectionCompany: this.selectedInspectionCompany ?? null,
+                    selectedInspectionCompany: this.selectedInspectionCompany || null,
                     inspectionCompanyReplyGroup: 1,
                     inspectionCompanyReplyDateTime: this.formatInspectionDateTime(this.inspectionCompanyReplyDate, this.inspectionCompanyReplyTime),
                     // Reply TTB (group 2)
-                    selectedInspectionCompanyTtb: this.selectedInspectionCompanyTtb ?? null,
+                    selectedInspectionCompanyTtb: this.selectedInspectionCompanyTtb || null,
                     inspectionCompanyReplyTtbGroup: 2,
                     inspectionCompanyReplyDateTimeTtb: this.formatInspectionDateTime(this.inspectionCompanyReplyDateTtb, this.inspectionCompanyReplyTimeTtb),
                 };
@@ -2082,5 +2095,85 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
         String(c.group) === '2' ||
         String(c.groupId) === '2'
     );
+  }
+
+  getInspectionCompanyById(caseId: string) {
+    this.callListService.getInspectionCompanyById(caseId).subscribe((res: any) => {
+      console.log('inspectionCompanyById: ', res);
+      this.inspectionCompanyById = res;
+    });
+  }
+
+  loadInspectionCompanyByCaseId(caseId: string) {
+    this.callListService.getInspectionCompanyById(caseId).subscribe((res: any) => {
+      console.log('inspectionCompanyById: ', res);
+      this.inspectionCompanyById = res;
+      if (!res) return;
+
+      const list = Array.isArray(res) ? res : [res];
+
+      const toOptionId = (val: any) => {
+        if (val == null || val === '') return null;
+        const n = Number(val);
+        return Number.isNaN(n) ? val : n;
+      };
+
+      // selectedInspectionCompanies: array of all inspectionCompanyId (Send To multi-select)
+      const ids = list
+        .map((item: any) => toOptionId(item.inspectionCompanyId ?? item.id ?? item.companyId))
+        .filter((id: any) => id != null);
+      this.selectedInspectionCompanies = ids.length > 0 ? [...ids] : [];
+
+      // Reply CI / Reply TTB: เซ็ตเฉพาะเมื่อมี replyTime จริง (ไม่เอาแค่ Send To มาใส่ Reply)
+      const group1 = list.find((item: any) => String(item.group) === '1' || item.group === 1);
+      const group2 = list.find((item: any) => String(item.group) === '2' || item.group === 2);
+      const hasReply1 = group1 && group1.replyTime != null && group1.replyTime !== '';
+      const hasReply2 = group2 && group2.replyTime != null && group2.replyTime !== '';
+      this.selectedInspectionCompany = hasReply1 ? (toOptionId(group1.inspectionCompanyId ?? group1.id) ?? '') : '';
+      this.selectedInspectionCompanyTtb = hasReply2 ? (toOptionId(group2.inspectionCompanyId ?? group2.id) ?? '') : '';
+
+      // Send To date/time: use first record's sendTime
+      const first = list[0];
+      const dt1 = this.parseInspectionDateTime(first?.sendTime ?? first?.inspectionCompanyDateTime);
+      this.inspectionCompanyDate = dt1.date;
+      this.inspectionCompanyTime = dt1.time;
+
+      // Reply CI date/time: เซ็ตเฉพาะเมื่อมี replyTime
+      if (hasReply1 && group1.replyTime) {
+        const dt2 = this.parseInspectionDateTime(group1.replyTime);
+        this.inspectionCompanyReplyDate = dt2.date;
+        this.inspectionCompanyReplyTime = dt2.time;
+      } else {
+        this.inspectionCompanyReplyDate = null;
+        this.inspectionCompanyReplyTime = { hour: 0, minute: 0, second: 0 };
+      }
+
+      // Reply TTB date/time: เซ็ตเฉพาะเมื่อมี replyTime
+      if (hasReply2 && group2.replyTime) {
+        const dt3 = this.parseInspectionDateTime(group2.replyTime);
+        this.inspectionCompanyReplyDateTtb = dt3.date;
+        this.inspectionCompanyReplyTimeTtb = dt3.time;
+      } else {
+        this.inspectionCompanyReplyDateTtb = null;
+        this.inspectionCompanyReplyTimeTtb = { hour: 0, minute: 0, second: 0 };
+      }
+    });
+  }
+
+  private parseInspectionDateTime(
+    str: string | null | undefined
+  ): { date: Date | null; time: { hour: number; minute: number; second: number } } {
+    const empty = { date: null, time: { hour: 0, minute: 0, second: 0 } };
+    if (!str || typeof str !== 'string' || str.trim() === '') return empty;
+    const d = new Date(str.trim());
+    if (isNaN(d.getTime())) return empty;
+    return {
+      date: d,
+      time: {
+        hour: d.getHours(),
+        minute: d.getMinutes(),
+        second: d.getSeconds(),
+      },
+    };
   }
 }

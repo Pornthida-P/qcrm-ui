@@ -50,7 +50,8 @@ export const config = {
                 history: '/history',
                 casePriority: '/case-priority',
                 casePriorityOverDue: '/case-priority-overdue',
-                inspectionCompany: '/inspection-company'
+                inspectionCompany: '/inspection-company',
+                inspectionCompanyById: '/inspection-company/case'
             },
             chatHistory: '/chathistory/getchat',
         },
