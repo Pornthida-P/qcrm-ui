@@ -978,6 +978,13 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div
+                                                *ngIf="inspectionCompanySendNames"
+                                                class="mt-2 mb-3 ps-2 small border-start border-2 border-secondary"
+                                                style="color: #009e9d"
+                                            >
+                                                <span class="fw-medium">{{ 'contact.sent' | translate }}:</span> {{ inspectionCompanySendNames }}
+                                            </div>
                                         </div>
 
                                         <!-- Reply (options = group 1 only) + Date -->
@@ -998,7 +1005,7 @@
                                                         name="selectedInspectionCompany"
                                                         [(ngModel)]="selectedInspectionCompany"
                                                     >
-                                                        <option [ngValue]="null" disabled>ไม่ระบุ</option>
+                                                        <option [ngValue]="''">ไม่ระบุ</option>
                                                         <option
                                                             *ngFor="let company of inspectionCompanyGroup1"
                                                             [value]="company.id || company.companyId || company.inspectionCompanyId"
@@ -1018,7 +1025,6 @@
                                                                     [(ngModel)]="inspectionCompanyReplyDate"
                                                                     class="form-control form-control-sm"
                                                                     [placeholder]="'common.selectDate' | translate"
-                                                                    [disabled]="isDateDisabled"
                                                                 />
                                                                 <span class="input-group-text">
                                                                     <mat-datepicker-toggle matSuffix [for]="pickerReply"></mat-datepicker-toggle>
@@ -1033,17 +1039,23 @@
                                                                 [seconds]="seconds"
                                                                 [ngModelOptions]="{ standalone: true }"
                                                                 class="time-picker-inline compact"
-                                                                [disabled]="isDateDisabled"
                                                             ></ngb-timepicker>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div
+                                                *ngIf="inspectionCompanyReplyNamesGroup1"
+                                                class="mt-2 mb-3 ps-2 small border-start border-2 border-secondary"
+                                                style="color: #009e9d"
+                                            >
+                                                <span class="fw-medium">{{ 'contact.replied' | translate }}:</span> {{ inspectionCompanyReplyNamesGroup1 }}
+                                            </div>
                                         </div>
 
                                         <!-- Reply TTB (options = group 2 only) + Date -->
                                         <div
-                                            class="col-12"
+                                            class="col-12 mt-2"
                                             *ngIf="
                                                 isPendingStatus() &&
                                                 (inspectionCompany || (inspectionCompany && inspectionCompany.length > 0))
@@ -1059,7 +1071,7 @@
                                                         name="selectedInspectionCompanyTtb"
                                                         [(ngModel)]="selectedInspectionCompanyTtb"
                                                     >
-                                                        <option [ngValue]="null" disabled>ไม่ระบุ</option>
+                                                        <option [ngValue]="''">ไม่ระบุ</option>
                                                         <option
                                                             *ngFor="let company of inspectionCompanyGroup2"
                                                             [value]="company.id || company.companyId || company.inspectionCompanyId"
@@ -1079,7 +1091,6 @@
                                                                     [(ngModel)]="inspectionCompanyReplyDateTtb"
                                                                     class="form-control form-control-sm"
                                                                     [placeholder]="'common.selectDate' | translate"
-                                                                    [disabled]="isDateDisabled"
                                                                 />
                                                                 <span class="input-group-text">
                                                                     <mat-datepicker-toggle matSuffix [for]="pickerReplyTtb"></mat-datepicker-toggle>
@@ -1094,11 +1105,17 @@
                                                                 [seconds]="seconds"
                                                                 [ngModelOptions]="{ standalone: true }"
                                                                 class="time-picker-inline compact"
-                                                                [disabled]="isDateDisabled"
                                                             ></ngb-timepicker>
                                                         </div>
                                                     </div>
                                                 </div>
+                                            </div>
+                                            <div
+                                                *ngIf="inspectionCompanyReplyNamesGroup2"
+                                                class="mt-2 mb-3 ps-2 small border-start border-2 border-secondary"
+                                                style="color: #009e9d"
+                                            >
+                                                <span class="fw-medium">{{ 'contact.replied' | translate }}:</span> {{ inspectionCompanyReplyNamesGroup2 }}
                                             </div>
                                         </div>
 
