@@ -143,6 +143,18 @@ export class CreateCallComponent {
     casePriorities: any[] = [];
     selectedCasePriority: any = null;
 
+    inspectionCompany: any;
+    selectedInspectionCompany: any = '';
+    selectedInspectionCompanies: any;
+    inspectionCompanyDate: Date | null = null;
+    inspectionCompanyTime: { hour: number; minute: number; second: number } = { hour: 0, minute: 0, second: 0 };
+    inspectionCompanyReplyDate: Date | null = null;
+    inspectionCompanyReplyTime: { hour: number; minute: number; second: number } = { hour: 0, minute: 0, second: 0 };
+    selectedInspectionCompanyTtb: any = '';
+    inspectionCompanyReplyDateTtb: Date | null = null;
+    inspectionCompanyReplyTimeTtb: { hour: number; minute: number; second: number } = { hour: 0, minute: 0, second: 0 };
+    inspectionCompanySendReply: any;
+
     // Autocomplete controls
     codeControl = new FormControl('');
     caseTypeControl = new FormControl('');
@@ -199,6 +211,31 @@ export class CreateCallComponent {
         const minute = time.minute;
         const second = time.second;
         return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:${second.toString().padStart(2, '0')}`;
+    }
+
+    formatInspectionDateTime(date: Date | null, time: { hour: number; minute: number; second: number } | null | undefined): string | null {
+        if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
+            return null;
+        }
+        const dateStr = this.formatDate(date);
+        const timeStr = time ? this.formatTime(time) : '00:00:00';
+        return `${dateStr} ${timeStr}`;
+    }
+
+    getSelectedInspectionCompaniesWithGroup(): { inspectionCompanyId: string | number; group: string | number }[] {
+        const ids = Array.isArray(this.selectedInspectionCompanies) ? this.selectedInspectionCompanies : [];
+        const list = this.inspectionCompany && Array.isArray(this.inspectionCompany) ? this.inspectionCompany : [];
+        return ids.map((id: string | number) => {
+            const c = list.find(
+                (x: any) =>
+                    x.id === id ||
+                    x.companyId === id ||
+                    x.inspectionCompanyId === id ||
+                    String(x.id) === String(id)
+            );
+            const group = c?.gruop ?? c?.group ?? c?.groupId ?? null;
+            return { inspectionCompanyId: id, group: group != null ? group : '' };
+        });
     }
 
     formatStartDate() {
@@ -308,6 +345,7 @@ export class CreateCallComponent {
 
         this.getStatusList();
         this.getCasePriority();
+        this.getInspectionCompany();
     }
 
     submit() {
@@ -367,6 +405,14 @@ export class CreateCallComponent {
             attachment: this.attachmentsId,
             comment: this.comment,
             casePriority: this.selectedCasePriority || null,
+            selectedInspectionCompanies: this.getSelectedInspectionCompaniesWithGroup(),
+            inspectionCompanyDateTime: this.formatInspectionDateTime(this.inspectionCompanyDate, this.inspectionCompanyTime),
+            selectedInspectionCompany: this.selectedInspectionCompany || null,
+            inspectionCompanyReplyGroup: 1,
+            inspectionCompanyReplyDateTime: this.formatInspectionDateTime(this.inspectionCompanyReplyDate, this.inspectionCompanyReplyTime),
+            selectedInspectionCompanyTtb: this.selectedInspectionCompanyTtb || null,
+            inspectionCompanyReplyTtbGroup: 2,
+            inspectionCompanyReplyDateTimeTtb: this.formatInspectionDateTime(this.inspectionCompanyReplyDateTtb, this.inspectionCompanyReplyTimeTtb),
         };
         this.callServive
             .createCase(dataForm)
@@ -406,6 +452,64 @@ export class CreateCallComponent {
 
     isPendingStatus(): boolean {
         return this.selectedStatus == 2;
+    }
+
+    getInspectionCompany() {
+        this.callListService.getInspectionCompany().subscribe((res: any) => {
+            this.inspectionCompany = res;
+        });
+    }
+
+    get inspectionCompanyGroup1(): any[] {
+        if (!this.inspectionCompany || !Array.isArray(this.inspectionCompany)) {
+            return [];
+        }
+        return this.inspectionCompany.filter(
+            (c: any) =>
+                c.gruop === 1 ||
+                c.gruop === '1' ||
+                c.group === 1 ||
+                c.groupId === 1 ||
+                c.inspectionCompanyGroup === 1 ||
+                String(c.group) === '1' ||
+                String(c.groupId) === '1'
+        );
+    }
+
+    get inspectionCompanyGroup2(): any[] {
+        if (!this.inspectionCompany || !Array.isArray(this.inspectionCompany)) {
+            return [];
+        }
+        return this.inspectionCompany.filter(
+            (c: any) =>
+                c.gruop === 2 ||
+                c.gruop === '2' ||
+                c.group === 2 ||
+                c.groupId === 2 ||
+                c.inspectionCompanyGroup === 2 ||
+                String(c.group) === '2' ||
+                String(c.groupId) === '2'
+        );
+    }
+
+    get inspectionCompanySendNames(): string {
+        const send = this.inspectionCompanySendReply?.send;
+        if (!Array.isArray(send) || send.length === 0) return '';
+        return send.map((s: any) => s.inspectionCompanyName || s.inspectionCompanyId || '').filter(Boolean).join(', ');
+    }
+
+    get inspectionCompanyReplyNamesGroup1(): string {
+        const reply = this.inspectionCompanySendReply?.reply;
+        if (!Array.isArray(reply)) return '';
+        const group1 = reply.filter((r: any) => String(r.group) === '1' || r.group === 1);
+        return group1.map((r: any) => r.inspectionCompanyName || r.inspectionCompanyId || '').filter(Boolean).join(', ');
+    }
+
+    get inspectionCompanyReplyNamesGroup2(): string {
+        const reply = this.inspectionCompanySendReply?.reply;
+        if (!Array.isArray(reply)) return '';
+        const group2 = reply.filter((r: any) => String(r.group) === '2' || r.group === 2);
+        return group2.map((r: any) => r.inspectionCompanyName || r.inspectionCompanyId || '').filter(Boolean).join(', ');
     }
 
     getCasePriority(caseId?: string) {
