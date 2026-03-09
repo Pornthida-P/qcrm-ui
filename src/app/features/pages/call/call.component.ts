@@ -208,6 +208,19 @@ export class CallComponent implements OnInit, OnDestroy {
 
     originalStatus: any;
 
+    inspectionCompanyReplyDateTtb: Date | null = null;
+    inspectionCompanyReplyTimeTtb: { hour: number; minute: number; second: number } = { hour: 0, minute: 0, second: 0 };
+    inspectionCompany: any;
+    inspectionCompanyById: any;
+    inspectionCompanySendReply: any;
+    selectedInspectionCompany: any = '';
+    selectedInspectionCompanies: any;
+    inspectionCompanyDate: Date | null = null;
+    inspectionCompanyTime: { hour: number; minute: number; second: number } = { hour: 0, minute: 0, second: 0 };
+    inspectionCompanyReplyDate: Date | null = null;
+    inspectionCompanyReplyTime: { hour: number; minute: number; second: number } = { hour: 0, minute: 0, second: 0 };
+    selectedInspectionCompanyTtb: any = '';
+
     constructor(
         private callService: CallService,
         private router: Router,
@@ -888,6 +901,8 @@ export class CallComponent implements OnInit, OnDestroy {
                                     this.getChatHistory(call.chatId);
                                     this.chatId = call.chatId || '';
                                     this.getHistory(call.caseId);
+                                    this.getInspectionCompany();
+                                    this.getInspectionCompanySendReply(call.caseId);
                                     this.selectedCallStatusId = call.callStatus;
                                     this.getCallStatusId(call.callStatusId?.toString() || '');
                                 },
@@ -1212,6 +1227,17 @@ export class CallComponent implements OnInit, OnDestroy {
                                   changedBy: userData.userId,
                               }
                             : null,
+                    // Send To (inspection company) – array of { inspectionCompanyId, group }
+                    selectedInspectionCompanies: this.getSelectedInspectionCompaniesWithGroup(),
+                    inspectionCompanyDateTime: this.formatInspectionDateTime(this.inspectionCompanyDate, this.inspectionCompanyTime),
+                    // Reply CI (group 1)
+                    selectedInspectionCompany: this.selectedInspectionCompany || null,
+                    inspectionCompanyReplyGroup: 1,
+                    inspectionCompanyReplyDateTime: this.formatInspectionDateTime(this.inspectionCompanyReplyDate, this.inspectionCompanyReplyTime),
+                    // Reply TTB (group 2)
+                    selectedInspectionCompanyTtb: this.selectedInspectionCompanyTtb || null,
+                    inspectionCompanyReplyTtbGroup: 2,
+                    inspectionCompanyReplyDateTimeTtb: this.formatInspectionDateTime(this.inspectionCompanyReplyDateTtb, this.inspectionCompanyReplyTimeTtb),
                 };
                 console.log('Data: ', data);
                 this.callService
@@ -1261,6 +1287,31 @@ export class CallComponent implements OnInit, OnDestroy {
         const minute = time.minute;
         const second = time.second;
         return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:${second.toString().padStart(2, '0')}`;
+    }
+
+    formatInspectionDateTime(date: Date | null, time: { hour: number; minute: number; second: number } | null | undefined): string | null {
+        if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
+            return null;
+        }
+        const dateStr = this.formatDate(date);
+        const timeStr = time ? this.formatTime(time) : '00:00:00';
+        return `${dateStr} ${timeStr}`;
+    }
+
+    getSelectedInspectionCompaniesWithGroup(): { inspectionCompanyId: string | number; group: string | number }[] {
+        const ids = Array.isArray(this.selectedInspectionCompanies) ? this.selectedInspectionCompanies : [];
+        const list = this.inspectionCompany && Array.isArray(this.inspectionCompany) ? this.inspectionCompany : [];
+        return ids.map((id: string | number) => {
+            const c = list.find(
+                (x: any) =>
+                    x.id === id ||
+                    x.companyId === id ||
+                    x.inspectionCompanyId === id ||
+                    String(x.id) === String(id)
+            );
+            const group = c?.gruop ?? c?.group ?? c?.groupId ?? null;
+            return { inspectionCompanyId: id, group: group != null ? group : '' };
+        });
     }
 
     // Autocomplete filter functions
@@ -1802,5 +1853,134 @@ export class CallComponent implements OnInit, OnDestroy {
       return `${prefix} ${hours} ชม ${mins} นาที`;
     }
     return `${prefix} ${mins} นาที`;
+  }
+
+  getInspectionCompany() {
+    this.callListService.getInspectionCompany().subscribe((res: any) => {
+      this.inspectionCompany = res;
+    });
+  }
+
+  get inspectionCompanyGroup1(): any[] {
+    if (!this.inspectionCompany || !Array.isArray(this.inspectionCompany)) {
+      return [];
+    }
+    return this.inspectionCompany.filter(
+      (c: any) =>
+        c.gruop === 1 ||
+        c.gruop === '1' ||
+        c.group === 1 ||
+        c.groupId === 1 ||
+        c.inspectionCompanyGroup === 1 ||
+        String(c.group) === '1' ||
+        String(c.groupId) === '1'
+    );
+  }
+
+  get inspectionCompanyGroup2(): any[] {
+    if (!this.inspectionCompany || !Array.isArray(this.inspectionCompany)) {
+      return [];
+    }
+    return this.inspectionCompany.filter(
+      (c: any) =>
+        c.gruop === 2 ||
+        c.gruop === '2' ||
+        c.group === 2 ||
+        c.groupId === 2 ||
+        c.inspectionCompanyGroup === 2 ||
+        String(c.group) === '2' ||
+        String(c.groupId) === '2'
+    );
+  }
+
+  private parseInspectionDateTime(
+    str: string | null | undefined
+  ): { date: Date | null; time: { hour: number; minute: number; second: number } } {
+    const empty = { date: null, time: { hour: 0, minute: 0, second: 0 } };
+    if (!str || typeof str !== 'string' || str.trim() === '') return empty;
+    const d = new Date(str.trim());
+    if (isNaN(d.getTime())) return empty;
+    return {
+      date: d,
+      time: {
+        hour: d.getHours(),
+        minute: d.getMinutes(),
+        second: d.getSeconds(),
+      },
+    };
+  }
+
+  get inspectionCompanySendNames(): string {
+    const send = this.inspectionCompanySendReply?.send;
+    if (!Array.isArray(send) || send.length === 0) return '';
+    return send.map((s: any) => s.inspectionCompanyName || s.inspectionCompanyId || '').filter(Boolean).join(', ');
+  }
+
+  get inspectionCompanyReplyNamesGroup1(): string {
+    const reply = this.inspectionCompanySendReply?.reply;
+    if (!Array.isArray(reply)) return '';
+    const group1 = reply.filter((r: any) => String(r.group) === '1' || r.group === 1);
+    return group1.map((r: any) => r.inspectionCompanyName || r.inspectionCompanyId || '').filter(Boolean).join(', ');
+  }
+
+  get inspectionCompanyReplyNamesGroup2(): string {
+    const reply = this.inspectionCompanySendReply?.reply;
+    if (!Array.isArray(reply)) return '';
+    const group2 = reply.filter((r: any) => String(r.group) === '2' || r.group === 2);
+    return group2.map((r: any) => r.inspectionCompanyName || r.inspectionCompanyId || '').filter(Boolean).join(', ');
+  }
+
+  getInspectionCompanySendReply(caseId: string) {
+    this.callListService.getInspectionCompanySendReply(caseId).subscribe((res: any) => {
+      this.inspectionCompanySendReply = res;
+      this.applyInspectionCompanySendReplyToForm(res);
+    });
+  }
+
+  private applyInspectionCompanySendReplyToForm(res: any) {
+    if (!res) return;
+    const toOptionId = (val: any) => {
+      if (val == null || val === '') return null;
+      const n = Number(val);
+      return Number.isNaN(n) ? val : n;
+    };
+
+    const sendList = Array.isArray(res.send) ? res.send : [];
+    const replyList = Array.isArray(res.reply) ? res.reply : [];
+
+    const sendIds = sendList
+      .map((item: any) => toOptionId(item.inspectionCompanyId ?? item.id))
+      .filter((id: any) => id != null);
+    this.selectedInspectionCompanies = sendIds.length > 0 ? [...sendIds] : [];
+    const firstSend = sendList[0];
+    if (firstSend?.sendTime) {
+      const dt = this.parseInspectionDateTime(firstSend.sendTime);
+      this.inspectionCompanyDate = dt.date;
+      this.inspectionCompanyTime = dt.time;
+    }
+
+    const reply1 = replyList.find((r: any) => String(r.group) === '1' || r.group === 1);
+    const reply2 = replyList.find((r: any) => String(r.group) === '2' || r.group === 2);
+    const hasReply1 = reply1 && reply1.replyTime != null && reply1.replyTime !== '';
+    const hasReply2 = reply2 && reply2.replyTime != null && reply2.replyTime !== '';
+    this.selectedInspectionCompany = hasReply1 ? (toOptionId(reply1.inspectionCompanyId ?? reply1.id) ?? '') : '';
+    this.selectedInspectionCompanyTtb = hasReply2 ? (toOptionId(reply2.inspectionCompanyId ?? reply2.id) ?? '') : '';
+
+    if (hasReply1 && reply1.replyTime) {
+      const dt2 = this.parseInspectionDateTime(reply1.replyTime);
+      this.inspectionCompanyReplyDate = dt2.date;
+      this.inspectionCompanyReplyTime = dt2.time;
+    } else {
+      this.inspectionCompanyReplyDate = null;
+      this.inspectionCompanyReplyTime = { hour: 0, minute: 0, second: 0 };
+    }
+    if (hasReply2 && reply2.replyTime) {
+      const dt3 = this.parseInspectionDateTime(reply2.replyTime);
+      this.inspectionCompanyReplyDateTtb = dt3.date;
+      this.inspectionCompanyReplyTimeTtb = dt3.time;
+    } else {
+      this.inspectionCompanyReplyDateTtb = null;
+      this.inspectionCompanyReplyTimeTtb = { hour: 0, minute: 0, second: 0 };
+    }
   }
 }
