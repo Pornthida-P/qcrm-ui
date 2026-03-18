@@ -93,31 +93,29 @@
                                     [placeholder]="'contact.lastName' | translate"
                                 />
                             </div>
-                            <div class="col-md-6" *ngIf="facebookDisplayName || !contactId">
-                                <label for="inputFacebookDisplayName" class="form-label fw-semibold">
-                                    {{ 'contact.facebookDisplayName' | translate }}
-                                </label>
+                            <!-- Contact chats from API (read-only): Facebook -->
+                            <div class="col-md-6" *ngIf="facebookChats.length > 0">
+                                <label class="form-label fw-semibold">{{ 'contact.facebookDisplayName' | translate }}</label>
                                 <input
+                                    *ngFor="let chat of facebookChats; let i = index"
                                     type="text"
-                                    class="form-control"
-                                    [(ngModel)]="facebookDisplayName"
-                                    name="facebookDisplayName"
-                                    id="inputFacebookDisplayName"
-                                    [disabled]="!!contactId"
+                                    class="form-control mb-2"
+                                    [value]="chat.displayName"
+                                    [attr.id]="'inputFacebookDisplayName_' + i"
+                                    disabled
                                     [placeholder]="'contact.facebookDisplayName' | translate"
                                 />
                             </div>
-                            <div class="col-md-6" *ngIf="lineDisplayName || !contactId">
-                                <label for="inputLineDisplayName" class="form-label fw-semibold">
-                                    {{ 'contact.lineDisplayName' | translate }}
-                                </label>
+                            <!-- Contact chats from API (read-only): Line -->
+                            <div class="col-md-6" *ngIf="lineChats.length > 0">
+                                <label class="form-label fw-semibold">{{ 'contact.lineDisplayName' | translate }}</label>
                                 <input
+                                    *ngFor="let chat of lineChats; let i = index"
                                     type="text"
-                                    class="form-control"
-                                    [(ngModel)]="lineDisplayName"
-                                    name="lineDisplayName"
-                                    id="inputLineDisplayName"
-                                    [disabled]="!!contactId"
+                                    class="form-control mb-2"
+                                    [value]="chat.displayName"
+                                    [attr.id]="'inputLineDisplayName_' + i"
+                                    disabled
                                     [placeholder]="'contact.lineDisplayName' | translate"
                                 />
                             </div>

@@ -161,6 +161,7 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
     contactChatDisplayName: string = '';
     facebookDisplayName: string = '';
     lineDisplayName: string = '';
+    contactChats: any[] = [];
     casePriority: any;
     casePriorities: any[] = [];
     selectedCasePriority: any;
@@ -409,6 +410,7 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
             this.contactChatDisplayName = this.detailItem.chatDisplayName || '';
             this.facebookDisplayName = this.detailItem.facebookDisplayName || '';
             this.lineDisplayName = this.detailItem.lineDisplayName || '';
+            this.contactChats = this.detailItem.contactChats || [];
 
             if (this.contactOrg != '' && this.contactOrg != null && this.contactOrg != undefined) {
                 this.contactsService.getOrganizationById(this.contactOrg).subscribe((res: any) => {
@@ -2064,6 +2066,25 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
       console.log('inspectionCompany: ', res);
       this.inspectionCompany = res;
     });
+  }
+
+  get facebookChats(): any[] {
+    return Array.isArray(this.contactChats)
+      ? this.contactChats.filter((c: any) => (c.chatType || '').toLowerCase() === 'facebook')
+      : [];
+  }
+  get lineChats(): any[] {
+    return Array.isArray(this.contactChats)
+      ? this.contactChats.filter((c: any) => (c.chatType || '').toLowerCase() === 'line')
+      : [];
+  }
+  get otherChats(): any[] {
+    return Array.isArray(this.contactChats)
+      ? this.contactChats.filter(
+          (c: any) =>
+            !['facebook', 'line'].includes((c.chatType || '').toLowerCase())
+        )
+      : [];
   }
 
   /** Inspection companies with group = 1 only (Reply CI). API uses "gruop" (typo). */
