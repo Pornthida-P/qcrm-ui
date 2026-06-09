@@ -152,11 +152,13 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
     serviceTypeControl = new FormControl('');
     serviceGroupControl = new FormControl('');
     serviceSubTypeControl = new FormControl('');
+    caseGroupControl = new FormControl('');
     filteredCodes: any[] = [];
     filteredCaseTypes: any[] = [];
     filteredServiceTypes: any[] = [];
     filteredServiceGroups: any[] = [];
     filteredServiceSubTypes: any[] = [];
+    filteredCaseGroups: any[] = [];
     partnerCode: any;
     contactGroupId: any;
     contactGroup: any;
@@ -183,6 +185,10 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
     inspectionCompanyReplyTimeTtb: { hour: number; minute: number; second: number } = { hour: 0, minute: 0, second: 0 };
     inspectionCompanyById: any;
     inspectionCompanySendReply: any;
+
+    caseGroupReport: any;
+    selectedCaseGroup: any = null;
+    pendingCaseGroupReportId: any = null;
 
     constructor(
         private contactsService: ContactsService,
@@ -369,6 +375,7 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
         this.getInspectionCompany();
         this.getInspectionCompanyById(this.caseId);
         this.getInspectionCompanySendReply(this.caseId);
+        this.getCaseGroupReport();
     }
 
     ngOnDestroy(): void {
@@ -926,6 +933,9 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
         this.caseTypeControl.enable();
         this.serviceGroupControl.setValue('');
         this.serviceGroupControl.enable();
+        this.caseGroupControl.setValue('');
+        this.selectedCaseGroup = null;
+        this.pendingCaseGroupReportId = null;
         this.clearServiceTypeSelection();
         this.isStatusDisabled = false;
         this.isChannelDisabled = false;
@@ -964,6 +974,8 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
         this.selectedServiceGroup = null;
         this.selectedServiceType = null;
         this.selectedServiceSubType = null;
+        this.selectedCaseGroup = null;
+        this.pendingCaseGroupReportId = null;
         this.inspectionCompanyDate = null;
         this.inspectionCompanyTime = { hour: date.getHours(), minute: date.getMinutes(), second: date.getSeconds() };
         this.selectedInspectionCompanies = [];
@@ -973,6 +985,7 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
         this.inspectionCompanyReplyTime = { hour: 0, minute: 0, second: 0 };
         this.inspectionCompanyReplyDateTtb = null;
         this.inspectionCompanyReplyTimeTtb = { hour: 0, minute: 0, second: 0 };
+        this.caseGroupControl.setValue('');
 
         this.isStatusDisabled = false;
         this.isChannelDisabled = true;
@@ -1075,6 +1088,8 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
                         this.clearServiceTypeSelection();
                     }
 
+                    this.applyCaseGroupReportSelection(call.caseGroupReportId);
+
                     this.getComment(caseId);
                     this.getChatHistory(call.chatId);
                     this.getCallStatusId(this.selectedCallStatusId?.toString() || '');
@@ -1152,6 +1167,7 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
         const caseServiceGroupId = this.resolveCaseServiceGroupId();
         const caseServiceTypeId = this.resolveCaseServiceTypeId();
         const caseServiceSubTypeId = this.resolveCaseServiceSubTypeId();
+        const caseGroupReportId = this.resolveCaseGroupReportId();
         await this.caseServiceHierarchyService.warnOnSaveIfNeeded(
             caseServiceGroupId,
             caseServiceTypeId,
@@ -1184,6 +1200,7 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
                     caseServiceGroupId,
                     caseServiceTypeId,
                     caseServiceSubTypeId,
+                    caseGroupReportId,
                     operationType: this.selectedCallTypeId,
                     priority: null,
                     status: this.selectedStatus,
@@ -1269,6 +1286,7 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
                     caseServiceGroupId,
                     caseServiceTypeId,
                     caseServiceSubTypeId,
+                    caseGroupReportId,
                     channel: this.selectedChannels,
                     description: this.description,
                     startTime: `${selectedDate} ${selectedTime}`,
@@ -1643,6 +1661,47 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
         return this.resolveAutocompleteId(this.serviceSubTypeControl.value);
     }
 
+    private resolveCaseGroupReportId(): any {
+        return this.resolveAutocompleteId(this.caseGroupControl.value);
+    }
+
+    private applyCaseGroupReportSelection(caseGroupReportId: any): void {
+        if (!caseGroupReportId) {
+            this.selectedCaseGroup = null;
+            this.pendingCaseGroupReportId = null;
+            this.caseGroupControl.setValue('');
+            return;
+        }
+
+        this.pendingCaseGroupReportId = caseGroupReportId;
+        const list = Array.isArray(this.caseGroupReport) ? this.caseGroupReport : [];
+        const selectedCaseGroup = list.find((group: any) => group.id == caseGroupReportId);
+
+        if (selectedCaseGroup) {
+            this.selectedCaseGroup = selectedCaseGroup.id;
+            this.caseGroupControl.setValue(selectedCaseGroup);
+            this.pendingCaseGroupReportId = null;
+        } else {
+            this.selectedCaseGroup = caseGroupReportId;
+        }
+    }
+
+    filterCaseGroups() {
+        const controlValue = this.caseGroupControl.value as any;
+        const originalValue = (typeof controlValue === 'object' && controlValue ? controlValue.name : controlValue || '')
+            .toString()
+            .trim();
+        const filterValue = originalValue.toLowerCase();
+        const list = Array.isArray(this.caseGroupReport) ? this.caseGroupReport : [];
+
+        if (!filterValue) {
+            this.filteredCaseGroups = [...list];
+            return;
+        }
+
+        this.filteredCaseGroups = list.filter((group: any) => (group.name || '').toLowerCase().includes(filterValue));
+    }
+
     filterServiceGroups() {
         this.syncServiceGroupSelectionFromControl();
         const controlValue = this.serviceGroupControl.value as any;
@@ -1874,6 +1933,10 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
         return serviceGroup?.name || '';
     };
 
+    displayCaseGroupFn = (group: any): string => {
+        return group?.name || '';
+    };
+
     displayServiceTypeFn = (serviceType: any): string => {
         return serviceType?.name || '';
     };
@@ -1963,6 +2026,11 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
         } else {
             this.selectedCaseType = selectedCaseType.id;
         }
+    }
+
+    onCaseGroupSelected(event: any) {
+        const group = event.option.value;
+        this.selectedCaseGroup = group?.id ?? null;
     }
 
     onServiceGroupSelected(event: any) {
@@ -2532,5 +2600,15 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
             this.inspectionCompanyReplyDateTtb = null;
             this.inspectionCompanyReplyTimeTtb = { hour: 0, minute: 0, second: 0 };
         }
+    }
+
+    getCaseGroupReport() {
+        this.callListService.getCaseGroupReport().subscribe((res: any) => {
+            this.caseGroupReport = Array.isArray(res) ? res : [];
+            this.filteredCaseGroups = [...this.caseGroupReport];
+            if (this.pendingCaseGroupReportId) {
+                this.applyCaseGroupReportSelection(this.pendingCaseGroupReportId);
+            }
+        });
     }
 }

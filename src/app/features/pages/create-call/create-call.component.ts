@@ -164,11 +164,15 @@ export class CreateCallComponent {
     serviceGroupControl = new FormControl('');
     serviceTypeControl = new FormControl('');
     serviceSubTypeControl = new FormControl('');
+    caseGroupControl = new FormControl('');
     filteredCodes: any[] = [];
     filteredCaseTypes: any[] = [];
     filteredServiceGroups: any[] = [];
     filteredServiceTypes: any[] = [];
     filteredServiceSubTypes: any[] = [];
+    filteredCaseGroups: any[] = [];
+    caseGroupReport: any;
+    selectedCaseGroup: any = null;
 
     // pageEln: number | undefined = 0;
 
@@ -346,6 +350,7 @@ export class CreateCallComponent {
         this.getStatusList();
         this.getCasePriority();
         this.getInspectionCompany();
+        this.getCaseGroupReport();
     }
 
     submit() {
@@ -388,6 +393,7 @@ export class CreateCallComponent {
         const caseServiceGroupId = this.resolveCaseServiceGroupId();
         const caseServiceTypeId = this.resolveCaseServiceTypeId();
         const caseServiceSubTypeId = this.resolveCaseServiceSubTypeId();
+        const caseGroupReportId = this.resolveCaseGroupReportId();
         await this.caseServiceHierarchyService.warnOnSaveIfNeeded(
             caseServiceGroupId,
             caseServiceTypeId,
@@ -408,6 +414,7 @@ export class CreateCallComponent {
             caseServiceGroupId,
             caseServiceTypeId,
             caseServiceSubTypeId,
+            caseGroupReportId,
             operationType: this.selectedCallTypeId,
             priority: null,
             status: this.selectedStatus,
@@ -797,6 +804,26 @@ export class CreateCallComponent {
         return this.resolveAutocompleteId(this.serviceSubTypeControl.value);
     }
 
+    private resolveCaseGroupReportId(): any {
+        return this.resolveAutocompleteId(this.caseGroupControl.value);
+    }
+
+    filterCaseGroups() {
+        const controlValue = this.caseGroupControl.value as any;
+        const originalValue = (typeof controlValue === 'object' && controlValue ? controlValue.name : controlValue || '')
+            .toString()
+            .trim();
+        const filterValue = originalValue.toLowerCase();
+        const list = Array.isArray(this.caseGroupReport) ? this.caseGroupReport : [];
+
+        if (!filterValue) {
+            this.filteredCaseGroups = [...list];
+            return;
+        }
+
+        this.filteredCaseGroups = list.filter((group: any) => (group.name || '').toLowerCase().includes(filterValue));
+    }
+
     filterServiceGroups() {
         this.syncServiceGroupSelectionFromControl();
         const controlValue = this.serviceGroupControl.value as any;
@@ -1028,6 +1055,10 @@ export class CreateCallComponent {
         return serviceGroup && serviceGroup.name ? serviceGroup.name : '';
     }
 
+    displayCaseGroupFn(group: any): string {
+        return group && group.name ? group.name : '';
+    }
+
     displayServiceTypeFn(serviceType: any): string {
         return serviceType && serviceType.name ? serviceType.name : '';
     }
@@ -1116,6 +1147,11 @@ export class CreateCallComponent {
         } else {
             this.selectedCaseType = selectedCaseType.id;
         }
+    }
+
+    onCaseGroupSelected(event: any) {
+        const group = event.option.value;
+        this.selectedCaseGroup = group?.id ?? null;
     }
 
     onServiceGroupSelected(event: any) {
@@ -1274,6 +1310,13 @@ export class CreateCallComponent {
     getStatusList() {
         this.callListService.getStatusList().subscribe((res: any) => {
             this.statusList = res;
+        });
+    }
+
+    getCaseGroupReport() {
+        this.callListService.getCaseGroupReport().subscribe((res: any) => {
+            this.caseGroupReport = Array.isArray(res) ? res : [];
+            this.filteredCaseGroups = [...this.caseGroupReport];
         });
     }
 }
