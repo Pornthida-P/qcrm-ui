@@ -17,6 +17,9 @@ export class ServiceTypeManagementComponent implements OnInit {
 
     faXmark = faXmark;
     allServiceSubTypes: any[] = [];
+    filteredServiceSubTypes: any[] = [];
+    selectedServiceSubTypes: any[] = [];
+    serviceSubTypeControl = new FormControl('');
     serviceGroups: any[] = [];
 
     serviceTypeForm: FormGroup = new FormGroup({
@@ -39,6 +42,8 @@ export class ServiceTypeManagementComponent implements OnInit {
 
         switch (this.data.mode) {
             case 'add':
+                this.selectedServiceSubTypes = [];
+                this.serviceSubTypeControl.setValue('');
                 this.serviceTypeForm.patchValue({
                     name: '',
                     caseServiceGroupId: null,
@@ -74,10 +79,69 @@ export class ServiceTypeManagementComponent implements OnInit {
         return response ?? [];
     }
 
+    filterServiceSubTypes(): void {
+        const controlValue = this.serviceSubTypeControl.value as any;
+        const originalValue = (typeof controlValue === 'object' && controlValue ? controlValue.name : controlValue || '')
+            .toString()
+            .trim();
+        const filterValue = originalValue.toLowerCase();
+        const selectedIds = new Set(this.serviceTypeForm.get('caseServiceSubTypeIds')?.value ?? []);
+        const availableSubTypes = this.allServiceSubTypes.filter((subType: any) => !selectedIds.has(subType.id));
+
+        if (!filterValue) {
+            this.filteredServiceSubTypes = [...availableSubTypes];
+            return;
+        }
+
+        this.filteredServiceSubTypes = availableSubTypes.filter((subType: any) =>
+            subType.name?.toLowerCase().includes(filterValue),
+        );
+    }
+
+    displayServiceSubTypeFn = (serviceSubType: any): string => {
+        return serviceSubType?.name || '';
+    };
+
+    onServiceSubTypeSelected(event: any): void {
+        const selected = event.option.value;
+        if (!selected?.id) {
+            return;
+        }
+
+        const currentIds: number[] = this.serviceTypeForm.get('caseServiceSubTypeIds')?.value ?? [];
+        if (currentIds.includes(selected.id)) {
+            this.serviceSubTypeControl.setValue('');
+            return;
+        }
+
+        this.selectedServiceSubTypes = [...this.selectedServiceSubTypes, selected];
+        this.serviceTypeForm.patchValue({ caseServiceSubTypeIds: [...currentIds, selected.id] });
+        this.serviceSubTypeControl.setValue('');
+        this.filterServiceSubTypes();
+    }
+
+    removeServiceSubType(subType: any): void {
+        const currentIds: number[] = this.serviceTypeForm.get('caseServiceSubTypeIds')?.value ?? [];
+        this.selectedServiceSubTypes = this.selectedServiceSubTypes.filter((item) => item.id !== subType.id);
+        this.serviceTypeForm.patchValue({ caseServiceSubTypeIds: currentIds.filter((id) => id !== subType.id) });
+        this.filterServiceSubTypes();
+    }
+
+    private syncSelectedServiceSubTypes(ids: number[]): void {
+        this.selectedServiceSubTypes = ids
+            .map((id) => this.allServiceSubTypes.find((subType) => subType.id == id))
+            .filter((subType): subType is any => !!subType);
+    }
+
     private loadServiceSubTypes(): void {
         this.callService.getServiceSubType().subscribe({
             next: (response: any) => {
                 this.allServiceSubTypes = this.parseResponse(response);
+                const ids: number[] = this.serviceTypeForm.get('caseServiceSubTypeIds')?.value ?? [];
+                if (ids.length > 0) {
+                    this.syncSelectedServiceSubTypes(ids);
+                }
+                this.filterServiceSubTypes();
             },
             error: (error) => {
                 this.sweetalertService.handleError(error);
@@ -102,6 +166,7 @@ export class ServiceTypeManagementComponent implements OnInit {
                 const mappings = this.parseResponse(response);
                 const subTypeIds = mappings.map((item: any) => Number(item.caseServiceSubTypeId));
                 this.serviceTypeForm.patchValue({ caseServiceSubTypeIds: subTypeIds });
+                this.syncSelectedServiceSubTypes(subTypeIds);
             },
             error: (error) => {
                 this.sweetalertService.handleError(error);

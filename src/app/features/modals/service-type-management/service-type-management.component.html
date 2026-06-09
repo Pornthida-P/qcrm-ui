@@ -54,18 +54,44 @@
                         </mat-select>
                     </div>
                     <div class="col-12">
-                        <label for="caseServiceSubTypeIds" class="form-label">{{ 'menu.serviceSubType' | translate }}</label>
-                        <mat-select
-                            id="caseServiceSubTypeIds"
-                            class="w-100"
-                            formControlName="caseServiceSubTypeIds"
-                            multiple
-                            [placeholder]="'contact.searchServiceSubType' | translate"
-                        >
-                            <mat-option *ngFor="let subType of allServiceSubTypes" [value]="subType.id">
+                        <label for="serviceSubTypeSearch" class="form-label">{{ 'menu.serviceSubType' | translate }}</label>
+                        <div *ngIf="selectedServiceSubTypes.length > 0" class="selected-subtype-list mb-2">
+                            <span class="badge bg-light text-dark border me-1 mb-1" *ngFor="let subType of selectedServiceSubTypes">
                                 {{ subType.name }}
-                            </mat-option>
-                        </mat-select>
+                                <button
+                                    type="button"
+                                    class="btn-remove-subtype"
+                                    *ngIf="data.mode !== 'view'"
+                                    (click)="removeServiceSubType(subType)"
+                                    aria-label="Remove"
+                                >
+                                    &times;
+                                </button>
+                            </span>
+                        </div>
+                        <mat-form-field class="w-100" appearance="outline" *ngIf="data.mode !== 'view'">
+                            <input
+                                id="serviceSubTypeSearch"
+                                type="text"
+                                matInput
+                                [formControl]="serviceSubTypeControl"
+                                [matAutocomplete]="autoServiceSubType"
+                                (input)="filterServiceSubTypes()"
+                                (focus)="filterServiceSubTypes()"
+                                [placeholder]="'contact.searchServiceSubType' | translate"
+                            />
+                            <mat-autocomplete
+                                #autoServiceSubType="matAutocomplete"
+                                [displayWith]="displayServiceSubTypeFn"
+                                (optionSelected)="onServiceSubTypeSelected($event)"
+                            >
+                                <ng-container *ngFor="let serviceSubType of filteredServiceSubTypes">
+                                    <mat-option *ngIf="!serviceSubType.isNew" [value]="serviceSubType">
+                                        {{ serviceSubType.name }}
+                                    </mat-option>
+                                </ng-container>
+                            </mat-autocomplete>
+                        </mat-form-field>
                     </div>
                 </div>
             </div>
