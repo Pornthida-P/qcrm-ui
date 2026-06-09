@@ -123,4 +123,8 @@ export class CallListService {
       return this.http.get(`${this.baseUrl}${config.api.path.callList.inspectionCompanySendReply}/${caseId}`);
     }
 
+    getCaseGroupReport() {
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.caseGroupReport}`);
+    }
+
 }
