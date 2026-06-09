@@ -16,6 +16,8 @@ export class ServiceSubTypeManagementComponent implements OnInit {
     title = 'service-sub-type';
 
     faXmark = faXmark;
+    linkedServiceTypes: string[] = [];
+    isLoadingLinkedTypes = false;
 
     serviceSubTypeForm: FormGroup = new FormGroup({
         name: new FormControl(''),
@@ -40,10 +42,12 @@ export class ServiceSubTypeManagementComponent implements OnInit {
             case 'view':
                 this.populateForm(this.data.serviceSubType);
                 this.serviceSubTypeForm.disable();
+                this.loadLinkedServiceTypes(this.data.serviceSubType?.id);
                 break;
 
             case 'edit':
                 this.populateForm(this.data.serviceSubType);
+                this.loadLinkedServiceTypes(this.data.serviceSubType?.id);
                 break;
 
             default:
@@ -56,6 +60,30 @@ export class ServiceSubTypeManagementComponent implements OnInit {
 
         this.serviceSubTypeForm.patchValue({
             name: serviceSubType.name || '',
+        });
+    }
+
+    loadLinkedServiceTypes(serviceSubTypeId?: number | string): void {
+        if (!serviceSubTypeId) {
+            this.linkedServiceTypes = [];
+            return;
+        }
+
+        this.isLoadingLinkedTypes = true;
+        this.callService.getCaseServiceTypeSubType(undefined, serviceSubTypeId).subscribe({
+            next: (response: any) => {
+                const rows = typeof response === 'string' ? JSON.parse(response) : response;
+                const junctionRows = Array.isArray(rows) ? rows : [];
+                const typeNames = junctionRows
+                    .map((row: any) => row.caseServiceTypeName)
+                    .filter((name: string) => !!name);
+                this.linkedServiceTypes = [...new Set(typeNames)];
+                this.isLoadingLinkedTypes = false;
+            },
+            error: () => {
+                this.linkedServiceTypes = [];
+                this.isLoadingLinkedTypes = false;
+            },
         });
     }
 

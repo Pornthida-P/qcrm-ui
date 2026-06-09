@@ -33,7 +33,7 @@ export class TableListComponent implements OnInit, OnChanges, DoCheck {
     includesPhone: string[] = ['phone', 'phoneNumber', 'contactNumber', 'caller'];
     includesColor: string[] = ['color'];
     includesScript: string[] = ['script'];
-    includesDescription: string[] = ['description'];
+    includesDescription: string[] = ['description', 'linkedServiceTypes'];
     includesCallStatus: string[] = ['callStatus'];
     includesTruncate: string[] = ['subject', 'topic'];
 

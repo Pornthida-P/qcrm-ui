@@ -21,10 +21,13 @@
         <form [formGroup]="serviceSubTypeForm" (ngSubmit)="saveServiceSubType()">
             <div class="form-section">
                 <div class="row g-3">
+                    <div class="col-12" *ngIf="data.mode === 'add'">
+                        <div class="alert alert-info mb-0">
+                            {{ 'page.service-sub-type.bindHint' | translate }}
+                        </div>
+                    </div>
                     <div class="col-12">
-                        <label for="name" class="form-label"
-                            >{{ 'form.name' | translate }} <span class="text-danger">*</span></label
-                        >
+                        <label for="name" class="form-label">{{ 'form.name' | translate }} <span class="text-danger">*</span></label>
                         <input
                             type="text"
                             class="form-control"
@@ -38,6 +41,20 @@
                             *ngIf="serviceSubTypeForm.get('name')?.invalid && serviceSubTypeForm.get('name')?.touched"
                         >
                             {{ 'form.nameRequired' | translate }}
+                        </div>
+                    </div>
+                    <div class="col-12" *ngIf="data.mode !== 'add'">
+                        <label class="form-label">{{ 'page.service-sub-type.linkedServiceTypes' | translate }}</label>
+                        <div *ngIf="linkedServiceTypes.length > 0" class="linked-type-list">
+                            <span class="badge bg-light text-dark border me-1 mb-1" *ngFor="let typeName of linkedServiceTypes">
+                                {{ typeName }}
+                            </span>
+                        </div>
+                        <div *ngIf="!isLoadingLinkedTypes && linkedServiceTypes.length === 0" class="text-muted small">
+                            {{ 'page.service-sub-type.noLinkedServiceTypes' | translate }}
+                        </div>
+                        <div class="form-text" *ngIf="data.mode === 'edit'">
+                            {{ 'page.service-sub-type.bindHintEdit' | translate }}
                         </div>
                     </div>
                 </div>
@@ -57,4 +74,3 @@
         </form>
     </div>
 </div>
-

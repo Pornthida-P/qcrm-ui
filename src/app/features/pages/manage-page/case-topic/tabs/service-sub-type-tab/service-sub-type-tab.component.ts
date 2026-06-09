@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { faGear, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { TranslateService } from '@ngx-translate/core';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, forkJoin, tap } from 'rxjs';
 import { ServiceSubTypeManagementComponent } from 'src/app/features/modals/service-sub-type-management/service-sub-type-management.component';
 import { CallService } from 'src/app/services/call/call.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
@@ -81,12 +81,20 @@ export class ServiceSubTypeTabComponent implements OnInit {
     }
 
     findAllServiceSubType() {
-        this.callService
-            .getServiceSubType()
+        forkJoin({
+            serviceSubTypes: this.callService.getServiceSubType(),
+            junctionRows: this.callService.getCaseServiceTypeSubType(),
+        })
             .pipe(
-                tap((response: any) => {
-                    const serviceSubTypes = Array.isArray(response) ? response : [];
-                    this.serviceSubTypes = serviceSubTypes;
+                tap(({ serviceSubTypes, junctionRows }: any) => {
+                    const parsedSubTypes = this.parseResponseArray(serviceSubTypes);
+                    const parsedJunctionRows = this.parseResponseArray(junctionRows);
+                    const linkedTypesBySubTypeId = this.buildLinkedTypesMap(parsedJunctionRows);
+
+                    this.serviceSubTypes = parsedSubTypes.map((subType: any) => ({
+                        ...subType,
+                        linkedServiceTypes: linkedTypesBySubTypeId.get(Number(subType.id))?.join(', ') || '',
+                    }));
                     this.dataSource = new MatTableDataSource<any>(this.serviceSubTypes);
                 }),
                 catchError((error) => {
@@ -95,6 +103,31 @@ export class ServiceSubTypeTabComponent implements OnInit {
                 }),
             )
             .subscribe();
+    }
+
+    private parseResponseArray(response: any): any[] {
+        const parsed = typeof response === 'string' ? JSON.parse(response) : response;
+        return Array.isArray(parsed) ? parsed : [];
+    }
+
+    private buildLinkedTypesMap(junctionRows: any[]): Map<number, string[]> {
+        const linkedTypesBySubTypeId = new Map<number, string[]>();
+
+        junctionRows.forEach((row: any) => {
+            const subTypeId = Number(row.caseServiceSubTypeId);
+            const typeName = row.caseServiceTypeName;
+            if (!subTypeId || !typeName) {
+                return;
+            }
+
+            const existing = linkedTypesBySubTypeId.get(subTypeId) || [];
+            if (!existing.includes(typeName)) {
+                existing.push(typeName);
+            }
+            linkedTypesBySubTypeId.set(subTypeId, existing);
+        });
+
+        return linkedTypesBySubTypeId;
     }
 
     openDialog(mode: 'add' | 'view' | 'edit', serviceSubType?: any): void {

@@ -6,6 +6,7 @@ import { ContactsService } from 'src/app/services/contacts/contacts.service';
 import * as XLSX from 'xlsx';
 import { UserService } from 'src/app/services/user/user.service';
 import { CallService } from 'src/app/services/call/call.service';
+import { CaseServiceHierarchyService } from 'src/app/services/case-service-hierarchy/case-service-hierarchy.service';
 import { CarService } from 'src/app/services/car/car.service';
 import { firstValueFrom, forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -44,6 +45,7 @@ export class ContactImportManagementComponent implements OnInit {
         private translate: TranslateService,
         private userService: UserService,
         private callService: CallService,
+        private caseServiceHierarchyService: CaseServiceHierarchyService,
         private carService: CarService,
         private sweetAlertService: SweetAlertService,
         public statusService: StatusService,
@@ -841,6 +843,21 @@ export class ContactImportManagementComponent implements OnInit {
             console.error('Error getting caseCodes:', error);
         }
 
+        let serviceTypes: any[] = [];
+        let junctionRows: any[] = [];
+        try {
+            const [serviceTypesRes, junctionRes]: any[] = await Promise.all([
+                firstValueFrom(this.callService.getCaseServiceType()),
+                firstValueFrom(this.callService.getCaseServiceTypeSubType()),
+            ]);
+            const parsedServiceTypes = typeof serviceTypesRes === 'string' ? JSON.parse(serviceTypesRes) : serviceTypesRes;
+            const parsedJunctionRows = typeof junctionRes === 'string' ? JSON.parse(junctionRes) : junctionRes;
+            serviceTypes = Array.isArray(parsedServiceTypes) ? parsedServiceTypes : [];
+            junctionRows = Array.isArray(parsedJunctionRows) ? parsedJunctionRows : [];
+        } catch (error) {
+            console.error('Error loading service hierarchy master data for import:', error);
+        }
+
         // Round Robin: distribute leads to agents in rotation
         await Promise.all(
             validContacts.map(async (contactObj: any, index: number) => {
@@ -892,6 +909,22 @@ export class ContactImportManagementComponent implements OnInit {
                     }
                 }
 
+                const rawHierarchy = {
+                    caseServiceGroupId: contactObj['caseServiceGroupId'] || contact['caseServiceGroupId'] || null,
+                    caseServiceTypeId: contactObj['caseServiceTypeId'] || contact['caseServiceTypeId'] || null,
+                    caseServiceSubTypeId: contactObj['caseServiceSubTypeId'] || contact['caseServiceSubTypeId'] || null,
+                };
+                const sanitizedHierarchy = this.caseServiceHierarchyService.sanitizeForImport(rawHierarchy, serviceTypes, junctionRows);
+                if (sanitizedHierarchy.warningKeys.length > 0) {
+                    contactObj['serviceHierarchyWarnings'] = sanitizedHierarchy.warningKeys;
+                    console.warn('Contact import service hierarchy adjusted', {
+                        contactId: contact.contactId,
+                        rawHierarchy,
+                        sanitizedHierarchy: sanitizedHierarchy.ids,
+                        warnings: sanitizedHierarchy.warningKeys,
+                    });
+                }
+
                 const caseData = {
                     caseId: null,
                     contactId: contact.contactId,
@@ -901,9 +934,9 @@ export class ContactImportManagementComponent implements OnInit {
                     description: description,
                     caseCodeId: caseCodeId, // From Code column
                     caseTypeId: contactObj['caseTypeId'] || contact['caseTypeId'] || null,
-                    caseServiceGroupId: contactObj['caseServiceGroupId'] || contact['caseServiceGroupId'] || null,
-                    caseServiceTypeId: contactObj['caseServiceTypeId'] || contact['caseServiceTypeId'] || null,
-                    caseServiceSubTypeId: contactObj['caseServiceSubTypeId'] || contact['caseServiceSubTypeId'] || null,
+                    caseServiceGroupId: sanitizedHierarchy.ids.caseServiceGroupId,
+                    caseServiceTypeId: sanitizedHierarchy.ids.caseServiceTypeId,
+                    caseServiceSubTypeId: sanitizedHierarchy.ids.caseServiceSubTypeId,
                     operationType: contactObj['operationType'] || contact['operationType'] || this.outbound, // Outbound for leads
                     priority: contactObj['priority'] || contact['priority'] || null,
                     status: contactObj['status'] || contact['status'] || 1, // Default status = 1 (Open)
@@ -944,10 +977,15 @@ export class ContactImportManagementComponent implements OnInit {
             const errorCount = results?.filter((r: any) => r?.error).length || 0;
 
             if (errorCount === 0) {
+                const hierarchyWarningCount = this.contactObjects.filter((item) => item['serviceHierarchyWarnings']?.length > 0).length;
+                const successMessage =
+                    hierarchyWarningCount > 0
+                        ? `${this.translate.instant('contact-import-management.success-message', { count: successCount })}\n${this.translate.instant('alert.serviceHierarchyImportAdjusted', { count: hierarchyWarningCount })}`
+                        : this.translate.instant('contact-import-management.success-message', { count: successCount });
                 this.sweetAlertService.getSwal(
-                    'success',
+                    hierarchyWarningCount > 0 ? 'warning' : 'success',
                     this.translate.instant('contact-import-management.success'),
-                    this.translate.instant('contact-import-management.success-message', { count: successCount }),
+                    successMessage,
                     true,
                     '',
                     {

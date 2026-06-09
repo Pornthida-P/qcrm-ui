@@ -40,6 +40,33 @@
                             {{ 'form.nameRequired' | translate }}
                         </div>
                     </div>
+                    <div class="col-12">
+                        <label for="caseServiceGroupId" class="form-label">{{ 'menu.serviceGroup' | translate }}</label>
+                        <mat-select
+                            id="caseServiceGroupId"
+                            class="w-100"
+                            formControlName="caseServiceGroupId"
+                            [placeholder]="'contact.searchServiceGroup' | translate"
+                        >
+                            <mat-option *ngFor="let group of serviceGroups" [value]="group.id">
+                                {{ group.name }}
+                            </mat-option>
+                        </mat-select>
+                    </div>
+                    <div class="col-12">
+                        <label for="caseServiceSubTypeIds" class="form-label">{{ 'menu.serviceSubType' | translate }}</label>
+                        <mat-select
+                            id="caseServiceSubTypeIds"
+                            class="w-100"
+                            formControlName="caseServiceSubTypeIds"
+                            multiple
+                            [placeholder]="'contact.searchServiceSubType' | translate"
+                        >
+                            <mat-option *ngFor="let subType of allServiceSubTypes" [value]="subType.id">
+                                {{ subType.name }}
+                            </mat-option>
+                        </mat-select>
+                    </div>
                 </div>
             </div>
 
