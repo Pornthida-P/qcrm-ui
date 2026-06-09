@@ -720,6 +720,31 @@
                                                 <option *ngFor="let status of statusList" [value]="status.id">{{ status.status }}</option>
                                             </select>
                                         </div>
+                                        <div class="col-6">
+                                            <label class="form-label form-label-sm fw-semibold mb-1">{{
+                                                'contact.caseGroup' | translate
+                                            }}</label>
+                                            <mat-form-field class="w-100 compact-field" appearance="outline">
+                                                <input
+                                                    type="text"
+                                                    matInput
+                                                    [formControl]="caseGroupControl"
+                                                    [matAutocomplete]="autoCaseGroup"
+                                                    (input)="filterCaseGroups()"
+                                                    (focus)="filterCaseGroups()"
+                                                    [placeholder]="'common.pleaseSelect' | translate"
+                                                />
+                                                <mat-autocomplete
+                                                    #autoCaseGroup="matAutocomplete"
+                                                    [displayWith]="displayCaseGroupFn"
+                                                    (optionSelected)="onCaseGroupSelected($event)"
+                                                >
+                                                    <mat-option *ngFor="let group of filteredCaseGroups" [value]="group">
+                                                        {{ group.name }}
+                                                    </mat-option>
+                                                </mat-autocomplete>
+                                            </mat-form-field>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
