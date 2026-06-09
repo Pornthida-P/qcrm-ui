@@ -75,6 +75,30 @@
     font-size: 0.875rem;
 }
 
+.selected-subtype-list {
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-weight: 500;
+    }
+}
+
+.btn-remove-subtype {
+    border: none;
+    background: none;
+    color: #6c757d;
+    font-size: 1rem;
+    line-height: 1;
+    padding: 0;
+    margin-left: 0.125rem;
+    cursor: pointer;
+
+    &:hover {
+        color: #dc3545;
+    }
+}
+
 .form-control {
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 
