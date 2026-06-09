@@ -203,11 +203,13 @@ export class CallComponent implements OnInit, OnDestroy {
     serviceGroupControl = new FormControl('');
     serviceTypeControl = new FormControl('');
     serviceSubTypeControl = new FormControl('');
+    caseGroupControl = new FormControl('');
     filteredCodes: any[] = [];
     filteredCaseTypes: any[] = [];
     filteredServiceGroups: any[] = [];
     filteredServiceTypes: any[] = [];
     filteredServiceSubTypes: any[] = [];
+    filteredCaseGroups: any[] = [];
 
     originalStatus: any;
 
@@ -223,6 +225,10 @@ export class CallComponent implements OnInit, OnDestroy {
     inspectionCompanyReplyDate: Date | null = null;
     inspectionCompanyReplyTime: { hour: number; minute: number; second: number } = { hour: 0, minute: 0, second: 0 };
     selectedInspectionCompanyTtb: any = '';
+
+    caseGroupReport: any;
+    selectedCaseGroup: any = null;
+    pendingCaseGroupReportId: any = null;
 
     constructor(
         private callService: CallService,
@@ -311,6 +317,8 @@ export class CallComponent implements OnInit, OnDestroy {
             this.getCallsData((this.currentPage - 1) * this.pageSize, this.pageSize);
             this.getPage();
         });
+
+        this.getCaseGroupReport();
 
         this.callTypes = [
             { id: '1', name: this.inbound },
@@ -757,6 +765,9 @@ export class CallComponent implements OnInit, OnDestroy {
         this.selectedServiceGroup = null;
         this.selectedServiceType = null;
         this.selectedServiceSubType = null;
+        this.selectedCaseGroup = null;
+        this.pendingCaseGroupReportId = null;
+        this.caseGroupControl.setValue('');
         this.selectedActivityTopicId = [];
 
         this.isStatusDisabled = false;
@@ -879,6 +890,8 @@ export class CallComponent implements OnInit, OnDestroy {
                                     } else {
                                         this.clearServiceTypeSelection();
                                     }
+
+                                    this.applyCaseGroupReportSelection(call.caseGroupReportId);
 
                                     this.disableFormControlsForAgent();
 
@@ -1128,6 +1141,7 @@ export class CallComponent implements OnInit, OnDestroy {
         const caseServiceGroupId = this.resolveCaseServiceGroupId();
         const caseServiceTypeId = this.resolveCaseServiceTypeId();
         const caseServiceSubTypeId = this.resolveCaseServiceSubTypeId();
+        const caseGroupReportId = this.resolveCaseGroupReportId();
         await this.caseServiceHierarchyService.warnOnSaveIfNeeded(
             caseServiceGroupId,
             caseServiceTypeId,
@@ -1148,6 +1162,7 @@ export class CallComponent implements OnInit, OnDestroy {
                     caseServiceGroupId,
                     caseServiceTypeId,
                     caseServiceSubTypeId,
+                    caseGroupReportId,
                     channel: this.selectedChannels,
                     activityType: this.activityTypeId,
                     description: this.description,
@@ -1204,6 +1219,7 @@ export class CallComponent implements OnInit, OnDestroy {
                     caseServiceGroupId,
                     caseServiceTypeId,
                     caseServiceSubTypeId,
+                    caseGroupReportId,
                     channel: this.selectedChannels,
                     description: this.description,
                     startTime: `${selectedDate} ${selectedTime}`,
@@ -1394,6 +1410,47 @@ export class CallComponent implements OnInit, OnDestroy {
 
     private resolveCaseServiceSubTypeId(): any {
         return this.resolveAutocompleteId(this.serviceSubTypeControl.value);
+    }
+
+    private resolveCaseGroupReportId(): any {
+        return this.resolveAutocompleteId(this.caseGroupControl.value);
+    }
+
+    private applyCaseGroupReportSelection(caseGroupReportId: any): void {
+        if (!caseGroupReportId) {
+            this.selectedCaseGroup = null;
+            this.pendingCaseGroupReportId = null;
+            this.caseGroupControl.setValue('');
+            return;
+        }
+
+        this.pendingCaseGroupReportId = caseGroupReportId;
+        const list = Array.isArray(this.caseGroupReport) ? this.caseGroupReport : [];
+        const selectedCaseGroup = list.find((group: any) => group.id == caseGroupReportId);
+
+        if (selectedCaseGroup) {
+            this.selectedCaseGroup = selectedCaseGroup.id;
+            this.caseGroupControl.setValue(selectedCaseGroup);
+            this.pendingCaseGroupReportId = null;
+        } else {
+            this.selectedCaseGroup = caseGroupReportId;
+        }
+    }
+
+    filterCaseGroups() {
+        const controlValue = this.caseGroupControl.value as any;
+        const originalValue = (typeof controlValue === 'object' && controlValue ? controlValue.name : controlValue || '')
+            .toString()
+            .trim();
+        const filterValue = originalValue.toLowerCase();
+        const list = Array.isArray(this.caseGroupReport) ? this.caseGroupReport : [];
+
+        if (!filterValue) {
+            this.filteredCaseGroups = [...list];
+            return;
+        }
+
+        this.filteredCaseGroups = list.filter((group: any) => (group.name || '').toLowerCase().includes(filterValue));
     }
 
     filterServiceGroups() {
@@ -1637,6 +1694,10 @@ export class CallComponent implements OnInit, OnDestroy {
         return serviceGroup?.name || '';
     };
 
+    displayCaseGroupFn = (group: any): string => {
+        return group?.name || '';
+    };
+
     displayServiceTypeFn = (serviceType: any): string => {
         return serviceType?.name || '';
     };
@@ -1717,6 +1778,11 @@ export class CallComponent implements OnInit, OnDestroy {
         } else {
             this.selectedCaseType = selectedCaseType.id;
         }
+    }
+
+    onCaseGroupSelected(event: any) {
+        const group = event.option.value;
+        this.selectedCaseGroup = group?.id ?? null;
     }
 
     onServiceGroupSelected(event: any) {
@@ -1944,10 +2010,12 @@ export class CallComponent implements OnInit, OnDestroy {
             this.serviceGroupControl.disable();
             this.serviceTypeControl.disable();
             this.serviceSubTypeControl.disable();
+            this.caseGroupControl.disable();
         } else {
             this.codeControl.enable();
             this.caseTypeControl.enable();
             this.serviceGroupControl.enable();
+            this.caseGroupControl.enable();
             if (this.selectedServiceGroup) {
                 this.serviceTypeControl.enable();
             } else {
@@ -2244,5 +2312,15 @@ export class CallComponent implements OnInit, OnDestroy {
             this.inspectionCompanyReplyDateTtb = null;
             this.inspectionCompanyReplyTimeTtb = { hour: 0, minute: 0, second: 0 };
         }
+    }
+
+    getCaseGroupReport() {
+        this.callListService.getCaseGroupReport().subscribe((res: any) => {
+            this.caseGroupReport = Array.isArray(res) ? res : [];
+            this.filteredCaseGroups = [...this.caseGroupReport];
+            if (this.pendingCaseGroupReportId) {
+                this.applyCaseGroupReportSelection(this.pendingCaseGroupReportId);
+            }
+        });
     }
 }
