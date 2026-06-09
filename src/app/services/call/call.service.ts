@@ -206,8 +206,16 @@ export class CallService {
     }
 
     // Service Type
-    getCaseServiceType() {
-        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-type`);
+    getCaseServiceType(caseServiceGroupId?: string | number) {
+        const params: Record<string, string> = {};
+        if (caseServiceGroupId !== undefined && caseServiceGroupId !== null && caseServiceGroupId !== '') {
+            params['caseServiceGroupId'] = String(caseServiceGroupId);
+        }
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-type`, { params });
+    }
+
+    getCaseServiceTypeByGroupId(caseServiceGroupId: string | number) {
+        return this.getCaseServiceType(caseServiceGroupId);
     }
 
     createCaseServiceType(data: any) {
@@ -225,8 +233,62 @@ export class CallService {
     }
 
     // Service Sub-Type
-    getServiceSubType() {
-        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}/service-sub-type`);
+    getServiceSubType(caseServiceTypeId?: string | number) {
+        const params: Record<string, string> = {};
+        if (caseServiceTypeId !== undefined && caseServiceTypeId !== null && caseServiceTypeId !== '') {
+            params['caseServiceTypeId'] = String(caseServiceTypeId);
+        }
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}/service-sub-type`, { params });
+    }
+
+    getServiceSubTypeByTypeId(caseServiceTypeId: string | number) {
+        return this.getServiceSubType(caseServiceTypeId);
+    }
+
+    validateCaseServiceHierarchy(
+        caseServiceGroupId?: string | number | null,
+        caseServiceTypeId?: string | number | null,
+        caseServiceSubTypeId?: string | number | null,
+    ) {
+        const params: Record<string, string> = {};
+        if (caseServiceGroupId !== undefined && caseServiceGroupId !== null && caseServiceGroupId !== '') {
+            params['caseServiceGroupId'] = String(caseServiceGroupId);
+        }
+        if (caseServiceTypeId !== undefined && caseServiceTypeId !== null && caseServiceTypeId !== '') {
+            params['caseServiceTypeId'] = String(caseServiceTypeId);
+        }
+        if (caseServiceSubTypeId !== undefined && caseServiceSubTypeId !== null && caseServiceSubTypeId !== '') {
+            params['caseServiceSubTypeId'] = String(caseServiceSubTypeId);
+        }
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}/validate-service-hierarchy`, { params });
+    }
+
+    getCaseServiceTypeSubType(caseServiceTypeId?: string | number, caseServiceSubTypeId?: string | number) {
+        const params: Record<string, string> = {};
+        if (caseServiceTypeId !== undefined && caseServiceTypeId !== null && caseServiceTypeId !== '') {
+            params['caseServiceTypeId'] = String(caseServiceTypeId);
+        }
+        if (caseServiceSubTypeId !== undefined && caseServiceSubTypeId !== null && caseServiceSubTypeId !== '') {
+            params['caseServiceSubTypeId'] = String(caseServiceSubTypeId);
+        }
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-type-sub-type`, { params });
+    }
+
+    createCaseServiceTypeSubType(data: any) {
+        return this.http.post(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-type-sub-type`, data);
+    }
+
+    syncCaseServiceTypeSubTypes(caseServiceTypeId: string | number, data: any) {
+        return this.http.put(
+            `${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-type/${caseServiceTypeId}/sub-types`,
+            data,
+        );
+    }
+
+    deleteCaseServiceTypeSubType(data: any) {
+        return this.http.delete(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-type-sub-type`, {
+            body: data,
+        });
     }
 
     createServiceSubType(data: any) {

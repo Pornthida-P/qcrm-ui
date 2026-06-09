@@ -90,6 +90,11 @@ export class SweetAlertService {
         this.getSwal('warning', title, text, false, route);
     }
 
+    warningText(text: string, route: string = '') {
+        const title = this.translate.instant('alert.warning');
+        this.getSwal('warning', title, text, false, route);
+    }
+
     confirmDelete(): Promise<any> {
         const title = this.translate.instant('alert.deleteConfirm');
         const confirmText = this.translate.instant('alert.confirm');

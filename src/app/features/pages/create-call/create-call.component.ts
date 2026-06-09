@@ -3,6 +3,7 @@ import { Location } from '@angular/common';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { CallService } from 'src/app/services/call/call.service';
+import { CaseServiceHierarchyService } from 'src/app/services/case-service-hierarchy/case-service-hierarchy.service';
 import { catchError, debounceTime, distinctUntilChanged, map, Observable, OperatorFunction, take, tap, throwError } from 'rxjs';
 import { UserService } from 'src/app/services/user/user.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
@@ -30,7 +31,9 @@ export class CreateCallComponent {
     caseTypes: any[] = [];
     serviceGroups: any[] = [];
     serviceTypes: any[] = [];
+    allServiceTypes: any[] = [];
     serviceSubTypes: any[] = [];
+    allServiceSubTypes: any[] = [];
     organizations: any;
     contacts: any[] = [];
     contactName: string = '';
@@ -175,6 +178,7 @@ export class CreateCallComponent {
         private location: Location,
         private route: ActivatedRoute,
         private callServive: CallService,
+        private caseServiceHierarchyService: CaseServiceHierarchyService,
         private sweetalertServices: SweetAlertService,
         private contactService: ContactsService,
         private ngSelectConfig: NgSelectConfig,
@@ -227,11 +231,7 @@ export class CreateCallComponent {
         const list = this.inspectionCompany && Array.isArray(this.inspectionCompany) ? this.inspectionCompany : [];
         return ids.map((id: string | number) => {
             const c = list.find(
-                (x: any) =>
-                    x.id === id ||
-                    x.companyId === id ||
-                    x.inspectionCompanyId === id ||
-                    String(x.id) === String(id)
+                (x: any) => x.id === id || x.companyId === id || x.inspectionCompanyId === id || String(x.id) === String(id),
             );
             const group = c?.gruop ?? c?.group ?? c?.groupId ?? null;
             return { inspectionCompanyId: id, group: group != null ? group : '' };
@@ -309,13 +309,13 @@ export class CreateCallComponent {
         });
 
         this.callServive.getCaseServiceType().subscribe((serviceTypes: any) => {
-            this.serviceTypes = serviceTypes;
-            this.filteredServiceTypes = serviceTypes;
+            this.allServiceTypes = Array.isArray(serviceTypes) ? serviceTypes : [];
+            this.clearServiceTypeSelection();
         });
 
         this.callServive.getServiceSubType().subscribe((serviceSubTypes: any) => {
-            this.serviceSubTypes = serviceSubTypes;
-            this.filteredServiceSubTypes = serviceSubTypes;
+            this.allServiceSubTypes = Array.isArray(serviceSubTypes) ? serviceSubTypes : [];
+            this.clearServiceSubTypeSelection();
         });
 
         this.callServive.getAllChannels().subscribe((channels: any) => {
@@ -354,28 +354,47 @@ export class CreateCallComponent {
         const selectedTime = this.timepickStart ? this.formatTime(this.timepickStart) : this.formatTime(new Date());
 
         if (this.selectedCaseCode || this.isSocialChannelSelected) {
-            this.userService.getDataUser().pipe(take(1)).subscribe((currentUser) => {
-                let createdById = currentUser?.userId ?? '';
-                if (!createdById) {
-                    this.userService.refreshFromStorage();
-                    this.userService.getDataUser().pipe(take(1)).subscribe((userAgain) => {
-                        createdById = userAgain?.userId ?? '';
-                        if (!createdById) {
-                            this.sweetalertServices.error('alert.error');
-                            return;
-                        }
-                        this.submitCreateCase(createdById, selectedDate, selectedTime);
-                    });
-                    return;
-                }
-                this.submitCreateCase(createdById, selectedDate, selectedTime);
-            });
+            this.userService
+                .getDataUser()
+                .pipe(take(1))
+                .subscribe((currentUser) => {
+                    let createdById = currentUser?.userId ?? '';
+                    if (!createdById) {
+                        this.userService.refreshFromStorage();
+                        this.userService
+                            .getDataUser()
+                            .pipe(take(1))
+                            .subscribe((userAgain) => {
+                                createdById = userAgain?.userId ?? '';
+                                if (!createdById) {
+                                    this.sweetalertServices.error('alert.error');
+                                    return;
+                                }
+                                this.submitCreateCase(createdById, selectedDate, selectedTime);
+                            });
+                        return;
+                    }
+                    this.submitCreateCase(createdById, selectedDate, selectedTime);
+                });
         } else {
             this.sweetalertServices.error('alert.pleaseEnterCode');
         }
     }
 
-    private submitCreateCase(createdById: string, selectedDate: string, selectedTime: string): void {
+    private async submitCreateCase(createdById: string, selectedDate: string, selectedTime: string): Promise<void> {
+        this.syncServiceGroupSelectionFromControl();
+        this.syncServiceTypeSelectionFromControl();
+        this.syncServiceSubTypeSelectionFromControl();
+        const caseServiceGroupId = this.resolveCaseServiceGroupId();
+        const caseServiceTypeId = this.resolveCaseServiceTypeId();
+        const caseServiceSubTypeId = this.resolveCaseServiceSubTypeId();
+        await this.caseServiceHierarchyService.warnOnSaveIfNeeded(
+            caseServiceGroupId,
+            caseServiceTypeId,
+            caseServiceSubTypeId,
+            this.allServiceTypes,
+        );
+
         const requestDateTime = `${selectedDate} ${selectedTime}`;
         const now = new Date().toISOString();
         const dataForm = {
@@ -386,9 +405,9 @@ export class CreateCallComponent {
             description: this.description,
             caseCodeId: this.selectedCaseCode,
             caseTypeId: this.selectedCaseType,
-            caseServiceGroupId: this.selectedServiceGroup,
-            caseServiceTypeId: this.selectedServiceType,
-            caseServiceSubTypeId: this.selectedServiceSubType,
+            caseServiceGroupId,
+            caseServiceTypeId,
+            caseServiceSubTypeId,
             operationType: this.selectedCallTypeId,
             priority: null,
             status: this.selectedStatus,
@@ -412,7 +431,10 @@ export class CreateCallComponent {
             inspectionCompanyReplyDateTime: this.formatInspectionDateTime(this.inspectionCompanyReplyDate, this.inspectionCompanyReplyTime),
             selectedInspectionCompanyTtb: this.selectedInspectionCompanyTtb || null,
             inspectionCompanyReplyTtbGroup: 2,
-            inspectionCompanyReplyDateTimeTtb: this.formatInspectionDateTime(this.inspectionCompanyReplyDateTtb, this.inspectionCompanyReplyTimeTtb),
+            inspectionCompanyReplyDateTimeTtb: this.formatInspectionDateTime(
+                this.inspectionCompanyReplyDateTtb,
+                this.inspectionCompanyReplyTimeTtb,
+            ),
         };
         this.callServive
             .createCase(dataForm)
@@ -472,7 +494,7 @@ export class CreateCallComponent {
                 c.groupId === 1 ||
                 c.inspectionCompanyGroup === 1 ||
                 String(c.group) === '1' ||
-                String(c.groupId) === '1'
+                String(c.groupId) === '1',
         );
     }
 
@@ -488,28 +510,37 @@ export class CreateCallComponent {
                 c.groupId === 2 ||
                 c.inspectionCompanyGroup === 2 ||
                 String(c.group) === '2' ||
-                String(c.groupId) === '2'
+                String(c.groupId) === '2',
         );
     }
 
     get inspectionCompanySendNames(): string {
         const send = this.inspectionCompanySendReply?.send;
         if (!Array.isArray(send) || send.length === 0) return '';
-        return send.map((s: any) => s.inspectionCompanyName || s.inspectionCompanyId || '').filter(Boolean).join(', ');
+        return send
+            .map((s: any) => s.inspectionCompanyName || s.inspectionCompanyId || '')
+            .filter(Boolean)
+            .join(', ');
     }
 
     get inspectionCompanyReplyNamesGroup1(): string {
         const reply = this.inspectionCompanySendReply?.reply;
         if (!Array.isArray(reply)) return '';
         const group1 = reply.filter((r: any) => String(r.group) === '1' || r.group === 1);
-        return group1.map((r: any) => r.inspectionCompanyName || r.inspectionCompanyId || '').filter(Boolean).join(', ');
+        return group1
+            .map((r: any) => r.inspectionCompanyName || r.inspectionCompanyId || '')
+            .filter(Boolean)
+            .join(', ');
     }
 
     get inspectionCompanyReplyNamesGroup2(): string {
         const reply = this.inspectionCompanySendReply?.reply;
         if (!Array.isArray(reply)) return '';
         const group2 = reply.filter((r: any) => String(r.group) === '2' || r.group === 2);
-        return group2.map((r: any) => r.inspectionCompanyName || r.inspectionCompanyId || '').filter(Boolean).join(', ');
+        return group2
+            .map((r: any) => r.inspectionCompanyName || r.inspectionCompanyId || '')
+            .filter(Boolean)
+            .join(', ');
     }
 
     getCasePriority(caseId?: string) {
@@ -720,7 +751,54 @@ export class CreateCallComponent {
         }
     }
 
+    private hasAutocompleteSelection(value: any): boolean {
+        return value != null && typeof value === 'object' && value.id != null;
+    }
+
+    private syncServiceGroupSelectionFromControl(): void {
+        if (!this.hasAutocompleteSelection(this.serviceGroupControl.value) && this.selectedServiceGroup != null) {
+            this.selectedServiceGroup = null;
+            this.clearServiceTypeSelection();
+        }
+    }
+
+    private syncServiceTypeSelectionFromControl(): void {
+        if (!this.hasAutocompleteSelection(this.serviceTypeControl.value)) {
+            if (this.selectedServiceType != null || this.selectedServiceSubType != null) {
+                this.selectedServiceType = null;
+                this.selectedServiceSubType = null;
+                this.serviceSubTypes = [];
+                this.filteredServiceSubTypes = [];
+                this.serviceSubTypeControl.setValue('');
+                this.serviceSubTypeControl.disable();
+            }
+        }
+    }
+
+    private syncServiceSubTypeSelectionFromControl(): void {
+        if (!this.hasAutocompleteSelection(this.serviceSubTypeControl.value)) {
+            this.selectedServiceSubType = null;
+        }
+    }
+
+    private resolveAutocompleteId(value: any): any {
+        return this.hasAutocompleteSelection(value) ? value.id : null;
+    }
+
+    private resolveCaseServiceGroupId(): any {
+        return this.resolveAutocompleteId(this.serviceGroupControl.value);
+    }
+
+    private resolveCaseServiceTypeId(): any {
+        return this.resolveAutocompleteId(this.serviceTypeControl.value);
+    }
+
+    private resolveCaseServiceSubTypeId(): any {
+        return this.resolveAutocompleteId(this.serviceSubTypeControl.value);
+    }
+
     filterServiceGroups() {
+        this.syncServiceGroupSelectionFromControl();
         const controlValue = this.serviceGroupControl.value as any;
         const originalValue = (typeof controlValue === 'object' && controlValue ? controlValue.name : controlValue || '').toString().trim();
         const filterValue = originalValue.toLowerCase();
@@ -739,6 +817,14 @@ export class CreateCallComponent {
     }
 
     filterServiceTypes() {
+        this.syncServiceGroupSelectionFromControl();
+        this.syncServiceTypeSelectionFromControl();
+
+        if (!this.selectedServiceGroup) {
+            this.filteredServiceTypes = [];
+            return;
+        }
+
         const controlValue = this.serviceTypeControl.value as any;
         const originalValue = (typeof controlValue === 'object' && controlValue ? controlValue.name : controlValue || '').toString().trim();
         const filterValue = originalValue.toLowerCase();
@@ -756,7 +842,85 @@ export class CreateCallComponent {
         }
     }
 
+    clearServiceTypeSelection(): void {
+        this.serviceTypes = [];
+        this.filteredServiceTypes = [];
+        this.selectedServiceType = null;
+        this.serviceTypeControl.setValue('');
+        this.serviceTypeControl.disable();
+        this.clearServiceSubTypeSelection();
+    }
+
+    loadServiceTypesForSelectedGroup(clearType = true, typeIdToSelect?: any, subTypeIdToSelect?: any): void {
+        if (!this.selectedServiceGroup) {
+            this.clearServiceTypeSelection();
+            return;
+        }
+
+        this.callServive.getCaseServiceTypeByGroupId(this.selectedServiceGroup).subscribe({
+            next: (response: any) => {
+                const types = Array.isArray(response) ? response : [];
+                this.serviceTypes = types;
+                this.filteredServiceTypes = [...types];
+
+                if (clearType) {
+                    this.selectedServiceType = null;
+                    this.serviceTypeControl.setValue('');
+                    this.clearServiceSubTypeSelection();
+                }
+
+                this.serviceTypeControl.enable();
+
+                if (typeIdToSelect) {
+                    this.applyServiceTypeSelection(typeIdToSelect, subTypeIdToSelect);
+                } else if (!clearType && this.selectedServiceType) {
+                    this.applyServiceTypeSelection(this.selectedServiceType, subTypeIdToSelect);
+                }
+            },
+            error: () => {
+                this.clearServiceTypeSelection();
+            },
+        });
+    }
+
+    applyServiceTypeSelection(typeId: any, subTypeIdToSelect?: any): void {
+        if (!typeId) {
+            return;
+        }
+
+        let selected = this.serviceTypes.find((type: any) => type.id == typeId);
+        if (!selected) {
+            selected = this.allServiceTypes.find((type: any) => type.id == typeId);
+            if (selected) {
+                this.serviceTypes = [selected, ...this.serviceTypes];
+                this.filteredServiceTypes = [...this.serviceTypes];
+            }
+        }
+
+        if (selected) {
+            this.selectedServiceType = selected.id;
+            this.serviceTypeControl.setValue(selected);
+            this.serviceTypeControl.enable();
+            if (subTypeIdToSelect || this.selectedServiceSubType) {
+                this.loadServiceSubTypesForSelectedType(false, subTypeIdToSelect ?? this.selectedServiceSubType);
+            }
+        }
+    }
+
+    onServiceGroupChanged(): void {
+        this.loadServiceTypesForSelectedGroup(true);
+    }
+
     filterServiceSubTypes() {
+        this.syncServiceTypeSelectionFromControl();
+        this.syncServiceSubTypeSelectionFromControl();
+
+        if (!this.selectedServiceType) {
+            this.filteredServiceSubTypes = [];
+            this.serviceSubTypeControl.disable();
+            return;
+        }
+
         const controlValue = this.serviceSubTypeControl.value as any;
         const originalValue = (typeof controlValue === 'object' && controlValue ? controlValue.name : controlValue || '').toString().trim();
         const filterValue = originalValue.toLowerCase();
@@ -772,6 +936,84 @@ export class CreateCallComponent {
         if (!exactMatch && filterValue) {
             this.filteredServiceSubTypes = [{ id: null, name: originalValue, isNew: true }, ...this.filteredServiceSubTypes];
         }
+    }
+
+    clearServiceSubTypeSelection(): void {
+        this.serviceSubTypes = [];
+        this.filteredServiceSubTypes = [];
+        this.selectedServiceSubType = null;
+        this.serviceSubTypeControl.setValue('');
+        this.serviceSubTypeControl.disable();
+    }
+
+    loadServiceSubTypesForSelectedType(clearSubType = true, subTypeIdToSelect?: any): void {
+        if (!this.selectedServiceType) {
+            this.clearServiceSubTypeSelection();
+            return;
+        }
+
+        this.callServive.getServiceSubTypeByTypeId(this.selectedServiceType).subscribe({
+            next: (response: any) => {
+                const subTypes = Array.isArray(response) ? response : [];
+                this.serviceSubTypes = subTypes;
+                this.filteredServiceSubTypes = [...subTypes];
+
+                if (clearSubType) {
+                    this.selectedServiceSubType = null;
+                    this.serviceSubTypeControl.setValue('');
+                }
+
+                this.serviceSubTypeControl.enable();
+
+                if (subTypeIdToSelect) {
+                    this.applySubTypeSelection(subTypeIdToSelect);
+                } else if (!clearSubType && this.selectedServiceSubType) {
+                    this.applySubTypeSelection(this.selectedServiceSubType);
+                }
+            },
+            error: () => {
+                this.clearServiceSubTypeSelection();
+            },
+        });
+    }
+
+    applySubTypeSelection(subTypeId: any): void {
+        if (!subTypeId) {
+            return;
+        }
+
+        let selected = this.serviceSubTypes.find((subType: any) => subType.id == subTypeId);
+        if (!selected) {
+            selected = this.allServiceSubTypes.find((subType: any) => subType.id == subTypeId);
+            if (selected) {
+                this.serviceSubTypes = [selected, ...this.serviceSubTypes];
+                this.filteredServiceSubTypes = [...this.serviceSubTypes];
+            }
+        }
+
+        if (selected) {
+            this.selectedServiceSubType = selected.id;
+            this.serviceSubTypeControl.setValue(selected);
+            this.serviceSubTypeControl.enable();
+        }
+    }
+
+    ensureSubTypeLinkedToType(subTypeId: any, createdById: string): void {
+        if (!this.selectedServiceType || !subTypeId) {
+            return;
+        }
+
+        this.callServive
+            .createCaseServiceTypeSubType({
+                caseServiceTypeId: this.selectedServiceType,
+                caseServiceSubTypeId: subTypeId,
+                createdById,
+            })
+            .subscribe({ error: () => {} });
+    }
+
+    onServiceTypeChanged(): void {
+        this.loadServiceSubTypesForSelectedType(true);
     }
 
     displayCodeFn(code: any): string {
@@ -811,23 +1053,26 @@ export class CreateCallComponent {
             }
 
             // สร้าง code ใหม่ (ใช้ user จาก UserService เพื่อรองรับ cross-auth จาก QIM)
-            this.userService.getDataUser().pipe(take(1)).subscribe((currentUser) => {
-                const createdById = currentUser?.userId ?? '';
-                this.callServive.createCaseCode({ code: selectedCode.code, script: '', createdById }).subscribe({
-                next: (res: any) => {
-                    const newCode = typeof res === 'string' ? JSON.parse(res) : res;
-                    this.selectedCaseCode = newCode.id;
-                    this.selectedCaseCodeObject = newCode;
-                    this.codeControl.setValue(newCode);
-                    this.caseCodes.push(newCode);
-                    this.filteredCodes = [...this.caseCodes];
-                    this.sweetalertServices.success('alert.createSuccess');
-                },
-                error: (err) => {
-                    this.sweetalertServices.handleError(err);
-                },
-            });
-            });
+            this.userService
+                .getDataUser()
+                .pipe(take(1))
+                .subscribe((currentUser) => {
+                    const createdById = currentUser?.userId ?? '';
+                    this.callServive.createCaseCode({ code: selectedCode.code, script: '', createdById }).subscribe({
+                        next: (res: any) => {
+                            const newCode = typeof res === 'string' ? JSON.parse(res) : res;
+                            this.selectedCaseCode = newCode.id;
+                            this.selectedCaseCodeObject = newCode;
+                            this.codeControl.setValue(newCode);
+                            this.caseCodes.push(newCode);
+                            this.filteredCodes = [...this.caseCodes];
+                            this.sweetalertServices.success('alert.createSuccess');
+                        },
+                        error: (err) => {
+                            this.sweetalertServices.handleError(err);
+                        },
+                    });
+                });
         } else {
             this.selectedCaseCode = selectedCode.id;
             this.selectedCaseCodeObject = selectedCode;
@@ -849,22 +1094,25 @@ export class CreateCallComponent {
             }
 
             // Create new caseType (ใช้ user จาก UserService เพื่อรองรับ cross-auth จาก QIM)
-            this.userService.getDataUser().pipe(take(1)).subscribe((currentUser) => {
-                const createdById = currentUser?.userId ?? '';
-                this.callServive.createCaseType({ name: selectedCaseType.name, createdById }).subscribe({
-                next: (res: any) => {
-                    const newType = typeof res === 'string' ? JSON.parse(res) : res;
-                    this.selectedCaseType = newType.id;
-                    this.caseTypeControl.setValue(newType);
-                    this.caseTypes.push(newType);
-                    this.filteredCaseTypes = [...this.caseTypes];
-                    this.sweetalertServices.success('alert.createSuccess');
-                },
-                error: (err) => {
-                    this.sweetalertServices.handleError(err);
-                },
-            });
-            });
+            this.userService
+                .getDataUser()
+                .pipe(take(1))
+                .subscribe((currentUser) => {
+                    const createdById = currentUser?.userId ?? '';
+                    this.callServive.createCaseType({ name: selectedCaseType.name, createdById }).subscribe({
+                        next: (res: any) => {
+                            const newType = typeof res === 'string' ? JSON.parse(res) : res;
+                            this.selectedCaseType = newType.id;
+                            this.caseTypeControl.setValue(newType);
+                            this.caseTypes.push(newType);
+                            this.filteredCaseTypes = [...this.caseTypes];
+                            this.sweetalertServices.success('alert.createSuccess');
+                        },
+                        error: (err) => {
+                            this.sweetalertServices.handleError(err);
+                        },
+                    });
+                });
         } else {
             this.selectedCaseType = selectedCaseType.id;
         }
@@ -883,33 +1131,44 @@ export class CreateCallComponent {
                 this.selectedServiceGroup = existingServiceGroup.id;
                 this.serviceGroupControl.setValue(existingServiceGroup);
                 this.filteredServiceGroups = [...this.serviceGroups];
+                this.onServiceGroupChanged();
                 return;
             }
 
             // Create new serviceGroup (ใช้ user จาก UserService เพื่อรองรับ cross-auth จาก QIM)
-            this.userService.getDataUser().pipe(take(1)).subscribe((currentUser) => {
-                const createdById = currentUser?.userId ?? '';
-                this.callServive.createCaseServiceGroup({ name: selectedServiceGroup.name, createdById }).subscribe({
-                next: (res: any) => {
-                    const newGroup = typeof res === 'string' ? JSON.parse(res) : res;
-                    this.selectedServiceGroup = newGroup.id;
-                    this.serviceGroupControl.setValue(newGroup);
-                    this.serviceGroups.push(newGroup);
-                    this.filteredServiceGroups = [...this.serviceGroups];
-                    this.sweetalertServices.success('alert.createSuccess');
-                },
-                error: (err) => {
-                    this.sweetalertServices.handleError(err);
-                },
-            });
-            });
+            this.userService
+                .getDataUser()
+                .pipe(take(1))
+                .subscribe((currentUser) => {
+                    const createdById = currentUser?.userId ?? '';
+                    this.callServive.createCaseServiceGroup({ name: selectedServiceGroup.name, createdById }).subscribe({
+                        next: (res: any) => {
+                            const newGroup = typeof res === 'string' ? JSON.parse(res) : res;
+                            this.selectedServiceGroup = newGroup.id;
+                            this.serviceGroupControl.setValue(newGroup);
+                            this.serviceGroups.push(newGroup);
+                            this.filteredServiceGroups = [...this.serviceGroups];
+                            this.onServiceGroupChanged();
+                            this.sweetalertServices.success('alert.createSuccess');
+                        },
+                        error: (err) => {
+                            this.sweetalertServices.handleError(err);
+                        },
+                    });
+                });
         } else {
             this.selectedServiceGroup = selectedServiceGroup.id;
+            this.onServiceGroupChanged();
         }
     }
 
     onServiceTypeSelected(event: any) {
         const selectedServiceType = event.option.value;
+
+        if (!this.selectedServiceGroup) {
+            this.sweetalertServices.error('alert.pleaseSelectServiceGroup');
+            return;
+        }
 
         if (selectedServiceType.isNew) {
             // ตรวจสอบว่ามีชื่อซ้ำหรือไม่ (case-insensitive)
@@ -919,76 +1178,94 @@ export class CreateCallComponent {
                 this.selectedServiceType = existingServiceType.id;
                 this.serviceTypeControl.setValue(existingServiceType);
                 this.filteredServiceTypes = [...this.serviceTypes];
+                this.onServiceTypeChanged();
                 return;
             }
 
             // Create new serviceType (ใช้ user จาก UserService เพื่อรองรับ cross-auth จาก QIM)
-            this.userService.getDataUser().pipe(take(1)).subscribe((currentUser) => {
-                const createdById = currentUser?.userId ?? '';
-                this.callServive
-                    .createCaseServiceType({
-                        name: selectedServiceType.name,
-                        caseServiceGroupId: this.selectedServiceGroup,
-                        createdById,
-                    })
-                .subscribe({
-                    next: (res: any) => {
-                        const newType = typeof res === 'string' ? JSON.parse(res) : res;
-                        this.selectedServiceType = newType.id;
-                        this.serviceTypeControl.setValue(newType);
-                        this.serviceTypes.push(newType);
-                        this.filteredServiceTypes = [...this.serviceTypes];
-                        this.sweetalertServices.success('alert.createSuccess');
-                    },
-                    error: (err) => {
-                        this.sweetalertServices.handleError(err);
-                    },
+            this.userService
+                .getDataUser()
+                .pipe(take(1))
+                .subscribe((currentUser) => {
+                    const createdById = currentUser?.userId ?? '';
+                    this.callServive
+                        .createCaseServiceType({
+                            name: selectedServiceType.name,
+                            caseServiceGroupId: this.selectedServiceGroup,
+                            createdById,
+                        })
+                        .subscribe({
+                            next: (res: any) => {
+                                const newType = typeof res === 'string' ? JSON.parse(res) : res;
+                                this.selectedServiceType = newType.id;
+                                this.serviceTypeControl.setValue(newType);
+                                this.serviceTypes.push(newType);
+                                this.allServiceTypes.push(newType);
+                                this.filteredServiceTypes = [...this.serviceTypes];
+                                this.onServiceTypeChanged();
+                                this.sweetalertServices.success('alert.createSuccess');
+                            },
+                            error: (err) => {
+                                this.sweetalertServices.handleError(err);
+                            },
+                        });
                 });
-            });
         } else {
             this.selectedServiceType = selectedServiceType.id;
+            this.onServiceTypeChanged();
         }
     }
 
     onServiceSubTypeSelected(event: any) {
         const selectedServiceSubType = event.option.value;
 
+        if (!this.selectedServiceType) {
+            this.sweetalertServices.error('alert.pleaseSelectServiceType');
+            return;
+        }
+
         if (selectedServiceSubType.isNew) {
-            // ตรวจสอบว่ามีชื่อซ้ำหรือไม่ (case-insensitive)
-            const existingServiceSubType = this.serviceSubTypes.find(
-                (st: any) => st.name.toLowerCase() === selectedServiceSubType.name.toLowerCase(),
-            );
+            this.userService
+                .getDataUser()
+                .pipe(take(1))
+                .subscribe((currentUser) => {
+                    const createdById = currentUser?.userId ?? '';
+                    const existingServiceSubType = this.allServiceSubTypes.find(
+                        (st: any) => st.name.toLowerCase() === selectedServiceSubType.name.toLowerCase(),
+                    );
 
-            if (existingServiceSubType) {
-                this.selectedServiceSubType = existingServiceSubType.id;
-                this.serviceSubTypeControl.setValue(existingServiceSubType);
-                this.filteredServiceSubTypes = [...this.serviceSubTypes];
-                return;
-            }
-
-            // Create new serviceSubType (ใช้ user จาก UserService เพื่อรองรับ cross-auth จาก QIM)
-            this.userService.getDataUser().pipe(take(1)).subscribe((currentUser) => {
-                const createdById = currentUser?.userId ?? '';
-                this.callServive
-                    .createServiceSubType({
-                        name: selectedServiceSubType.name,
-                        caseServiceTypeId: this.selectedServiceType,
-                        createdById,
-                    })
-                .subscribe({
-                    next: (res: any) => {
-                        const newSubType = typeof res === 'string' ? JSON.parse(res) : res;
-                        this.selectedServiceSubType = newSubType.id;
-                        this.serviceSubTypeControl.setValue(newSubType);
-                        this.serviceSubTypes.push(newSubType);
+                    if (existingServiceSubType) {
+                        if (!this.serviceSubTypes.find((st: any) => st.id == existingServiceSubType.id)) {
+                            this.serviceSubTypes = [existingServiceSubType, ...this.serviceSubTypes];
+                        }
+                        this.selectedServiceSubType = existingServiceSubType.id;
+                        this.serviceSubTypeControl.setValue(existingServiceSubType);
                         this.filteredServiceSubTypes = [...this.serviceSubTypes];
-                        this.sweetalertServices.success('alert.createSuccess');
-                    },
-                    error: (err) => {
-                        this.sweetalertServices.handleError(err);
-                    },
+                        this.ensureSubTypeLinkedToType(existingServiceSubType.id, createdById);
+                        return;
+                    }
+
+                    this.callServive
+                        .createServiceSubType({
+                            name: selectedServiceSubType.name,
+                            caseServiceTypeId: this.selectedServiceType,
+                            createdById,
+                        })
+                        .subscribe({
+                            next: (res: any) => {
+                                const newSubType = typeof res === 'string' ? JSON.parse(res) : res;
+                                this.selectedServiceSubType = newSubType.id;
+                                this.serviceSubTypeControl.setValue(newSubType);
+                                this.serviceSubTypes.push(newSubType);
+                                this.allServiceSubTypes.push(newSubType);
+                                this.filteredServiceSubTypes = [...this.serviceSubTypes];
+                                this.sweetalertServices.success('alert.createSuccess');
+                            },
+                            error: (err) => {
+                                this.sweetalertServices.handleError(err);
+                            },
+                        });
                 });
-            });
         } else {
             this.selectedServiceSubType = selectedServiceSubType.id;
         }

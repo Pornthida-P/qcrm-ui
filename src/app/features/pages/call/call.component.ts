@@ -1,6 +1,7 @@
 import { Component, Pipe, PipeTransform, OnInit, OnDestroy } from '@angular/core';
 import { faPenToSquare, faTrashCan, faArrowRight, faArrowLeft, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { CallService } from 'src/app/services/call/call.service';
+import { CaseServiceHierarchyService } from 'src/app/services/case-service-hierarchy/case-service-hierarchy.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Call } from 'src/app/shared/interface/call';
 import { UserService } from 'src/app/services/user/user.service';
@@ -137,7 +138,9 @@ export class CallComponent implements OnInit, OnDestroy {
     caseTypes: any[] = [];
     serviceGroups: any[] = [];
     serviceTypes: any[] = [];
+    allServiceTypes: any[] = [];
     serviceSubTypes: any[] = [];
+    allServiceSubTypes: any[] = [];
     callTypes: any;
 
     isCheckboxSelected: { [key: number]: boolean } = {};
@@ -223,6 +226,7 @@ export class CallComponent implements OnInit, OnDestroy {
 
     constructor(
         private callService: CallService,
+        private caseServiceHierarchyService: CaseServiceHierarchyService,
         private router: Router,
         private activeRoute: ActivatedRoute,
         private userService: UserService,
@@ -706,13 +710,16 @@ export class CallComponent implements OnInit, OnDestroy {
         });
 
         this.callService.getCaseServiceType().subscribe((serviceTypes: any) => {
-            this.serviceTypes = serviceTypes;
-            this.filteredServiceTypes = serviceTypes;
+            this.allServiceTypes = Array.isArray(serviceTypes) ? serviceTypes : [];
+            if (this.selectedServiceGroup) {
+                this.loadServiceTypesForSelectedGroup(false, this.selectedServiceType, this.selectedServiceSubType);
+            } else {
+                this.clearServiceTypeSelection();
+            }
         });
 
         this.callService.getServiceSubType().subscribe((serviceSubTypes: any) => {
-            this.serviceSubTypes = serviceSubTypes;
-            this.filteredServiceSubTypes = serviceSubTypes;
+            this.allServiceSubTypes = Array.isArray(serviceSubTypes) ? serviceSubTypes : [];
         });
 
         this.callService.getAllChannels().subscribe((channels: any) => {
@@ -781,12 +788,10 @@ export class CallComponent implements OnInit, OnDestroy {
                     this.filteredServiceGroups = serviceGroups;
 
                     this.callService.getCaseServiceType().subscribe((serviceTypes: any) => {
-                        this.serviceTypes = serviceTypes;
-                        this.filteredServiceTypes = serviceTypes;
+                        this.allServiceTypes = Array.isArray(serviceTypes) ? serviceTypes : [];
 
                         this.callService.getServiceSubType().subscribe((serviceSubTypes: any) => {
-                            this.serviceSubTypes = serviceSubTypes;
-                            this.filteredServiceSubTypes = serviceSubTypes;
+                            this.allServiceSubTypes = Array.isArray(serviceSubTypes) ? serviceSubTypes : [];
 
                             this.callService.getCaseById(callId).subscribe(
                                 (call: any) => {
@@ -869,33 +874,13 @@ export class CallComponent implements OnInit, OnDestroy {
                                         this.serviceGroupControl.setValue('');
                                     }
 
-                                    // Set serviceTypeControl value
-                                    if (call.caseServiceTypeId) {
-                                        this.selectedServiceType = call.caseServiceTypeId;
-                                        const selectedServiceType = this.serviceTypes.find(
-                                            (type: any) => type.id == call.caseServiceTypeId,
-                                        );
-                                        if (selectedServiceType) {
-                                            this.serviceTypeControl.setValue(selectedServiceType);
-                                        }
+                                    if (call.caseServiceGroupId) {
+                                        this.loadServiceTypesForSelectedGroup(false, call.caseServiceTypeId, call.caseServiceSubTypeId);
                                     } else {
-                                        this.selectedServiceType = null;
-                                        this.serviceTypeControl.setValue('');
+                                        this.clearServiceTypeSelection();
                                     }
 
-                                    // Set serviceSubTypeControl value
-                                    if (call.caseServiceSubTypeId) {
-                                        this.selectedServiceSubType = call.caseServiceSubTypeId;
-                                        const selectedServiceSubType = this.serviceSubTypes.find(
-                                            (subType: any) => subType.id == call.caseServiceSubTypeId,
-                                        );
-                                        if (selectedServiceSubType) {
-                                            this.serviceSubTypeControl.setValue(selectedServiceSubType);
-                                        }
-                                    } else {
-                                        this.selectedServiceSubType = null;
-                                        this.serviceSubTypeControl.setValue('');
-                                    }
+                                    this.disableFormControlsForAgent();
 
                                     this.getComment(call.caseId);
                                     this.getChatHistory(call.chatId);
@@ -1135,8 +1120,20 @@ export class CallComponent implements OnInit, OnDestroy {
         }
     }
 
-    submitCall() {
+    async submitCall() {
         const userData = this.userData || JSON.parse(localStorage.getItem('userData') || '{}');
+        this.syncServiceGroupSelectionFromControl();
+        this.syncServiceTypeSelectionFromControl();
+        this.syncServiceSubTypeSelectionFromControl();
+        const caseServiceGroupId = this.resolveCaseServiceGroupId();
+        const caseServiceTypeId = this.resolveCaseServiceTypeId();
+        const caseServiceSubTypeId = this.resolveCaseServiceSubTypeId();
+        await this.caseServiceHierarchyService.warnOnSaveIfNeeded(
+            caseServiceGroupId,
+            caseServiceTypeId,
+            caseServiceSubTypeId,
+            this.allServiceTypes,
+        );
         this.attachmentsId = this.attachments.map((attachment) => attachment.attachmentId.toString());
         const selectedDate = this.startTime ? this.formatDate(new Date(this.startTime)) : this.formatDate(new Date());
         const selectedTime = this.timepickStart ? this.formatTime(this.timepickStart) : this.formatTime(new Date());
@@ -1148,9 +1145,9 @@ export class CallComponent implements OnInit, OnDestroy {
                     name: userData.userId,
                     caseCodeId: this.selectedCaseCode,
                     caseTypeId: this.selectedCaseType,
-                    caseServiceGroupId: this.selectedServiceGroup,
-                    caseServiceTypeId: this.selectedServiceType,
-                    caseServiceSubTypeId: this.selectedServiceSubType,
+                    caseServiceGroupId,
+                    caseServiceTypeId,
+                    caseServiceSubTypeId,
                     channel: this.selectedChannels,
                     activityType: this.activityTypeId,
                     description: this.description,
@@ -1204,9 +1201,9 @@ export class CallComponent implements OnInit, OnDestroy {
                     callId: this.callId,
                     caseCodeId: this.selectedCaseCode,
                     caseTypeId: this.selectedCaseType,
-                    caseServiceGroupId: this.selectedServiceGroup,
-                    caseServiceTypeId: this.selectedServiceType,
-                    caseServiceSubTypeId: this.selectedServiceSubType,
+                    caseServiceGroupId,
+                    caseServiceTypeId,
+                    caseServiceSubTypeId,
                     channel: this.selectedChannels,
                     description: this.description,
                     startTime: `${selectedDate} ${selectedTime}`,
@@ -1233,11 +1230,17 @@ export class CallComponent implements OnInit, OnDestroy {
                     // Reply CI (group 1)
                     selectedInspectionCompany: this.selectedInspectionCompany || null,
                     inspectionCompanyReplyGroup: 1,
-                    inspectionCompanyReplyDateTime: this.formatInspectionDateTime(this.inspectionCompanyReplyDate, this.inspectionCompanyReplyTime),
+                    inspectionCompanyReplyDateTime: this.formatInspectionDateTime(
+                        this.inspectionCompanyReplyDate,
+                        this.inspectionCompanyReplyTime,
+                    ),
                     // Reply TTB (group 2)
                     selectedInspectionCompanyTtb: this.selectedInspectionCompanyTtb || null,
                     inspectionCompanyReplyTtbGroup: 2,
-                    inspectionCompanyReplyDateTimeTtb: this.formatInspectionDateTime(this.inspectionCompanyReplyDateTtb, this.inspectionCompanyReplyTimeTtb),
+                    inspectionCompanyReplyDateTimeTtb: this.formatInspectionDateTime(
+                        this.inspectionCompanyReplyDateTtb,
+                        this.inspectionCompanyReplyTimeTtb,
+                    ),
                 };
                 console.log('Data: ', data);
                 this.callService
@@ -1303,11 +1306,7 @@ export class CallComponent implements OnInit, OnDestroy {
         const list = this.inspectionCompany && Array.isArray(this.inspectionCompany) ? this.inspectionCompany : [];
         return ids.map((id: string | number) => {
             const c = list.find(
-                (x: any) =>
-                    x.id === id ||
-                    x.companyId === id ||
-                    x.inspectionCompanyId === id ||
-                    String(x.id) === String(id)
+                (x: any) => x.id === id || x.companyId === id || x.inspectionCompanyId === id || String(x.id) === String(id),
             );
             const group = c?.gruop ?? c?.group ?? c?.groupId ?? null;
             return { inspectionCompanyId: id, group: group != null ? group : '' };
@@ -1351,7 +1350,54 @@ export class CallComponent implements OnInit, OnDestroy {
         }
     }
 
+    private hasAutocompleteSelection(value: any): boolean {
+        return value != null && typeof value === 'object' && value.id != null;
+    }
+
+    private syncServiceGroupSelectionFromControl(): void {
+        if (!this.hasAutocompleteSelection(this.serviceGroupControl.value) && this.selectedServiceGroup != null) {
+            this.selectedServiceGroup = null;
+            this.clearServiceTypeSelection();
+        }
+    }
+
+    private syncServiceTypeSelectionFromControl(): void {
+        if (!this.hasAutocompleteSelection(this.serviceTypeControl.value)) {
+            if (this.selectedServiceType != null || this.selectedServiceSubType != null) {
+                this.selectedServiceType = null;
+                this.selectedServiceSubType = null;
+                this.serviceSubTypes = [];
+                this.filteredServiceSubTypes = [];
+                this.serviceSubTypeControl.setValue('');
+                this.serviceSubTypeControl.disable();
+            }
+        }
+    }
+
+    private syncServiceSubTypeSelectionFromControl(): void {
+        if (!this.hasAutocompleteSelection(this.serviceSubTypeControl.value)) {
+            this.selectedServiceSubType = null;
+        }
+    }
+
+    private resolveAutocompleteId(value: any): any {
+        return this.hasAutocompleteSelection(value) ? value.id : null;
+    }
+
+    private resolveCaseServiceGroupId(): any {
+        return this.resolveAutocompleteId(this.serviceGroupControl.value);
+    }
+
+    private resolveCaseServiceTypeId(): any {
+        return this.resolveAutocompleteId(this.serviceTypeControl.value);
+    }
+
+    private resolveCaseServiceSubTypeId(): any {
+        return this.resolveAutocompleteId(this.serviceSubTypeControl.value);
+    }
+
     filterServiceGroups() {
+        this.syncServiceGroupSelectionFromControl();
         const controlValue = this.serviceGroupControl.value as any;
         const originalValue = (typeof controlValue === 'object' && controlValue ? controlValue.name : controlValue || '').toString().trim();
         const filterValue = originalValue.toLowerCase();
@@ -1370,6 +1416,14 @@ export class CallComponent implements OnInit, OnDestroy {
     }
 
     filterServiceTypes() {
+        this.syncServiceGroupSelectionFromControl();
+        this.syncServiceTypeSelectionFromControl();
+
+        if (!this.selectedServiceGroup) {
+            this.filteredServiceTypes = [];
+            return;
+        }
+
         const controlValue = this.serviceTypeControl.value as any;
         const originalValue = (typeof controlValue === 'object' && controlValue ? controlValue.name : controlValue || '').toString().trim();
         const filterValue = originalValue.toLowerCase();
@@ -1387,7 +1441,91 @@ export class CallComponent implements OnInit, OnDestroy {
         }
     }
 
+    clearServiceTypeSelection(): void {
+        this.serviceTypes = [];
+        this.filteredServiceTypes = [];
+        this.selectedServiceType = null;
+        this.serviceTypeControl.setValue('');
+        this.serviceTypeControl.disable();
+        this.clearServiceSubTypeSelection();
+    }
+
+    loadServiceTypesForSelectedGroup(clearType = true, typeIdToSelect?: any, subTypeIdToSelect?: any): void {
+        if (!this.selectedServiceGroup) {
+            this.clearServiceTypeSelection();
+            return;
+        }
+
+        this.callService.getCaseServiceTypeByGroupId(this.selectedServiceGroup).subscribe({
+            next: (response: any) => {
+                const types = Array.isArray(response) ? response : [];
+                this.serviceTypes = types;
+                this.filteredServiceTypes = [...types];
+
+                if (clearType) {
+                    this.selectedServiceType = null;
+                    this.serviceTypeControl.setValue('');
+                    this.clearServiceSubTypeSelection();
+                }
+
+                if (!this.isAgent()) {
+                    this.serviceTypeControl.enable();
+                }
+
+                if (typeIdToSelect) {
+                    this.applyServiceTypeSelection(typeIdToSelect, subTypeIdToSelect);
+                } else if (!clearType && this.selectedServiceType) {
+                    this.applyServiceTypeSelection(this.selectedServiceType, subTypeIdToSelect);
+                }
+            },
+            error: () => {
+                this.clearServiceTypeSelection();
+            },
+        });
+    }
+
+    applyServiceTypeSelection(typeId: any, subTypeIdToSelect?: any): void {
+        if (!typeId) {
+            return;
+        }
+
+        let selected = this.serviceTypes.find((type: any) => type.id == typeId);
+        if (!selected) {
+            selected = this.allServiceTypes.find((type: any) => type.id == typeId);
+            if (selected) {
+                this.serviceTypes = [selected, ...this.serviceTypes];
+                this.filteredServiceTypes = [...this.serviceTypes];
+            }
+        }
+
+        if (selected) {
+            this.selectedServiceType = selected.id;
+            this.serviceTypeControl.setValue(selected);
+            if (!this.isAgent()) {
+                this.serviceTypeControl.enable();
+            }
+            if (subTypeIdToSelect || this.selectedServiceSubType) {
+                this.loadServiceSubTypesForSelectedType(false, subTypeIdToSelect ?? this.selectedServiceSubType);
+            }
+        }
+    }
+
+    onServiceGroupChanged(): void {
+        this.loadServiceTypesForSelectedGroup(true);
+    }
+
     filterServiceSubTypes() {
+        this.syncServiceTypeSelectionFromControl();
+        this.syncServiceSubTypeSelectionFromControl();
+
+        if (!this.selectedServiceType) {
+            this.filteredServiceSubTypes = [];
+            if (!this.isAgent()) {
+                this.serviceSubTypeControl.disable();
+            }
+            return;
+        }
+
         const controlValue = this.serviceSubTypeControl.value as any;
         const originalValue = (typeof controlValue === 'object' && controlValue ? controlValue.name : controlValue || '').toString().trim();
         const filterValue = originalValue.toLowerCase();
@@ -1403,6 +1541,88 @@ export class CallComponent implements OnInit, OnDestroy {
         if (!exactMatch && filterValue) {
             this.filteredServiceSubTypes = [{ id: null, name: originalValue, isNew: true }, ...this.filteredServiceSubTypes];
         }
+    }
+
+    clearServiceSubTypeSelection(): void {
+        this.serviceSubTypes = [];
+        this.filteredServiceSubTypes = [];
+        this.selectedServiceSubType = null;
+        this.serviceSubTypeControl.setValue('');
+        this.serviceSubTypeControl.disable();
+    }
+
+    loadServiceSubTypesForSelectedType(clearSubType = true, subTypeIdToSelect?: any): void {
+        if (!this.selectedServiceType) {
+            this.clearServiceSubTypeSelection();
+            return;
+        }
+
+        this.callService.getServiceSubTypeByTypeId(this.selectedServiceType).subscribe({
+            next: (response: any) => {
+                const subTypes = Array.isArray(response) ? response : [];
+                this.serviceSubTypes = subTypes;
+                this.filteredServiceSubTypes = [...subTypes];
+
+                if (clearSubType) {
+                    this.selectedServiceSubType = null;
+                    this.serviceSubTypeControl.setValue('');
+                }
+
+                if (!this.isAgent()) {
+                    this.serviceSubTypeControl.enable();
+                }
+
+                if (subTypeIdToSelect) {
+                    this.applySubTypeSelection(subTypeIdToSelect);
+                } else if (!clearSubType && this.selectedServiceSubType) {
+                    this.applySubTypeSelection(this.selectedServiceSubType);
+                }
+            },
+            error: () => {
+                this.clearServiceSubTypeSelection();
+            },
+        });
+    }
+
+    applySubTypeSelection(subTypeId: any): void {
+        if (!subTypeId) {
+            return;
+        }
+
+        let selected = this.serviceSubTypes.find((subType: any) => subType.id == subTypeId);
+        if (!selected) {
+            selected = this.allServiceSubTypes.find((subType: any) => subType.id == subTypeId);
+            if (selected) {
+                this.serviceSubTypes = [selected, ...this.serviceSubTypes];
+                this.filteredServiceSubTypes = [...this.serviceSubTypes];
+            }
+        }
+
+        if (selected) {
+            this.selectedServiceSubType = selected.id;
+            this.serviceSubTypeControl.setValue(selected);
+            if (!this.isAgent()) {
+                this.serviceSubTypeControl.enable();
+            }
+        }
+    }
+
+    ensureSubTypeLinkedToType(subTypeId: any): void {
+        if (!this.selectedServiceType || !subTypeId) {
+            return;
+        }
+
+        this.callService
+            .createCaseServiceTypeSubType({
+                caseServiceTypeId: this.selectedServiceType,
+                caseServiceSubTypeId: subTypeId,
+                createdById: this.userData.userId,
+            })
+            .subscribe({ error: () => {} });
+    }
+
+    onServiceTypeChanged(): void {
+        this.loadServiceSubTypesForSelectedType(true);
     }
 
     displayCodeFn = (code: any): string => {
@@ -1511,6 +1731,7 @@ export class CallComponent implements OnInit, OnDestroy {
                 this.selectedServiceGroup = existingServiceGroup.id;
                 this.serviceGroupControl.setValue(existingServiceGroup);
                 this.filteredServiceGroups = [...this.serviceGroups];
+                this.onServiceGroupChanged();
                 return;
             }
 
@@ -1525,6 +1746,7 @@ export class CallComponent implements OnInit, OnDestroy {
                         this.serviceGroupControl.setValue(res);
                         this.serviceGroups.push(res);
                         this.filteredServiceGroups = [...this.serviceGroups];
+                        this.onServiceGroupChanged();
                     },
                     error: (error) => {
                         console.error('Error creating service group:', error);
@@ -1533,11 +1755,17 @@ export class CallComponent implements OnInit, OnDestroy {
                 });
         } else {
             this.selectedServiceGroup = selectedServiceGroup.id;
+            this.onServiceGroupChanged();
         }
     }
 
     onServiceTypeSelected(event: any) {
         const selectedServiceType = event.option.value;
+
+        if (!this.selectedServiceGroup) {
+            this.sweetalertServices.error('alert.pleaseSelectServiceGroup');
+            return;
+        }
 
         if (selectedServiceType.isNew) {
             const existingServiceType = this.serviceTypes.find((t: any) => t.name.toLowerCase() === selectedServiceType.name.toLowerCase());
@@ -1546,20 +1774,25 @@ export class CallComponent implements OnInit, OnDestroy {
                 this.selectedServiceType = existingServiceType.id;
                 this.serviceTypeControl.setValue(existingServiceType);
                 this.filteredServiceTypes = [...this.serviceTypes];
+                this.onServiceTypeChanged();
                 return;
             }
 
             this.callService
                 .createCaseServiceType({
                     name: selectedServiceType.name,
+                    caseServiceGroupId: this.selectedServiceGroup,
                     createdById: this.userData.userId,
                 })
                 .subscribe({
                     next: (res: any) => {
-                        this.selectedServiceType = res.id;
-                        this.serviceTypeControl.setValue(res);
-                        this.serviceTypes.push(res);
+                        const newType = typeof res === 'string' ? JSON.parse(res) : res;
+                        this.selectedServiceType = newType.id;
+                        this.serviceTypeControl.setValue(newType);
+                        this.serviceTypes.push(newType);
+                        this.allServiceTypes.push(newType);
                         this.filteredServiceTypes = [...this.serviceTypes];
+                        this.onServiceTypeChanged();
                     },
                     error: (error) => {
                         console.error('Error creating service type:', error);
@@ -1568,34 +1801,47 @@ export class CallComponent implements OnInit, OnDestroy {
                 });
         } else {
             this.selectedServiceType = selectedServiceType.id;
+            this.onServiceTypeChanged();
         }
     }
 
     onServiceSubTypeSelected(event: any) {
         const selectedServiceSubType = event.option.value;
 
+        if (!this.selectedServiceType) {
+            this.sweetalertServices.error('alert.pleaseSelectServiceType');
+            return;
+        }
+
         if (selectedServiceSubType.isNew) {
-            const existingServiceSubType = this.serviceSubTypes.find(
+            const existingServiceSubType = this.allServiceSubTypes.find(
                 (st: any) => st.name.toLowerCase() === selectedServiceSubType.name.toLowerCase(),
             );
 
             if (existingServiceSubType) {
+                if (!this.serviceSubTypes.find((st: any) => st.id == existingServiceSubType.id)) {
+                    this.serviceSubTypes = [existingServiceSubType, ...this.serviceSubTypes];
+                }
                 this.selectedServiceSubType = existingServiceSubType.id;
                 this.serviceSubTypeControl.setValue(existingServiceSubType);
                 this.filteredServiceSubTypes = [...this.serviceSubTypes];
+                this.ensureSubTypeLinkedToType(existingServiceSubType.id);
                 return;
             }
 
             this.callService
                 .createServiceSubType({
                     name: selectedServiceSubType.name,
+                    caseServiceTypeId: this.selectedServiceType,
                     createdById: this.userData.userId,
                 })
                 .subscribe({
                     next: (res: any) => {
-                        this.selectedServiceSubType = res.id;
-                        this.serviceSubTypeControl.setValue(res);
-                        this.serviceSubTypes.push(res);
+                        const newSubType = typeof res === 'string' ? JSON.parse(res) : res;
+                        this.selectedServiceSubType = newSubType.id;
+                        this.serviceSubTypeControl.setValue(newSubType);
+                        this.serviceSubTypes.push(newSubType);
+                        this.allServiceSubTypes.push(newSubType);
                         this.filteredServiceSubTypes = [...this.serviceSubTypes];
                     },
                     error: (error) => {
@@ -1702,8 +1948,16 @@ export class CallComponent implements OnInit, OnDestroy {
             this.codeControl.enable();
             this.caseTypeControl.enable();
             this.serviceGroupControl.enable();
-            this.serviceTypeControl.enable();
-            this.serviceSubTypeControl.enable();
+            if (this.selectedServiceGroup) {
+                this.serviceTypeControl.enable();
+            } else {
+                this.serviceTypeControl.disable();
+            }
+            if (this.selectedServiceType) {
+                this.serviceSubTypeControl.enable();
+            } else {
+                this.serviceSubTypeControl.disable();
+            }
         }
     }
 
@@ -1821,166 +2075,174 @@ export class CallComponent implements OnInit, OnDestroy {
         }
     }
 
-  getSlaRemainingMinutes(call: any): number | null {
-    if (!call) return null;
+    getSlaRemainingMinutes(call: any): number | null {
+        if (!call) return null;
 
-    if (call.slaDueAt) {
-      const dueMs = new Date(call.slaDueAt).getTime();
-      if (!Number.isNaN(dueMs)) {
-        return Math.ceil((dueMs - this.slaNowMs) / 60000);
-      }
+        if (call.slaDueAt) {
+            const dueMs = new Date(call.slaDueAt).getTime();
+            if (!Number.isNaN(dueMs)) {
+                return Math.ceil((dueMs - this.slaNowMs) / 60000);
+            }
+        }
+
+        if (call.slaRemainingMinutes !== null && call.slaRemainingMinutes !== undefined && call.slaRemainingMinutes !== '') {
+            const fallback = Number(call.slaRemainingMinutes);
+            return Number.isNaN(fallback) ? null : fallback;
+        }
+
+        return null;
     }
 
-    if (call.slaRemainingMinutes !== null && call.slaRemainingMinutes !== undefined && call.slaRemainingMinutes !== '') {
-      const fallback = Number(call.slaRemainingMinutes);
-      return Number.isNaN(fallback) ? null : fallback;
+    formatSlaRemaining(call: any): string {
+        const remaining = this.getSlaRemainingMinutes(call);
+        if (remaining === null) return '-';
+
+        const isOverdue = remaining <= 0;
+        const absValue = Math.abs(remaining);
+        const hours = Math.floor(absValue / 60);
+        const mins = absValue % 60;
+        const prefix = isOverdue ? 'เกิน' : 'เหลือ';
+
+        if (hours > 0) {
+            return `${prefix} ${hours} ชม ${mins} นาที`;
+        }
+        return `${prefix} ${mins} นาที`;
     }
 
-    return null;
-  }
-
-  formatSlaRemaining(call: any): string {
-    const remaining = this.getSlaRemainingMinutes(call);
-    if (remaining === null) return '-';
-
-    const isOverdue = remaining <= 0;
-    const absValue = Math.abs(remaining);
-    const hours = Math.floor(absValue / 60);
-    const mins = absValue % 60;
-    const prefix = isOverdue ? 'เกิน' : 'เหลือ';
-
-    if (hours > 0) {
-      return `${prefix} ${hours} ชม ${mins} นาที`;
-    }
-    return `${prefix} ${mins} นาที`;
-  }
-
-  getInspectionCompany() {
-    this.callListService.getInspectionCompany().subscribe((res: any) => {
-      this.inspectionCompany = res;
-    });
-  }
-
-  get inspectionCompanyGroup1(): any[] {
-    if (!this.inspectionCompany || !Array.isArray(this.inspectionCompany)) {
-      return [];
-    }
-    return this.inspectionCompany.filter(
-      (c: any) =>
-        c.gruop === 1 ||
-        c.gruop === '1' ||
-        c.group === 1 ||
-        c.groupId === 1 ||
-        c.inspectionCompanyGroup === 1 ||
-        String(c.group) === '1' ||
-        String(c.groupId) === '1'
-    );
-  }
-
-  get inspectionCompanyGroup2(): any[] {
-    if (!this.inspectionCompany || !Array.isArray(this.inspectionCompany)) {
-      return [];
-    }
-    return this.inspectionCompany.filter(
-      (c: any) =>
-        c.gruop === 2 ||
-        c.gruop === '2' ||
-        c.group === 2 ||
-        c.groupId === 2 ||
-        c.inspectionCompanyGroup === 2 ||
-        String(c.group) === '2' ||
-        String(c.groupId) === '2'
-    );
-  }
-
-  private parseInspectionDateTime(
-    str: string | null | undefined
-  ): { date: Date | null; time: { hour: number; minute: number; second: number } } {
-    const empty = { date: null, time: { hour: 0, minute: 0, second: 0 } };
-    if (!str || typeof str !== 'string' || str.trim() === '') return empty;
-    const d = new Date(str.trim());
-    if (isNaN(d.getTime())) return empty;
-    return {
-      date: d,
-      time: {
-        hour: d.getHours(),
-        minute: d.getMinutes(),
-        second: d.getSeconds(),
-      },
-    };
-  }
-
-  get inspectionCompanySendNames(): string {
-    const send = this.inspectionCompanySendReply?.send;
-    if (!Array.isArray(send) || send.length === 0) return '';
-    return send.map((s: any) => s.inspectionCompanyName || s.inspectionCompanyId || '').filter(Boolean).join(', ');
-  }
-
-  get inspectionCompanyReplyNamesGroup1(): string {
-    const reply = this.inspectionCompanySendReply?.reply;
-    if (!Array.isArray(reply)) return '';
-    const group1 = reply.filter((r: any) => String(r.group) === '1' || r.group === 1);
-    return group1.map((r: any) => r.inspectionCompanyName || r.inspectionCompanyId || '').filter(Boolean).join(', ');
-  }
-
-  get inspectionCompanyReplyNamesGroup2(): string {
-    const reply = this.inspectionCompanySendReply?.reply;
-    if (!Array.isArray(reply)) return '';
-    const group2 = reply.filter((r: any) => String(r.group) === '2' || r.group === 2);
-    return group2.map((r: any) => r.inspectionCompanyName || r.inspectionCompanyId || '').filter(Boolean).join(', ');
-  }
-
-  getInspectionCompanySendReply(caseId: string) {
-    this.callListService.getInspectionCompanySendReply(caseId).subscribe((res: any) => {
-      this.inspectionCompanySendReply = res;
-      this.applyInspectionCompanySendReplyToForm(res);
-    });
-  }
-
-  private applyInspectionCompanySendReplyToForm(res: any) {
-    if (!res) return;
-    const toOptionId = (val: any) => {
-      if (val == null || val === '') return null;
-      const n = Number(val);
-      return Number.isNaN(n) ? val : n;
-    };
-
-    const sendList = Array.isArray(res.send) ? res.send : [];
-    const replyList = Array.isArray(res.reply) ? res.reply : [];
-
-    const sendIds = sendList
-      .map((item: any) => toOptionId(item.inspectionCompanyId ?? item.id))
-      .filter((id: any) => id != null);
-    this.selectedInspectionCompanies = sendIds.length > 0 ? [...sendIds] : [];
-    const firstSend = sendList[0];
-    if (firstSend?.sendTime) {
-      const dt = this.parseInspectionDateTime(firstSend.sendTime);
-      this.inspectionCompanyDate = dt.date;
-      this.inspectionCompanyTime = dt.time;
+    getInspectionCompany() {
+        this.callListService.getInspectionCompany().subscribe((res: any) => {
+            this.inspectionCompany = res;
+        });
     }
 
-    const reply1 = replyList.find((r: any) => String(r.group) === '1' || r.group === 1);
-    const reply2 = replyList.find((r: any) => String(r.group) === '2' || r.group === 2);
-    const hasReply1 = reply1 && reply1.replyTime != null && reply1.replyTime !== '';
-    const hasReply2 = reply2 && reply2.replyTime != null && reply2.replyTime !== '';
-    this.selectedInspectionCompany = hasReply1 ? (toOptionId(reply1.inspectionCompanyId ?? reply1.id) ?? '') : '';
-    this.selectedInspectionCompanyTtb = hasReply2 ? (toOptionId(reply2.inspectionCompanyId ?? reply2.id) ?? '') : '';
+    get inspectionCompanyGroup1(): any[] {
+        if (!this.inspectionCompany || !Array.isArray(this.inspectionCompany)) {
+            return [];
+        }
+        return this.inspectionCompany.filter(
+            (c: any) =>
+                c.gruop === 1 ||
+                c.gruop === '1' ||
+                c.group === 1 ||
+                c.groupId === 1 ||
+                c.inspectionCompanyGroup === 1 ||
+                String(c.group) === '1' ||
+                String(c.groupId) === '1',
+        );
+    }
 
-    if (hasReply1 && reply1.replyTime) {
-      const dt2 = this.parseInspectionDateTime(reply1.replyTime);
-      this.inspectionCompanyReplyDate = dt2.date;
-      this.inspectionCompanyReplyTime = dt2.time;
-    } else {
-      this.inspectionCompanyReplyDate = null;
-      this.inspectionCompanyReplyTime = { hour: 0, minute: 0, second: 0 };
+    get inspectionCompanyGroup2(): any[] {
+        if (!this.inspectionCompany || !Array.isArray(this.inspectionCompany)) {
+            return [];
+        }
+        return this.inspectionCompany.filter(
+            (c: any) =>
+                c.gruop === 2 ||
+                c.gruop === '2' ||
+                c.group === 2 ||
+                c.groupId === 2 ||
+                c.inspectionCompanyGroup === 2 ||
+                String(c.group) === '2' ||
+                String(c.groupId) === '2',
+        );
     }
-    if (hasReply2 && reply2.replyTime) {
-      const dt3 = this.parseInspectionDateTime(reply2.replyTime);
-      this.inspectionCompanyReplyDateTtb = dt3.date;
-      this.inspectionCompanyReplyTimeTtb = dt3.time;
-    } else {
-      this.inspectionCompanyReplyDateTtb = null;
-      this.inspectionCompanyReplyTimeTtb = { hour: 0, minute: 0, second: 0 };
+
+    private parseInspectionDateTime(str: string | null | undefined): {
+        date: Date | null;
+        time: { hour: number; minute: number; second: number };
+    } {
+        const empty = { date: null, time: { hour: 0, minute: 0, second: 0 } };
+        if (!str || typeof str !== 'string' || str.trim() === '') return empty;
+        const d = new Date(str.trim());
+        if (isNaN(d.getTime())) return empty;
+        return {
+            date: d,
+            time: {
+                hour: d.getHours(),
+                minute: d.getMinutes(),
+                second: d.getSeconds(),
+            },
+        };
     }
-  }
+
+    get inspectionCompanySendNames(): string {
+        const send = this.inspectionCompanySendReply?.send;
+        if (!Array.isArray(send) || send.length === 0) return '';
+        return send
+            .map((s: any) => s.inspectionCompanyName || s.inspectionCompanyId || '')
+            .filter(Boolean)
+            .join(', ');
+    }
+
+    get inspectionCompanyReplyNamesGroup1(): string {
+        const reply = this.inspectionCompanySendReply?.reply;
+        if (!Array.isArray(reply)) return '';
+        const group1 = reply.filter((r: any) => String(r.group) === '1' || r.group === 1);
+        return group1
+            .map((r: any) => r.inspectionCompanyName || r.inspectionCompanyId || '')
+            .filter(Boolean)
+            .join(', ');
+    }
+
+    get inspectionCompanyReplyNamesGroup2(): string {
+        const reply = this.inspectionCompanySendReply?.reply;
+        if (!Array.isArray(reply)) return '';
+        const group2 = reply.filter((r: any) => String(r.group) === '2' || r.group === 2);
+        return group2
+            .map((r: any) => r.inspectionCompanyName || r.inspectionCompanyId || '')
+            .filter(Boolean)
+            .join(', ');
+    }
+
+    getInspectionCompanySendReply(caseId: string) {
+        this.callListService.getInspectionCompanySendReply(caseId).subscribe((res: any) => {
+            this.inspectionCompanySendReply = res;
+            this.applyInspectionCompanySendReplyToForm(res);
+        });
+    }
+
+    private applyInspectionCompanySendReplyToForm(res: any) {
+        if (!res) return;
+        const toOptionId = (val: any) => {
+            if (val == null || val === '') return null;
+            const n = Number(val);
+            return Number.isNaN(n) ? val : n;
+        };
+
+        const sendList = Array.isArray(res.send) ? res.send : [];
+        const replyList = Array.isArray(res.reply) ? res.reply : [];
+
+        const sendIds = sendList.map((item: any) => toOptionId(item.inspectionCompanyId ?? item.id)).filter((id: any) => id != null);
+        this.selectedInspectionCompanies = sendIds.length > 0 ? [...sendIds] : [];
+        const firstSend = sendList[0];
+        if (firstSend?.sendTime) {
+            const dt = this.parseInspectionDateTime(firstSend.sendTime);
+            this.inspectionCompanyDate = dt.date;
+            this.inspectionCompanyTime = dt.time;
+        }
+
+        const reply1 = replyList.find((r: any) => String(r.group) === '1' || r.group === 1);
+        const reply2 = replyList.find((r: any) => String(r.group) === '2' || r.group === 2);
+        const hasReply1 = reply1 && reply1.replyTime != null && reply1.replyTime !== '';
+        const hasReply2 = reply2 && reply2.replyTime != null && reply2.replyTime !== '';
+        this.selectedInspectionCompany = hasReply1 ? (toOptionId(reply1.inspectionCompanyId ?? reply1.id) ?? '') : '';
+        this.selectedInspectionCompanyTtb = hasReply2 ? (toOptionId(reply2.inspectionCompanyId ?? reply2.id) ?? '') : '';
+
+        if (hasReply1 && reply1.replyTime) {
+            const dt2 = this.parseInspectionDateTime(reply1.replyTime);
+            this.inspectionCompanyReplyDate = dt2.date;
+            this.inspectionCompanyReplyTime = dt2.time;
+        } else {
+            this.inspectionCompanyReplyDate = null;
+            this.inspectionCompanyReplyTime = { hour: 0, minute: 0, second: 0 };
+        }
+        if (hasReply2 && reply2.replyTime) {
+            const dt3 = this.parseInspectionDateTime(reply2.replyTime);
+            this.inspectionCompanyReplyDateTtb = dt3.date;
+            this.inspectionCompanyReplyTimeTtb = dt3.time;
+        } else {
+            this.inspectionCompanyReplyDateTtb = null;
+            this.inspectionCompanyReplyTimeTtb = { hour: 0, minute: 0, second: 0 };
+        }
+    }
 }
