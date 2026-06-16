@@ -6,8 +6,16 @@ export type CaseServiceHierarchyIds = {
 
 export type ServiceTypeRecord = {
     id: number;
-    caseServiceGroupId?: number | null;
+    caseServiceGroupIds?: number[];
 };
+
+export function getServiceTypeGroupIds(type: ServiceTypeRecord): number[] {
+    if (!Array.isArray(type.caseServiceGroupIds)) {
+        return [];
+    }
+
+    return type.caseServiceGroupIds.map((id) => Number(id)).filter((id) => Number.isFinite(id));
+}
 
 export type JunctionRecord = {
     caseServiceTypeId: number;
@@ -44,8 +52,11 @@ export function getCaseServiceHierarchyWarningKeys(
         const type = serviceTypes.find((item) => Number(item.id) === typeId);
         if (!type) {
             warnings.push('alert.serviceHierarchyTypeNotFound');
-        } else if (groupId !== null && type.caseServiceGroupId != null && Number(type.caseServiceGroupId) !== groupId) {
-            warnings.push('alert.serviceHierarchyTypeNotInGroup');
+        } else if (groupId !== null) {
+            const typeGroupIds = getServiceTypeGroupIds(type);
+            if (typeGroupIds.length > 0 && !typeGroupIds.includes(groupId)) {
+                warnings.push('alert.serviceHierarchyTypeNotInGroup');
+            }
         }
     }
 
@@ -79,10 +90,13 @@ export function sanitizeCaseServiceHierarchyForImport(
             warningKeys.push('alert.serviceHierarchyTypeNotFound');
             typeId = null;
             subTypeId = null;
-        } else if (groupId !== null && type.caseServiceGroupId != null && Number(type.caseServiceGroupId) !== groupId) {
-            warningKeys.push('alert.serviceHierarchyTypeNotInGroup');
-            typeId = null;
-            subTypeId = null;
+        } else if (groupId !== null) {
+            const typeGroupIds = getServiceTypeGroupIds(type);
+            if (typeGroupIds.length > 0 && !typeGroupIds.includes(groupId)) {
+                warningKeys.push('alert.serviceHierarchyTypeNotInGroup');
+                typeId = null;
+                subTypeId = null;
+            }
         }
     }
 

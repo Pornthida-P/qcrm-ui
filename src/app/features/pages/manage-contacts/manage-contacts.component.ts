@@ -1917,6 +1917,20 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
             .subscribe({ error: () => {} });
     }
 
+    ensureTypeLinkedToGroup(typeId: any): void {
+        if (!this.selectedServiceGroup || !typeId) {
+            return;
+        }
+
+        this.callServive
+            .createCaseServiceGroupType({
+                caseServiceGroupId: this.selectedServiceGroup,
+                caseServiceTypeId: typeId,
+                createdById: this.userData.userId,
+            })
+            .subscribe({ error: () => {} });
+    }
+
     onServiceTypeChanged(): void {
         this.loadServiceSubTypesForSelectedType(true);
     }
@@ -2084,12 +2098,18 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
         }
 
         if (selectedServiceType.isNew) {
-            const existingServiceType = this.serviceTypes.find((t: any) => t.name.toLowerCase() === selectedServiceType.name.toLowerCase());
+            const existingServiceType = this.allServiceTypes.find(
+                (t: any) => t.name.toLowerCase() === selectedServiceType.name.toLowerCase(),
+            );
 
             if (existingServiceType) {
+                if (!this.serviceTypes.find((t: any) => t.id == existingServiceType.id)) {
+                    this.serviceTypes = [existingServiceType, ...this.serviceTypes];
+                }
                 this.selectedServiceType = existingServiceType.id;
                 this.serviceTypeControl.setValue(existingServiceType);
                 this.filteredServiceTypes = [...this.serviceTypes];
+                this.ensureTypeLinkedToGroup(existingServiceType.id);
                 this.onServiceTypeChanged();
                 return;
             }
@@ -2097,7 +2117,7 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
             this.callServive
                 .createCaseServiceType({
                     name: selectedServiceType.name,
-                    caseServiceGroupId: this.selectedServiceGroup,
+                    caseServiceGroupIds: this.selectedServiceGroup ? [this.selectedServiceGroup] : [],
                     createdById: this.userData.userId,
                 })
                 .subscribe({

@@ -285,6 +285,28 @@ export class CallService {
         );
     }
 
+    getCaseServiceGroupType(caseServiceGroupId?: string | number, caseServiceTypeId?: string | number) {
+        const params: Record<string, string> = {};
+        if (caseServiceGroupId !== undefined && caseServiceGroupId !== null && caseServiceGroupId !== '') {
+            params['caseServiceGroupId'] = String(caseServiceGroupId);
+        }
+        if (caseServiceTypeId !== undefined && caseServiceTypeId !== null && caseServiceTypeId !== '') {
+            params['caseServiceTypeId'] = String(caseServiceTypeId);
+        }
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-group-type`, { params });
+    }
+
+    syncCaseServiceGroupTypes(caseServiceTypeId: string | number, data: any) {
+        return this.http.put(
+            `${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-type/${caseServiceTypeId}/groups`,
+            data,
+        );
+    }
+
+    createCaseServiceGroupType(data: any) {
+        return this.http.post(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-group-type`, data);
+    }
+
     deleteCaseServiceTypeSubType(data: any) {
         return this.http.delete(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-type-sub-type`, {
             body: data,

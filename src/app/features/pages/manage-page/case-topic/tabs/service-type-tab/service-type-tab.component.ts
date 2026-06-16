@@ -83,16 +83,21 @@ export class ServiceTypeTabComponent implements OnInit {
     findAllServiceType() {
         forkJoin({
             serviceTypes: this.callService.getCaseServiceType(),
-            junctionRows: this.callService.getCaseServiceTypeSubType(),
+            subTypeJunctionRows: this.callService.getCaseServiceTypeSubType(),
+            groupJunctionRows: this.callService.getCaseServiceGroupType(),
         })
             .pipe(
-                tap(({ serviceTypes, junctionRows }: any) => {
+                tap(({ serviceTypes, subTypeJunctionRows, groupJunctionRows }: any) => {
                     const parsedServiceTypes = this.parseResponseArray(serviceTypes);
-                    const parsedJunctionRows = this.parseResponseArray(junctionRows);
-                    const subTypeCountByTypeId = this.buildSubTypeCountMap(parsedJunctionRows);
+                    const parsedSubTypeJunctionRows = this.parseResponseArray(subTypeJunctionRows);
+                    const parsedGroupJunctionRows = this.parseResponseArray(groupJunctionRows);
+                    const subTypeCountByTypeId = this.buildSubTypeCountMap(parsedSubTypeJunctionRows);
+                    const groupNamesByTypeId = this.buildGroupNamesMap(parsedGroupJunctionRows);
 
                     this.serviceTypes = parsedServiceTypes.map((serviceType: any) => ({
                         ...serviceType,
+                        caseServiceGroupName:
+                            serviceType.caseServiceGroupName || groupNamesByTypeId.get(Number(serviceType.id)) || '-',
                         subTypeCount: subTypeCountByTypeId.get(Number(serviceType.id)) || 0,
                     }));
                     this.dataSource = new MatTableDataSource<any>(this.serviceTypes);
@@ -122,6 +127,28 @@ export class ServiceTypeTabComponent implements OnInit {
         });
 
         return subTypeCountByTypeId;
+    }
+
+    private buildGroupNamesMap(junctionRows: any[]): Map<number, string> {
+        const groupNamesByTypeId = new Map<number, string[]>();
+
+        junctionRows.forEach((row: any) => {
+            const typeId = Number(row.caseServiceTypeId);
+            const groupName = row.caseServiceGroupName;
+            if (!typeId || !groupName) {
+                return;
+            }
+
+            const names = groupNamesByTypeId.get(typeId) ?? [];
+            if (!names.includes(groupName)) {
+                names.push(groupName);
+            }
+            groupNamesByTypeId.set(typeId, names);
+        });
+
+        return new Map(
+            [...groupNamesByTypeId.entries()].map(([typeId, names]) => [typeId, names.sort((a, b) => a.localeCompare(b, 'th')).join(', ')]),
+        );
     }
 
     openDialog(mode: 'add' | 'view' | 'edit', serviceType?: any): void {
