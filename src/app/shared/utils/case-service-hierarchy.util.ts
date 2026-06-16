@@ -17,18 +17,6 @@ export function getServiceTypeGroupIds(type: ServiceTypeRecord): number[] {
     return type.caseServiceGroupIds.map((id) => Number(id)).filter((id) => Number.isFinite(id));
 }
 
-export function appendServiceTypeGroupId(type: ServiceTypeRecord, groupId: number | string): void {
-    const normalizedGroupId = Number(groupId);
-    if (!Number.isFinite(normalizedGroupId)) {
-        return;
-    }
-
-    const ids = getServiceTypeGroupIds(type);
-    if (!ids.includes(normalizedGroupId)) {
-        type.caseServiceGroupIds = [...ids, normalizedGroupId];
-    }
-}
-
 export type JunctionRecord = {
     caseServiceTypeId: number;
     caseServiceSubTypeId: number;

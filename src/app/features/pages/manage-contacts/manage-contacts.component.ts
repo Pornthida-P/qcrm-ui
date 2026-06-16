@@ -6,7 +6,6 @@ import { UserService } from 'src/app/services/user/user.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { CallService } from 'src/app/services/call/call.service';
 import { CaseServiceHierarchyService } from 'src/app/services/case-service-hierarchy/case-service-hierarchy.service';
-import { appendServiceTypeGroupId } from 'src/app/shared/utils/case-service-hierarchy.util';
 import { ActivatedRoute, Router } from '@angular/router';
 import { config } from 'src/app/config/config';
 import { AttachmentService } from 'src/app/services/attachment/attachment.service';
@@ -1588,14 +1587,6 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
         }
 
         this.filteredCodes = this.caseCodes.filter((code: any) => code.code.toLowerCase().includes(filterValue));
-
-        // ถ้าไม่พบ exact match ให้เพิ่ม option สร้างใหม่
-        const exactMatch = this.caseCodes.find((code: any) => code.code.toLowerCase() === filterValue);
-
-        if (!exactMatch && filterValue) {
-            // เพิ่ม option สร้างใหม่ที่ต้นของ list (ใช้ค่าต้นฉบับ)
-            this.filteredCodes = [{ id: null, code: originalValue, isNew: true }, ...this.filteredCodes];
-        }
     }
 
     filterCaseTypes() {
@@ -1609,11 +1600,6 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
         }
 
         this.filteredCaseTypes = this.caseTypes.filter((type: any) => type.name.toLowerCase().includes(filterValue));
-
-        const exactMatch = this.caseTypes.find((type: any) => type.name.toLowerCase() === filterValue);
-        if (!exactMatch && filterValue) {
-            this.filteredCaseTypes = [{ id: null, name: originalValue, isNew: true }, ...this.filteredCaseTypes];
-        }
     }
 
     private hasAutocompleteSelection(value: any): boolean {
@@ -1713,11 +1699,6 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
         }
 
         this.filteredServiceGroups = this.serviceGroups.filter((group: any) => group.name.toLowerCase().includes(filterValue));
-
-        const exactMatch = this.serviceGroups.find((group: any) => group.name.toLowerCase() === filterValue);
-        if (!exactMatch && filterValue) {
-            this.filteredServiceGroups = [{ id: null, name: originalValue, isNew: true }, ...this.filteredServiceGroups];
-        }
     }
 
     filterServiceTypes() {
@@ -1739,11 +1720,6 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
         }
 
         this.filteredServiceTypes = this.serviceTypes.filter((type: any) => type.name.toLowerCase().includes(filterValue));
-
-        const exactMatch = this.serviceTypes.find((type: any) => type.name.toLowerCase() === filterValue);
-        if (!exactMatch && filterValue) {
-            this.filteredServiceTypes = [{ id: null, name: originalValue, isNew: true }, ...this.filteredServiceTypes];
-        }
     }
 
     clearServiceTypeSelection(): void {
@@ -1835,11 +1811,6 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
         }
 
         this.filteredServiceSubTypes = this.serviceSubTypes.filter((subType: any) => subType.name.toLowerCase().includes(filterValue));
-
-        const exactMatch = this.serviceSubTypes.find((subType: any) => subType.name.toLowerCase() === filterValue);
-        if (!exactMatch && filterValue) {
-            this.filteredServiceSubTypes = [{ id: null, name: originalValue, isNew: true }, ...this.filteredServiceSubTypes];
-        }
     }
 
     clearServiceSubTypeSelection(): void {
@@ -1902,42 +1873,6 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
         }
     }
 
-    ensureSubTypeLinkedToType(subTypeId: any): void {
-        if (!this.selectedServiceType || !subTypeId) {
-            return;
-        }
-
-        this.callServive
-            .createCaseServiceTypeSubType({
-                caseServiceTypeId: this.selectedServiceType,
-                caseServiceSubTypeId: subTypeId,
-                createdById: this.userData.userId,
-            })
-            .subscribe({ error: () => {} });
-    }
-
-    ensureTypeLinkedToGroup(typeId: any): void {
-        if (!this.selectedServiceGroup || !typeId) {
-            return;
-        }
-
-        this.callServive
-            .createCaseServiceGroupType({
-                caseServiceGroupId: this.selectedServiceGroup,
-                caseServiceTypeId: typeId,
-                createdById: this.userData.userId,
-            })
-            .subscribe({
-                next: () => {
-                    const cachedType = this.allServiceTypes.find((type: any) => type.id == typeId);
-                    if (cachedType) {
-                        appendServiceTypeGroupId(cachedType, this.selectedServiceGroup);
-                    }
-                },
-                error: () => {},
-            });
-    }
-
     onServiceTypeChanged(): void {
         this.loadServiceSubTypesForSelectedType(true);
     }
@@ -1968,85 +1903,13 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
 
     onCodeSelected(event: any) {
         const selectedCode = event.option.value;
-
-        if (selectedCode.isNew) {
-            // ตรวจสอบว่ามีชื่อซ้ำหรือไม่ (case-insensitive)
-            const existingCode = this.caseCodes.find((c: any) => c.code.toLowerCase() === selectedCode.code.toLowerCase());
-
-            if (existingCode) {
-                // ถ้ามีอยู่แล้ว ใช้ตัวที่มี
-                this.selectedCaseCode = existingCode.id;
-                this.selectedCaseCodeObject = existingCode;
-                this.codeControl.setValue(existingCode);
-                this.filteredCodes = [...this.caseCodes];
-                return;
-            }
-
-            // สร้าง code ใหม่
-            this.callServive
-                .createCaseCode({
-                    code: selectedCode.code,
-                    script: '',
-                    createdById: this.userData.userId,
-                })
-                .subscribe({
-                    next: (res: any) => {
-                        this.selectedCaseCodeObject = res;
-                        this.selectedCaseCode = res.id;
-                        this.codeControl.setValue(res);
-                        // เพิ่มเข้า list
-                        this.caseCodes.push(res);
-                        // Refresh filtered list เพื่อลบ option สร้างใหม่
-                        this.filteredCodes = [...this.caseCodes];
-                        this.sweetalertServices.success('alert.createSuccess');
-                    },
-                    error: (err) => {
-                        console.error('Error creating case code:', err);
-                        this.sweetalertServices.error('alert.error');
-                    },
-                });
-        } else {
-            // เลือก code ที่มีอยู่แล้ว
-            this.selectedCaseCode = selectedCode.id;
-            this.selectedCaseCodeObject = selectedCode;
-        }
+        this.selectedCaseCode = selectedCode.id;
+        this.selectedCaseCodeObject = selectedCode;
     }
 
     onCaseTypeSelected(event: any) {
         const selectedCaseType = event.option.value;
-
-        if (selectedCaseType.isNew) {
-            // ตรวจสอบว่ามีชื่อซ้ำหรือไม่ (case-insensitive)
-            const existingCaseType = this.caseTypes.find((t: any) => t.name.toLowerCase() === selectedCaseType.name.toLowerCase());
-
-            if (existingCaseType) {
-                this.selectedCaseType = existingCaseType.id;
-                this.caseTypeControl.setValue(existingCaseType);
-                this.filteredCaseTypes = [...this.caseTypes];
-                return;
-            }
-
-            this.callServive
-                .createCaseType({
-                    name: selectedCaseType.name,
-                    createdById: this.userData.userId,
-                })
-                .subscribe({
-                    next: (res: any) => {
-                        this.selectedCaseType = res.id;
-                        this.caseTypeControl.setValue(res);
-                        this.caseTypes.push(res);
-                        this.filteredCaseTypes = [...this.caseTypes];
-                        this.sweetalertServices.success('alert.createSuccess');
-                    },
-                    error: (err) => {
-                        console.error('Error creating case type:', err);
-                        this.sweetalertServices.error('alert.error');
-                    },
-                });
-        } else {
-            this.selectedCaseType = selectedCaseType.id;
-        }
+        this.selectedCaseType = selectedCaseType.id;
     }
 
     onCaseGroupSelected(event: any) {
@@ -2056,44 +1919,8 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
 
     onServiceGroupSelected(event: any) {
         const selectedServiceGroup = event.option.value;
-
-        if (selectedServiceGroup.isNew) {
-            // ตรวจสอบว่ามีชื่อซ้ำหรือไม่ (case-insensitive)
-            const existingServiceGroup = this.serviceGroups.find(
-                (g: any) => g.name.toLowerCase() === selectedServiceGroup.name.toLowerCase(),
-            );
-
-            if (existingServiceGroup) {
-                this.selectedServiceGroup = existingServiceGroup.id;
-                this.serviceGroupControl.setValue(existingServiceGroup);
-                this.filteredServiceGroups = [...this.serviceGroups];
-                this.onServiceGroupChanged();
-                return;
-            }
-
-            this.callServive
-                .createCaseServiceGroup({
-                    name: selectedServiceGroup.name,
-                    createdById: this.userData.userId,
-                })
-                .subscribe({
-                    next: (res: any) => {
-                        this.selectedServiceGroup = res.id;
-                        this.serviceGroupControl.setValue(res);
-                        this.serviceGroups.push(res);
-                        this.filteredServiceGroups = [...this.serviceGroups];
-                        this.onServiceGroupChanged();
-                        this.sweetalertServices.success('alert.createSuccess');
-                    },
-                    error: (err) => {
-                        console.error('Error creating service group:', err);
-                        this.sweetalertServices.error('alert.error');
-                    },
-                });
-        } else {
-            this.selectedServiceGroup = selectedServiceGroup.id;
-            this.onServiceGroupChanged();
-        }
+        this.selectedServiceGroup = selectedServiceGroup.id;
+        this.onServiceGroupChanged();
     }
 
     onServiceTypeSelected(event: any) {
@@ -2104,49 +1931,8 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
             return;
         }
 
-        if (selectedServiceType.isNew) {
-            const existingServiceType = this.allServiceTypes.find(
-                (t: any) => t.name.toLowerCase() === selectedServiceType.name.toLowerCase(),
-            );
-
-            if (existingServiceType) {
-                if (!this.serviceTypes.find((t: any) => t.id == existingServiceType.id)) {
-                    this.serviceTypes = [existingServiceType, ...this.serviceTypes];
-                }
-                this.selectedServiceType = existingServiceType.id;
-                this.serviceTypeControl.setValue(existingServiceType);
-                this.filteredServiceTypes = [...this.serviceTypes];
-                this.ensureTypeLinkedToGroup(existingServiceType.id);
-                this.onServiceTypeChanged();
-                return;
-            }
-
-            this.callServive
-                .createCaseServiceType({
-                    name: selectedServiceType.name,
-                    caseServiceGroupIds: this.selectedServiceGroup ? [this.selectedServiceGroup] : [],
-                    createdById: this.userData.userId,
-                })
-                .subscribe({
-                    next: (res: any) => {
-                        const newType = typeof res === 'string' ? JSON.parse(res) : res;
-                        this.selectedServiceType = newType.id;
-                        this.serviceTypeControl.setValue(newType);
-                        this.serviceTypes.push(newType);
-                        this.allServiceTypes.push(newType);
-                        this.filteredServiceTypes = [...this.serviceTypes];
-                        this.onServiceTypeChanged();
-                        this.sweetalertServices.success('alert.createSuccess');
-                    },
-                    error: (err) => {
-                        console.error('Error creating service type:', err);
-                        this.sweetalertServices.error('alert.error');
-                    },
-                });
-        } else {
-            this.selectedServiceType = selectedServiceType.id;
-            this.onServiceTypeChanged();
-        }
+        this.selectedServiceType = selectedServiceType.id;
+        this.onServiceTypeChanged();
     }
 
     onServiceSubTypeSelected(event: any) {
@@ -2157,46 +1943,7 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
             return;
         }
 
-        if (selectedServiceSubType.isNew) {
-            const existingServiceSubType = this.allServiceSubTypes.find(
-                (st: any) => st.name.toLowerCase() === selectedServiceSubType.name.toLowerCase(),
-            );
-
-            if (existingServiceSubType) {
-                if (!this.serviceSubTypes.find((st: any) => st.id == existingServiceSubType.id)) {
-                    this.serviceSubTypes = [existingServiceSubType, ...this.serviceSubTypes];
-                }
-                this.selectedServiceSubType = existingServiceSubType.id;
-                this.serviceSubTypeControl.setValue(existingServiceSubType);
-                this.filteredServiceSubTypes = [...this.serviceSubTypes];
-                this.ensureSubTypeLinkedToType(existingServiceSubType.id);
-                return;
-            }
-
-            this.callServive
-                .createServiceSubType({
-                    name: selectedServiceSubType.name,
-                    caseServiceTypeId: this.selectedServiceType,
-                    createdById: this.userData.userId,
-                })
-                .subscribe({
-                    next: (res: any) => {
-                        const newSubType = typeof res === 'string' ? JSON.parse(res) : res;
-                        this.selectedServiceSubType = newSubType.id;
-                        this.serviceSubTypeControl.setValue(newSubType);
-                        this.serviceSubTypes.push(newSubType);
-                        this.allServiceSubTypes.push(newSubType);
-                        this.filteredServiceSubTypes = [...this.serviceSubTypes];
-                        this.sweetalertServices.success('alert.createSuccess');
-                    },
-                    error: (err) => {
-                        console.error('Error creating service sub type:', err);
-                        this.sweetalertServices.error('alert.error');
-                    },
-                });
-        } else {
-            this.selectedServiceSubType = selectedServiceSubType.id;
-        }
+        this.selectedServiceSubType = selectedServiceSubType.id;
     }
 
     getChatHistory(chatId: string) {
