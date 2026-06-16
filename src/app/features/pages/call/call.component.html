@@ -403,7 +403,7 @@
                                                                 (optionSelected)="!isAgent() && onCodeSelected($event)"
                                                             >
                                                                 <ng-container *ngFor="let code of filteredCodes">
-                                                                    <mat-option *ngIf="!code.isNew" [value]="code">
+                                                                    <mat-option [value]="code">
                                                                         {{ code.code }}
                                                                     </mat-option>
                                                                 </ng-container>
@@ -435,7 +435,7 @@
                                                                 (optionSelected)="!isAgent() && onCaseTypeSelected($event)"
                                                             >
                                                                 <ng-container *ngFor="let caseType of filteredCaseTypes">
-                                                                    <mat-option *ngIf="!caseType.isNew" [value]="caseType">
+                                                                    <mat-option [value]="caseType">
                                                                         {{ caseType.name }}
                                                                     </mat-option>
                                                                 </ng-container>
@@ -469,7 +469,7 @@
                                                                 (optionSelected)="!isAgent() && onServiceGroupSelected($event)"
                                                             >
                                                                 <ng-container *ngFor="let serviceGroup of filteredServiceGroups">
-                                                                    <mat-option *ngIf="!serviceGroup.isNew" [value]="serviceGroup">
+                                                                    <mat-option [value]="serviceGroup">
                                                                         {{ serviceGroup.name }}
                                                                     </mat-option>
                                                                 </ng-container>
@@ -501,7 +501,7 @@
                                                                 (optionSelected)="!isAgent() && onServiceTypeSelected($event)"
                                                             >
                                                                 <ng-container *ngFor="let serviceType of filteredServiceTypes">
-                                                                    <mat-option *ngIf="!serviceType.isNew" [value]="serviceType">
+                                                                    <mat-option [value]="serviceType">
                                                                         {{ serviceType.name }}
                                                                     </mat-option>
                                                                 </ng-container>
@@ -535,7 +535,7 @@
                                                                 (optionSelected)="!isAgent() && onServiceSubTypeSelected($event)"
                                                             >
                                                                 <ng-container *ngFor="let serviceSubType of filteredServiceSubTypes">
-                                                                    <mat-option *ngIf="!serviceSubType.isNew" [value]="serviceSubType">
+                                                                    <mat-option [value]="serviceSubType">
                                                                         {{ serviceSubType.name }}
                                                                     </mat-option>
                                                                 </ng-container>

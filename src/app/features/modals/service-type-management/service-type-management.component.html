@@ -111,7 +111,7 @@
                                 (optionSelected)="onServiceSubTypeSelected($event)"
                             >
                                 <ng-container *ngFor="let serviceSubType of filteredServiceSubTypes">
-                                    <mat-option *ngIf="!serviceSubType.isNew" [value]="serviceSubType">
+                                    <mat-option [value]="serviceSubType">
                                         {{ serviceSubType.name }}
                                     </mat-option>
                                 </ng-container>

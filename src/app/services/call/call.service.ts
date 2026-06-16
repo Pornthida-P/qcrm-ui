@@ -274,10 +274,6 @@ export class CallService {
         return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-type-sub-type`, { params });
     }
 
-    createCaseServiceTypeSubType(data: any) {
-        return this.http.post(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-type-sub-type`, data);
-    }
-
     syncCaseServiceTypeSubTypes(caseServiceTypeId: string | number, data: any) {
         return this.http.put(
             `${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-type/${caseServiceTypeId}/sub-types`,
@@ -301,10 +297,6 @@ export class CallService {
             `${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-type/${caseServiceTypeId}/groups`,
             data,
         );
-    }
-
-    createCaseServiceGroupType(data: any) {
-        return this.http.post(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-group-type`, data);
     }
 
     deleteCaseServiceTypeSubType(data: any) {
