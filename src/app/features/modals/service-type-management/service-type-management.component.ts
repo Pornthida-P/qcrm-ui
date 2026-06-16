@@ -104,8 +104,10 @@ export class ServiceTypeManagementComponent implements OnInit {
             .toString()
             .trim();
         const filterValue = originalValue.toLowerCase();
-        const selectedIds = new Set(this.serviceTypeForm.get('caseServiceGroupIds')?.value ?? []);
-        const availableGroups = this.serviceGroups.filter((group: any) => !selectedIds.has(group.id));
+        const selectedIds = new Set(
+            (this.serviceTypeForm.get('caseServiceGroupIds')?.value ?? []).map((id: any) => Number(id)),
+        );
+        const availableGroups = this.serviceGroups.filter((group: any) => !selectedIds.has(Number(group.id)));
 
         if (!filterValue) {
             this.filteredServiceGroups = [...availableGroups];
@@ -128,7 +130,7 @@ export class ServiceTypeManagementComponent implements OnInit {
         }
 
         const currentIds: number[] = this.serviceTypeForm.get('caseServiceGroupIds')?.value ?? [];
-        if (currentIds.includes(selected.id)) {
+        if (currentIds.map((id) => Number(id)).includes(Number(selected.id))) {
             this.serviceGroupControl.setValue('');
             return;
         }
@@ -141,7 +143,7 @@ export class ServiceTypeManagementComponent implements OnInit {
 
     removeServiceGroup(group: any): void {
         const currentIds: number[] = this.serviceTypeForm.get('caseServiceGroupIds')?.value ?? [];
-        const nextIds = currentIds.filter((id) => id !== group.id);
+        const nextIds = currentIds.filter((id) => Number(id) !== Number(group.id));
         this.serviceTypeForm.patchValue({ caseServiceGroupIds: nextIds });
         this.syncSelectedServiceGroups(nextIds);
         this.filterServiceGroups();
@@ -153,8 +155,10 @@ export class ServiceTypeManagementComponent implements OnInit {
             .toString()
             .trim();
         const filterValue = originalValue.toLowerCase();
-        const selectedIds = new Set(this.serviceTypeForm.get('caseServiceSubTypeIds')?.value ?? []);
-        const availableSubTypes = this.allServiceSubTypes.filter((subType: any) => !selectedIds.has(subType.id));
+        const selectedIds = new Set(
+            (this.serviceTypeForm.get('caseServiceSubTypeIds')?.value ?? []).map((id: any) => Number(id)),
+        );
+        const availableSubTypes = this.allServiceSubTypes.filter((subType: any) => !selectedIds.has(Number(subType.id)));
 
         if (!filterValue) {
             this.filteredServiceSubTypes = [...availableSubTypes];
@@ -314,7 +318,7 @@ export class ServiceTypeManagementComponent implements OnInit {
                 next: (res: any) => {
                     const result = this.parseResponse(res);
                     if (result?.success === false) {
-                        this.sweetalertService.handleError(result);
+                        this.sweetalertService.showServiceSaveFailure(result);
                         return;
                     }
 
@@ -340,7 +344,7 @@ export class ServiceTypeManagementComponent implements OnInit {
                 next: (res: any) => {
                     const result = this.parseResponse(res);
                     if (result?.success === false) {
-                        this.sweetalertService.handleError(result);
+                        this.sweetalertService.showServiceSaveFailure(result);
                         return;
                     }
 

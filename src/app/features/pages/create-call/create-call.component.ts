@@ -4,6 +4,7 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { CallService } from 'src/app/services/call/call.service';
 import { CaseServiceHierarchyService } from 'src/app/services/case-service-hierarchy/case-service-hierarchy.service';
+import { appendServiceTypeGroupId } from 'src/app/shared/utils/case-service-hierarchy.util';
 import { catchError, debounceTime, distinctUntilChanged, map, Observable, OperatorFunction, take, tap, throwError } from 'rxjs';
 import { UserService } from 'src/app/services/user/user.service';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
@@ -810,9 +811,7 @@ export class CreateCallComponent {
 
     filterCaseGroups() {
         const controlValue = this.caseGroupControl.value as any;
-        const originalValue = (typeof controlValue === 'object' && controlValue ? controlValue.name : controlValue || '')
-            .toString()
-            .trim();
+        const originalValue = (typeof controlValue === 'object' && controlValue ? controlValue.name : controlValue || '').toString().trim();
         const filterValue = originalValue.toLowerCase();
         const list = Array.isArray(this.caseGroupReport) ? this.caseGroupReport : [];
 
@@ -1050,7 +1049,15 @@ export class CreateCallComponent {
                 caseServiceTypeId: typeId,
                 createdById,
             })
-            .subscribe({ error: () => {} });
+            .subscribe({
+                next: () => {
+                    const cachedType = this.allServiceTypes.find((type: any) => type.id == typeId);
+                    if (cachedType) {
+                        appendServiceTypeGroupId(cachedType, this.selectedServiceGroup);
+                    }
+                },
+                error: () => {},
+            });
     }
 
     onServiceTypeChanged(): void {
