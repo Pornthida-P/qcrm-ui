@@ -1039,6 +1039,20 @@ export class CreateCallComponent {
             .subscribe({ error: () => {} });
     }
 
+    ensureTypeLinkedToGroup(typeId: any, createdById: string): void {
+        if (!this.selectedServiceGroup || !typeId) {
+            return;
+        }
+
+        this.callServive
+            .createCaseServiceGroupType({
+                caseServiceGroupId: this.selectedServiceGroup,
+                caseServiceTypeId: typeId,
+                createdById,
+            })
+            .subscribe({ error: () => {} });
+    }
+
     onServiceTypeChanged(): void {
         this.loadServiceSubTypesForSelectedType(true);
     }
@@ -1207,27 +1221,31 @@ export class CreateCallComponent {
         }
 
         if (selectedServiceType.isNew) {
-            // ตรวจสอบว่ามีชื่อซ้ำหรือไม่ (case-insensitive)
-            const existingServiceType = this.serviceTypes.find((t: any) => t.name.toLowerCase() === selectedServiceType.name.toLowerCase());
-
-            if (existingServiceType) {
-                this.selectedServiceType = existingServiceType.id;
-                this.serviceTypeControl.setValue(existingServiceType);
-                this.filteredServiceTypes = [...this.serviceTypes];
-                this.onServiceTypeChanged();
-                return;
-            }
-
-            // Create new serviceType (ใช้ user จาก UserService เพื่อรองรับ cross-auth จาก QIM)
             this.userService
                 .getDataUser()
                 .pipe(take(1))
                 .subscribe((currentUser) => {
                     const createdById = currentUser?.userId ?? '';
+                    const existingServiceType = this.allServiceTypes.find(
+                        (t: any) => t.name.toLowerCase() === selectedServiceType.name.toLowerCase(),
+                    );
+
+                    if (existingServiceType) {
+                        if (!this.serviceTypes.find((t: any) => t.id == existingServiceType.id)) {
+                            this.serviceTypes = [existingServiceType, ...this.serviceTypes];
+                        }
+                        this.selectedServiceType = existingServiceType.id;
+                        this.serviceTypeControl.setValue(existingServiceType);
+                        this.filteredServiceTypes = [...this.serviceTypes];
+                        this.ensureTypeLinkedToGroup(existingServiceType.id, createdById);
+                        this.onServiceTypeChanged();
+                        return;
+                    }
+
                     this.callServive
                         .createCaseServiceType({
                             name: selectedServiceType.name,
-                            caseServiceGroupId: this.selectedServiceGroup,
+                            caseServiceGroupIds: this.selectedServiceGroup ? [this.selectedServiceGroup] : [],
                             createdById,
                         })
                         .subscribe({

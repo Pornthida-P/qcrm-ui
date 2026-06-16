@@ -20,11 +20,14 @@ export class ServiceTypeManagementComponent implements OnInit {
     filteredServiceSubTypes: any[] = [];
     selectedServiceSubTypes: any[] = [];
     serviceSubTypeControl = new FormControl('');
+    serviceGroupControl = new FormControl('');
     serviceGroups: any[] = [];
+    filteredServiceGroups: any[] = [];
+    selectedServiceGroups: any[] = [];
 
     serviceTypeForm: FormGroup = new FormGroup({
         name: new FormControl(''),
-        caseServiceGroupId: new FormControl<number | null>(null),
+        caseServiceGroupIds: new FormControl<number[]>([]),
         caseServiceSubTypeIds: new FormControl<number[]>([]),
     });
 
@@ -43,10 +46,12 @@ export class ServiceTypeManagementComponent implements OnInit {
         switch (this.data.mode) {
             case 'add':
                 this.selectedServiceSubTypes = [];
+                this.selectedServiceGroups = [];
                 this.serviceSubTypeControl.setValue('');
+                this.serviceGroupControl.setValue('');
                 this.serviceTypeForm.patchValue({
                     name: '',
-                    caseServiceGroupId: null,
+                    caseServiceGroupIds: [],
                     caseServiceSubTypeIds: [],
                 });
                 break;
@@ -77,6 +82,69 @@ export class ServiceTypeManagementComponent implements OnInit {
             }
         }
         return response ?? [];
+    }
+
+    private parseGroupIds(serviceType?: any): number[] {
+        if (!serviceType || !Array.isArray(serviceType.caseServiceGroupIds)) {
+            return [];
+        }
+
+        return serviceType.caseServiceGroupIds.map((id: any) => Number(id)).filter((id: number) => Number.isFinite(id));
+    }
+
+    private syncSelectedServiceGroups(ids: number[]): void {
+        this.selectedServiceGroups = ids
+            .map((id) => this.serviceGroups.find((group) => group.id == id))
+            .filter((group): group is any => !!group);
+    }
+
+    filterServiceGroups(): void {
+        const controlValue = this.serviceGroupControl.value as any;
+        const originalValue = (typeof controlValue === 'object' && controlValue ? controlValue.name : controlValue || '')
+            .toString()
+            .trim();
+        const filterValue = originalValue.toLowerCase();
+        const selectedIds = new Set(this.serviceTypeForm.get('caseServiceGroupIds')?.value ?? []);
+        const availableGroups = this.serviceGroups.filter((group: any) => !selectedIds.has(group.id));
+
+        if (!filterValue) {
+            this.filteredServiceGroups = [...availableGroups];
+            return;
+        }
+
+        this.filteredServiceGroups = availableGroups.filter((group: any) =>
+            group.name?.toLowerCase().includes(filterValue),
+        );
+    }
+
+    displayServiceGroupFn = (serviceGroup: any): string => {
+        return serviceGroup?.name || '';
+    };
+
+    onServiceGroupSelected(event: any): void {
+        const selected = event.option.value;
+        if (!selected?.id) {
+            return;
+        }
+
+        const currentIds: number[] = this.serviceTypeForm.get('caseServiceGroupIds')?.value ?? [];
+        if (currentIds.includes(selected.id)) {
+            this.serviceGroupControl.setValue('');
+            return;
+        }
+
+        this.selectedServiceGroups = [...this.selectedServiceGroups, selected];
+        this.serviceTypeForm.patchValue({ caseServiceGroupIds: [...currentIds, selected.id] });
+        this.serviceGroupControl.setValue('');
+        this.filterServiceGroups();
+    }
+
+    removeServiceGroup(group: any): void {
+        const currentIds: number[] = this.serviceTypeForm.get('caseServiceGroupIds')?.value ?? [];
+        const nextIds = currentIds.filter((id) => id !== group.id);
+        this.serviceTypeForm.patchValue({ caseServiceGroupIds: nextIds });
+        this.syncSelectedServiceGroups(nextIds);
+        this.filterServiceGroups();
     }
 
     filterServiceSubTypes(): void {
@@ -153,6 +221,11 @@ export class ServiceTypeManagementComponent implements OnInit {
         this.callService.getCaseServiceGroup().subscribe({
             next: (response: any) => {
                 this.serviceGroups = this.parseResponse(response);
+                const groupIds: number[] = this.serviceTypeForm.get('caseServiceGroupIds')?.value ?? [];
+                if (groupIds.length > 0) {
+                    this.syncSelectedServiceGroups(groupIds);
+                }
+                this.filterServiceGroups();
             },
             error: (error) => {
                 this.sweetalertService.handleError(error);
@@ -174,16 +247,33 @@ export class ServiceTypeManagementComponent implements OnInit {
         });
     }
 
+    private loadMappedGroupIds(serviceTypeId: number): void {
+        this.callService.getCaseServiceGroupType(undefined, serviceTypeId).subscribe({
+            next: (response: any) => {
+                const mappings = this.parseResponse(response);
+                const groupIds = mappings.map((item: any) => Number(item.caseServiceGroupId));
+                this.serviceTypeForm.patchValue({ caseServiceGroupIds: groupIds });
+                this.syncSelectedServiceGroups(groupIds);
+            },
+            error: (error) => {
+                this.sweetalertService.handleError(error);
+            },
+        });
+    }
+
     private populateForm(serviceType: any): void {
         if (!serviceType) return;
 
+        const groupIds = this.parseGroupIds(serviceType);
         this.serviceTypeForm.patchValue({
             name: serviceType.name || '',
-            caseServiceGroupId: serviceType.caseServiceGroupId ?? null,
+            caseServiceGroupIds: groupIds,
             caseServiceSubTypeIds: [],
         });
+        this.syncSelectedServiceGroups(groupIds);
 
         if (serviceType.id) {
+            this.loadMappedGroupIds(serviceType.id);
             this.loadMappedSubTypeIds(serviceType.id);
         }
     }
@@ -217,7 +307,7 @@ export class ServiceTypeManagementComponent implements OnInit {
         if (this.data.mode === 'add') {
             const createData = {
                 name: formValue.name,
-                caseServiceGroupId: formValue.caseServiceGroupId,
+                caseServiceGroupIds: formValue.caseServiceGroupIds ?? [],
                 createdById: userData.userId,
             };
             this.callService.createCaseServiceType(createData).subscribe({
@@ -243,7 +333,7 @@ export class ServiceTypeManagementComponent implements OnInit {
         } else if (this.data.mode === 'edit') {
             const updateData = {
                 name: formValue.name,
-                caseServiceGroupId: formValue.caseServiceGroupId,
+                caseServiceGroupIds: formValue.caseServiceGroupIds ?? [],
                 modifiedById: userData.userId,
             };
             this.callService.updateCaseServiceType(this.data.serviceType.id, updateData).subscribe({

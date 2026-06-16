@@ -41,17 +41,42 @@
                         </div>
                     </div>
                     <div class="col-12">
-                        <label for="caseServiceGroupId" class="form-label">{{ 'menu.serviceGroup' | translate }}</label>
-                        <mat-select
-                            id="caseServiceGroupId"
-                            class="w-100"
-                            formControlName="caseServiceGroupId"
-                            [placeholder]="'contact.searchServiceGroup' | translate"
-                        >
-                            <mat-option *ngFor="let group of serviceGroups" [value]="group.id">
+                        <label for="serviceGroupSearch" class="form-label">{{ 'menu.serviceGroup' | translate }}</label>
+                        <div *ngIf="selectedServiceGroups.length > 0" class="selected-subtype-list mb-2">
+                            <span class="badge bg-light text-dark border me-1 mb-1" *ngFor="let group of selectedServiceGroups">
                                 {{ group.name }}
-                            </mat-option>
-                        </mat-select>
+                                <button
+                                    type="button"
+                                    class="btn-remove-subtype"
+                                    *ngIf="data.mode !== 'view'"
+                                    (click)="removeServiceGroup(group)"
+                                    aria-label="Remove"
+                                >
+                                    &times;
+                                </button>
+                            </span>
+                        </div>
+                        <mat-form-field class="w-100" appearance="outline" *ngIf="data.mode !== 'view'">
+                            <input
+                                id="serviceGroupSearch"
+                                type="text"
+                                matInput
+                                [formControl]="serviceGroupControl"
+                                [matAutocomplete]="autoServiceGroup"
+                                (input)="filterServiceGroups()"
+                                (focus)="filterServiceGroups()"
+                                [placeholder]="'contact.searchServiceGroup' | translate"
+                            />
+                            <mat-autocomplete
+                                #autoServiceGroup="matAutocomplete"
+                                [displayWith]="displayServiceGroupFn"
+                                (optionSelected)="onServiceGroupSelected($event)"
+                            >
+                                <mat-option *ngFor="let serviceGroup of filteredServiceGroups" [value]="serviceGroup">
+                                    {{ serviceGroup.name }}
+                                </mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
                     </div>
                     <div class="col-12">
                         <label for="serviceSubTypeSearch" class="form-label">{{ 'menu.serviceSubType' | translate }}</label>
