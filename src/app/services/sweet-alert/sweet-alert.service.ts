@@ -95,6 +95,22 @@ export class SweetAlertService {
         this.getSwal('warning', title, text, false, route);
     }
 
+    showServiceSaveFailure(result: any): void {
+        const parsed = typeof result === 'string' ? JSON.parse(result) : result;
+        if (parsed?.code === 'DUPLICATE_NAME') {
+            const messageKey =
+                parsed.entity === 'group'
+                    ? 'alert.duplicateServiceGroupName'
+                    : parsed.entity === 'type'
+                      ? 'alert.duplicateServiceTypeName'
+                      : 'alert.duplicateServiceSubTypeName';
+            this.error(messageKey);
+            return;
+        }
+
+        this.error('alert.error');
+    }
+
     confirmDelete(): Promise<any> {
         const title = this.translate.instant('alert.deleteConfirm');
         const confirmText = this.translate.instant('alert.confirm');

@@ -17,6 +17,18 @@ export function getServiceTypeGroupIds(type: ServiceTypeRecord): number[] {
     return type.caseServiceGroupIds.map((id) => Number(id)).filter((id) => Number.isFinite(id));
 }
 
+export function appendServiceTypeGroupId(type: ServiceTypeRecord, groupId: number | string): void {
+    const normalizedGroupId = Number(groupId);
+    if (!Number.isFinite(normalizedGroupId)) {
+        return;
+    }
+
+    const ids = getServiceTypeGroupIds(type);
+    if (!ids.includes(normalizedGroupId)) {
+        type.caseServiceGroupIds = [...ids, normalizedGroupId];
+    }
+}
+
 export type JunctionRecord = {
     caseServiceTypeId: number;
     caseServiceSubTypeId: number;
@@ -54,7 +66,7 @@ export function getCaseServiceHierarchyWarningKeys(
             warnings.push('alert.serviceHierarchyTypeNotFound');
         } else if (groupId !== null) {
             const typeGroupIds = getServiceTypeGroupIds(type);
-            if (typeGroupIds.length > 0 && !typeGroupIds.includes(groupId)) {
+            if (!typeGroupIds.includes(groupId)) {
                 warnings.push('alert.serviceHierarchyTypeNotInGroup');
             }
         }
@@ -92,7 +104,7 @@ export function sanitizeCaseServiceHierarchyForImport(
             subTypeId = null;
         } else if (groupId !== null) {
             const typeGroupIds = getServiceTypeGroupIds(type);
-            if (typeGroupIds.length > 0 && !typeGroupIds.includes(groupId)) {
+            if (!typeGroupIds.includes(groupId)) {
                 warningKeys.push('alert.serviceHierarchyTypeNotInGroup');
                 typeId = null;
                 subTypeId = null;

@@ -2,6 +2,7 @@ import { Component, Pipe, PipeTransform, OnInit, OnDestroy } from '@angular/core
 import { faPenToSquare, faTrashCan, faArrowRight, faArrowLeft, faCircleXmark } from '@fortawesome/free-solid-svg-icons';
 import { CallService } from 'src/app/services/call/call.service';
 import { CaseServiceHierarchyService } from 'src/app/services/case-service-hierarchy/case-service-hierarchy.service';
+import { appendServiceTypeGroupId } from 'src/app/shared/utils/case-service-hierarchy.util';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Call } from 'src/app/shared/interface/call';
 import { UserService } from 'src/app/services/user/user.service';
@@ -1439,9 +1440,7 @@ export class CallComponent implements OnInit, OnDestroy {
 
     filterCaseGroups() {
         const controlValue = this.caseGroupControl.value as any;
-        const originalValue = (typeof controlValue === 'object' && controlValue ? controlValue.name : controlValue || '')
-            .toString()
-            .trim();
+        const originalValue = (typeof controlValue === 'object' && controlValue ? controlValue.name : controlValue || '').toString().trim();
         const filterValue = originalValue.toLowerCase();
         const list = Array.isArray(this.caseGroupReport) ? this.caseGroupReport : [];
 
@@ -1689,7 +1688,15 @@ export class CallComponent implements OnInit, OnDestroy {
                 caseServiceTypeId: typeId,
                 createdById: this.userData.userId,
             })
-            .subscribe({ error: () => {} });
+            .subscribe({
+                next: () => {
+                    const cachedType = this.allServiceTypes.find((type: any) => type.id == typeId);
+                    if (cachedType) {
+                        appendServiceTypeGroupId(cachedType, this.selectedServiceGroup);
+                    }
+                },
+                error: () => {},
+            });
     }
 
     onServiceTypeChanged(): void {

@@ -87,6 +87,20 @@ export class ServiceSubTypeManagementComponent implements OnInit {
         });
     }
 
+    private parseResponse(response: any): any {
+        if (Array.isArray(response)) {
+            return response;
+        }
+        if (typeof response === 'string') {
+            try {
+                return JSON.parse(response);
+            } catch {
+                return response;
+            }
+        }
+        return response ?? {};
+    }
+
     onClickClose(): void {
         this.dialogRef.close();
     }
@@ -103,12 +117,13 @@ export class ServiceSubTypeManagementComponent implements OnInit {
                 };
                 this.callService.createServiceSubType(createData).subscribe({
                     next: (res: any) => {
-                        if (res.success) {
-                            this.sweetalertService.success('alert.createServiceSubTypeSuccess');
-                            this.dialogRef.close(res);
-                        } else {
-                            this.sweetalertService.handleError(res);
+                        const result = this.parseResponse(res);
+                        if (result?.success === false) {
+                            this.sweetalertService.showServiceSaveFailure(result);
+                            return;
                         }
+                        this.sweetalertService.success('alert.createServiceSubTypeSuccess');
+                        this.dialogRef.close(result);
                     },
                     error: (error) => {
                         this.sweetalertService.handleError(error);
@@ -121,12 +136,13 @@ export class ServiceSubTypeManagementComponent implements OnInit {
                 };
                 this.callService.updateServiceSubType(this.data.serviceSubType.id, updateData).subscribe({
                     next: (res: any) => {
-                        if (res.success) {
-                            this.sweetalertService.success('alert.updateServiceSubTypeSuccess');
-                            this.dialogRef.close(res);
-                        } else {
-                            this.sweetalertService.handleError(res);
+                        const result = this.parseResponse(res);
+                        if (result?.success === false) {
+                            this.sweetalertService.showServiceSaveFailure(result);
+                            return;
                         }
+                        this.sweetalertService.success('alert.updateServiceSubTypeSuccess');
+                        this.dialogRef.close(result);
                     },
                     error: (error) => {
                         this.sweetalertService.handleError(error);

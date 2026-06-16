@@ -59,6 +59,20 @@ export class ServiceGroupManagementComponent implements OnInit {
         });
     }
 
+    private parseResponse(response: any): any {
+        if (Array.isArray(response)) {
+            return response;
+        }
+        if (typeof response === 'string') {
+            try {
+                return JSON.parse(response);
+            } catch {
+                return response;
+            }
+        }
+        return response ?? {};
+    }
+
     onClickClose(): void {
         this.dialogRef.close();
     }
@@ -75,12 +89,13 @@ export class ServiceGroupManagementComponent implements OnInit {
                 };
                 this.callService.createCaseServiceGroup(createData).subscribe({
                     next: (res: any) => {
-                        if (res.success) {
-                            this.sweetalertService.success('alert.createServiceGroupSuccess');
-                            this.dialogRef.close(res);
-                        } else {
-                            this.sweetalertService.handleError(res);
+                        const result = this.parseResponse(res);
+                        if (result?.success === false) {
+                            this.sweetalertService.showServiceSaveFailure(result);
+                            return;
                         }
+                        this.sweetalertService.success('alert.createServiceGroupSuccess');
+                        this.dialogRef.close(result);
                     },
                     error: (error) => {
                         this.sweetalertService.handleError(error);
@@ -93,12 +108,13 @@ export class ServiceGroupManagementComponent implements OnInit {
                 };
                 this.callService.updateCaseServiceGroup(this.data.serviceGroup.id, updateData).subscribe({
                     next: (res: any) => {
-                        if (res.success) {
-                            this.sweetalertService.success('alert.updateServiceGroupSuccess');
-                            this.dialogRef.close(res);
-                        } else {
-                            this.sweetalertService.handleError(res);
+                        const result = this.parseResponse(res);
+                        if (result?.success === false) {
+                            this.sweetalertService.showServiceSaveFailure(result);
+                            return;
                         }
+                        this.sweetalertService.success('alert.updateServiceGroupSuccess');
+                        this.dialogRef.close(result);
                     },
                     error: (error) => {
                         this.sweetalertService.handleError(error);
