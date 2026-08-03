@@ -18,8 +18,7 @@ export const environment = {
         path: '/roddonjai-qcrm-apis/socket.io',
     },
     strapi: {
-        url: 'https://devel02.convtech.dev/roddonjai-qcrm-strapi/api',
-        // url: 'http://localhost:1337/api',
+        url: '',
         path: {
             auditlog: '/auditlogs',
         },
@@ -31,5 +30,8 @@ export const environment = {
     },
     idle: {
         timeoutMinutes: 720,
+    },
+    features: {
+        chatEnabled: true,
     },
 };

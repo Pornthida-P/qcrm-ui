@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { faChartPie, faClipboardList, faFileLines, faFilePen, faGear, faHouse, faPhoneVolume } from '@fortawesome/free-solid-svg-icons';
+import { faChartPie, faClipboardList, faComments, faFileLines, faGear, faHouse, faPhoneVolume } from '@fortawesome/free-solid-svg-icons';
 import { UserService } from 'src/app/services/user/user.service';
 import { User } from 'src/app/shared/interface/user.interface';
+import { environment } from 'src/environments/environment';
 
 @Component({
     selector: 'app-sidebar',
@@ -42,6 +43,16 @@ export class SidebarComponent implements OnInit {
                 routerLink: '/call',
                 roles: [1, 2, 3],
             },
+            ...(environment.features?.chatEnabled
+                ? [
+                      {
+                          label: 'chat',
+                          icon: faComments,
+                          routerLink: '/chat',
+                          roles: [1, 2, 3],
+                      },
+                  ]
+                : []),
             {
                 label: 'report-page',
                 icon: faChartPie,
@@ -54,22 +65,6 @@ export class SidebarComponent implements OnInit {
                 routerLink: '/manage-page',
                 roles: [2],
             },
-
-            // {
-            //     label: 'หลักสูตร E-Learning',
-            //     icon: faBookOpen,
-            //     routerLink: '/e-learning',
-            // },
-            // {
-            //     label: 'โครงการอบรม / สัมนา',
-            //     icon: faLayerGroup,
-            //     routerLink: '/training',
-            // },
-            // {
-            //     label: 'ประเภทสินค้า',
-            //     icon: faBagShopping,
-            //     routerLink: '/products',
-            // },
         ];
     }
 

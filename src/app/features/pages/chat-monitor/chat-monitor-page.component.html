@@ -1,0 +1,45 @@
+<div class="p-3">
+    <app-chat-subnav active="monitor"></app-chat-subnav>
+    <div class="bg-white rounded shadow d-flex overflow-hidden monitor-shell">
+        <aside class="monitor-list border-end">
+            <div class="p-3 fw-semibold border-bottom">Active conversations</div>
+            <button
+                type="button"
+                class="list-item"
+                *ngFor="let item of conversations"
+                [class.active]="selected?.chatRoomId === item.chatRoomId"
+                (click)="select(item)"
+            >
+                <div class="fw-semibold text-truncate">{{ item.displayName || item.chatRoomId }}</div>
+                <div class="small text-muted text-truncate">
+                    Agent: {{ item.agentUsername || item.agentUserId || '-' }} · {{ item.lastMessage || '' }}
+                </div>
+            </button>
+            <div class="p-3 text-muted" *ngIf="!conversations.length">No assigned chats</div>
+        </aside>
+        <section class="flex-grow-1 d-flex flex-column">
+            <ng-container *ngIf="selected; else empty">
+                <div class="p-3 border-bottom">
+                    <div class="fw-semibold">{{ selected.displayName || selected.chatRoomId }}</div>
+                    <div class="small text-muted">Supervisor view (includes whisper messages)</div>
+                </div>
+                <div class="flex-grow-1 overflow-auto p-3 bg-light">
+                    <div class="mb-2" *ngFor="let m of messages">
+                        <span class="badge me-1" [class.text-bg-warning]="m.secretType === 'monitor'" [class.text-bg-secondary]="m.secretType !== 'monitor'">
+                            {{ m.secretType === 'monitor' ? 'whisper' : m.direction }}
+                        </span>
+                        <strong class="me-1">{{ m.senderName || '-' }}:</strong>
+                        {{ m.messageText }}
+                    </div>
+                </div>
+                <div class="p-3 border-top d-flex gap-2">
+                    <input class="form-control" [(ngModel)]="whisper" (keyup.enter)="sendWhisper()" placeholder="Whisper to agent (not visible to customer)" />
+                    <button type="button" class="btn btn-warning" (click)="sendWhisper()">Whisper</button>
+                </div>
+            </ng-container>
+            <ng-template #empty>
+                <div class="m-auto text-muted">Select an active conversation</div>
+            </ng-template>
+        </section>
+    </div>
+</div>

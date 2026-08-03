@@ -1,0 +1,74 @@
+<div class="p-3">
+    <app-chat-subnav active="broadcast"></app-chat-subnav>
+    <div class="bg-white rounded shadow p-4">
+        <h5 class="mb-3">Create broadcast</h5>
+        <div class="row g-2 mb-4">
+            <div class="col-md-3">
+                <input class="form-control" placeholder="Name" [(ngModel)]="form.broadcastName" />
+            </div>
+            <div class="col-md-3">
+                <input class="form-control" type="datetime-local" [(ngModel)]="form.scheduledAt" />
+            </div>
+            <div class="col-md-3">
+                <input class="form-control" placeholder="Channels (comma: line,facebook)" [(ngModel)]="form.channelKeys" />
+            </div>
+            <div class="col-md-3">
+                <input class="form-control" placeholder="Tag filter (optional, comma)" [(ngModel)]="form.tagFilter" list="broadcastTags" />
+                <datalist id="broadcastTags">
+                    <option *ngFor="let t of tags" [value]="t.tagName"></option>
+                </datalist>
+            </div>
+            <div class="col-md-10">
+                <textarea class="form-control" rows="2" placeholder="Message text" [(ngModel)]="form.messageText"></textarea>
+            </div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-primary w-100 h-100" (click)="create()">Schedule</button>
+            </div>
+        </div>
+
+        <h6>Scheduled / history</h6>
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Scheduled</th>
+                    <th>Status</th>
+                    <th>Channels</th>
+                    <th>Messages</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let b of broadcasts">
+                    <td>{{ b.broadcastName }}</td>
+                    <td>{{ b.scheduledAt | date : 'dd/MM/yyyy HH:mm' }}</td>
+                    <td>
+                        <span
+                            class="badge"
+                            [class.text-bg-success]="b.isSent === 1"
+                            [class.text-bg-warning]="b.isSent === 0"
+                            [class.text-bg-secondary]="b.isSent === 2"
+                            >{{ statusLabel(b.isSent) }}</span
+                        >
+                    </td>
+                    <td>
+                        <ng-container *ngIf="b.broadcastChannels?.length; else noCh">
+                            <span *ngFor="let c of b.broadcastChannels; let last = last">
+                                {{ c.channelKey || c }}<span *ngIf="!last">, </span>
+                            </span>
+                        </ng-container>
+                        <ng-template #noCh>-</ng-template>
+                    </td>
+                    <td>{{ b.messages?.length || 0 }}</td>
+                    <td class="text-nowrap">
+                        <button *ngIf="b.isSent === 0" type="button" class="btn btn-sm btn-link" (click)="cancel(b.id)">Cancel</button>
+                        <button type="button" class="btn btn-sm btn-link text-danger" (click)="remove(b.id)">Delete</button>
+                    </td>
+                </tr>
+                <tr *ngIf="!broadcasts.length">
+                    <td colspan="6" class="text-muted">No broadcasts</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

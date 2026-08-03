@@ -84,6 +84,36 @@ const routes: Routes = [
                 title: 'Call List',
             },
             {
+                path: 'chat/monitor',
+                loadChildren: () => import('../../pages/chat-monitor/chat-monitor.module').then((m) => m.ChatMonitorModule),
+                title: 'Chat Monitor',
+            },
+            {
+                path: 'chat/broadcast',
+                loadChildren: () => import('../../pages/chat-broadcast/chat-broadcast.module').then((m) => m.ChatBroadcastModule),
+                title: 'Chat Broadcast',
+            },
+            {
+                path: 'chat/bot',
+                loadChildren: () => import('../../pages/chat-bot/chat-bot.module').then((m) => m.ChatBotModule),
+                title: 'Chat Bot',
+            },
+            {
+                path: 'chat/reports',
+                loadChildren: () => import('../../pages/chat-reports/chat-reports.module').then((m) => m.ChatReportsModule),
+                title: 'Chat Reports',
+            },
+            {
+                path: 'chat/settings',
+                loadChildren: () => import('../../pages/chat-settings/chat-settings.module').then((m) => m.ChatSettingsModule),
+                title: 'Chat Settings',
+            },
+            {
+                path: 'chat',
+                loadChildren: () => import('../../pages/chat-page/chat-page.module').then((m) => m.ChatPageModule),
+                title: 'Chat',
+            },
+            {
                 path: '',
                 redirectTo: '/home',
                 pathMatch: 'full',
