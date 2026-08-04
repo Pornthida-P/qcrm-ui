@@ -1,7 +1,7 @@
 <aside class="case-panel d-flex flex-column h-100">
     <div class="case-panel-header border-bottom d-flex align-items-center justify-content-between gap-2">
         <div class="min-w-0">
-            <div class="fw-semibold text-truncate">Create case</div>
+            <div class="fw-semibold text-truncate">{{ 'chat.create-case' | translate }}</div>
             <div class="d-flex align-items-center gap-2 flex-wrap small" *ngIf="conversation">
                 <span class="text-muted text-truncate">{{ conversation.displayName || conversation.chatRoomId }}</span>
                 <span
@@ -13,26 +13,26 @@
                 </span>
             </div>
         </div>
-        <button type="button" class="btn btn-sm btn-outline-secondary" (click)="close()" [disabled]="saving">Close</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary" (click)="close()" [disabled]="saving">{{ 'common.close' | translate }}</button>
     </div>
 
     <div class="case-panel-body flex-grow-1 overflow-auto">
-        <div class="alert alert-info py-2 px-3 small mb-3" *ngIf="lookingUpContact">Looking up contact…</div>
+        <div class="alert alert-info py-2 px-3 small mb-3" *ngIf="lookingUpContact">{{ 'chat.looking-up-contact' | translate }}</div>
         <div class="alert alert-success py-2 px-3 small mb-3" *ngIf="contactId && !lookingUpContact">
-            Linked contact: {{ contactLabel || contactId }}
+            {{ 'chat.linked-contact' | translate }}: {{ contactLabel || contactId }}
         </div>
 
         <div class="section-title d-flex align-items-center justify-content-between">
-            <span>Previous cases</span>
-            <span class="text-muted fw-normal text-lowercase" *ngIf="caseHistory.length">{{ caseHistory.length }} recent</span>
+            <span>{{ 'chat.previous-cases' | translate }}</span>
+            <span class="text-muted fw-normal text-lowercase" *ngIf="caseHistory.length">{{ caseHistory.length }} {{ 'chat.recent' | translate }}</span>
         </div>
         <div class="case-history mb-3">
-            <div class="small text-muted px-1 py-2" *ngIf="loadingHistory">Loading history…</div>
+            <div class="small text-muted px-1 py-2" *ngIf="loadingHistory">{{ 'chat.loading-history' | translate }}</div>
             <div class="small text-muted px-1 py-2" *ngIf="!loadingHistory && !contactId">
-                No linked contact yet — history appears after match.
+                {{ 'chat.no-linked-contact' | translate }}
             </div>
             <div class="small text-muted px-1 py-2" *ngIf="!loadingHistory && contactId && !caseHistory.length">
-                No previous cases for this contact.
+                {{ 'chat.no-previous-cases' | translate }}
             </div>
             <div class="history-item" *ngFor="let item of caseHistory">
                 <div class="d-flex justify-content-between gap-2 align-items-start">
@@ -52,30 +52,30 @@
             </div>
         </div>
 
-        <div class="section-title">Contact</div>
+        <div class="section-title">{{ 'chat.contact' | translate }}</div>
         <div class="row g-2 mb-3">
             <div class="col-6">
-                <label class="form-label form-label-sm">First name</label>
+                <label class="form-label form-label-sm">{{ 'contact.firstName' | translate }}</label>
                 <input class="form-control form-control-sm" [(ngModel)]="firstName" name="firstName" />
             </div>
             <div class="col-6">
-                <label class="form-label form-label-sm">Last name</label>
+                <label class="form-label form-label-sm">{{ 'contact.lastName' | translate }}</label>
                 <input class="form-control form-control-sm" [(ngModel)]="lastName" name="lastName" />
             </div>
             <div class="col-12">
-                <label class="form-label form-label-sm">Phone</label>
+                <label class="form-label form-label-sm">{{ 'contact.phoneNumber' | translate }}</label>
                 <input class="form-control form-control-sm" [(ngModel)]="phone" name="phone" />
             </div>
             <div class="col-12">
-                <label class="form-label form-label-sm">Chat ID</label>
+                <label class="form-label form-label-sm">{{ 'chat.chat-id' | translate }}</label>
                 <input class="form-control form-control-sm" [value]="conversation?.chatRoomId || ''" disabled />
             </div>
         </div>
 
-        <div class="section-title">Case</div>
+        <div class="section-title">{{ 'chat.case' | translate }}</div>
         <div class="row g-2 mb-3">
             <div class="col-12">
-                <label class="form-label form-label-sm">Channel</label>
+                <label class="form-label form-label-sm">{{ 'contact.channel' | translate }}</label>
                 <ng-select
                     [items]="channels"
                     bindLabel="name"
@@ -87,7 +87,7 @@
                 ></ng-select>
             </div>
             <div class="col-12" *ngIf="!isSocialChannel">
-                <label class="form-label form-label-sm">Case code <span class="text-danger">*</span></label>
+                <label class="form-label form-label-sm">{{ 'menu.caseCode' | translate }} <span class="text-danger">*</span></label>
                 <ng-select
                     [items]="caseCodes"
                     bindLabel="code"
@@ -97,7 +97,7 @@
                 ></ng-select>
             </div>
             <div class="col-12">
-                <label class="form-label form-label-sm">Case type</label>
+                <label class="form-label form-label-sm">{{ 'contact.caseType' | translate }}</label>
                 <ng-select
                     [items]="caseTypes"
                     bindLabel="name"
@@ -107,7 +107,7 @@
                 ></ng-select>
             </div>
             <div class="col-12">
-                <label class="form-label form-label-sm">Service group</label>
+                <label class="form-label form-label-sm">{{ 'contact.serviceGroup' | translate }}</label>
                 <ng-select
                     [items]="serviceGroups"
                     bindLabel="name"
@@ -118,7 +118,7 @@
                 ></ng-select>
             </div>
             <div class="col-12">
-                <label class="form-label form-label-sm">Service type</label>
+                <label class="form-label form-label-sm">{{ 'contact.serviceType' | translate }}</label>
                 <ng-select
                     [items]="serviceTypes"
                     bindLabel="name"
@@ -129,7 +129,7 @@
                 ></ng-select>
             </div>
             <div class="col-12">
-                <label class="form-label form-label-sm">Service sub type</label>
+                <label class="form-label form-label-sm">{{ 'contact.serviceSubType' | translate }}</label>
                 <ng-select
                     [items]="serviceSubTypes"
                     bindLabel="name"
@@ -139,7 +139,7 @@
                 ></ng-select>
             </div>
             <div class="col-12">
-                <label class="form-label form-label-sm">Status</label>
+                <label class="form-label form-label-sm">{{ 'common.status' | translate }}</label>
                 <ng-select
                     [items]="statusList"
                     bindLabel="status"
@@ -150,20 +150,20 @@
                 ></ng-select>
             </div>
             <div class="col-12">
-                <label class="form-label form-label-sm">Description</label>
+                <label class="form-label form-label-sm">{{ 'contact.description' | translate }}</label>
                 <textarea class="form-control form-control-sm" rows="3" [(ngModel)]="description" name="description"></textarea>
             </div>
             <div class="col-12">
-                <label class="form-label form-label-sm">Solution</label>
+                <label class="form-label form-label-sm">{{ 'chat.solution' | translate }}</label>
                 <textarea class="form-control form-control-sm" rows="2" [(ngModel)]="solutions" name="solutions"></textarea>
             </div>
         </div>
     </div>
 
     <div class="case-panel-footer border-top d-flex gap-2">
-        <button type="button" class="btn btn-outline-secondary flex-grow-1" (click)="close()" [disabled]="saving">Cancel</button>
+        <button type="button" class="btn btn-outline-secondary flex-grow-1" (click)="close()" [disabled]="saving">{{ 'common.cancel' | translate }}</button>
         <button type="button" class="btn btn-blue flex-grow-1" (click)="save()" [disabled]="saving">
-            {{ saving ? 'Saving…' : 'Save case' }}
+            {{ (saving ? 'chat.saving' : 'chat.save-case') | translate }}
         </button>
     </div>
 </aside>

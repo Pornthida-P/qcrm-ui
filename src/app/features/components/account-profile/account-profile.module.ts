@@ -1,15 +1,14 @@
-import { NgModule, OnInit } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { AccountProfileComponent } from './account-profile.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { HttpClient } from '@angular/common/http';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
     declarations: [AccountProfileComponent],
-    imports: [CommonModule, ReactiveFormsModule, FormsModule, NgbModule, TranslateModule],
+    imports: [CommonModule, RouterModule, ReactiveFormsModule, FormsModule, NgbModule, TranslateModule],
     exports: [AccountProfileComponent],
 })
 export class AccountProfileModule {}

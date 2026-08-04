@@ -96,28 +96,74 @@
                             <!-- Contact chats from API (read-only): Facebook -->
                             <div class="col-md-6" *ngIf="facebookChats.length > 0">
                                 <label class="form-label fw-semibold">{{ 'contact.facebookDisplayName' | translate }}</label>
-                                <input
-                                    *ngFor="let chat of facebookChats; let i = index"
-                                    type="text"
-                                    class="form-control mb-2"
-                                    [value]="chat.displayName"
-                                    [attr.id]="'inputFacebookDisplayName_' + i"
-                                    disabled
-                                    [placeholder]="'contact.facebookDisplayName' | translate"
-                                />
+                                <div *ngFor="let chat of facebookChats; let i = index" class="d-flex gap-2 mb-2">
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        [value]="chat.displayName"
+                                        [attr.id]="'inputFacebookDisplayName_' + i"
+                                        disabled
+                                        [placeholder]="'contact.facebookDisplayName' | translate"
+                                    />
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-outline-blue flex-shrink-0"
+                                        *ngIf="chat.chatId && chatEnabled"
+                                        (click)="openLinkedChat(chat)"
+                                        title="Open chat"
+                                    >
+                                        <i class="fa-solid fa-comments"></i>
+                                    </button>
+                                </div>
                             </div>
                             <!-- Contact chats from API (read-only): Line -->
                             <div class="col-md-6" *ngIf="lineChats.length > 0">
                                 <label class="form-label fw-semibold">{{ 'contact.lineDisplayName' | translate }}</label>
-                                <input
-                                    *ngFor="let chat of lineChats; let i = index"
-                                    type="text"
-                                    class="form-control mb-2"
-                                    [value]="chat.displayName"
-                                    [attr.id]="'inputLineDisplayName_' + i"
-                                    disabled
-                                    [placeholder]="'contact.lineDisplayName' | translate"
-                                />
+                                <div *ngFor="let chat of lineChats; let i = index" class="d-flex gap-2 mb-2">
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        [value]="chat.displayName"
+                                        [attr.id]="'inputLineDisplayName_' + i"
+                                        disabled
+                                        [placeholder]="'contact.lineDisplayName' | translate"
+                                    />
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-outline-blue flex-shrink-0"
+                                        *ngIf="chat.chatId && chatEnabled"
+                                        (click)="openLinkedChat(chat)"
+                                        title="Open chat"
+                                    >
+                                        <i class="fa-solid fa-comments"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-12" *ngIf="contactChats.length">
+                                <label class="form-label fw-semibold">Linked chats</label>
+                                <div class="linked-chat-list">
+                                    <div class="linked-chat-row" *ngFor="let chat of contactChats">
+                                        <span
+                                            class="channel-badge"
+                                            [style.background-color]="statusService.getChannelBgColor(chatChannelLabel(chat))"
+                                        >
+                                            <i [class]="statusService.getChannelIcon(chatChannelLabel(chat))" class="me-1"></i>
+                                            {{ chatChannelLabel(chat) }}
+                                        </span>
+                                        <div class="linked-chat-meta min-w-0 flex-grow-1">
+                                            <div class="fw-semibold text-truncate">{{ chat.displayName || chat.chatId || '-' }}</div>
+                                            <div class="small text-muted text-truncate" *ngIf="chat.chatId">{{ chat.chatId }}</div>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            class="btn btn-sm btn-outline-blue flex-shrink-0"
+                                            *ngIf="chat.chatId && chatEnabled"
+                                            (click)="openLinkedChat(chat)"
+                                        >
+                                            Open chat
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <label for="inputContactContactGroup" class="form-label fw-semibold">

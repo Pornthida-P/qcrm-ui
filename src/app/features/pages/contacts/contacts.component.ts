@@ -7,6 +7,7 @@ import Swal from 'sweetalert2';
 import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
 import { TranslateService } from '@ngx-translate/core';
 import { colors } from 'src/app/shared/theme/colors';
+import { environment } from 'src/environments/environment';
 
 /** เฉพาะ field ที่ใช้ค้น (ไม่รวม contactId, วันที่ ฯลฯ) เหมือน API */
 const CONTACT_SEARCH_KEYS = [
@@ -50,6 +51,7 @@ export class ContactSearchFilterPipe implements PipeTransform {
 export class ContactsComponent implements OnInit {
     contacts!: any;
     valueSearch!: string;
+    readonly chatEnabled = !!environment.features?.chatEnabled;
 
     filterOption!: any[];
     selectedFilter: any | undefined;
@@ -159,6 +161,15 @@ export class ContactsComponent implements OnInit {
 
     edit(item: any) {
         this.router.navigate(['/contacts/edit'], { queryParams: { key: item.contactId } });
+    }
+
+    openChat(event: Event, chatRoomId?: string): void {
+        event.preventDefault();
+        event.stopPropagation();
+        if (!this.chatEnabled || !chatRoomId) {
+            return;
+        }
+        this.router.navigate(['/chat'], { queryParams: { chatRoomId } });
     }
 
     deletecontacts(contactId: string) {

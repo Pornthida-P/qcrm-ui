@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ChatService } from 'src/app/services/chat/chat.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { environment } from 'src/environments/environment';
+import { canAccessChatNav } from '../chat-page/chat-access';
 
 @Component({
     selector: 'app-chat-bot-page',
@@ -31,8 +32,14 @@ export class ChatBotPageComponent implements OnInit {
             this.router.navigate(['/home']);
             return;
         }
-        this.userService.getDataUser().subscribe((u) => (this.userId = u?.userId || ''));
-        this.reload();
+        this.userService.getDataUser().subscribe((u) => {
+            if (!canAccessChatNav('bot', u)) {
+                this.router.navigate(['/chat']);
+                return;
+            }
+            this.userId = u?.userId || '';
+            this.reload();
+        });
     }
 
     reload(): void {

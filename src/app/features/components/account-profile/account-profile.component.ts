@@ -13,6 +13,7 @@ import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
 import { LoaderService } from 'src/app/services/loader/loader.service';
 import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
 import { TranslateService } from '@ngx-translate/core';
+import { ChatService } from 'src/app/services/chat/chat.service';
 
 @Component({
     selector: 'app-account-profile',
@@ -28,8 +29,11 @@ export class AccountProfileComponent {
 
     imageSrc?: File;
     roles: Role[] = [];
+    chatChannels: any[] = [];
+    selectedChannelKeys: string[] = [];
     userDataForm: FormGroup = new FormGroup({});
     userData?: User | null;
+    readonly chatEnabled = !!environment.features?.chatEnabled;
 
     faXmark = faXmark;
 
@@ -46,24 +50,28 @@ export class AccountProfileComponent {
         private socketIO: SocketIoService,
         private auditLogService: AuditLogService,
         private translate: TranslateService,
+        private chatService: ChatService,
     ) {}
 
     ngOnInit(): void {
         this.findAllRoles();
         this.getDataUser();
+        this.loadChatChannels();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
         console.log(changes);
-        this.isAction = changes['isAction'].currentValue;
+        this.isAction = changes['isAction']?.currentValue ?? this.isAction;
         console.log(this.isAction);
         this.initializeForm();
+        this.selectedChannelKeys = this.normalizeChannelKeys(this.member?.channelKeys);
     }
 
     initializeForm(): void {
         const isViewMode = this.mode === 'view';
 
         if (this.mode === 'add') {
+            this.selectedChannelKeys = [];
             this.userDataForm = this.fb.group({
                 userId: [''],
                 username: ['', this.usernameValidators],
@@ -71,9 +79,10 @@ export class AccountProfileComponent {
                 role: ['', Validators.required],
                 profile: [''],
                 lastLogin: [''],
-                isActive: [1], // Default to active (1) for new users
+                isActive: [1],
             });
         } else {
+            this.selectedChannelKeys = this.normalizeChannelKeys(this.member?.channelKeys);
             this.userDataForm = this.fb.group({
                 userId: [{ value: this.member?.userId, disabled: isViewMode || !this.isAction }, Validators.required],
                 username: [{ value: this.member?.username, disabled: isViewMode }, this.usernameValidators],
@@ -92,10 +101,49 @@ export class AccountProfileComponent {
             .pipe(
                 tap((res: User | null) => {
                     this.userData = res;
-                    // this.isAction = res?.role.roleTitle.toLowerCase().includes('admin') ?? false;
                 }),
             )
             .subscribe(() => {});
+    }
+
+    loadChatChannels(): void {
+        if (!this.chatEnabled) {
+            this.chatChannels = [];
+            return;
+        }
+        this.chatService.listChannels().subscribe({
+            next: (channels) => {
+                this.chatChannels = Array.isArray(channels)
+                    ? channels.filter((c) => c?.channelKey && Number(c?.isActive) !== 0)
+                    : [];
+            },
+            error: () => {
+                this.chatChannels = [];
+            },
+        });
+    }
+
+    isChannelSelected(channelKey: string): boolean {
+        return this.selectedChannelKeys.includes(channelKey);
+    }
+
+    onChannelToggle(channelKey: string, event: Event): void {
+        if (this.mode === 'view') {
+            return;
+        }
+        const checked = (event.target as HTMLInputElement).checked;
+        if (checked) {
+            if (!this.selectedChannelKeys.includes(channelKey)) {
+                this.selectedChannelKeys = [...this.selectedChannelKeys, channelKey];
+            }
+        } else {
+            this.selectedChannelKeys = this.selectedChannelKeys.filter((k) => k !== channelKey);
+        }
+        this.userDataForm.markAsDirty();
+    }
+
+    channelLabel(channel: any): string {
+        return channel?.displayName || channel?.channelName || channel?.channelType || channel?.channelKey || 'Channel';
     }
 
     findAllRoles(): void {
@@ -164,6 +212,7 @@ export class AccountProfileComponent {
             profile: this.userDataForm.get('profile')?.value,
             lastLogin: this.userDataForm.get('lastLogin')?.value,
             isActive: this.userDataForm.get('isActive')?.value,
+            channelKeys: [...this.selectedChannelKeys],
         };
 
         if (this.mode === 'edit') {
@@ -212,10 +261,9 @@ export class AccountProfileComponent {
                         'Account',
                         '',
                         'Add',
-                        `Username : ${userData.username}, Role : ${userData.role.roleTitle}, Email : ${userData.email}, isActive: ${userData.isActive}`,
+                        `Username : ${userData.username}, Role : ${userData.role.roleTitle}, Email : ${userData.email}, isActive: ${userData.isActive}, channels: ${(userData.channelKeys || []).join(',')}`,
                         `Success`,
                     );
-                    // Emit event to close dialog/modal
                     this.onSaveSuccess.emit();
                 }),
                 catchError((err) => {
@@ -241,10 +289,9 @@ export class AccountProfileComponent {
                     'Account',
                     '',
                     'Edit',
-                    `Username : ${userData.username}, Role : ${userData.role.roleTitle}, Email : ${userData.email}, Profile: ${userData.profile}, isActive: ${userData.isActive}`,
+                    `Username : ${userData.username}, Role : ${userData.role.roleTitle}, Email : ${userData.email}, Profile: ${userData.profile}, isActive: ${userData.isActive}, channels: ${(userData.channelKeys || []).join(',')}`,
                     `Success`,
                 );
-                // Emit event to close dialog/modal
                 this.onSaveSuccess.emit();
             },
             (err) => {
@@ -268,5 +315,18 @@ export class AccountProfileComponent {
         const isChecked = event.target.checked;
         this.userDataForm.get('isActive')?.setValue(isChecked ? 1 : 0);
         this.userDataForm.markAsDirty();
+    }
+
+    private normalizeChannelKeys(value: unknown): string[] {
+        if (Array.isArray(value)) {
+            return value.map((v) => String(v).trim()).filter(Boolean);
+        }
+        if (typeof value === 'string' && value.trim()) {
+            return value
+                .split(',')
+                .map((v) => v.trim())
+                .filter(Boolean);
+        }
+        return [];
     }
 }

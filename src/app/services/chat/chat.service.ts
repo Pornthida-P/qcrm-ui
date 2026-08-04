@@ -17,8 +17,27 @@ export class ChatService {
         return this.http.get(`${this.baseUrl}${config.api.path.chat.status}`).pipe(map((res) => this.parse(res)));
     }
 
-    getQueue(channelKey?: string): Observable<ChatConversation[]> {
-        const query = channelKey ? `?channelKey=${encodeURIComponent(channelKey)}` : '';
+    listChannels(): Observable<any[]> {
+        return this.http.get(`${this.baseUrl}${config.api.path.chat.channels}`).pipe(map((res) => this.parse(res) || []));
+    }
+
+    saveChannel(body: any): Observable<any> {
+        return this.http.post(`${this.baseUrl}${config.api.path.chat.channels}`, body).pipe(map((res) => this.parse(res)));
+    }
+
+    deleteChannel(id: number): Observable<any> {
+        return this.http.delete(`${this.baseUrl}${config.api.path.chat.channels}/${id}`).pipe(map((res) => this.parse(res)));
+    }
+
+    getQueue(channelKey?: string, agentUserId?: string): Observable<ChatConversation[]> {
+        const params = new URLSearchParams();
+        if (channelKey) {
+            params.set('channelKey', channelKey);
+        }
+        if (agentUserId) {
+            params.set('agentUserId', agentUserId);
+        }
+        const query = params.toString() ? `?${params.toString()}` : '';
         return this.http.get(`${this.baseUrl}${config.api.path.chat.queue}${query}`).pipe(map((res) => this.parse(res) || []));
     }
 
@@ -26,6 +45,12 @@ export class ChatService {
         return this.http
             .get(`${this.baseUrl}${config.api.path.chat.conversations}/${agentUserId}`)
             .pipe(map((res) => this.parse(res) || []));
+    }
+
+    getConversation(chatRoomId: string): Observable<ChatConversation | null> {
+        return this.http
+            .get(`${this.baseUrl}${config.api.path.chat.conversation}/${encodeURIComponent(chatRoomId)}`)
+            .pipe(map((res) => this.parse(res) || null));
     }
 
     getHistory(chatRoomId: string, includeMonitor = false): Observable<ChatMessage[]> {
@@ -67,9 +92,7 @@ export class ChatService {
     }
 
     getReportSummary(startTs: number, endTs: number): Observable<any> {
-        return this.http
-            .get(`${this.baseUrl}/reports/summary?startTs=${startTs}&endTs=${endTs}`)
-            .pipe(map((res) => this.parse(res)));
+        return this.http.get(`${this.baseUrl}/reports/summary?startTs=${startTs}&endTs=${endTs}`).pipe(map((res) => this.parse(res)));
     }
 
     listSchedules(channelKey?: string): Observable<any[]> {

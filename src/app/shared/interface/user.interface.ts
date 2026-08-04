@@ -8,4 +8,5 @@ export interface User {
     role: Role;
     lastLogin?: string;
     isActive?: number;
+    channelKeys?: string[];
 }

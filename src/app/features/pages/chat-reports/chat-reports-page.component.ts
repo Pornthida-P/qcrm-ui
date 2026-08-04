@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ChatService } from 'src/app/services/chat/chat.service';
+import { UserService } from 'src/app/services/user/user.service';
 import { environment } from 'src/environments/environment';
+import { canAccessChatNav } from '../chat-page/chat-access';
 
 @Component({
     selector: 'app-chat-reports-page',
@@ -13,6 +15,7 @@ export class ChatReportsPageComponent implements OnInit {
 
     constructor(
         private chatService: ChatService,
+        private userService: UserService,
         private router: Router,
     ) {}
 
@@ -21,7 +24,13 @@ export class ChatReportsPageComponent implements OnInit {
             this.router.navigate(['/home']);
             return;
         }
-        this.reload();
+        this.userService.getDataUser().subscribe((u) => {
+            if (!canAccessChatNav('reports', u)) {
+                this.router.navigate(['/chat']);
+                return;
+            }
+            this.reload();
+        });
     }
 
     reload(): void {

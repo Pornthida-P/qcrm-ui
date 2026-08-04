@@ -173,7 +173,7 @@ export class ChatCreateCasePanelComponent implements OnInit, OnChanges {
         this.firstName = parts[0] || conv.displayName || 'Chat';
         this.lastName = parts.slice(1).join(' ') || '';
         this.phone = conv.phoneNumber || '';
-        this.description = conv.issue || conv.lastMessage || '';
+        this.description = '';
         this.solutions = '';
         this.contactId = conv.contactId || '';
         this.contactChatId = '';

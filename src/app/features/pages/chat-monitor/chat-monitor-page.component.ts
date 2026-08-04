@@ -3,8 +3,10 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ChatService } from 'src/app/services/chat/chat.service';
 import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
+import { UserService } from 'src/app/services/user/user.service';
 import { ChatConversation, ChatMessage } from 'src/app/shared/interface/chat.interface';
 import { environment } from 'src/environments/environment';
+import { canAccessChatNav } from '../chat-page/chat-access';
 
 @Component({
     selector: 'app-chat-monitor-page',
@@ -21,6 +23,7 @@ export class ChatMonitorPageComponent implements OnInit, OnDestroy {
     constructor(
         private chatService: ChatService,
         private socketIoService: SocketIoService,
+        private userService: UserService,
         private router: Router,
     ) {}
 
@@ -29,15 +32,21 @@ export class ChatMonitorPageComponent implements OnInit, OnDestroy {
             this.router.navigate(['/home']);
             return;
         }
-        this.refresh();
-        this.socketIoService.socket.on('chat:conversation', () => this.refresh());
-        this.socketIoService.socket.on('chat:message', (msg: ChatMessage) => {
-            if (this.selected?.chatRoomId === msg.chatRoomId) {
-                if (!this.messages.some((m) => m.messageId && m.messageId === msg.messageId)) {
-                    this.messages = [...this.messages, msg];
-                }
+        this.userService.getDataUser().subscribe((u) => {
+            if (!canAccessChatNav('monitor', u)) {
+                this.router.navigate(['/chat']);
+                return;
             }
             this.refresh();
+            this.socketIoService.socket.on('chat:conversation', () => this.refresh());
+            this.socketIoService.socket.on('chat:message', (msg: ChatMessage) => {
+                if (this.selected?.chatRoomId === msg.chatRoomId) {
+                    if (!this.messages.some((m) => m.messageId && m.messageId === msg.messageId)) {
+                        this.messages = [...this.messages, msg];
+                    }
+                }
+                this.refresh();
+            });
         });
     }
 

@@ -3,10 +3,10 @@
     <div class="bg-white rounded shadow p-4">
         <div class="row g-4">
             <div class="col-lg-4">
-                <h6>Categories</h6>
+                <h6>{{ 'chat.categories' | translate }}</h6>
                 <div class="input-group mb-2">
-                    <input class="form-control" placeholder="Category name" [(ngModel)]="categoryForm.categoryName" />
-                    <button class="btn btn-primary" type="button" (click)="saveCategory()">Add</button>
+                    <input class="form-control" [placeholder]="'chat.category-name' | translate" [(ngModel)]="categoryForm.categoryName" />
+                    <button class="btn btn-primary" type="button" (click)="saveCategory()">{{ 'common.add' | translate }}</button>
                 </div>
                 <div class="d-flex flex-wrap gap-2 mb-4">
                     <span class="badge text-bg-secondary p-2" *ngFor="let c of categories">
@@ -15,40 +15,40 @@
                     </span>
                 </div>
 
-                <h6>Test match</h6>
+                <h6>{{ 'chat.test-match' | translate }}</h6>
                 <div class="input-group mb-2">
-                    <input class="form-control" [(ngModel)]="testText" placeholder="Customer message" (keyup.enter)="testMatch()" />
-                    <button class="btn btn-outline-primary" type="button" (click)="testMatch()">Test</button>
+                    <input class="form-control" [(ngModel)]="testText" [placeholder]="'chat.customer-message' | translate" (keyup.enter)="testMatch()" />
+                    <button class="btn btn-outline-primary" type="button" (click)="testMatch()">{{ 'chat.test' | translate }}</button>
                 </div>
                 <pre class="bg-light p-2 small" *ngIf="testResult">{{ testResult | json }}</pre>
             </div>
 
             <div class="col-lg-8">
-                <h6>Keywords</h6>
+                <h6>{{ 'chat.keywords' | translate }}</h6>
                 <div class="row g-2 mb-3">
                     <div class="col-md-4">
-                        <input class="form-control" placeholder="Keyword" [(ngModel)]="keywordForm.keywordName" />
+                        <input class="form-control" [placeholder]="'chat.keyword' | translate" [(ngModel)]="keywordForm.keywordName" />
                     </div>
                     <div class="col-md-3">
                         <select class="form-select" [(ngModel)]="keywordForm.categoryId">
-                            <option [ngValue]="null">No category</option>
+                            <option [ngValue]="null">{{ 'chat.no-category' | translate }}</option>
                             <option *ngFor="let c of categories" [ngValue]="c.id">{{ c.categoryName }}</option>
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <input class="form-control" type="number" placeholder="Group id" [(ngModel)]="keywordForm.keywordGroupId" />
+                        <input class="form-control" type="number" [placeholder]="'chat.group-id' | translate" [(ngModel)]="keywordForm.keywordGroupId" />
                     </div>
                     <div class="col-md-3">
-                        <button class="btn btn-primary w-100" type="button" (click)="saveKeyword()">Save keyword</button>
+                        <button class="btn btn-primary w-100" type="button" (click)="saveKeyword()">{{ 'chat.save-keyword' | translate }}</button>
                     </div>
                 </div>
 
                 <table class="table table-sm mb-4">
                     <thead>
                         <tr>
-                            <th>Keyword</th>
-                            <th>Group</th>
-                            <th>Category</th>
+                            <th>{{ 'chat.keyword' | translate }}</th>
+                            <th>{{ 'chat.group' | translate }}</th>
+                            <th>{{ 'chat.category' | translate }}</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -58,31 +58,31 @@
                             <td>{{ k.keywordGroupId }}</td>
                             <td>{{ k.categoryName || '-' }}</td>
                             <td>
-                                <button class="btn btn-sm btn-link" type="button" (click)="editKeyword(k)">Edit / use group</button>
-                                <button class="btn btn-sm btn-link text-danger" type="button" (click)="deleteKeyword(k.id)">Delete</button>
+                                <button class="btn btn-sm btn-link" type="button" (click)="editKeyword(k)">{{ 'chat.edit-use-group' | translate }}</button>
+                                <button class="btn btn-sm btn-link text-danger" type="button" (click)="deleteKeyword(k.id)">{{ 'common.delete' | translate }}</button>
                             </td>
                         </tr>
                     </tbody>
                 </table>
 
-                <h6>Responses for group {{ responseForm.keywordGroupId || '-' }}</h6>
+                <h6>{{ 'chat.responses-for-group' | translate }} {{ responseForm.keywordGroupId || '-' }}</h6>
                 <div class="row g-2 mb-3">
                     <div class="col-md-2">
-                        <input class="form-control" type="number" placeholder="Group id" [(ngModel)]="responseForm.keywordGroupId" />
+                        <input class="form-control" type="number" [placeholder]="'chat.group-id' | translate" [(ngModel)]="responseForm.keywordGroupId" />
                     </div>
                     <div class="col-md-7">
-                        <input class="form-control" placeholder="Response text" [(ngModel)]="responseForm.messageText" />
+                        <input class="form-control" [placeholder]="'chat.response-text' | translate" [(ngModel)]="responseForm.messageText" />
                     </div>
                     <div class="col-md-3">
-                        <button class="btn btn-primary w-100" type="button" (click)="saveResponse()">Save response</button>
+                        <button class="btn btn-primary w-100" type="button" (click)="saveResponse()">{{ 'chat.save-response' | translate }}</button>
                     </div>
                 </div>
 
                 <table class="table table-sm">
                     <thead>
                         <tr>
-                            <th>Group</th>
-                            <th>Text</th>
+                            <th>{{ 'chat.group' | translate }}</th>
+                            <th>{{ 'chat.text' | translate }}</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -91,7 +91,7 @@
                             <td>{{ r.keywordGroupId }}</td>
                             <td>{{ r.messageText }}</td>
                             <td>
-                                <button class="btn btn-sm btn-link text-danger" type="button" (click)="deleteResponse(r.id)">Delete</button>
+                                <button class="btn btn-sm btn-link text-danger" type="button" (click)="deleteResponse(r.id)">{{ 'common.delete' | translate }}</button>
                             </td>
                         </tr>
                     </tbody>

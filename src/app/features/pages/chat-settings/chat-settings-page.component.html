@@ -3,29 +3,92 @@
     <div class="bg-white rounded shadow p-3">
         <ul class="nav nav-tabs mb-3">
             <li class="nav-item" *ngFor="let t of tabs">
-                <button type="button" class="nav-link" [class.active]="tab === t.id" (click)="setTab(t.id)">{{ t.label }}</button>
+                <button type="button" class="nav-link" [class.active]="tab === t.id" (click)="setTab(t.id)">{{ t.label | translate }}</button>
             </li>
         </ul>
+
+        <!-- Channels -->
+        <div *ngIf="tab === 'channels'">
+            <div class="row g-2 mb-3">
+                <div class="col-md-3">
+                    <input class="form-control" [placeholder]="'chat.channel-key' | translate" [(ngModel)]="channelForm.channelKey" />
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" [(ngModel)]="channelForm.channelType">
+                        <option *ngFor="let opt of channelTypeOptions" [value]="channelTypeValue(opt)">{{ opt.name }}</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-center">
+                    <div class="form-check">
+                        <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="channelActive"
+                            [checked]="isChannelActive(channelForm)"
+                            (change)="channelForm.isActive = $any($event.target).checked ? 1 : 0"
+                        />
+                        <label class="form-check-label" for="channelActive">{{ 'component.account-profile.isActive' | translate }}</label>
+                    </div>
+                </div>
+                <div class="col-md-2 d-flex gap-1">
+                    <button class="btn btn-primary flex-grow-1" type="button" (click)="saveChannel()">{{ 'common.save' | translate }}</button>
+                    <button class="btn btn-outline-secondary" type="button" *ngIf="channelForm.id" (click)="resetChannelForm()">{{ 'common.cancel' | translate }}</button>
+                </div>
+            </div>
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>{{ 'chat.channel-key' | translate }}</th>
+                        <th>{{ 'form.type' | translate }}</th>
+                        <th>{{ 'component.account-profile.isActive' | translate }}</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let c of channels">
+                        <td>{{ c.channelKey }}</td>
+                        <td>{{ channelTypeLabel(c.channelType) }}</td>
+                        <td>{{ isChannelActive(c) ? ('common.yes' | translate) : ('common.no' | translate) }}</td>
+                        <td class="text-nowrap">
+                            <button class="btn btn-sm btn-link" type="button" (click)="editChannel(c)">{{ 'common.edit' | translate }}</button>
+                            <button class="btn btn-sm btn-link text-danger" type="button" (click)="deleteChannel(c.id)">{{ 'common.delete' | translate }}</button>
+                        </td>
+                    </tr>
+                    <tr *ngIf="!channels.length">
+                        <td colspan="4" class="text-muted">{{ 'component.account-profile.noChannels' | translate }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
         <!-- Schedules -->
         <div *ngIf="tab === 'schedules'">
             <div class="row g-2 mb-3">
-                <div class="col-md-2"><input class="form-control" placeholder="Name" [(ngModel)]="scheduleForm.scheduleName" /></div>
+                <div class="col-md-2"><input class="form-control" [placeholder]="'form.name' | translate" [(ngModel)]="scheduleForm.scheduleName" /></div>
                 <div class="col-md-2">
                     <select class="form-select" [(ngModel)]="scheduleForm.type">
-                        <option value="normal">normal</option>
-                        <option value="holiday">holiday</option>
+                        <option value="normal">{{ 'chat.schedule-type.normal' | translate }}</option>
+                        <option value="holiday">{{ 'chat.schedule-type.holiday' | translate }}</option>
                     </select>
                 </div>
-                <div class="col-md-1"><input class="form-control" placeholder="Day" [(ngModel)]="scheduleForm.day" /></div>
-                <div class="col-md-1"><input class="form-control" placeholder="Start" [(ngModel)]="scheduleForm.startTime" /></div>
-                <div class="col-md-1"><input class="form-control" placeholder="End" [(ngModel)]="scheduleForm.endTime" /></div>
-                <div class="col-md-2"><input class="form-control" placeholder="Channel key" [(ngModel)]="scheduleForm.channelKey" /></div>
-                <div class="col-md-2"><input class="form-control" placeholder="OOO text" [(ngModel)]="scheduleForm.resWord" /></div>
-                <div class="col-md-1"><button class="btn btn-primary w-100" type="button" (click)="saveSchedule()">Save</button></div>
+                <div class="col-md-1"><input class="form-control" [placeholder]="'chat.day' | translate" [(ngModel)]="scheduleForm.day" /></div>
+                <div class="col-md-1"><input class="form-control" [placeholder]="'chat.start' | translate" [(ngModel)]="scheduleForm.startTime" /></div>
+                <div class="col-md-1"><input class="form-control" [placeholder]="'chat.end' | translate" [(ngModel)]="scheduleForm.endTime" /></div>
+                <div class="col-md-2"><input class="form-control" [placeholder]="'chat.channel-key' | translate" [(ngModel)]="scheduleForm.channelKey" /></div>
+                <div class="col-md-2"><input class="form-control" [placeholder]="'chat.ooo-text' | translate" [(ngModel)]="scheduleForm.resWord" /></div>
+                <div class="col-md-1"><button class="btn btn-primary w-100" type="button" (click)="saveSchedule()">{{ 'common.save' | translate }}</button></div>
             </div>
             <table class="table table-sm">
-                <thead><tr><th>Name</th><th>Type</th><th>Day</th><th>Time</th><th>Channel</th><th></th></tr></thead>
+                <thead>
+                    <tr>
+                        <th>{{ 'form.name' | translate }}</th>
+                        <th>{{ 'form.type' | translate }}</th>
+                        <th>{{ 'chat.day' | translate }}</th>
+                        <th>{{ 'chat.time' | translate }}</th>
+                        <th>{{ 'contact.channel' | translate }}</th>
+                        <th></th>
+                    </tr>
+                </thead>
                 <tbody>
                     <tr *ngFor="let s of schedules">
                         <td>{{ s.scheduleName || '-' }}</td>
@@ -34,8 +97,8 @@
                         <td>{{ s.startTime || '-' }} - {{ s.endTime || '-' }}</td>
                         <td>{{ s.channelKey || '-' }}</td>
                         <td class="text-nowrap">
-                            <button class="btn btn-sm btn-link" type="button" (click)="editSchedule(s)">Edit</button>
-                            <button class="btn btn-sm btn-link text-danger" type="button" (click)="deleteSchedule(s.id)">Delete</button>
+                            <button class="btn btn-sm btn-link" type="button" (click)="editSchedule(s)">{{ 'common.edit' | translate }}</button>
+                            <button class="btn btn-sm btn-link text-danger" type="button" (click)="deleteSchedule(s.id)">{{ 'common.delete' | translate }}</button>
                         </td>
                     </tr>
                 </tbody>
@@ -47,43 +110,56 @@
             <div class="row g-2 mb-3">
                 <div class="col-md-2">
                     <select class="form-select" [(ngModel)]="autoForm.tagName">
-                        <option value="welcome">welcome</option>
-                        <option value="after_work">after_work</option>
-                        <option value="custom">custom</option>
+                        <option value="welcome">{{ 'chat.auto-tag.welcome' | translate }}</option>
+                        <option value="after_work">{{ 'chat.auto-tag.after-work' | translate }}</option>
+                        <option value="custom">{{ 'chat.auto-tag.custom' | translate }}</option>
                     </select>
                 </div>
-                <div class="col-md-4"><input class="form-control" placeholder="Response text" [(ngModel)]="autoForm.resWord" /></div>
-                <div class="col-md-2"><input class="form-control" placeholder="Channel key" [(ngModel)]="autoForm.channelKey" /></div>
-                <div class="col-md-2"><button class="btn btn-primary" type="button" (click)="saveAuto()">Save auto</button></div>
+                <div class="col-md-4"><input class="form-control" [placeholder]="'chat.response-text' | translate" [(ngModel)]="autoForm.resWord" /></div>
+                <div class="col-md-2"><input class="form-control" [placeholder]="'chat.channel-key' | translate" [(ngModel)]="autoForm.channelKey" /></div>
+                <div class="col-md-2"><button class="btn btn-primary" type="button" (click)="saveAuto()">{{ 'chat.save-auto' | translate }}</button></div>
             </div>
             <table class="table table-sm mb-4">
-                <thead><tr><th>Tag</th><th>Text</th><th>Channel</th><th></th></tr></thead>
+                <thead>
+                    <tr>
+                        <th>{{ 'chat.tag' | translate }}</th>
+                        <th>{{ 'chat.text' | translate }}</th>
+                        <th>{{ 'contact.channel' | translate }}</th>
+                        <th></th>
+                    </tr>
+                </thead>
                 <tbody>
                     <tr *ngFor="let m of autoMessages">
                         <td>{{ m.tagName }}</td>
                         <td>{{ m.resWord }}</td>
                         <td>{{ m.channelKey || '-' }}</td>
                         <td>
-                            <button class="btn btn-sm btn-link" type="button" (click)="editAuto(m)">Edit</button>
-                            <button class="btn btn-sm btn-link text-danger" type="button" (click)="deleteAuto(m.id)">Delete</button>
+                            <button class="btn btn-sm btn-link" type="button" (click)="editAuto(m)">{{ 'common.edit' | translate }}</button>
+                            <button class="btn btn-sm btn-link text-danger" type="button" (click)="deleteAuto(m.id)">{{ 'common.delete' | translate }}</button>
                         </td>
                     </tr>
                 </tbody>
             </table>
 
-            <h6>End chat messages</h6>
+            <h6>{{ 'chat.end-chat-messages' | translate }}</h6>
             <div class="row g-2 mb-3">
-                <div class="col-md-3"><input class="form-control" placeholder="Channel key" [(ngModel)]="endForm.channelKey" /></div>
-                <div class="col-md-6"><input class="form-control" placeholder="End message" [(ngModel)]="endForm.message" /></div>
-                <div class="col-md-2"><button class="btn btn-primary" type="button" (click)="saveEnd()">Save end</button></div>
+                <div class="col-md-3"><input class="form-control" [placeholder]="'chat.channel-key' | translate" [(ngModel)]="endForm.channelKey" /></div>
+                <div class="col-md-6"><input class="form-control" [placeholder]="'chat.end-message' | translate" [(ngModel)]="endForm.message" /></div>
+                <div class="col-md-2"><button class="btn btn-primary" type="button" (click)="saveEnd()">{{ 'chat.save-end' | translate }}</button></div>
             </div>
             <table class="table table-sm">
-                <thead><tr><th>Channel</th><th>Message</th><th></th></tr></thead>
+                <thead>
+                    <tr>
+                        <th>{{ 'contact.channel' | translate }}</th>
+                        <th>{{ 'chat.message' | translate }}</th>
+                        <th></th>
+                    </tr>
+                </thead>
                 <tbody>
                     <tr *ngFor="let m of endMessages">
                         <td>{{ m.channelKey || '-' }}</td>
                         <td>{{ m.message }}</td>
-                        <td><button class="btn btn-sm btn-link" type="button" (click)="editEnd(m)">Edit</button></td>
+                        <td><button class="btn btn-sm btn-link" type="button" (click)="editEnd(m)">{{ 'common.edit' | translate }}</button></td>
                     </tr>
                 </tbody>
             </table>
@@ -92,29 +168,34 @@
         <!-- Templates -->
         <div *ngIf="tab === 'templates'">
             <div class="row g-2 mb-3">
-                <div class="col-md-2"><input class="form-control" placeholder="Name" [(ngModel)]="templateForm.name" /></div>
-                <div class="col-md-2"><input class="form-control" placeholder="Category" [(ngModel)]="templateForm.category" /></div>
+                <div class="col-md-2"><input class="form-control" [placeholder]="'form.name' | translate" [(ngModel)]="templateForm.name" /></div>
+                <div class="col-md-2"><input class="form-control" [placeholder]="'chat.category' | translate" [(ngModel)]="templateForm.category" /></div>
                 <div class="col-md-2">
                     <select class="form-select" [(ngModel)]="templateForm.channelType">
-                        <option value="all">all</option>
-                        <option value="line">line</option>
-                        <option value="facebook">facebook</option>
-                        <option value="livechat">livechat</option>
+                        <option value="all">{{ 'chat.channel-type.all' | translate }}</option>
+                        <option *ngFor="let opt of channelTypeOptions" [value]="channelTypeValue(opt)">{{ opt.name }}</option>
                     </select>
                 </div>
-                <div class="col-md-4"><input class="form-control" placeholder="Message text" [(ngModel)]="templateForm.messageText" /></div>
-                <div class="col-md-2"><button class="btn btn-primary w-100" type="button" (click)="saveTemplate()">Save</button></div>
+                <div class="col-md-4"><input class="form-control" [placeholder]="'chat.message-text' | translate" [(ngModel)]="templateForm.messageText" /></div>
+                <div class="col-md-2"><button class="btn btn-primary w-100" type="button" (click)="saveTemplate()">{{ 'common.save' | translate }}</button></div>
             </div>
             <table class="table table-sm">
-                <thead><tr><th>Name</th><th>Channel</th><th>Text</th><th></th></tr></thead>
+                <thead>
+                    <tr>
+                        <th>{{ 'form.name' | translate }}</th>
+                        <th>{{ 'contact.channel' | translate }}</th>
+                        <th>{{ 'chat.text' | translate }}</th>
+                        <th></th>
+                    </tr>
+                </thead>
                 <tbody>
                     <tr *ngFor="let t of templates">
                         <td>{{ t.name }}</td>
-                        <td>{{ t.channelType }}</td>
+                        <td>{{ t.channelType === 'all' ? ('chat.channel-type.all' | translate) : channelTypeLabel(t.channelType) }}</td>
                         <td>{{ t.messageText }}</td>
                         <td>
-                            <button class="btn btn-sm btn-link" type="button" (click)="editTemplate(t)">Edit</button>
-                            <button class="btn btn-sm btn-link text-danger" type="button" (click)="deleteTemplate(t.id)">Delete</button>
+                            <button class="btn btn-sm btn-link" type="button" (click)="editTemplate(t)">{{ 'common.edit' | translate }}</button>
+                            <button class="btn btn-sm btn-link text-danger" type="button" (click)="deleteTemplate(t.id)">{{ 'common.delete' | translate }}</button>
                         </td>
                     </tr>
                 </tbody>
@@ -124,8 +205,8 @@
         <!-- Tags -->
         <div *ngIf="tab === 'tags'">
             <div class="row g-2 mb-3">
-                <div class="col-md-4"><input class="form-control" placeholder="Tag name" [(ngModel)]="tagForm.tagName" /></div>
-                <div class="col-md-2"><button class="btn btn-primary" type="button" (click)="saveTag()">Save</button></div>
+                <div class="col-md-4"><input class="form-control" [placeholder]="'chat.tag-name' | translate" [(ngModel)]="tagForm.tagName" /></div>
+                <div class="col-md-2"><button class="btn btn-primary" type="button" (click)="saveTag()">{{ 'common.save' | translate }}</button></div>
             </div>
             <div class="d-flex flex-wrap gap-2">
                 <span class="badge text-bg-secondary p-2" *ngFor="let t of tags">
@@ -138,8 +219,8 @@
         <!-- Badwords -->
         <div *ngIf="tab === 'badwords'">
             <div class="row g-2 mb-3">
-                <div class="col-md-4"><input class="form-control" placeholder="Word" [(ngModel)]="badwordForm.word" /></div>
-                <div class="col-md-2"><button class="btn btn-primary" type="button" (click)="saveBadword()">Save</button></div>
+                <div class="col-md-4"><input class="form-control" [placeholder]="'chat.word' | translate" [(ngModel)]="badwordForm.word" /></div>
+                <div class="col-md-2"><button class="btn btn-primary" type="button" (click)="saveBadword()">{{ 'common.save' | translate }}</button></div>
             </div>
             <div class="d-flex flex-wrap gap-2">
                 <span class="badge text-bg-danger p-2" *ngFor="let w of badwords">

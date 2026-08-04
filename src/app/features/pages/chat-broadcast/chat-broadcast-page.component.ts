@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { ChatService } from 'src/app/services/chat/chat.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { environment } from 'src/environments/environment';
+import { canAccessChatNav } from '../chat-page/chat-access';
 
 @Component({
     selector: 'app-chat-broadcast-page',
@@ -24,6 +26,7 @@ export class ChatBroadcastPageComponent implements OnInit {
         private chatService: ChatService,
         private userService: UserService,
         private router: Router,
+        private translate: TranslateService,
     ) {}
 
     ngOnInit(): void {
@@ -31,9 +34,15 @@ export class ChatBroadcastPageComponent implements OnInit {
             this.router.navigate(['/home']);
             return;
         }
-        this.userService.getDataUser().subscribe((u) => (this.userId = u?.userId || ''));
-        this.reload();
-        this.chatService.listTagDictionary().subscribe((t) => (this.tags = t || []));
+        this.userService.getDataUser().subscribe((u) => {
+            if (!canAccessChatNav('broadcast', u)) {
+                this.router.navigate(['/chat']);
+                return;
+            }
+            this.userId = u?.userId || '';
+            this.reload();
+            this.chatService.listTagDictionary().subscribe((t) => (this.tags = t || []));
+        });
     }
 
     reload(): void {
@@ -78,8 +87,8 @@ export class ChatBroadcastPageComponent implements OnInit {
     }
 
     statusLabel(isSent: number): string {
-        if (isSent === 1) return 'sent';
-        if (isSent === 2) return 'cancelled';
-        return 'pending';
+        if (isSent === 1) return this.translate.instant('chat.status.sent');
+        if (isSent === 2) return this.translate.instant('chat.status.cancelled');
+        return this.translate.instant('chat.status.pending');
     }
 }

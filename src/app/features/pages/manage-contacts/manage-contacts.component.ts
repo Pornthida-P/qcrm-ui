@@ -28,6 +28,7 @@ import { colors } from 'src/app/shared/theme/colors';
 })
 export class ManageContactsComponent implements OnInit, OnDestroy {
     private readonly socialChannelIds: string[] = ['4', '5'];
+    readonly chatEnabled = !!environment.features?.chatEnabled;
     MultiNumber: boolean = false;
     contactCall: any[] = [];
     contact: any = {};
@@ -2158,17 +2159,48 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
     }
 
     get facebookChats(): any[] {
-        return Array.isArray(this.contactChats)
-            ? this.contactChats.filter((c: any) => (c.chatType || '').toLowerCase() === 'facebook')
-            : [];
+        return Array.isArray(this.contactChats) ? this.contactChats.filter((c: any) => this.isFacebookChat(c)) : [];
     }
     get lineChats(): any[] {
-        return Array.isArray(this.contactChats) ? this.contactChats.filter((c: any) => (c.chatType || '').toLowerCase() === 'line') : [];
+        return Array.isArray(this.contactChats) ? this.contactChats.filter((c: any) => this.isLineChat(c)) : [];
     }
     get otherChats(): any[] {
         return Array.isArray(this.contactChats)
-            ? this.contactChats.filter((c: any) => !['facebook', 'line'].includes((c.chatType || '').toLowerCase()))
+            ? this.contactChats.filter((c: any) => !this.isFacebookChat(c) && !this.isLineChat(c))
             : [];
+    }
+
+    chatChannelLabel(chat: any): string {
+        if (!chat) {
+            return 'Chat';
+        }
+        if (chat.channelName) {
+            return chat.channelName;
+        }
+        if (this.isFacebookChat(chat)) {
+            return 'Facebook';
+        }
+        if (this.isLineChat(chat)) {
+            return 'LINE';
+        }
+        return chat.chatType || 'Chat';
+    }
+
+    openLinkedChat(chat: any): void {
+        if (!this.chatEnabled || !chat?.chatId) {
+            return;
+        }
+        this.router.navigate(['/chat'], { queryParams: { chatRoomId: chat.chatId } });
+    }
+
+    private isFacebookChat(chat: any): boolean {
+        const haystack = `${chat?.chatType || ''} ${chat?.channelName || ''} ${chat?.chatId || ''}`.toLowerCase();
+        return haystack.includes('facebook') || haystack.includes('fb') || String(chat?.chatId || '').startsWith('fb_');
+    }
+
+    private isLineChat(chat: any): boolean {
+        const haystack = `${chat?.chatType || ''} ${chat?.channelName || ''} ${chat?.chatId || ''}`.toLowerCase();
+        return haystack.includes('line') || String(chat?.chatId || '').startsWith('line_');
     }
 
     /** Inspection companies with group = 1 only (Reply CI). API uses "gruop" (typo). */

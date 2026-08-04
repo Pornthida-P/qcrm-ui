@@ -1,40 +1,40 @@
 <div class="p-3">
     <app-chat-subnav active="broadcast"></app-chat-subnav>
     <div class="bg-white rounded shadow p-4">
-        <h5 class="mb-3">Create broadcast</h5>
+        <h5 class="mb-3">{{ 'chat.create-broadcast' | translate }}</h5>
         <div class="row g-2 mb-4">
             <div class="col-md-3">
-                <input class="form-control" placeholder="Name" [(ngModel)]="form.broadcastName" />
+                <input class="form-control" [placeholder]="'form.name' | translate" [(ngModel)]="form.broadcastName" />
             </div>
             <div class="col-md-3">
                 <input class="form-control" type="datetime-local" [(ngModel)]="form.scheduledAt" />
             </div>
             <div class="col-md-3">
-                <input class="form-control" placeholder="Channels (comma: line,facebook)" [(ngModel)]="form.channelKeys" />
+                <input class="form-control" [placeholder]="'chat.broadcast-channels' | translate" [(ngModel)]="form.channelKeys" />
             </div>
             <div class="col-md-3">
-                <input class="form-control" placeholder="Tag filter (optional, comma)" [(ngModel)]="form.tagFilter" list="broadcastTags" />
+                <input class="form-control" [placeholder]="'chat.tag-filter' | translate" [(ngModel)]="form.tagFilter" list="broadcastTags" />
                 <datalist id="broadcastTags">
                     <option *ngFor="let t of tags" [value]="t.tagName"></option>
                 </datalist>
             </div>
             <div class="col-md-10">
-                <textarea class="form-control" rows="2" placeholder="Message text" [(ngModel)]="form.messageText"></textarea>
+                <textarea class="form-control" rows="2" [placeholder]="'chat.message-text' | translate" [(ngModel)]="form.messageText"></textarea>
             </div>
             <div class="col-md-2">
-                <button type="button" class="btn btn-primary w-100 h-100" (click)="create()">Schedule</button>
+                <button type="button" class="btn btn-primary w-100 h-100" (click)="create()">{{ 'chat.schedule' | translate }}</button>
             </div>
         </div>
 
-        <h6>Scheduled / history</h6>
+        <h6>{{ 'chat.scheduled-history' | translate }}</h6>
         <table class="table table-sm">
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Scheduled</th>
-                    <th>Status</th>
-                    <th>Channels</th>
-                    <th>Messages</th>
+                    <th>{{ 'form.name' | translate }}</th>
+                    <th>{{ 'chat.scheduled' | translate }}</th>
+                    <th>{{ 'common.status' | translate }}</th>
+                    <th>{{ 'chat.channels' | translate }}</th>
+                    <th>{{ 'chat.messages' | translate }}</th>
                     <th></th>
                 </tr>
             </thead>
@@ -61,12 +61,12 @@
                     </td>
                     <td>{{ b.messages?.length || 0 }}</td>
                     <td class="text-nowrap">
-                        <button *ngIf="b.isSent === 0" type="button" class="btn btn-sm btn-link" (click)="cancel(b.id)">Cancel</button>
-                        <button type="button" class="btn btn-sm btn-link text-danger" (click)="remove(b.id)">Delete</button>
+                        <button *ngIf="b.isSent === 0" type="button" class="btn btn-sm btn-link" (click)="cancel(b.id)">{{ 'common.cancel' | translate }}</button>
+                        <button type="button" class="btn btn-sm btn-link text-danger" (click)="remove(b.id)">{{ 'common.delete' | translate }}</button>
                     </td>
                 </tr>
                 <tr *ngIf="!broadcasts.length">
-                    <td colspan="6" class="text-muted">No broadcasts</td>
+                    <td colspan="6" class="text-muted">{{ 'chat.no-broadcasts' | translate }}</td>
                 </tr>
             </tbody>
         </table>

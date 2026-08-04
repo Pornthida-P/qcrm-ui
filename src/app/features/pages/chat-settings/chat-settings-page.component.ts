@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { CallService } from 'src/app/services/call/call.service';
 import { ChatService } from 'src/app/services/chat/chat.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { environment } from 'src/environments/environment';
+import { canAccessChatNav } from '../chat-page/chat-access';
 
-type ChatSettingsTab = 'schedules' | 'auto' | 'templates' | 'tags' | 'badwords';
+type ChatSettingsTab = 'channels' | 'schedules' | 'auto' | 'templates' | 'tags' | 'badwords';
 
 @Component({
     selector: 'app-chat-settings-page',
@@ -12,16 +14,21 @@ type ChatSettingsTab = 'schedules' | 'auto' | 'templates' | 'tags' | 'badwords';
     styleUrl: './chat-settings-page.component.scss',
 })
 export class ChatSettingsPageComponent implements OnInit {
-    tab: ChatSettingsTab = 'schedules';
+    tab: ChatSettingsTab = 'channels';
     tabs: { id: ChatSettingsTab; label: string }[] = [
-        { id: 'schedules', label: 'Schedules' },
-        { id: 'auto', label: 'Auto messages' },
-        { id: 'templates', label: 'Templates' },
-        { id: 'tags', label: 'Tags' },
-        { id: 'badwords', label: 'Bad words' },
+        { id: 'channels', label: 'menu.chat.settings.channels' },
+        { id: 'schedules', label: 'menu.chat.settings.schedules' },
+        { id: 'auto', label: 'menu.chat.settings.auto-messages' },
+        { id: 'templates', label: 'menu.chat.settings.templates' },
+        { id: 'tags', label: 'menu.chat.settings.tags' },
+        { id: 'badwords', label: 'menu.chat.settings.bad-words' },
     ];
     userId = '';
 
+    /** Master list from `channels` table (type options) */
+    channelTypeOptions: any[] = [];
+    /** Managed connectors from `chatChannels` */
+    channels: any[] = [];
     schedules: any[] = [];
     autoMessages: any[] = [];
     endMessages: any[] = [];
@@ -29,6 +36,7 @@ export class ChatSettingsPageComponent implements OnInit {
     tags: any[] = [];
     badwords: any[] = [];
 
+    channelForm: any = { channelType: '', isActive: 1 };
     scheduleForm: any = { type: 'normal', day: 'Mon', canQueue: 1, canReplyWelcome: 1, canAbandon: 1, isActive: 1 };
     autoForm: any = { tagName: 'welcome', lang: 'TH', messageType: 'text', sortIndex: 0, isActive: 1 };
     endForm: any = { isActive: 1 };
@@ -38,6 +46,7 @@ export class ChatSettingsPageComponent implements OnInit {
 
     constructor(
         private chatService: ChatService,
+        private callService: CallService,
         private userService: UserService,
         private router: Router,
     ) {}
@@ -47,8 +56,14 @@ export class ChatSettingsPageComponent implements OnInit {
             this.router.navigate(['/home']);
             return;
         }
-        this.userService.getDataUser().subscribe((u) => (this.userId = u?.userId || ''));
-        this.reloadAll();
+        this.userService.getDataUser().subscribe((u) => {
+            if (!canAccessChatNav('settings', u)) {
+                this.router.navigate(['/chat']);
+                return;
+            }
+            this.userId = u?.userId || '';
+            this.reloadAll();
+        });
     }
 
     setTab(tab: ChatSettingsTab): void {
@@ -56,12 +71,73 @@ export class ChatSettingsPageComponent implements OnInit {
     }
 
     reloadAll(): void {
+        this.callService.getAllChannels().subscribe((rows: any) => {
+            const list = this.parseList(rows).filter((c) => c?.name);
+            this.channelTypeOptions = list;
+            if (!this.channelForm.channelType && list.length) {
+                this.channelForm.channelType = this.channelTypeValue(list[0]);
+            }
+        });
+        this.chatService.listChannels().subscribe((r) => (this.channels = r || []));
         this.chatService.listSchedules().subscribe((r) => (this.schedules = r || []));
         this.chatService.listAutoMessages().subscribe((r) => (this.autoMessages = r || []));
         this.chatService.listEndMessages().subscribe((r) => (this.endMessages = r || []));
         this.chatService.listTemplates(undefined, true).subscribe((r) => (this.templates = r || []));
         this.chatService.listTagDictionary().subscribe((r) => (this.tags = r || []));
         this.chatService.listBadwords().subscribe((r) => (this.badwords = r || []));
+    }
+
+    channelTypeValue(channel: any): string {
+        return String(channel?.name || '')
+            .trim()
+            .toLowerCase();
+    }
+
+    channelTypeLabel(type: string): string {
+        if (!type) {
+            return '-';
+        }
+        const found = this.channelTypeOptions.find((c) => this.channelTypeValue(c) === String(type).toLowerCase());
+        return found?.name || type;
+    }
+
+    resetChannelForm(): void {
+        this.channelForm = {
+            channelType: this.channelTypeOptions.length ? this.channelTypeValue(this.channelTypeOptions[0]) : '',
+            isActive: 1,
+        };
+    }
+
+    isChannelActive(channel: any): boolean {
+        return Number(channel?.isActive) === 1;
+    }
+
+    saveChannel(): void {
+        if (!this.channelForm.channelKey?.trim() || !this.channelForm.channelType?.trim()) {
+            return;
+        }
+        const channelKey = this.channelForm.channelKey.trim();
+        const payload = {
+            ...this.channelForm,
+            channelKey,
+            channelName: this.channelForm.channelName || channelKey,
+            displayName: this.channelForm.displayName || this.channelForm.channelName || channelKey,
+        };
+        this.chatService.saveChannel(payload).subscribe(() => {
+            this.resetChannelForm();
+            this.chatService.listChannels().subscribe((r) => (this.channels = r || []));
+        });
+    }
+
+    editChannel(item: any): void {
+        this.channelForm = {
+            ...item,
+            channelType: String(item?.channelType || '').toLowerCase(),
+        };
+    }
+
+    deleteChannel(id: number): void {
+        this.chatService.deleteChannel(id).subscribe(() => this.chatService.listChannels().subscribe((r) => (this.channels = r || [])));
     }
 
     saveSchedule(): void {
@@ -146,5 +222,16 @@ export class ChatSettingsPageComponent implements OnInit {
 
     deleteBadword(id: number): void {
         this.chatService.deleteBadword(id).subscribe(() => this.chatService.listBadwords().subscribe((r) => (this.badwords = r || [])));
+    }
+
+    private parseList(rows: any): any[] {
+        if (typeof rows === 'string') {
+            try {
+                rows = JSON.parse(rows);
+            } catch {
+                return [];
+            }
+        }
+        return Array.isArray(rows) ? rows : [];
     }
 }

@@ -2,19 +2,19 @@
     <app-chat-subnav active="reports"></app-chat-subnav>
     <div class="bg-white rounded shadow p-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="mb-0">Chat reports</h5>
-            <button type="button" class="btn btn-sm btn-outline-primary" (click)="reload()">Refresh</button>
+            <h5 class="mb-0">{{ 'chat.reports' | translate }}</h5>
+            <button type="button" class="btn btn-sm btn-outline-primary" (click)="reload()">{{ 'chat.refresh' | translate }}</button>
         </div>
 
         <div class="row g-3 mb-4" *ngIf="dashboard">
             <div class="col-6 col-md-3" *ngFor="let card of [
-                { label: 'Queue', value: dashboard.queue },
-                { label: 'Assigned', value: dashboard.assigned },
-                { label: 'Ended today', value: dashboard.endedToday },
-                { label: 'Messages today', value: dashboard.messagesToday }
+                { labelKey: 'chat.report.queue', value: dashboard.queue },
+                { labelKey: 'chat.report.assigned', value: dashboard.assigned },
+                { labelKey: 'chat.report.ended-today', value: dashboard.endedToday },
+                { labelKey: 'chat.report.messages-today', value: dashboard.messagesToday }
             ]">
                 <div class="border rounded p-3 h-100">
-                    <div class="text-muted small">{{ card.label }}</div>
+                    <div class="text-muted small">{{ card.labelKey | translate }}</div>
                     <div class="fs-3 fw-semibold">{{ card.value }}</div>
                 </div>
             </div>
@@ -22,31 +22,31 @@
 
         <div class="row g-3" *ngIf="summary">
             <div class="col-md-6">
-                <h6>Messages by channel (7 days)</h6>
+                <h6>{{ 'chat.report.messages-by-channel' | translate }}</h6>
                 <table class="table table-sm">
-                    <thead><tr><th>Channel</th><th>Total</th></tr></thead>
+                    <thead><tr><th>{{ 'contact.channel' | translate }}</th><th>{{ 'common.total' | translate }}</th></tr></thead>
                     <tbody>
                         <tr *ngFor="let row of summary.byChannel">
                             <td>{{ row.channelType || '-' }}</td>
                             <td>{{ row.total }}</td>
                         </tr>
-                        <tr *ngIf="!summary.byChannel?.length"><td colspan="2" class="text-muted">No data</td></tr>
+                        <tr *ngIf="!summary.byChannel?.length"><td colspan="2" class="text-muted">{{ 'chat.no-data' | translate }}</td></tr>
                     </tbody>
                 </table>
             </div>
             <div class="col-md-6">
-                <h6>Ended chats by agent (7 days)</h6>
+                <h6>{{ 'chat.report.ended-by-agent' | translate }}</h6>
                 <table class="table table-sm">
-                    <thead><tr><th>Agent</th><th>Ended</th></tr></thead>
+                    <thead><tr><th>{{ 'chat.agent' | translate }}</th><th>{{ 'chat.ended' | translate }}</th></tr></thead>
                     <tbody>
                         <tr *ngFor="let row of summary.byAgent">
                             <td>{{ row.agentUserId || '-' }}</td>
                             <td>{{ row.endedCount }}</td>
                         </tr>
-                        <tr *ngIf="!summary.byAgent?.length"><td colspan="2" class="text-muted">No data</td></tr>
+                        <tr *ngIf="!summary.byAgent?.length"><td colspan="2" class="text-muted">{{ 'chat.no-data' | translate }}</td></tr>
                     </tbody>
                 </table>
-                <div class="small text-muted">Avg duration: {{ (summary.avgDurationMs / 60000) | number:'1.0-1' }} min</div>
+                <div class="small text-muted">{{ 'chat.avg-duration' | translate }}: {{ (summary.avgDurationMs / 60000) | number:'1.0-1' }} {{ 'chat.minutes' | translate }}</div>
             </div>
         </div>
     </div>

@@ -2,7 +2,7 @@
     <app-chat-subnav active="monitor"></app-chat-subnav>
     <div class="bg-white rounded shadow d-flex overflow-hidden monitor-shell">
         <aside class="monitor-list border-end">
-            <div class="p-3 fw-semibold border-bottom">Active conversations</div>
+            <div class="p-3 fw-semibold border-bottom">{{ 'chat.active-conversations' | translate }}</div>
             <button
                 type="button"
                 class="list-item"
@@ -12,33 +12,33 @@
             >
                 <div class="fw-semibold text-truncate">{{ item.displayName || item.chatRoomId }}</div>
                 <div class="small text-muted text-truncate">
-                    Agent: {{ item.agentUsername || item.agentUserId || '-' }} · {{ item.lastMessage || '' }}
+                    {{ 'chat.agent' | translate }}: {{ item.agentUsername || item.agentUserId || '-' }} · {{ item.lastMessage || '' }}
                 </div>
             </button>
-            <div class="p-3 text-muted" *ngIf="!conversations.length">No assigned chats</div>
+            <div class="p-3 text-muted" *ngIf="!conversations.length">{{ 'chat.no-assigned-chats' | translate }}</div>
         </aside>
         <section class="flex-grow-1 d-flex flex-column">
             <ng-container *ngIf="selected; else empty">
                 <div class="p-3 border-bottom">
                     <div class="fw-semibold">{{ selected.displayName || selected.chatRoomId }}</div>
-                    <div class="small text-muted">Supervisor view (includes whisper messages)</div>
+                    <div class="small text-muted">{{ 'chat.supervisor-view' | translate }}</div>
                 </div>
                 <div class="flex-grow-1 overflow-auto p-3 bg-light">
                     <div class="mb-2" *ngFor="let m of messages">
                         <span class="badge me-1" [class.text-bg-warning]="m.secretType === 'monitor'" [class.text-bg-secondary]="m.secretType !== 'monitor'">
-                            {{ m.secretType === 'monitor' ? 'whisper' : m.direction }}
+                            {{ (m.secretType === 'monitor' ? 'chat.whisper' : 'chat.direction.' + m.direction) | translate }}
                         </span>
                         <strong class="me-1">{{ m.senderName || '-' }}:</strong>
                         {{ m.messageText }}
                     </div>
                 </div>
                 <div class="p-3 border-top d-flex gap-2">
-                    <input class="form-control" [(ngModel)]="whisper" (keyup.enter)="sendWhisper()" placeholder="Whisper to agent (not visible to customer)" />
-                    <button type="button" class="btn btn-warning" (click)="sendWhisper()">Whisper</button>
+                    <input class="form-control" [(ngModel)]="whisper" (keyup.enter)="sendWhisper()" [placeholder]="'chat.whisper-to-agent' | translate" />
+                    <button type="button" class="btn btn-warning" (click)="sendWhisper()">{{ 'chat.whisper' | translate }}</button>
                 </div>
             </ng-container>
             <ng-template #empty>
-                <div class="m-auto text-muted">Select an active conversation</div>
+                <div class="m-auto text-muted">{{ 'chat.select-active-conversation' | translate }}</div>
             </ng-template>
         </section>
     </div>

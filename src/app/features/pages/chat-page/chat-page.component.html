@@ -14,7 +14,7 @@
                 [class.border-bottom]="showCasePanel"
             >
                 <button type="button" class="pane-header pane-toggle-btn" (click)="queueCollapsed = !queueCollapsed">
-                    <span class="pane-title text-truncate">Queue ({{ queue.length }})</span>
+                    <span class="pane-title text-truncate">{{ 'menu.chat.queue' | translate }} ({{ queue.length }})</span>
                     <i
                         class="fa-solid pane-chevron"
                         [class.fa-chevron-left]="!showCasePanel && !queueCollapsed"
@@ -24,51 +24,28 @@
                     ></i>
                 </button>
                 <div class="pane-body" *ngIf="!queueCollapsed">
+                    <div class="pane-search">
+                        <input
+                            class="form-control form-control-sm"
+                            type="search"
+                            [(ngModel)]="queueSearch"
+                            [placeholder]="'chat.search-queue' | translate"
+                        />
+                    </div>
                     <button
                         type="button"
                         class="chat-item"
-                        *ngFor="let item of queue; trackBy: trackByRoom"
+                        *ngFor="let item of filteredQueue; trackBy: trackByRoom"
                         (click)="takeFromQueue(item)"
                     >
-                        <div class="fw-semibold text-truncate">{{ item.displayName || item.chatRoomId }}</div>
-                        <div class="chat-item-meta d-flex align-items-center gap-2">
-                            <span
-                                *ngIf="channelLabel(item) as channel"
-                                class="channel-badge"
-                                [style.background-color]="statusService.getChannelBgColor(channel)"
-                            >
-                                <i [class]="statusService.getChannelIcon(channel)" class="me-1"></i>{{ channel }}
-                            </span>
-                            <span class="small text-muted text-truncate">{{ item.lastMessage || '' }}</span>
-                        </div>
-                    </button>
-                    <div class="empty-state" *ngIf="!queue.length">No waiting chats</div>
-                </div>
-            </aside>
-
-            <aside class="chat-pane chat-list" [class.collapsed]="myChatsCollapsed">
-                <button type="button" class="pane-header pane-toggle-btn" (click)="myChatsCollapsed = !myChatsCollapsed">
-                    <span class="pane-title text-truncate">My chats ({{ conversations.length }})</span>
-                    <i
-                        class="fa-solid pane-chevron"
-                        [class.fa-chevron-left]="!showCasePanel && !myChatsCollapsed"
-                        [class.fa-chevron-right]="!showCasePanel && myChatsCollapsed"
-                        [class.fa-chevron-up]="showCasePanel && !myChatsCollapsed"
-                        [class.fa-chevron-down]="showCasePanel && myChatsCollapsed"
-                    ></i>
-                </button>
-                <div class="pane-body" *ngIf="!myChatsCollapsed">
-                    <button
-                        type="button"
-                        class="chat-item"
-                        *ngFor="let item of conversations; trackBy: trackByRoom"
-                        [class.active]="selected?.chatRoomId === item.chatRoomId"
-                        (click)="selectConversation(item)"
-                    >
-                        <div class="d-flex justify-content-between gap-2 align-items-start">
-                            <div class="min-w-0">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="chat-avatar flex-shrink-0">
+                                <img *ngIf="avatarUrl(item) as src" [src]="src" alt="" />
+                                <span *ngIf="!avatarUrl(item)">{{ avatarInitial(item) }}</span>
+                            </div>
+                            <div class="min-w-0 flex-grow-1">
                                 <div class="fw-semibold text-truncate">{{ item.displayName || item.chatRoomId }}</div>
-                                <div class="chat-item-meta d-flex align-items-center gap-2 mt-1">
+                                <div class="chat-item-meta d-flex align-items-center gap-2">
                                     <span
                                         *ngIf="channelLabel(item) as channel"
                                         class="channel-badge"
@@ -79,10 +56,67 @@
                                     <span class="small text-muted text-truncate">{{ item.lastMessage || '' }}</span>
                                 </div>
                             </div>
+                        </div>
+                    </button>
+                    <div class="empty-state" *ngIf="!filteredQueue.length">
+                        {{ (queueSearch.trim() ? 'chat.no-matching-chats' : 'chat.no-waiting-chats') | translate }}
+                    </div>
+                </div>
+            </aside>
+
+            <aside class="chat-pane chat-list" [class.collapsed]="myChatsCollapsed">
+                <button type="button" class="pane-header pane-toggle-btn" (click)="myChatsCollapsed = !myChatsCollapsed">
+                    <span class="pane-title text-truncate">{{ 'menu.chat.my-chats' | translate }} ({{ conversations.length }})</span>
+                    <i
+                        class="fa-solid pane-chevron"
+                        [class.fa-chevron-left]="!showCasePanel && !myChatsCollapsed"
+                        [class.fa-chevron-right]="!showCasePanel && myChatsCollapsed"
+                        [class.fa-chevron-up]="showCasePanel && !myChatsCollapsed"
+                        [class.fa-chevron-down]="showCasePanel && myChatsCollapsed"
+                    ></i>
+                </button>
+                <div class="pane-body" *ngIf="!myChatsCollapsed">
+                    <div class="pane-search">
+                        <input
+                            class="form-control form-control-sm"
+                            type="search"
+                            [(ngModel)]="myChatsSearch"
+                            [placeholder]="'chat.search-my-chats' | translate"
+                        />
+                    </div>
+                    <button
+                        type="button"
+                        class="chat-item"
+                        *ngFor="let item of filteredConversations; trackBy: trackByRoom"
+                        [class.active]="selected?.chatRoomId === item.chatRoomId"
+                        (click)="selectConversation(item)"
+                    >
+                        <div class="d-flex justify-content-between gap-2 align-items-start">
+                            <div class="d-flex align-items-center gap-2 min-w-0">
+                                <div class="chat-avatar flex-shrink-0">
+                                    <img *ngIf="avatarUrl(item) as src" [src]="src" alt="" />
+                                    <span *ngIf="!avatarUrl(item)">{{ avatarInitial(item) }}</span>
+                                </div>
+                                <div class="min-w-0">
+                                    <div class="fw-semibold text-truncate">{{ item.displayName || item.chatRoomId }}</div>
+                                    <div class="chat-item-meta d-flex align-items-center gap-2 mt-1">
+                                        <span
+                                            *ngIf="channelLabel(item) as channel"
+                                            class="channel-badge"
+                                            [style.background-color]="statusService.getChannelBgColor(channel)"
+                                        >
+                                            <i [class]="statusService.getChannelIcon(channel)" class="me-1"></i>{{ channel }}
+                                        </span>
+                                        <span class="small text-muted text-truncate">{{ item.lastMessage || '' }}</span>
+                                    </div>
+                                </div>
+                            </div>
                             <span class="badge text-bg-danger flex-shrink-0" *ngIf="item.unread">{{ item.unread }}</span>
                         </div>
                     </button>
-                    <div class="empty-state" *ngIf="!conversations.length">No active chats</div>
+                    <div class="empty-state" *ngIf="!filteredConversations.length">
+                        {{ (myChatsSearch.trim() ? 'chat.no-matching-chats' : 'chat.no-active-chats') | translate }}
+                    </div>
                 </div>
             </aside>
         </div>
@@ -91,22 +125,40 @@
             <ng-container *ngIf="selected; else emptyThread">
                 <div class="thread-header border-bottom">
                     <div class="d-flex justify-content-between align-items-center gap-2">
-                        <div class="min-w-0">
-                            <div class="d-flex align-items-center gap-2 flex-wrap">
-                                <div class="fw-semibold text-truncate">{{ selected.displayName || selected.chatRoomId }}</div>
-                                <span
-                                    *ngIf="channelLabel(selected) as channel"
-                                    class="channel-badge"
-                                    [style.background-color]="statusService.getChannelBgColor(channel)"
-                                >
-                                    <i [class]="statusService.getChannelIcon(channel)" class="me-1"></i>{{ channel }}
-                                </span>
+                        <div class="d-flex align-items-center gap-2 min-w-0">
+                            <div class="chat-avatar chat-avatar-lg flex-shrink-0">
+                                <img *ngIf="avatarUrl(selected) as src" [src]="src" alt="" />
+                                <span *ngIf="!avatarUrl(selected)">{{ avatarInitial(selected) }}</span>
                             </div>
-                            <div class="small text-muted text-truncate" *ngIf="selected.phoneNumber">
-                                {{ selected.phoneNumber }}
+                            <div class="min-w-0">
+                                <div class="d-flex align-items-center gap-2 flex-wrap">
+                                    <div class="fw-semibold text-truncate">{{ selected.displayName || selected.chatRoomId }}</div>
+                                    <span
+                                        *ngIf="channelLabel(selected) as channel"
+                                        class="channel-badge"
+                                        [style.background-color]="statusService.getChannelBgColor(channel)"
+                                    >
+                                        <i [class]="statusService.getChannelIcon(channel)" class="me-1"></i>{{ channel }}
+                                    </span>
+                                </div>
+                                <div class="small text-muted text-truncate" *ngIf="selected.phoneNumber">
+                                    {{ selected.phoneNumber }}
+                                </div>
                             </div>
                         </div>
-                        <div class="d-flex gap-2 flex-shrink-0">
+                        <div class="d-flex gap-2 flex-shrink-0 flex-wrap justify-content-end">
+                            <button type="button" class="btn btn-sm btn-outline-blue" (click)="openTransferModal()">
+                                {{ 'chat.transfer' | translate }}
+                            </button>
+                            <button
+                                type="button"
+                                class="btn btn-sm"
+                                [class.btn-blue]="showSupervisorPanel"
+                                [class.btn-outline-blue]="!showSupervisorPanel"
+                                (click)="toggleSupervisorPanel()"
+                            >
+                                {{ (showSupervisorPanel ? 'chat.close-supervisor' : 'chat.supervisor') | translate }}
+                            </button>
                             <button
                                 type="button"
                                 class="btn btn-sm"
@@ -114,9 +166,11 @@
                                 [class.btn-outline-blue]="!showCasePanel"
                                 (click)="createCase()"
                             >
-                                {{ showCasePanel ? 'Close case' : 'Create case' }}
+                                {{ (showCasePanel ? 'chat.close-case' : 'chat.create-case') | translate }}
                             </button>
-                            <button type="button" class="btn btn-sm btn-outline-danger" (click)="endChat()">End chat</button>
+                            <button type="button" class="btn btn-sm btn-outline-danger" (click)="endChat()">
+                                {{ 'chat.end-chat' | translate }}
+                            </button>
                         </div>
                     </div>
                     <div class="d-flex flex-wrap align-items-center gap-2 mt-2">
@@ -130,17 +184,19 @@
                             list="tagDict"
                             [(ngModel)]="newTag"
                             (keyup.enter)="addTag()"
-                            placeholder="Add tag"
+                            [placeholder]="'chat.add-tag' | translate"
                         />
                         <datalist id="tagDict">
                             <option *ngFor="let t of tagDictionary" [value]="t.tagName"></option>
                         </datalist>
-                        <button type="button" class="btn btn-sm btn-outline-secondary" (click)="addTag()">Tag</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" (click)="addTag()">
+                            {{ 'chat.tag' | translate }}
+                        </button>
                     </div>
                 </div>
 
                 <div #messageList class="thread-messages">
-                    <div class="text-center text-muted py-4" *ngIf="loadingHistory">Loading...</div>
+                    <div class="text-center text-muted py-4" *ngIf="loadingHistory">{{ 'common.loading' | translate }}</div>
                     <ng-container *ngFor="let message of messages; trackBy: trackByMessage">
                         <div class="system-divider" *ngIf="isSystemMessage(message)">
                             <span class="system-divider-line"></span>
@@ -153,52 +209,144 @@
                             [class.out]="message.direction === 'out'"
                             [class.in]="message.direction !== 'out'"
                         >
-                            <div class="message-bubble">
-                                <div class="small text-muted mb-1" *ngIf="message.senderName">{{ message.senderName }}</div>
-                                <div>{{ message.messageText }}</div>
+                            <div class="message-bubble" [class.media-bubble]="messageTypeOf(message) !== 'text'">
+                                <div class="d-flex justify-content-between align-items-start gap-2">
+                                    <div class="small text-muted mb-1" *ngIf="message.senderName">{{ message.senderName }}</div>
+                                    <button
+                                        type="button"
+                                        class="btn btn-link btn-sm p-0 forward-sup-btn"
+                                        *ngIf="message.direction === 'in'"
+                                        [title]="'chat.send-to-supervisor' | translate"
+                                        (click)="forwardToSupervisor(message)"
+                                        [disabled]="sendingMonitor"
+                                    >
+                                        <i class="fa-solid fa-share"></i>
+                                    </button>
+                                </div>
+
+                                <ng-container [ngSwitch]="messageTypeOf(message)">
+                                    <img
+                                        *ngSwitchCase="'image'"
+                                        class="msg-media msg-image"
+                                        [src]="mediaSrc(message)"
+                                        alt="image"
+                                        (click)="openMedia(message)"
+                                    />
+                                    <img *ngSwitchCase="'sticker'" class="msg-media msg-sticker" [src]="mediaSrc(message)" alt="sticker" />
+                                    <video *ngSwitchCase="'video'" class="msg-media msg-video" controls [src]="mediaSrc(message)"></video>
+                                    <audio *ngSwitchCase="'audio'" class="msg-audio" controls [src]="mediaSrc(message)"></audio>
+                                    <a *ngSwitchCase="'file'" class="msg-file" href="javascript:void(0)" (click)="openMedia(message)">
+                                        <i class="fa-solid fa-file me-2"></i>{{ fileName(message) }}
+                                    </a>
+                                    <a *ngSwitchCase="'document'" class="msg-file" href="javascript:void(0)" (click)="openMedia(message)">
+                                        <i class="fa-solid fa-file me-2"></i>{{ fileName(message) }}
+                                    </a>
+                                    <div *ngSwitchDefault class="msg-text">{{ message.messageText }}</div>
+                                </ng-container>
                             </div>
                         </div>
                     </ng-container>
                 </div>
 
-                <div class="thread-composer border-top">
-                    <div class="template-panel border rounded mb-2 p-2" *ngIf="showTemplates">
+                <div class="supervisor-panel border-top" *ngIf="showSupervisorPanel">
+                    <div class="supervisor-header d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="fw-semibold">{{ 'chat.supervisor-chat' | translate }}</div>
+                            <div class="small text-muted">{{ 'chat.supervisor-internal-hint' | translate }}</div>
+                        </div>
+                        <span class="badge text-bg-warning">{{ monitorMessages.length }}</span>
+                    </div>
+                    <div #monitorList class="supervisor-messages">
+                        <div class="small text-muted text-center py-3" *ngIf="!monitorMessages.length">
+                            {{ 'chat.no-supervisor-messages' | translate }}
+                        </div>
+                        <div
+                            class="monitor-row"
+                            *ngFor="let message of monitorMessages; trackBy: trackByMessage"
+                            [class.mine]="message.senderName === user?.username"
+                        >
+                            <div class="monitor-bubble">
+                                <div class="small text-muted mb-1">
+                                    {{ message.senderName || ('chat.supervisor' | translate) }}
+                                    <span *ngIf="message.timestamp"> · {{ message.timestamp | date: 'HH:mm' }}</span>
+                                </div>
+                                <div class="monitor-text">{{ message.messageText }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="supervisor-composer">
+                        <input
+                            class="form-control form-control-sm"
+                            [(ngModel)]="monitorDraft"
+                            (keyup.enter)="sendToSupervisor()"
+                            [placeholder]="'chat.message-supervisor' | translate"
+                            [disabled]="sendingMonitor"
+                        />
                         <button
                             type="button"
-                            class="btn btn-sm btn-light me-1 mb-1"
-                            *ngFor="let t of templates"
-                            (click)="applyTemplate(t)"
+                            class="btn btn-sm btn-blue"
+                            (click)="sendToSupervisor()"
+                            [disabled]="sendingMonitor || !monitorDraft.trim()"
                         >
+                            {{ 'common.send' | translate }}
+                        </button>
+                    </div>
+                </div>
+
+                <div class="thread-composer border-top">
+                    <div class="template-panel border rounded mb-2 p-2" *ngIf="showTemplates">
+                        <button type="button" class="btn btn-sm btn-light me-1 mb-1" *ngFor="let t of templates" (click)="applyTemplate(t)">
                             {{ t.name }}
                         </button>
-                        <div class="small text-muted" *ngIf="!templates.length">No templates</div>
+                        <div class="small text-muted" *ngIf="!templates.length">{{ 'chat.no-templates' | translate }}</div>
                     </div>
                     <div class="composer-row">
                         <button type="button" class="btn btn-outline-secondary flex-shrink-0" (click)="showTemplates = !showTemplates">
-                            Templates
+                            {{ 'menu.chat.settings.templates' | translate }}
                         </button>
+                        <button
+                            type="button"
+                            class="btn btn-outline-secondary flex-shrink-0"
+                            (click)="openFilePicker()"
+                            [disabled]="uploading || sending"
+                            [title]="'chat.attach-file' | translate"
+                        >
+                            <i
+                                class="fa-solid"
+                                [class.fa-paperclip]="!uploading"
+                                [class.fa-spinner]="uploading"
+                                [class.fa-spin]="uploading"
+                            ></i>
+                        </button>
+                        <input
+                            #fileInput
+                            type="file"
+                            class="d-none"
+                            accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx,.zip,.txt"
+                            (change)="onFileSelected($event)"
+                        />
                         <textarea
                             class="form-control composer-input"
                             rows="2"
                             [(ngModel)]="draft"
                             (keydown.enter)="$event.preventDefault(); send()"
-                            placeholder="Type a message"
-                            [disabled]="sending"
+                            [placeholder]="'chat.type-message' | translate"
+                            [disabled]="sending || uploading"
                         ></textarea>
                         <button
                             type="button"
                             class="btn btn-blue flex-shrink-0"
                             (click)="send()"
-                            [disabled]="sending || !draft.trim()"
+                            [disabled]="sending || uploading || !draft.trim()"
                         >
-                            Send
+                            {{ 'common.send' | translate }}
                         </button>
                     </div>
                 </div>
             </ng-container>
 
             <ng-template #emptyThread>
-                <div class="empty-thread">Select a conversation or take one from the queue</div>
+                <div class="empty-thread">{{ 'chat.empty-thread' | translate }}</div>
             </ng-template>
         </section>
 
@@ -209,5 +357,40 @@
             (closed)="closeCasePanel()"
             (saved)="onCaseSaved()"
         ></app-chat-create-case-panel>
+    </div>
+
+    <div class="transfer-overlay" *ngIf="showTransferModal" (click)="closeTransferModal()">
+        <div class="transfer-modal" (click)="$event.stopPropagation()">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="mb-0">{{ 'chat.transfer-chat' | translate }}</h6>
+                <button type="button" class="btn-close" (click)="closeTransferModal()"></button>
+            </div>
+            <p class="small text-muted mb-3">{{ 'chat.transfer-hint' | translate }}</p>
+            <div class="text-muted small mb-2" *ngIf="loadingAgents">{{ 'chat.loading-agents' | translate }}</div>
+            <div class="text-muted small mb-2" *ngIf="!loadingAgents && !activeAgents.length">
+                {{ 'chat.no-agents' | translate }}
+            </div>
+            <select
+                class="form-select mb-3"
+                [(ngModel)]="selectedTransferAgentId"
+                [disabled]="loadingAgents || transferring || !activeAgents.length"
+            >
+                <option value="">{{ 'chat.select-agent' | translate }}</option>
+                <option *ngFor="let agent of activeAgents" [value]="agent.userId">{{ agent.username }}</option>
+            </select>
+            <div class="d-flex justify-content-end gap-2">
+                <button type="button" class="btn btn-sm btn-outline-secondary" (click)="closeTransferModal()" [disabled]="transferring">
+                    {{ 'common.cancel' | translate }}
+                </button>
+                <button
+                    type="button"
+                    class="btn btn-sm btn-blue"
+                    (click)="confirmTransfer()"
+                    [disabled]="transferring || !selectedTransferAgentId"
+                >
+                    {{ (transferring ? 'chat.transferring' : 'chat.transfer') | translate }}
+                </button>
+            </div>
+        </div>
     </div>
 </div>

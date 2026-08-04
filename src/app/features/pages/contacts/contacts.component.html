@@ -67,20 +67,30 @@
                                     <!-- ชื่อโปรไฟล์ -->
                                     <td>
                                         <div class="d-flex flex-column gap-1">
-                                            <span
+                                            <button
+                                                type="button"
                                                 *ngIf="contact?.facebookDisplayName"
-                                                class="badge d-inline-flex align-items-center channel-badge-facebook"
+                                                class="badge d-inline-flex align-items-center channel-badge-facebook channel-badge-btn"
+                                                [disabled]="!contact?.facebookChatId || !chatEnabled"
+                                                [title]="contact?.facebookChatId ? 'Open chat' : ''"
+                                                (click)="openChat($event, contact?.facebookChatId)"
                                             >
                                                 <i class="fa-brands fa-facebook me-1"></i>
                                                 {{ contact.facebookDisplayName }}
-                                            </span>
-                                            <span
+                                                <i class="fa-solid fa-arrow-up-right-from-square ms-1 opacity-75" *ngIf="contact?.facebookChatId && chatEnabled"></i>
+                                            </button>
+                                            <button
+                                                type="button"
                                                 *ngIf="contact?.lineDisplayName"
-                                                class="badge d-inline-flex align-items-center channel-badge-line"
+                                                class="badge d-inline-flex align-items-center channel-badge-line channel-badge-btn"
+                                                [disabled]="!contact?.lineChatId || !chatEnabled"
+                                                [title]="contact?.lineChatId ? 'Open chat' : ''"
+                                                (click)="openChat($event, contact?.lineChatId)"
                                             >
                                                 <i class="fa-brands fa-line me-1"></i>
                                                 {{ contact.lineDisplayName }}
-                                            </span>
+                                                <i class="fa-solid fa-arrow-up-right-from-square ms-1 opacity-75" *ngIf="contact?.lineChatId && chatEnabled"></i>
+                                            </button>
                                             <span *ngIf="!contact?.facebookDisplayName && !contact?.lineDisplayName" class="text-muted">
                                                 -
                                             </span>

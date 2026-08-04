@@ -35,4 +35,19 @@ td a {
   .channel-badge-line {
     background-color: var(--color-channel-line);
   }
+
+  .channel-badge-btn {
+    border: 0;
+    text-align: left;
+    cursor: pointer;
+
+    &:disabled {
+      cursor: default;
+      opacity: 0.85;
+    }
+
+    &:not(:disabled):hover {
+      filter: brightness(0.95);
+    }
+  }
   
