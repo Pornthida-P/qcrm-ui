@@ -14,7 +14,7 @@
         border-bottom: 2px solid #f0f0f0;
 
         i {
-            color: var(--color-blue-dark, #010966);
+            color: var(--color-blue-dark);
             font-size: 1.1rem;
         }
 
@@ -41,7 +41,7 @@
             transition: all 0.2s ease;
 
             &:focus {
-                border-color: var(--color-primary, #0d6efd);
+                border-color: var(--color-blue-dark);
                 box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
             }
         }
@@ -196,7 +196,7 @@
         .mdc-notched-outline__leading,
         .mdc-notched-outline__notch,
         .mdc-notched-outline__trailing {
-            border-color: var(--color-primary, #0d6efd);
+            border-color: var(--color-blue-dark);
         }
     }
 

@@ -6,6 +6,7 @@ import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.serv
 import Swal from 'sweetalert2';
 import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
 import { TranslateService } from '@ngx-translate/core';
+import { colors } from 'src/app/shared/theme/colors';
 
 /** เฉพาะ field ที่ใช้ค้น (ไม่รวม contactId, วันที่ ฯลฯ) เหมือน API */
 const CONTACT_SEARCH_KEYS = [
@@ -167,8 +168,8 @@ export class ContactsComponent implements OnInit {
             showCancelButton: true,
             confirmButtonText: this.translate.instant('alert.ok'),
             cancelButtonText: this.translate.instant('alert.cancel'),
-            confirmButtonColor: '#3066be',
-            cancelButtonColor: '#ec5365',
+            confirmButtonColor: colors.blueMid,
+            cancelButtonColor: colors.lighterRed,
             width: '50%',
         }).then((result) => {
             if (result.isConfirmed) {

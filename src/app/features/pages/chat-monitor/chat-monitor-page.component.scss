@@ -11,12 +11,12 @@
     width: 100%;
     text-align: left;
     border: 0;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--color-border-light);
     background: transparent;
     padding: 0.75rem 1rem;
 }
 
 .list-item.active,
 .list-item:hover {
-    background: #eef5ff;
+    background: var(--color-blue-whisper);
 }

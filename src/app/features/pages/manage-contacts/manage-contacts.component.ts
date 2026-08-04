@@ -19,6 +19,7 @@ declare var bootstrap: any;
 import { CallListService } from 'src/app/services/call-list/call-list.service';
 import { environment } from 'src/environments/environment';
 import { StatusService } from 'src/app/services/status/status.service';
+import { colors } from 'src/app/shared/theme/colors';
 
 @Component({
     selector: 'app-manage-contacts',
@@ -1125,8 +1126,8 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
             showCancelButton: true,
             confirmButtonText: this.translate.instant('alert.ok'),
             cancelButtonText: this.translate.instant('alert.cancel'),
-            confirmButtonColor: '#3066be',
-            cancelButtonColor: '#ec5365',
+            confirmButtonColor: colors.blueMid,
+            cancelButtonColor: colors.lighterRed,
             width: '50%',
         }).then((result) => {
             if (result.isConfirmed) {

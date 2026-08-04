@@ -110,8 +110,8 @@
                             <button
                                 type="button"
                                 class="btn btn-sm"
-                                [class.btn-primary]="showCasePanel"
-                                [class.btn-outline-primary]="!showCasePanel"
+                                [class.btn-blue]="showCasePanel"
+                                [class.btn-outline-blue]="!showCasePanel"
                                 (click)="createCase()"
                             >
                                 {{ showCasePanel ? 'Close case' : 'Create case' }}
@@ -187,7 +187,7 @@
                         ></textarea>
                         <button
                             type="button"
-                            class="btn btn-primary flex-shrink-0"
+                            class="btn btn-blue flex-shrink-0"
                             (click)="send()"
                             [disabled]="sending || !draft.trim()"
                         >

@@ -10,6 +10,7 @@ import { CallListService } from 'src/app/services/call-list/call-list.service';
 import { Router } from '@angular/router';
 import * as Highcharts from 'highcharts';
 import { TranslateService } from '@ngx-translate/core';
+import { chartPalette, colors } from 'src/app/shared/theme/colors';
 
 @Component({
     selector: 'app-home-page',
@@ -133,7 +134,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
                 },
             } as any,
         },
-        colors: ['#FB5F20', '#010966', '#ffd700'],
+        colors: [...chartPalette],
         series: [
             {
                 type: 'pie',
@@ -175,7 +176,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
                 borderWidth: 0,
             },
         },
-        colors: ['#ffd700', '#010966', '#FB5F20'],
+        colors: [colors.gold, colors.blueDark, colors.primary],
         series: [
             {
                 name: '',
@@ -474,8 +475,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
     }
 
     getChannelColor(index: number): string {
-        const colors = ['#FB5F20', '#010966', '#ffd700'];
-        return colors[index % colors.length];
+        return chartPalette[index % chartPalette.length];
     }
 
     calculatePages(): void {

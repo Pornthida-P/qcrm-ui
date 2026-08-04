@@ -12,13 +12,27 @@ td a {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background-color: #3066be;
-    color: white;
+    background-color: var(--color-blue-mid);
+    color: var(--color-white);
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 600;
     font-size: 14px;
     flex-shrink: 0;
+  }
+
+  .channel-badge-facebook,
+  .channel-badge-line {
+    width: fit-content;
+    color: var(--color-white);
+  }
+
+  .channel-badge-facebook {
+    background-color: var(--color-channel-facebook);
+  }
+
+  .channel-badge-line {
+    background-color: var(--color-channel-line);
   }
   

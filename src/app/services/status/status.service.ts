@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { colors, statusPalette } from 'src/app/shared/theme/colors';
 
 export interface StatusStyle {
     color: string;
@@ -12,52 +13,51 @@ export interface StatusStyle {
 export class StatusService {
     private statusColors: { [key: string]: StatusStyle } = {
         open: {
-            color: '#ffffff',
-            backgroundColor: '#FB5F20',
+            color: colors.white,
+            backgroundColor: colors.primary,
             icon: 'fa-solid fa-folder-open',
         },
         pending: {
-            color: '#ffffff',
-            backgroundColor: '#010966',
+            color: colors.white,
+            backgroundColor: colors.blueDark,
             icon: 'fa-solid fa-hourglass-end',
         },
         closed: {
-            color: '#ffffff',
-            backgroundColor: '#006400',
+            color: colors.white,
+            backgroundColor: colors.successDark,
             icon: 'fa-solid fa-folder-closed',
         },
         cancelled: {
-            color: '#ffffff',
-            backgroundColor: '#6c757d',
+            color: colors.white,
+            backgroundColor: colors.textMuted,
             icon: 'fa-solid fa-ban',
         },
     };
 
-    // Channel styles - ช่องทางติดต่อ
     private channelColors: { [key: string]: StatusStyle } = {
         voice: {
-            color: '#ffffff',
-            backgroundColor: '#17a2b8',
+            color: colors.white,
+            backgroundColor: colors.channelVoice,
             icon: 'fa-solid fa-phone',
         },
         line: {
-            color: '#ffffff',
-            backgroundColor: '#06C755',
+            color: colors.white,
+            backgroundColor: colors.channelLine,
             icon: 'fa-brands fa-line',
         },
         facebook: {
-            color: '#ffffff',
-            backgroundColor: '#1877F2',
+            color: colors.white,
+            backgroundColor: colors.channelFacebook,
             icon: 'fa-brands fa-facebook-messenger',
         },
         'facebook (comment)': {
-            color: '#ffffff',
-            backgroundColor: '#6a6ce2',
+            color: colors.white,
+            backgroundColor: colors.channelFacebookComment,
             icon: 'fa-brands fa-facebook-f',
         },
     };
 
-    private defaultColors = ['#FB5F20', '#010966', '#006400', '#6c757d', '#ffc107', '#dc3545'];
+    private defaultColors = [...statusPalette];
 
     constructor() {}
 
@@ -68,27 +68,25 @@ export class StatusService {
 
         const normalizedName = statusName.toLowerCase().trim();
 
-        // Check predefined status
         if (this.statusColors[normalizedName]) {
             return this.statusColors[normalizedName];
         }
 
-        // Generate color based on status name hash
         const colorIndex = this.hashString(normalizedName) % this.defaultColors.length;
         return {
-            color: '#ffffff',
+            color: colors.white,
             backgroundColor: this.defaultColors[colorIndex],
             icon: 'fa-solid fa-circle',
         };
     }
 
     getStatusColorByIndex(index: number): StatusStyle {
-        const colors = ['#FB5F20', '#010966', '#006400'];
+        const palette = [colors.primary, colors.blueDark, colors.successDark];
         const icons = ['fa-solid fa-folder-open', 'fa-solid fa-hourglass-end', 'fa-solid fa-folder-closed'];
 
         return {
-            color: '#ffffff',
-            backgroundColor: colors[index % colors.length],
+            color: colors.white,
+            backgroundColor: palette[index % palette.length],
             icon: icons[index % icons.length],
         };
     }
@@ -108,15 +106,13 @@ export class StatusService {
 
         const normalizedName = channelName.toLowerCase().trim();
 
-        // Check predefined channels
         if (this.channelColors[normalizedName]) {
             return this.channelColors[normalizedName];
         }
 
-        // Generate color based on channel name hash
         const colorIndex = this.hashString(normalizedName) % this.defaultColors.length;
         return {
-            color: '#ffffff',
+            color: colors.white,
             backgroundColor: this.defaultColors[colorIndex],
             icon: 'fa-solid fa-circle-nodes',
         };
@@ -132,16 +128,16 @@ export class StatusService {
 
     private getDefaultChannelStyle(): StatusStyle {
         return {
-            color: '#ffffff',
-            backgroundColor: '#6c757d',
+            color: colors.white,
+            backgroundColor: colors.textMuted,
             icon: 'fa-solid fa-circle-nodes',
         };
     }
 
     private getDefaultStyle(): StatusStyle {
         return {
-            color: '#ffffff',
-            backgroundColor: '#6c757d',
+            color: colors.white,
+            backgroundColor: colors.textMuted,
             icon: 'fa-solid fa-circle',
         };
     }

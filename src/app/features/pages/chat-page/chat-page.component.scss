@@ -2,34 +2,6 @@
 
 .chat-page {
     min-height: calc(100vh - 80px);
-
-    .btn-primary {
-        background-color: var(--color-blue-dark) !important;
-        border-color: var(--color-blue-dark) !important;
-        color: #fff !important;
-
-        &:hover,
-        &:focus,
-        &:active {
-            background-color: #020b80 !important;
-            border-color: #020b80 !important;
-            color: #fff !important;
-        }
-    }
-
-    .btn-outline-primary {
-        color: var(--color-blue-dark) !important;
-        border-color: var(--color-blue-dark) !important;
-        background-color: transparent !important;
-
-        &:hover,
-        &:focus,
-        &:active {
-            color: #fff !important;
-            background-color: var(--color-blue-dark) !important;
-            border-color: var(--color-blue-dark) !important;
-        }
-    }
 }
 
 .chat-shell {
@@ -80,7 +52,7 @@
     min-width: 220px;
     display: flex;
     flex-direction: column;
-    background: #f8f9fa;
+    background: var(--color-surface);
     transition: width 0.15s ease, min-width 0.15s ease;
 }
 
@@ -119,7 +91,7 @@
 .pane-chevron {
     flex-shrink: 0;
     font-size: 0.7rem;
-    color: #6c757d;
+    color: var(--color-text-muted);
 }
 
 .chat-side:not(.stacked) .chat-pane.collapsed .pane-toggle-btn {
@@ -157,7 +129,7 @@
 
 .chat-item:hover,
 .chat-item.active {
-    background: #e9f2ff;
+    background: var(--color-blue-chat-hover);
 }
 
 .chat-item-meta {
@@ -190,7 +162,7 @@
     flex: 1;
     overflow: auto;
     padding: 1rem;
-    background: #f3f5f7;
+    background: var(--color-chat-thread);
 }
 
 .message-row {
@@ -215,7 +187,7 @@
 }
 
 .message-row.out .message-bubble {
-    background: #d7e8ff;
+    background: var(--color-blue-chat-bubble);
 }
 
 .system-divider {
@@ -235,7 +207,7 @@
 .system-divider-text {
     flex-shrink: 0;
     font-size: 0.75rem;
-    color: #6c757d;
+    color: var(--color-text-muted);
     letter-spacing: 0.02em;
     white-space: nowrap;
 }
@@ -265,7 +237,7 @@
 
 .empty-state,
 .empty-thread {
-    color: #6c757d;
+    color: var(--color-text-muted);
     padding: 1.5rem 1rem;
     text-align: center;
 }

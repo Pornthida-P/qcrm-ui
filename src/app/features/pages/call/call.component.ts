@@ -11,6 +11,7 @@ import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.serv
 import { catchError, tap } from 'rxjs';
 import * as XLSX from 'xlsx';
 import { config } from 'src/app/config/config';
+import { colors } from 'src/app/shared/theme/colors';
 import { FormControl, FormBuilder, FormGroup } from '@angular/forms';
 import * as moment from 'moment';
 import { ContactsService } from 'src/app/services/contacts/contacts.service';
@@ -1735,8 +1736,8 @@ export class CallComponent implements OnInit, OnDestroy {
             showCancelButton: true,
             confirmButtonText: this.translate.instant('alert.ok'),
             cancelButtonText: this.translate.instant('alert.cancel'),
-            confirmButtonColor: '#3066be',
-            cancelButtonColor: '#ec5365',
+            confirmButtonColor: colors.blueMid,
+            cancelButtonColor: colors.lighterRed,
             width: '50%',
         }).then((result) => {
             if (result.isConfirmed) {

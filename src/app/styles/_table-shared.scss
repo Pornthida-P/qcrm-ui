@@ -86,7 +86,7 @@
             }
 
             &:hover {
-                background: rgba(251, 95, 32, 0.05);
+                background: var(--bg-primary-soft);
             }
 
             &.row-overdue {
@@ -196,7 +196,7 @@
 
         &:hover,
         &:focus {
-            color: #fff;
+            color: var(--color-white);
             background-color: var(--color-blue-dark);
             border-color: var(--color-blue-dark);
         }
@@ -235,7 +235,7 @@
             cursor: pointer;
 
             &:hover {
-                background: rgba(251, 95, 32, 0.1);
+                background: var(--bg-primary-soft-strong);
                 color: var(--primary);
             }
         }
@@ -243,7 +243,7 @@
         &.active .page-link {
             background: linear-gradient(135deg, var(--color-blue-dark) 0%, var(--primary) 100%);
             color: #fff;
-            box-shadow: 0 2px 8px rgba(251, 95, 32, 0.3);
+            box-shadow: var(--shadow-primary-soft);
         }
 
         &.disabled .page-link {
@@ -262,7 +262,7 @@
 
         &:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(251, 95, 32, 0.15);
+            box-shadow: var(--focus-primary-ring);
         }
     }
 }

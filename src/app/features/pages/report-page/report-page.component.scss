@@ -1,15 +1,15 @@
 .item-report {
-    color: #333;
+    color: var(--color-text-secondary);
     transition: all 0.2s ease-in-out;
 
     &:hover {
-        background-color: #f8f9fa;
-        color: var(--primary, #007bff);
+        background-color: var(--color-surface);
+        color: var(--primary);
     }
 
     &.active {
-        background-color: var(--primary, #007bff);
-        color: white;
+        background-color: var(--primary);
+        color: var(--color-white);
     }
 }
 

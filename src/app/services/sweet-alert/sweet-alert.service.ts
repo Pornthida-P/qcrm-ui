@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import Swal from 'sweetalert2';
+import { colors } from 'src/app/shared/theme/colors';
 
 @Injectable({
     providedIn: 'root',
@@ -15,7 +16,7 @@ export class SweetAlertService {
             title: title,
             text: text,
             showConfirmButton: showButton,
-            confirmButtonColor: '#fb5f20',
+            confirmButtonColor: colors.primary,
             timer: 1000,
             timerProgressBar: true,
         }).then(() => {
@@ -35,7 +36,7 @@ export class SweetAlertService {
             title: title,
             text: text,
             showCancelButton: true,
-            confirmButtonColor: '#fb5f20',
+            confirmButtonColor: colors.primary,
             confirmButtonText: confirmButtonText,
             cancelButtonText: cancelButtonText,
         });

@@ -1,8 +1,8 @@
 .contact-card {
-  background: #fff;
+  background: var(--color-white);
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(1, 9, 102, 0.08);
+  box-shadow: var(--shadow-blue-soft);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   height: 100%;
   display: flex;
@@ -10,12 +10,12 @@
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(1, 9, 102, 0.15);
+    box-shadow: var(--shadow-blue-strong);
   }
 }
 
 .card-header-section {
-  background: linear-gradient(135deg, #010966 0%, #3066be 100%);
+  background: linear-gradient(135deg, var(--color-blue-dark) 0%, var(--color-blue-mid) 100%);
   padding: 10px;
   display: flex;
   align-items: center;
@@ -77,24 +77,24 @@
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #f0f4ff 0%, #e8ecff 100%);
+  background: linear-gradient(135deg, var(--color-blue-soft) 0%, var(--color-blue-soft-alt) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #010966;
+  color: var(--color-blue-dark);
   font-size: 14px;
   flex-shrink: 0;
 }
 
 .info-text {
-  color: #333;
+  color: var(--color-text-secondary);
   font-size: 14px;
   font-weight: 500;
 }
 
 .card-actions {
   display: flex;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--color-border-light);
 }
 
 .action-btn {
@@ -116,19 +116,19 @@
   }
 
   &.edit-btn {
-    color: #010966;
-    border-right: 1px solid #f0f0f0;
+    color: var(--color-blue-dark);
+    border-right: 1px solid var(--color-border-light);
 
     &:hover {
-      background: linear-gradient(135deg, #f0f4ff 0%, #e8ecff 100%);
+      background: linear-gradient(135deg, var(--color-blue-soft) 0%, var(--color-blue-soft-alt) 100%);
     }
   }
 
   &.delete-btn {
-    color: #dc3545;
+    color: var(--color-danger);
 
     &:hover {
-      background: #fff5f5;
+      background: var(--color-danger-soft);
     }
   }
 }

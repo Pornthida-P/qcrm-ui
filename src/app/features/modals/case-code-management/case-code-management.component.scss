@@ -89,14 +89,14 @@
         transition: all 0.2s ease-in-out;
 
         &:hover {
-            color: var(--primary, #007bff);
+            color: var(--primary);
             border-bottom-color: #dee2e6;
         }
 
         &.active {
-            color: var(--primary, #007bff);
+            color: var(--primary);
             background-color: transparent;
-            border-bottom-color: var(--primary, #007bff);
+            border-bottom-color: var(--primary);
         }
     }
 }

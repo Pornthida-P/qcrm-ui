@@ -1,35 +1,180 @@
+// ===========================================
+// QCRM Theme — single source of truth for colors
+// Change values here; SCSS uses var(--token), TS uses colors.ts
+// ===========================================
+
 :root {
+    // Brand
     --primary: #fb5f20;
     --primary-active-color: #ff8040;
-    --color-blue-dark: #010966;
-    --color-light-sky: #20a0ff;
-    --color-lighter-red: #ec5365;
-    --color-lighter-green: #53ec62;
-    --color-white: #ffffff;
-    --color-gray: #acabab;
-    --color-black: #000;
+    --primary-soft: #fff0e9;
 
+    // Blues
+    --color-blue-dark: #010966;
+    --color-blue-dark-hover: #020b80;
+    --color-blue-mid: #3066be;
+    --color-blue-soft: #f0f4ff;
+    --color-blue-soft-alt: #e8ecff;
+    --color-blue-whisper: #eef5ff;
+    --color-blue-chat-bubble: #d7e8ff;
+    --color-blue-chat-hover: #e9f2ff;
+    --color-light-sky: #20a0ff;
+    --color-bootstrap-blue: #0d6efd;
+
+    // Accents / status
+    --color-lighter-red: #ec5365;
+    --color-danger: #dc3545;
+    --color-danger-soft: #fff5f5;
+    --color-lighter-green: #53ec62;
+    --color-success: #28a745;
+    --color-success-dark: #006400;
+    --color-warning: #ffc107;
+    --color-gold: #ffd700;
+    --color-info: #17a2b8;
+
+    // Channels
+    --color-channel-voice: #17a2b8;
+    --color-channel-line: #06c755;
+    --color-channel-facebook: #1877f2;
+    --color-channel-facebook-comment: #6a6ce2;
+
+    // Neutrals
+    --color-white: #ffffff;
+    --color-black: #000000;
+    --color-gray: #acabab;
+    --color-text: #212529;
+    --color-text-secondary: #495057;
+    --color-text-muted: #6c757d;
+    --color-border: #dee2e6;
+    --color-border-light: #e9ecef;
+    --color-surface: #f8f9fa;
+    --color-surface-hover: #e9ecef;
+    --color-chat-thread: #f3f5f7;
     --background-color: #f8f7f7a2;
+
+    // Shadows (brand-tinted)
+    --shadow-blue-soft: 0 2px 8px rgba(1, 9, 102, 0.08);
+    --shadow-blue-strong: 0 12px 32px rgba(1, 9, 102, 0.15);
+    --shadow-primary-soft: 0 2px 8px rgba(251, 95, 32, 0.3);
+    --shadow-primary-strong: 0 4px 12px rgba(251, 95, 32, 0.4);
+    --focus-primary-ring: 0 0 0 3px rgba(251, 95, 32, 0.15);
+    --bg-primary-soft: rgba(251, 95, 32, 0.05);
+    --bg-primary-soft-strong: rgba(251, 95, 32, 0.1);
+    --text-shadow-blue: 0 2px 4px rgba(1, 9, 102, 0.1);
 }
 
-.text-blue-dark {
+// ---------- Text utilities ----------
+.text-blue-dark,
+.color-blue-dark {
     color: var(--color-blue-dark) !important;
 }
 
-* {
-    font-family: 'Noto Sans Thai', sans-serif;
+.color-primary {
+    color: var(--primary) !important;
 }
 
-body {
-    margin: 0;
-    padding: 0;
-    background-color: #f8f7f7a2;
-    min-height: 100vh;
+.color-white {
+    color: var(--color-white) !important;
+}
+
+.color-red {
+    color: var(--color-lighter-red) !important;
+}
+
+.color-gray {
+    color: var(--color-gray);
+}
+
+.bg-primary-color {
+    background: var(--primary) !important;
+}
+
+.bg-dark-blue {
+    background-color: var(--color-blue-dark);
+}
+
+.bg-cl-edit {
+    background-color: var(--primary);
+    color: var(--color-white);
+}
+
+.bg-cl-delete {
+    background-color: var(--color-lighter-red);
+    color: var(--color-white);
+}
+
+// ---------- Buttons ----------
+// Brand orange (existing primary CTA)
+.btn-primary-color,
+.btn-primary {
+    border: none !important;
+    background: var(--primary) !important;
+    color: var(--color-white) !important;
 }
 
 .btn-primary-color {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-primary-color:hover,
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+    background-color: var(--primary-active-color) !important;
+    color: var(--color-white) !important;
+}
+
+// Navy blue (use for chat / outline actions)
+.btn-blue,
+.btn-blue-dark {
     border: none !important;
-    background: var(--primary) !important;
+    background: var(--color-blue-dark) !important;
+    color: var(--color-white) !important;
+}
+
+.btn-blue:hover,
+.btn-blue:focus,
+.btn-blue:active,
+.btn-blue-dark:hover,
+.btn-blue-dark:focus,
+.btn-blue-dark:active {
+    background: var(--color-blue-dark-hover) !important;
+    color: var(--color-white) !important;
+}
+
+.btn-outline-blue,
+.btn-outline-primary {
+    color: var(--color-blue-dark) !important;
+    border-color: var(--color-blue-dark) !important;
+    background-color: transparent !important;
+}
+
+.btn-outline-blue:hover,
+.btn-outline-blue:focus,
+.btn-outline-blue:active,
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:active {
+    color: var(--color-white) !important;
+    background-color: var(--color-blue-dark) !important;
+    border-color: var(--color-blue-dark) !important;
+}
+
+// When a page needs filled primary to be navy instead of orange
+.theme-blue-primary {
+    .btn-primary {
+        background: var(--color-blue-dark) !important;
+        border-color: var(--color-blue-dark) !important;
+        color: var(--color-white) !important;
+    }
+
+    .btn-primary:hover,
+    .btn-primary:focus,
+    .btn-primary:active {
+        background: var(--color-blue-dark-hover) !important;
+        border-color: var(--color-blue-dark-hover) !important;
+        color: var(--color-white) !important;
+    }
 }
 
 .btn-red-color {
@@ -37,21 +182,17 @@ body {
     background: var(--color-lighter-red) !important;
 }
 
-.btn-primary {
-    border: none !important;
-    background: var(--primary) !important;
+// ---------- Base ----------
+* {
+    font-family: 'Noto Sans Thai', sans-serif;
 }
 
-.bg-primary-color {
-    background: var(--primary) !important;
-}
-
-.btn-primary-color {
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.btn-primary-color:hover {
-    background-color: var(--primary-active-color) !important;
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--background-color);
+    min-height: 100vh;
+    color: var(--color-text);
 }
 
 .popover-search {
@@ -92,31 +233,6 @@ th[sortable].asc:before {
 th[sortable].desc:before {
     transform: rotate(180deg);
     -ms-transform: rotate(180deg);
-}
-
-.bg-cl-edit {
-    background-color: var(--primary);
-    color: var(--color-white);
-}
-
-.bg-cl-delete {
-    background-color: var(--color-lighter-red);
-    color: var(--color-white);
-}
-
-.color-white {
-    color: var(--color-white) !important;
-}
-
-.color-primary {
-    color: var(--primary) !important;
-}
-.color-blue-dark {
-    color: var(--color-blue-dark) !important;
-}
-
-.color-red {
-    color: var(--color-lighter-red) !important;
 }
 
 .bd-radius {
@@ -208,11 +324,11 @@ th[sortable].desc:before {
 }
 
 .custom-link {
-    color: #000 !important;
+    color: var(--color-black) !important;
 }
 
 .page-item.active a.page-link.custom-link {
-    color: #ffffff !important;
+    color: var(--color-white) !important;
     background-color: var(--primary);
     border-color: var(--primary);
 }
@@ -227,14 +343,6 @@ th[sortable].desc:before {
     border-bottom-left-radius: 0.5rem !important;
 }
 
-.color-gray {
-    color: #acabab;
-}
-
 .loading {
     opacity: 0.5;
-}
-
-.bg-dark-blue {
-    background-color: var(--color-blue-dark);
 }
