@@ -4,7 +4,7 @@
             <div class="border rounded-2 p-5 shadow" style="width: 24rem">
                 <div class="row">
                     <div class="col-12 d-flex justify-content-center mb-4">
-                        <img src="./assets/qcrm-ui/image/logo_roddonjai.svg" class="w-100" />
+                        <img src="./assets/qcrm-ui/image/crm_logo.png" class="w-100" />
                     </div>
                     <div class="col-12">
                         <div>
@@ -41,11 +41,7 @@
                                         [placeholder]="'login.passwordPlaceholder' | translate"
                                         (input)="filterLoginInput('password', $any($event.target).value)"
                                     />
-                                    <i
-                                        class="fa-solid fa-eye password-toggle-icon"
-                                        (click)="togglePassword()"
-                                        *ngIf="!showPassword"
-                                    ></i>
+                                    <i class="fa-solid fa-eye password-toggle-icon" (click)="togglePassword()" *ngIf="!showPassword"></i>
                                     <i
                                         class="fa-solid fa-eye-slash password-toggle-icon"
                                         (click)="togglePassword()"
@@ -54,9 +50,11 @@
                                 </div>
                                 <div
                                     class="invalid-feedback d-block"
-                                    *ngIf="password.invalid && password.touched || showPasswordPatternError"
+                                    *ngIf="(password.invalid && password.touched) || showPasswordPatternError"
                                 >
-                                    <span *ngIf="password.errors?.['pattern'] || showPasswordPatternError">{{ 'login.passwordPattern' | translate }}</span>
+                                    <span *ngIf="password.errors?.['pattern'] || showPasswordPatternError">{{
+                                        'login.passwordPattern' | translate
+                                    }}</span>
                                 </div>
                             </div>
 

@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ChatService } from 'src/app/services/chat/chat.service';
 import { SocketIoService } from 'src/app/services/socket-io/socket-io.service';
+import { StatusService } from 'src/app/services/status/status.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { ChatConversation, ChatMessage } from 'src/app/shared/interface/chat.interface';
 import { User } from 'src/app/shared/interface/user.interface';
@@ -30,6 +31,10 @@ export class ChatPageComponent implements OnInit, OnDestroy {
     tagDictionary: any[] = [];
     newTag = '';
     showTemplates = false;
+    showCasePanel = false;
+    caseConversation: ChatConversation | null = null;
+    queueCollapsed = false;
+    myChatsCollapsed = false;
 
     private subs: Subscription[] = [];
 
@@ -38,6 +43,7 @@ export class ChatPageComponent implements OnInit, OnDestroy {
         private userService: UserService,
         private socketIoService: SocketIoService,
         private router: Router,
+        public statusService: StatusService,
     ) {}
 
     ngOnInit(): void {
@@ -79,6 +85,9 @@ export class ChatPageComponent implements OnInit, OnDestroy {
 
     selectConversation(item: ChatConversation): void {
         this.selected = item;
+        if (this.showCasePanel && this.caseConversation?.chatRoomId !== item.chatRoomId) {
+            this.caseConversation = item;
+        }
         this.loadingHistory = true;
         this.showTemplates = false;
         this.chatService.listTemplates(item.channelType).subscribe((list) => (this.templates = list || []));
@@ -201,6 +210,7 @@ export class ChatPageComponent implements OnInit, OnDestroy {
             next: () => {
                 this.selected = null;
                 this.messages = [];
+                this.closeCasePanel();
                 this.refreshLists();
             },
         });
@@ -210,15 +220,21 @@ export class ChatPageComponent implements OnInit, OnDestroy {
         if (!this.selected) {
             return;
         }
-        const queryParams: Record<string, string> = {
-            chatid: this.selected.chatRoomId,
-            chattype: this.selected.channelType || this.selected.channelKey || '',
-            displayName: this.selected.displayName || '',
-            phone: this.selected.phoneNumber || '',
-            issue: this.selected.issue || '',
-            userId: this.selected.externalUserId || '',
-        };
-        this.router.navigate(['/contacts/phone'], { queryParams });
+        if (this.showCasePanel && this.caseConversation?.chatRoomId === this.selected.chatRoomId) {
+            this.closeCasePanel();
+            return;
+        }
+        this.caseConversation = this.selected;
+        this.showCasePanel = true;
+    }
+
+    closeCasePanel(): void {
+        this.showCasePanel = false;
+        this.caseConversation = null;
+    }
+
+    onCaseSaved(): void {
+        this.closeCasePanel();
     }
 
     trackByRoom(_: number, item: ChatConversation): string {
@@ -227,6 +243,31 @@ export class ChatPageComponent implements OnInit, OnDestroy {
 
     trackByMessage(_: number, item: ChatMessage): string {
         return item.messageId || `${item.timestamp}-${item.messageText}`;
+    }
+
+    channelLabel(item: ChatConversation | null | undefined): string {
+        if (!item) {
+            return '';
+        }
+        return item.channelName || item.channelType || item.channelKey || '';
+    }
+
+    isSystemMessage(message: ChatMessage): boolean {
+        const type = (message.messageType || '').toLowerCase();
+        const text = (message.messageText || '').toLowerCase();
+        return type === 'system' || text === 'assignchat' || text === 'endchat';
+    }
+
+    systemMessageLabel(message: ChatMessage): string {
+        const text = (message.messageText || '').toLowerCase().trim();
+        if (text === 'assignchat') {
+            const by = message.senderName && message.senderName !== 'system' ? ` · ${message.senderName}` : '';
+            return `Chat assigned${by}`;
+        }
+        if (text === 'endchat') {
+            return 'Chat ended';
+        }
+        return message.messageText || 'System';
     }
 
     private bindSocket(): void {

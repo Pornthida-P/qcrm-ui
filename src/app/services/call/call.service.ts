@@ -128,6 +128,12 @@ export class CallService {
         return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-id/${id}`);
     }
 
+    getCasesByContactId(contactId: string, limit = 5) {
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}/contact/${contactId}`, {
+            params: { limit: String(limit) },
+        });
+    }
+
     updateCase(data: any) {
         return this.http.put(`${this.baseUrl}${config.api.path.callList.baseUrl}`, data);
     }

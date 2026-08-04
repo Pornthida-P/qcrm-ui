@@ -1,0 +1,169 @@
+<aside class="case-panel d-flex flex-column h-100">
+    <div class="case-panel-header border-bottom d-flex align-items-center justify-content-between gap-2">
+        <div class="min-w-0">
+            <div class="fw-semibold text-truncate">Create case</div>
+            <div class="d-flex align-items-center gap-2 flex-wrap small" *ngIf="conversation">
+                <span class="text-muted text-truncate">{{ conversation.displayName || conversation.chatRoomId }}</span>
+                <span
+                    *ngIf="channelLabel as channel"
+                    class="channel-badge"
+                    [style.background-color]="statusService.getChannelBgColor(channel)"
+                >
+                    <i [class]="statusService.getChannelIcon(channel)" class="me-1"></i>{{ channel }}
+                </span>
+            </div>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-secondary" (click)="close()" [disabled]="saving">Close</button>
+    </div>
+
+    <div class="case-panel-body flex-grow-1 overflow-auto">
+        <div class="alert alert-info py-2 px-3 small mb-3" *ngIf="lookingUpContact">Looking up contact…</div>
+        <div class="alert alert-success py-2 px-3 small mb-3" *ngIf="contactId && !lookingUpContact">
+            Linked contact: {{ contactLabel || contactId }}
+        </div>
+
+        <div class="section-title d-flex align-items-center justify-content-between">
+            <span>Previous cases</span>
+            <span class="text-muted fw-normal text-lowercase" *ngIf="caseHistory.length">{{ caseHistory.length }} recent</span>
+        </div>
+        <div class="case-history mb-3">
+            <div class="small text-muted px-1 py-2" *ngIf="loadingHistory">Loading history…</div>
+            <div class="small text-muted px-1 py-2" *ngIf="!loadingHistory && !contactId">
+                No linked contact yet — history appears after match.
+            </div>
+            <div class="small text-muted px-1 py-2" *ngIf="!loadingHistory && contactId && !caseHistory.length">
+                No previous cases for this contact.
+            </div>
+            <div class="history-item" *ngFor="let item of caseHistory">
+                <div class="d-flex justify-content-between gap-2 align-items-start">
+                    <div class="min-w-0">
+                        <div class="fw-semibold text-truncate">
+                            {{ item.caseIdForReport || item.casecode || item.caseId || '-' }}
+                            <span class="text-muted fw-normal" *ngIf="item.casetype"> · {{ item.casetype }}</span>
+                        </div>
+                        <div class="small text-muted text-truncate">{{ item.description || item.caseServiceGroup || '—' }}</div>
+                    </div>
+                    <span class="history-status flex-shrink-0" *ngIf="item.status">{{ item.status }}</span>
+                </div>
+                <div class="small text-muted mt-1">
+                    {{ (item.requestDateTime || item.createdAt) | date: 'dd/MM/yyyy HH:mm' }}
+                    <span *ngIf="item.channel"> · {{ item.channel }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title">Contact</div>
+        <div class="row g-2 mb-3">
+            <div class="col-6">
+                <label class="form-label form-label-sm">First name</label>
+                <input class="form-control form-control-sm" [(ngModel)]="firstName" name="firstName" />
+            </div>
+            <div class="col-6">
+                <label class="form-label form-label-sm">Last name</label>
+                <input class="form-control form-control-sm" [(ngModel)]="lastName" name="lastName" />
+            </div>
+            <div class="col-12">
+                <label class="form-label form-label-sm">Phone</label>
+                <input class="form-control form-control-sm" [(ngModel)]="phone" name="phone" />
+            </div>
+            <div class="col-12">
+                <label class="form-label form-label-sm">Chat ID</label>
+                <input class="form-control form-control-sm" [value]="conversation?.chatRoomId || ''" disabled />
+            </div>
+        </div>
+
+        <div class="section-title">Case</div>
+        <div class="row g-2 mb-3">
+            <div class="col-12">
+                <label class="form-label form-label-sm">Channel</label>
+                <ng-select
+                    [items]="channels"
+                    bindLabel="name"
+                    bindValue="channelId"
+                    [(ngModel)]="selectedChannels"
+                    (change)="onChannelChange()"
+                    [clearable]="false"
+                    name="channel"
+                ></ng-select>
+            </div>
+            <div class="col-12" *ngIf="!isSocialChannel">
+                <label class="form-label form-label-sm">Case code <span class="text-danger">*</span></label>
+                <ng-select
+                    [items]="caseCodes"
+                    bindLabel="code"
+                    [(ngModel)]="selectedCaseCode"
+                    [clearable]="true"
+                    name="caseCode"
+                ></ng-select>
+            </div>
+            <div class="col-12">
+                <label class="form-label form-label-sm">Case type</label>
+                <ng-select
+                    [items]="caseTypes"
+                    bindLabel="name"
+                    [(ngModel)]="selectedCaseType"
+                    [clearable]="true"
+                    name="caseType"
+                ></ng-select>
+            </div>
+            <div class="col-12">
+                <label class="form-label form-label-sm">Service group</label>
+                <ng-select
+                    [items]="serviceGroups"
+                    bindLabel="name"
+                    [(ngModel)]="selectedServiceGroup"
+                    (change)="onServiceGroupChange()"
+                    [clearable]="true"
+                    name="serviceGroup"
+                ></ng-select>
+            </div>
+            <div class="col-12">
+                <label class="form-label form-label-sm">Service type</label>
+                <ng-select
+                    [items]="serviceTypes"
+                    bindLabel="name"
+                    [(ngModel)]="selectedServiceType"
+                    (change)="onServiceTypeChange()"
+                    [clearable]="true"
+                    name="serviceType"
+                ></ng-select>
+            </div>
+            <div class="col-12">
+                <label class="form-label form-label-sm">Service sub type</label>
+                <ng-select
+                    [items]="serviceSubTypes"
+                    bindLabel="name"
+                    [(ngModel)]="selectedServiceSubType"
+                    [clearable]="true"
+                    name="serviceSubType"
+                ></ng-select>
+            </div>
+            <div class="col-12">
+                <label class="form-label form-label-sm">Status</label>
+                <ng-select
+                    [items]="statusList"
+                    bindLabel="status"
+                    bindValue="id"
+                    [(ngModel)]="selectedStatus"
+                    [clearable]="false"
+                    name="status"
+                ></ng-select>
+            </div>
+            <div class="col-12">
+                <label class="form-label form-label-sm">Description</label>
+                <textarea class="form-control form-control-sm" rows="3" [(ngModel)]="description" name="description"></textarea>
+            </div>
+            <div class="col-12">
+                <label class="form-label form-label-sm">Solution</label>
+                <textarea class="form-control form-control-sm" rows="2" [(ngModel)]="solutions" name="solutions"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="case-panel-footer border-top d-flex gap-2">
+        <button type="button" class="btn btn-outline-secondary flex-grow-1" (click)="close()" [disabled]="saving">Cancel</button>
+        <button type="button" class="btn btn-primary flex-grow-1" (click)="save()" [disabled]="saving">
+            {{ saving ? 'Saving…' : 'Save case' }}
+        </button>
+    </div>
+</aside>

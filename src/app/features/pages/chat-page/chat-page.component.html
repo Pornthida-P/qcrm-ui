@@ -1,55 +1,121 @@
 <div class="chat-page h-full p-3">
     <app-chat-subnav active="inbox"></app-chat-subnav>
-    <div class="chat-shell bg-white rounded shadow d-flex overflow-hidden">
-        <aside class="chat-pane chat-queue border-end">
-            <div class="pane-header">Queue ({{ queue.length }})</div>
-            <div class="pane-body">
-                <button
-                    type="button"
-                    class="chat-item"
-                    *ngFor="let item of queue; trackBy: trackByRoom"
-                    (click)="takeFromQueue(item)"
-                >
-                    <div class="fw-semibold text-truncate">{{ item.displayName || item.chatRoomId }}</div>
-                    <div class="small text-muted text-truncate">{{ item.channelType || '-' }} · {{ item.lastMessage || '' }}</div>
+    <div class="chat-shell bg-white rounded shadow d-flex overflow-hidden" [class.case-open]="showCasePanel">
+        <div
+            class="chat-side border-end"
+            [class.stacked]="showCasePanel"
+            [class.queue-collapsed]="queueCollapsed"
+            [class.list-collapsed]="myChatsCollapsed"
+        >
+            <aside
+                class="chat-pane chat-queue"
+                [class.collapsed]="queueCollapsed"
+                [class.border-end]="!showCasePanel"
+                [class.border-bottom]="showCasePanel"
+            >
+                <button type="button" class="pane-header pane-toggle-btn" (click)="queueCollapsed = !queueCollapsed">
+                    <span class="pane-title text-truncate">Queue ({{ queue.length }})</span>
+                    <i
+                        class="fa-solid pane-chevron"
+                        [class.fa-chevron-left]="!showCasePanel && !queueCollapsed"
+                        [class.fa-chevron-right]="!showCasePanel && queueCollapsed"
+                        [class.fa-chevron-up]="showCasePanel && !queueCollapsed"
+                        [class.fa-chevron-down]="showCasePanel && queueCollapsed"
+                    ></i>
                 </button>
-                <div class="empty-state" *ngIf="!queue.length">No waiting chats</div>
-            </div>
-        </aside>
-
-        <aside class="chat-pane chat-list border-end">
-            <div class="pane-header">My chats ({{ conversations.length }})</div>
-            <div class="pane-body">
-                <button
-                    type="button"
-                    class="chat-item"
-                    *ngFor="let item of conversations; trackBy: trackByRoom"
-                    [class.active]="selected?.chatRoomId === item.chatRoomId"
-                    (click)="selectConversation(item)"
-                >
-                    <div class="d-flex justify-content-between gap-2">
+                <div class="pane-body" *ngIf="!queueCollapsed">
+                    <button
+                        type="button"
+                        class="chat-item"
+                        *ngFor="let item of queue; trackBy: trackByRoom"
+                        (click)="takeFromQueue(item)"
+                    >
                         <div class="fw-semibold text-truncate">{{ item.displayName || item.chatRoomId }}</div>
-                        <span class="badge text-bg-danger" *ngIf="item.unread">{{ item.unread }}</span>
-                    </div>
-                    <div class="small text-muted text-truncate">{{ item.lastMessage || '' }}</div>
+                        <div class="chat-item-meta d-flex align-items-center gap-2">
+                            <span
+                                *ngIf="channelLabel(item) as channel"
+                                class="channel-badge"
+                                [style.background-color]="statusService.getChannelBgColor(channel)"
+                            >
+                                <i [class]="statusService.getChannelIcon(channel)" class="me-1"></i>{{ channel }}
+                            </span>
+                            <span class="small text-muted text-truncate">{{ item.lastMessage || '' }}</span>
+                        </div>
+                    </button>
+                    <div class="empty-state" *ngIf="!queue.length">No waiting chats</div>
+                </div>
+            </aside>
+
+            <aside class="chat-pane chat-list" [class.collapsed]="myChatsCollapsed">
+                <button type="button" class="pane-header pane-toggle-btn" (click)="myChatsCollapsed = !myChatsCollapsed">
+                    <span class="pane-title text-truncate">My chats ({{ conversations.length }})</span>
+                    <i
+                        class="fa-solid pane-chevron"
+                        [class.fa-chevron-left]="!showCasePanel && !myChatsCollapsed"
+                        [class.fa-chevron-right]="!showCasePanel && myChatsCollapsed"
+                        [class.fa-chevron-up]="showCasePanel && !myChatsCollapsed"
+                        [class.fa-chevron-down]="showCasePanel && myChatsCollapsed"
+                    ></i>
                 </button>
-                <div class="empty-state" *ngIf="!conversations.length">No active chats</div>
-            </div>
-        </aside>
+                <div class="pane-body" *ngIf="!myChatsCollapsed">
+                    <button
+                        type="button"
+                        class="chat-item"
+                        *ngFor="let item of conversations; trackBy: trackByRoom"
+                        [class.active]="selected?.chatRoomId === item.chatRoomId"
+                        (click)="selectConversation(item)"
+                    >
+                        <div class="d-flex justify-content-between gap-2 align-items-start">
+                            <div class="min-w-0">
+                                <div class="fw-semibold text-truncate">{{ item.displayName || item.chatRoomId }}</div>
+                                <div class="chat-item-meta d-flex align-items-center gap-2 mt-1">
+                                    <span
+                                        *ngIf="channelLabel(item) as channel"
+                                        class="channel-badge"
+                                        [style.background-color]="statusService.getChannelBgColor(channel)"
+                                    >
+                                        <i [class]="statusService.getChannelIcon(channel)" class="me-1"></i>{{ channel }}
+                                    </span>
+                                    <span class="small text-muted text-truncate">{{ item.lastMessage || '' }}</span>
+                                </div>
+                            </div>
+                            <span class="badge text-bg-danger flex-shrink-0" *ngIf="item.unread">{{ item.unread }}</span>
+                        </div>
+                    </button>
+                    <div class="empty-state" *ngIf="!conversations.length">No active chats</div>
+                </div>
+            </aside>
+        </div>
 
         <section class="chat-thread d-flex flex-column flex-grow-1">
             <ng-container *ngIf="selected; else emptyThread">
                 <div class="thread-header border-bottom">
                     <div class="d-flex justify-content-between align-items-center gap-2">
                         <div class="min-w-0">
-                            <div class="fw-semibold text-truncate">{{ selected.displayName || selected.chatRoomId }}</div>
-                            <div class="small text-muted text-truncate">
-                                {{ selected.channelType || selected.channelKey || '-' }}
-                                <span *ngIf="selected.phoneNumber"> · {{ selected.phoneNumber }}</span>
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <div class="fw-semibold text-truncate">{{ selected.displayName || selected.chatRoomId }}</div>
+                                <span
+                                    *ngIf="channelLabel(selected) as channel"
+                                    class="channel-badge"
+                                    [style.background-color]="statusService.getChannelBgColor(channel)"
+                                >
+                                    <i [class]="statusService.getChannelIcon(channel)" class="me-1"></i>{{ channel }}
+                                </span>
+                            </div>
+                            <div class="small text-muted text-truncate" *ngIf="selected.phoneNumber">
+                                {{ selected.phoneNumber }}
                             </div>
                         </div>
                         <div class="d-flex gap-2 flex-shrink-0">
-                            <button type="button" class="btn btn-sm btn-outline-primary" (click)="createCase()">Create case</button>
+                            <button
+                                type="button"
+                                class="btn btn-sm"
+                                [class.btn-primary]="showCasePanel"
+                                [class.btn-outline-primary]="!showCasePanel"
+                                (click)="createCase()"
+                            >
+                                {{ showCasePanel ? 'Close case' : 'Create case' }}
+                            </button>
                             <button type="button" class="btn btn-sm btn-outline-danger" (click)="endChat()">End chat</button>
                         </div>
                     </div>
@@ -75,18 +141,24 @@
 
                 <div #messageList class="thread-messages">
                     <div class="text-center text-muted py-4" *ngIf="loadingHistory">Loading...</div>
-                    <div
-                        class="message-row"
-                        *ngFor="let message of messages; trackBy: trackByMessage"
-                        [class.out]="message.direction === 'out'"
-                        [class.in]="message.direction !== 'out'"
-                    >
-                        <div class="message-bubble">
-                            <div class="small text-muted mb-1" *ngIf="message.senderName">{{ message.senderName }}</div>
-                            <div *ngIf="message.messageType === 'system'" class="fst-italic">{{ message.messageText }}</div>
-                            <div *ngIf="message.messageType !== 'system'">{{ message.messageText }}</div>
+                    <ng-container *ngFor="let message of messages; trackBy: trackByMessage">
+                        <div class="system-divider" *ngIf="isSystemMessage(message)">
+                            <span class="system-divider-line"></span>
+                            <span class="system-divider-text">{{ systemMessageLabel(message) }}</span>
+                            <span class="system-divider-line"></span>
                         </div>
-                    </div>
+                        <div
+                            class="message-row"
+                            *ngIf="!isSystemMessage(message)"
+                            [class.out]="message.direction === 'out'"
+                            [class.in]="message.direction !== 'out'"
+                        >
+                            <div class="message-bubble">
+                                <div class="small text-muted mb-1" *ngIf="message.senderName">{{ message.senderName }}</div>
+                                <div>{{ message.messageText }}</div>
+                            </div>
+                        </div>
+                    </ng-container>
                 </div>
 
                 <div class="thread-composer border-top">
@@ -101,16 +173,24 @@
                         </button>
                         <div class="small text-muted" *ngIf="!templates.length">No templates</div>
                     </div>
-                    <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-outline-secondary" (click)="showTemplates = !showTemplates">Templates</button>
-                        <input
-                            class="form-control"
+                    <div class="composer-row">
+                        <button type="button" class="btn btn-outline-secondary flex-shrink-0" (click)="showTemplates = !showTemplates">
+                            Templates
+                        </button>
+                        <textarea
+                            class="form-control composer-input"
+                            rows="2"
                             [(ngModel)]="draft"
-                            (keyup.enter)="send()"
+                            (keydown.enter)="$event.preventDefault(); send()"
                             placeholder="Type a message"
                             [disabled]="sending"
-                        />
-                        <button type="button" class="btn btn-primary" (click)="send()" [disabled]="sending || !draft.trim()">
+                        ></textarea>
+                        <button
+                            type="button"
+                            class="btn btn-primary flex-shrink-0"
+                            (click)="send()"
+                            [disabled]="sending || !draft.trim()"
+                        >
                             Send
                         </button>
                     </div>
@@ -121,5 +201,13 @@
                 <div class="empty-thread">Select a conversation or take one from the queue</div>
             </ng-template>
         </section>
+
+        <app-chat-create-case-panel
+            *ngIf="showCasePanel && caseConversation"
+            [conversation]="caseConversation"
+            [user]="user"
+            (closed)="closeCasePanel()"
+            (saved)="onCaseSaved()"
+        ></app-chat-create-case-panel>
     </div>
 </div>
