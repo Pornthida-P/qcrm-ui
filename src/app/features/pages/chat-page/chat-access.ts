@@ -1,6 +1,6 @@
 import { User } from 'src/app/shared/interface/user.interface';
 
-export type ChatNavKey = 'inbox' | 'monitor' | 'broadcast' | 'bot' | 'reports' | 'settings';
+export type ChatNavKey = 'inbox' | 'history' | 'monitor' | 'broadcast' | 'bot' | 'reports' | 'settings';
 
 function roleTitle(user: User | null | undefined): string {
     return String(user?.role?.roleTitle || '').toLowerCase();
@@ -21,6 +21,7 @@ export function isChatPrivileged(user: User | null | undefined): boolean {
 export function canAccessChatNav(key: ChatNavKey, user: User | null | undefined): boolean {
     switch (key) {
         case 'inbox':
+        case 'history':
             return true;
         case 'monitor':
         case 'reports':

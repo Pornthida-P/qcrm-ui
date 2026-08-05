@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { take } from 'rxjs';
 import { AuditLogService } from 'src/app/services/audit-log/audit-log.service';
@@ -14,8 +14,10 @@ import { IdleService } from 'src/app/services/idle/idle.service';
     templateUrl: './logout.component.html',
     styleUrl: './logout.component.scss',
 })
-export class LogoutComponent implements OnInit {
+export class LogoutComponent implements OnInit, OnDestroy {
     userData?: User | null;
+    private logoutTimer: ReturnType<typeof setTimeout> | null = null;
+    private didLogout = false;
 
     constructor(
         private userService: UserService,
@@ -31,6 +33,13 @@ export class LogoutComponent implements OnInit {
         this.initzation();
     }
 
+    ngOnDestroy(): void {
+        if (this.logoutTimer) {
+            clearTimeout(this.logoutTimer);
+            this.logoutTimer = null;
+        }
+    }
+
     initzation(): void {
         this.getDataUser();
     }
@@ -41,20 +50,38 @@ export class LogoutComponent implements OnInit {
             .pipe(take(1))
             .subscribe((res: User | null) => {
                 this.userData = res;
-                setTimeout(() => {
+                // Keep a short UI beat, but cancel on destroy so a later login is not wiped.
+                this.logoutTimer = setTimeout(() => {
+                    this.logoutTimer = null;
                     this.logout();
-                }, 1000);
+                }, 300);
             });
     }
 
     logout(): void {
-        // หยุด idle timeout เมื่อ logout
-        this.idleService.stop();
-
-        if (this.userData) {
-            this.loginService.logout(this.userData).subscribe();
+        if (this.didLogout) {
+            return;
         }
-        this.auditLogService.log('', 'Logout', '', 'User Logout', `User ${this.userData?.username} logged out successfully`, `Success`);
+        this.didLogout = true;
+
+        this.idleService.stop();
+        this.socketIO.logout(this.userData);
+
+        const userSnapshot = this.userData;
+        if (userSnapshot) {
+            this.loginService.logout(userSnapshot).subscribe({ error: () => {} });
+        }
+
+        this.auditLogService.log(
+            '',
+            'Logout',
+            '',
+            'User Logout',
+            `User ${userSnapshot?.username} logged out successfully`,
+            `Success`,
+        );
+
+        this.loginService.clearLoginState();
         this.userService.clearDataUser();
         this.tokenService.clearDataToken();
         this.router.navigate(['/login']);

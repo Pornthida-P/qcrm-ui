@@ -36,6 +36,10 @@ export class UserService {
         return this.userDataSubject.asObservable();
     }
 
+    getCurrentUser(): User | null {
+        return this.userDataSubject.getValue();
+    }
+
     refreshFromStorage(): void {
         const stored = localStorage.getItem(this.storageKey);
         if (stored) {

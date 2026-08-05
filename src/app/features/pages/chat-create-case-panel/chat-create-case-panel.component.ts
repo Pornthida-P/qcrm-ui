@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { switchMap, of, catchError } from 'rxjs';
 import { config } from 'src/app/config/config';
 import { CallService } from 'src/app/services/call/call.service';
@@ -46,6 +47,18 @@ export class ChatCreateCasePanelComponent implements OnInit, OnChanges {
     serviceSubTypes: any[] = [];
     statusList: any[] = [];
 
+    filteredCodes: any[] = [];
+    filteredCaseTypes: any[] = [];
+    filteredServiceGroups: any[] = [];
+    filteredServiceTypes: any[] = [];
+    filteredServiceSubTypes: any[] = [];
+
+    codeControl = new FormControl('');
+    caseTypeControl = new FormControl('');
+    serviceGroupControl = new FormControl('');
+    serviceTypeControl = new FormControl('');
+    serviceSubTypeControl = new FormControl('');
+
     selectedChannels = '';
     selectedCaseCode: any = null;
     selectedCaseType: any = null;
@@ -55,6 +68,12 @@ export class ChatCreateCasePanelComponent implements OnInit, OnChanges {
     selectedStatus: any = null;
 
     saving = false;
+
+    displayCodeFn = (code: any): string => code?.code || '';
+    displayCaseTypeFn = (caseType: any): string => caseType?.name || '';
+    displayServiceGroupFn = (serviceGroup: any): string => serviceGroup?.name || '';
+    displayServiceTypeFn = (serviceType: any): string => serviceType?.name || '';
+    displayServiceSubTypeFn = (serviceSubType: any): string => serviceSubType?.name || '';
 
     get isSocialChannel(): boolean {
         return this.socialChannelIds.includes(String(this.selectedChannels));
@@ -93,33 +112,116 @@ export class ChatCreateCasePanelComponent implements OnInit, OnChanges {
     onChannelChange(): void {
         if (this.isSocialChannel) {
             this.selectedCaseCode = null;
+            this.codeControl.setValue('');
         }
     }
 
-    onServiceGroupChange(): void {
-        this.selectedServiceType = null;
-        this.selectedServiceSubType = null;
-        this.serviceSubTypes = [];
-        const groupId = this.selectedServiceGroup?.id ?? this.selectedServiceGroup;
-        this.serviceTypes = (this.allServiceTypes || []).filter((t) => {
-            const ids = t.caseServiceGroupIds || t.groupIds || [];
-            if (Array.isArray(ids) && ids.length) {
-                return ids.map(String).includes(String(groupId));
-            }
-            return !groupId || String(t.caseServiceGroupId) === String(groupId) || !t.caseServiceGroupId;
-        });
+    filterCodes(): void {
+        const controlValue = this.codeControl.value as any;
+        const originalValue = (typeof controlValue === 'object' && controlValue ? controlValue.code : controlValue || '')
+            .toString()
+            .trim();
+        const filterValue = originalValue.toLowerCase();
+        if (!filterValue) {
+            this.filteredCodes = [...this.caseCodes];
+            return;
+        }
+        this.filteredCodes = this.caseCodes.filter((code: any) => (code.code || '').toLowerCase().includes(filterValue));
     }
 
-    onServiceTypeChange(): void {
+    filterCaseTypes(): void {
+        const controlValue = this.caseTypeControl.value as any;
+        const originalValue = (typeof controlValue === 'object' && controlValue ? controlValue.name : controlValue || '')
+            .toString()
+            .trim();
+        const filterValue = originalValue.toLowerCase();
+        if (!filterValue) {
+            this.filteredCaseTypes = [...this.caseTypes];
+            return;
+        }
+        this.filteredCaseTypes = this.caseTypes.filter((type: any) => (type.name || '').toLowerCase().includes(filterValue));
+    }
+
+    filterServiceGroups(): void {
+        const controlValue = this.serviceGroupControl.value as any;
+        const originalValue = (typeof controlValue === 'object' && controlValue ? controlValue.name : controlValue || '')
+            .toString()
+            .trim();
+        const filterValue = originalValue.toLowerCase();
+        if (!filterValue) {
+            this.filteredServiceGroups = [...this.serviceGroups];
+            return;
+        }
+        this.filteredServiceGroups = this.serviceGroups.filter((group: any) =>
+            (group.name || '').toLowerCase().includes(filterValue),
+        );
+    }
+
+    filterServiceTypes(): void {
+        if (!this.selectedServiceGroup) {
+            this.filteredServiceTypes = [];
+            return;
+        }
+        const controlValue = this.serviceTypeControl.value as any;
+        const originalValue = (typeof controlValue === 'object' && controlValue ? controlValue.name : controlValue || '')
+            .toString()
+            .trim();
+        const filterValue = originalValue.toLowerCase();
+        if (!filterValue) {
+            this.filteredServiceTypes = [...this.serviceTypes];
+            return;
+        }
+        this.filteredServiceTypes = this.serviceTypes.filter((type: any) => (type.name || '').toLowerCase().includes(filterValue));
+    }
+
+    filterServiceSubTypes(): void {
+        if (!this.selectedServiceType) {
+            this.filteredServiceSubTypes = [];
+            return;
+        }
+        const controlValue = this.serviceSubTypeControl.value as any;
+        const originalValue = (typeof controlValue === 'object' && controlValue ? controlValue.name : controlValue || '')
+            .toString()
+            .trim();
+        const filterValue = originalValue.toLowerCase();
+        if (!filterValue) {
+            this.filteredServiceSubTypes = [...this.serviceSubTypes];
+            return;
+        }
+        this.filteredServiceSubTypes = this.serviceSubTypes.filter((sub: any) =>
+            (sub.name || '').toLowerCase().includes(filterValue),
+        );
+    }
+
+    onCodeSelected(event: any): void {
+        const selected = event.option.value;
+        this.selectedCaseCode = selected;
+    }
+
+    onCaseTypeSelected(event: any): void {
+        this.selectedCaseType = event.option.value;
+    }
+
+    onServiceGroupSelected(event: any): void {
+        this.selectedServiceGroup = event.option.value;
+        this.selectedServiceType = null;
         this.selectedServiceSubType = null;
-        const typeId = this.selectedServiceType?.id ?? this.selectedServiceType;
-        this.serviceSubTypes = (this.allServiceSubTypes || []).filter((s) => {
-            const ids = s.caseServiceTypeIds || s.typeIds || [];
-            if (Array.isArray(ids) && ids.length) {
-                return ids.map(String).includes(String(typeId));
-            }
-            return !typeId || String(s.caseServiceTypeId) === String(typeId) || !s.caseServiceTypeId;
-        });
+        this.serviceTypeControl.setValue('');
+        this.serviceSubTypeControl.setValue('');
+        this.serviceSubTypes = [];
+        this.filteredServiceSubTypes = [];
+        this.refreshServiceTypes();
+    }
+
+    onServiceTypeSelected(event: any): void {
+        this.selectedServiceType = event.option.value;
+        this.selectedServiceSubType = null;
+        this.serviceSubTypeControl.setValue('');
+        this.refreshServiceSubTypes();
+    }
+
+    onServiceSubTypeSelected(event: any): void {
+        this.selectedServiceSubType = event.option.value;
     }
 
     save(): void {
@@ -140,9 +242,7 @@ export class ChatCreateCasePanelComponent implements OnInit, OnChanges {
         }
 
         this.saving = true;
-        const ensureContact$ = this.contactId
-            ? this.ensureContactChatLink()
-            : this.createContact();
+        const ensureContact$ = this.contactId ? this.ensureContactChatLink() : this.createContact();
 
         ensureContact$
             .pipe(
@@ -179,16 +279,56 @@ export class ChatCreateCasePanelComponent implements OnInit, OnChanges {
         this.contactChatId = '';
         this.contactLabel = '';
         this.caseHistory = [];
-        this.selectedCaseCode = null;
-        this.selectedCaseType = null;
-        this.selectedServiceGroup = null;
-        this.selectedServiceType = null;
-        this.selectedServiceSubType = null;
+        this.resetCaseSelections();
         this.matchChannel(conv);
         this.lookupExistingContact(conv.chatRoomId);
         if (this.contactId) {
             this.loadCaseHistory(this.contactId);
         }
+    }
+
+    private resetCaseSelections(): void {
+        this.selectedCaseCode = null;
+        this.selectedCaseType = null;
+        this.selectedServiceGroup = null;
+        this.selectedServiceType = null;
+        this.selectedServiceSubType = null;
+        this.codeControl.setValue('');
+        this.caseTypeControl.setValue('');
+        this.serviceGroupControl.setValue('');
+        this.serviceTypeControl.setValue('');
+        this.serviceSubTypeControl.setValue('');
+        this.serviceTypes = [...(this.allServiceTypes || [])];
+        this.serviceSubTypes = [];
+        this.filteredCodes = [...this.caseCodes];
+        this.filteredCaseTypes = [...this.caseTypes];
+        this.filteredServiceGroups = [...this.serviceGroups];
+        this.filteredServiceTypes = [...this.serviceTypes];
+        this.filteredServiceSubTypes = [];
+    }
+
+    private refreshServiceTypes(): void {
+        const groupId = this.selectedServiceGroup?.id ?? this.selectedServiceGroup;
+        this.serviceTypes = (this.allServiceTypes || []).filter((t) => {
+            const ids = t.caseServiceGroupIds || t.groupIds || [];
+            if (Array.isArray(ids) && ids.length) {
+                return ids.map(String).includes(String(groupId));
+            }
+            return !groupId || String(t.caseServiceGroupId) === String(groupId) || !t.caseServiceGroupId;
+        });
+        this.filteredServiceTypes = [...this.serviceTypes];
+    }
+
+    private refreshServiceSubTypes(): void {
+        const typeId = this.selectedServiceType?.id ?? this.selectedServiceType;
+        this.serviceSubTypes = (this.allServiceSubTypes || []).filter((s) => {
+            const ids = s.caseServiceTypeIds || s.typeIds || [];
+            if (Array.isArray(ids) && ids.length) {
+                return ids.map(String).includes(String(typeId));
+            }
+            return !typeId || String(s.caseServiceTypeId) === String(typeId) || !s.caseServiceTypeId;
+        });
+        this.filteredServiceSubTypes = [...this.serviceSubTypes];
     }
 
     private loadCaseHistory(contactId: string): void {
@@ -211,12 +351,22 @@ export class ChatCreateCasePanelComponent implements OnInit, OnChanges {
     }
 
     private loadLookups(): void {
-        this.callService.getCaseCode().subscribe((list: any) => (this.caseCodes = list || []));
-        this.callService.getCaseType().subscribe((list: any) => (this.caseTypes = list || []));
-        this.callService.getCaseServiceGroup().subscribe((list: any) => (this.serviceGroups = list || []));
+        this.callService.getCaseCode().subscribe((list: any) => {
+            this.caseCodes = list || [];
+            this.filteredCodes = [...this.caseCodes];
+        });
+        this.callService.getCaseType().subscribe((list: any) => {
+            this.caseTypes = list || [];
+            this.filteredCaseTypes = [...this.caseTypes];
+        });
+        this.callService.getCaseServiceGroup().subscribe((list: any) => {
+            this.serviceGroups = list || [];
+            this.filteredServiceGroups = [...this.serviceGroups];
+        });
         this.callService.getCaseServiceType().subscribe((list: any) => {
             this.allServiceTypes = Array.isArray(list) ? list : [];
             this.serviceTypes = [...this.allServiceTypes];
+            this.filteredServiceTypes = [...this.serviceTypes];
         });
         this.callService.getServiceSubType().subscribe((list: any) => {
             this.allServiceSubTypes = Array.isArray(list) ? list : [];
@@ -345,7 +495,6 @@ export class ChatCreateCasePanelComponent implements OnInit, OnChanges {
                 if (Array.isArray(rows) && rows[0]?.contactChatId) {
                     return of({ contactId: this.contactId, contactChatId: rows[0].contactChatId });
                 }
-                // No link yet — create contact payload will attach chatId (may hit duplicate path for phone)
                 return this.createContact();
             }),
             catchError(() => this.createContact()),
@@ -356,9 +505,7 @@ export class ChatCreateCasePanelComponent implements OnInit, OnChanges {
         const now = new Date();
         const pad = (n: number) => String(n).padStart(2, '0');
         const requestDateTime = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
-        const caseCodeId = this.isSocialChannel
-            ? null
-            : this.selectedCaseCode?.id ?? this.selectedCaseCode;
+        const caseCodeId = this.isSocialChannel ? null : this.selectedCaseCode?.id ?? this.selectedCaseCode;
         const dataForm = {
             caseId: null,
             contactId: this.contactId,

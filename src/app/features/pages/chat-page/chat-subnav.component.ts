@@ -23,6 +23,7 @@ export class ChatSubnavComponent implements OnInit {
 
     private readonly items: { key: ChatNavKey; label: string; route: string }[] = [
         { key: 'inbox', label: 'menu.chat.inbox', route: '/chat' },
+        { key: 'history', label: 'menu.chat.history', route: '/chat/history' },
         { key: 'monitor', label: 'menu.chat.monitor', route: '/chat/monitor' },
         { key: 'broadcast', label: 'menu.chat.broadcast', route: '/chat/broadcast' },
         { key: 'bot', label: 'menu.chat.bot', route: '/chat/bot' },

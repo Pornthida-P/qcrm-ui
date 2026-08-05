@@ -1,44 +1,154 @@
-<div class="p-3">
+<div class="p-3 monitor-page">
     <app-chat-subnav active="monitor"></app-chat-subnav>
     <div class="bg-white rounded shadow d-flex overflow-hidden monitor-shell">
-        <aside class="monitor-list border-end">
-            <div class="p-3 fw-semibold border-bottom">{{ 'chat.active-conversations' | translate }}</div>
-            <button
-                type="button"
-                class="list-item"
-                *ngFor="let item of conversations"
-                [class.active]="selected?.chatRoomId === item.chatRoomId"
-                (click)="select(item)"
-            >
-                <div class="fw-semibold text-truncate">{{ item.displayName || item.chatRoomId }}</div>
-                <div class="small text-muted text-truncate">
-                    {{ 'chat.agent' | translate }}: {{ item.agentUsername || item.agentUserId || '-' }} · {{ item.lastMessage || '' }}
-                </div>
-            </button>
-            <div class="p-3 text-muted" *ngIf="!conversations.length">{{ 'chat.no-assigned-chats' | translate }}</div>
+        <aside class="monitor-list border-end chat-pane">
+            <div class="pane-header fw-semibold">{{ 'chat.active-conversations' | translate }}</div>
+            <div class="pane-body">
+                <button
+                    type="button"
+                    class="chat-item"
+                    *ngFor="let item of conversations; trackBy: trackByRoom"
+                    [class.active]="selected?.chatRoomId === item.chatRoomId"
+                    (click)="select(item)"
+                >
+                    <div class="chat-item-row">
+                        <div class="chat-avatar flex-shrink-0">
+                            <img *ngIf="avatarUrl(item) as src" [src]="src" alt="" />
+                            <span *ngIf="!avatarUrl(item)">{{ avatarInitial(item) }}</span>
+                        </div>
+                        <div class="chat-item-body">
+                            <div class="chat-item-name fw-semibold" [title]="item.displayName || item.chatRoomId">
+                                {{ item.displayName || item.chatRoomId }}
+                            </div>
+                            <div class="chat-item-meta">
+                                <span
+                                    *ngIf="channelLabel(item) as channel"
+                                    class="channel-badge"
+                                    [style.background-color]="statusService.getChannelBgColor(channel)"
+                                >
+                                    <i [class]="statusService.getChannelIcon(channel)" class="me-1"></i>{{ channel }}
+                                </span>
+                                <span class="chat-item-preview small text-muted" [title]="item.lastMessage || ''">
+                                    {{ item.lastMessage || '' }}
+                                </span>
+                            </div>
+                            <div class="small text-muted mt-1 text-truncate">
+                                {{ 'chat.agent' | translate }}: {{ item.agentUsername || item.agentUserId || '-' }}
+                            </div>
+                        </div>
+                    </div>
+                </button>
+                <div class="empty-state" *ngIf="!conversations.length">{{ 'chat.no-assigned-chats' | translate }}</div>
+            </div>
         </aside>
-        <section class="flex-grow-1 d-flex flex-column">
-            <ng-container *ngIf="selected; else empty">
-                <div class="p-3 border-bottom">
-                    <div class="fw-semibold">{{ selected.displayName || selected.chatRoomId }}</div>
-                    <div class="small text-muted">{{ 'chat.supervisor-view' | translate }}</div>
-                </div>
-                <div class="flex-grow-1 overflow-auto p-3 bg-light">
-                    <div class="mb-2" *ngFor="let m of messages">
-                        <span class="badge me-1" [class.text-bg-warning]="m.secretType === 'monitor'" [class.text-bg-secondary]="m.secretType !== 'monitor'">
-                            {{ (m.secretType === 'monitor' ? 'chat.whisper' : 'chat.direction.' + m.direction) | translate }}
-                        </span>
-                        <strong class="me-1">{{ m.senderName || '-' }}:</strong>
-                        {{ m.messageText }}
+
+        <section class="chat-thread d-flex flex-column flex-grow-1">
+            <ng-container *ngIf="selected; else emptyThread">
+                <div class="thread-header border-bottom">
+                    <div class="d-flex align-items-center gap-2 min-w-0">
+                        <div class="chat-avatar chat-avatar-lg flex-shrink-0">
+                            <img *ngIf="avatarUrl(selected) as src" [src]="src" alt="" />
+                            <span *ngIf="!avatarUrl(selected)">{{ avatarInitial(selected) }}</span>
+                        </div>
+                        <div class="min-w-0">
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <div class="fw-semibold text-truncate">{{ selected.displayName || selected.chatRoomId }}</div>
+                                <span
+                                    *ngIf="channelLabel(selected) as channel"
+                                    class="channel-badge"
+                                    [style.background-color]="statusService.getChannelBgColor(channel)"
+                                >
+                                    <i [class]="statusService.getChannelIcon(channel)" class="me-1"></i>{{ channel }}
+                                </span>
+                                <span class="badge text-bg-warning">{{ 'chat.supervisor-view' | translate }}</span>
+                            </div>
+                            <div class="small text-muted text-truncate">
+                                {{ 'chat.agent' | translate }}: {{ selected.agentUsername || selected.agentUserId || '-' }}
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="p-3 border-top d-flex gap-2">
-                    <input class="form-control" [(ngModel)]="whisper" (keyup.enter)="sendWhisper()" [placeholder]="'chat.whisper-to-agent' | translate" />
-                    <button type="button" class="btn btn-warning" (click)="sendWhisper()">{{ 'chat.whisper' | translate }}</button>
+
+                <div class="thread-messages">
+                    <div class="text-muted small text-center py-4" *ngIf="!messages.length">{{ 'chat.no-messages' | translate }}</div>
+                    <ng-container *ngFor="let message of messages; trackBy: trackByMessage">
+                        <div class="system-divider" *ngIf="isSystemMessage(message)">
+                            <span class="system-divider-line"></span>
+                            <span class="system-divider-text">
+                                {{ systemMessageLabel(message) }}
+                                <span *ngIf="message.timestamp"> · {{ message.timestamp | date: 'dd/MM/yyyy HH:mm' }}</span>
+                            </span>
+                            <span class="system-divider-line"></span>
+                        </div>
+                        <div
+                            class="message-row"
+                            *ngIf="!isSystemMessage(message)"
+                            [class.out]="message.direction === 'out' && !isMonitorMessage(message)"
+                            [class.in]="message.direction !== 'out' || isMonitorMessage(message)"
+                            [class.whisper]="isMonitorMessage(message)"
+                        >
+                            <div class="message-bubble" [class.media-bubble]="messageTypeOf(message) !== 'text'">
+                                <div class="d-flex justify-content-between align-items-start gap-2 mb-1">
+                                    <div class="small text-muted" *ngIf="message.senderName || isMonitorMessage(message)">
+                                        <span class="badge text-bg-warning me-1" *ngIf="isMonitorMessage(message)">
+                                            {{ 'chat.whisper' | translate }}
+                                        </span>
+                                        {{ message.senderName || '-' }}
+                                    </div>
+                                </div>
+                                <ng-container [ngSwitch]="messageTypeOf(message)">
+                                    <img
+                                        *ngSwitchCase="'image'"
+                                        class="msg-media msg-image"
+                                        [src]="mediaSrc(message)"
+                                        alt="image"
+                                        (click)="openMedia(message)"
+                                    />
+                                    <img
+                                        *ngSwitchCase="'sticker'"
+                                        class="msg-media msg-sticker"
+                                        [src]="mediaSrc(message)"
+                                        alt="sticker"
+                                    />
+                                    <video
+                                        *ngSwitchCase="'video'"
+                                        class="msg-media msg-video"
+                                        controls
+                                        [src]="mediaSrc(message)"
+                                    ></video>
+                                    <audio *ngSwitchCase="'audio'" class="msg-audio" controls [src]="mediaSrc(message)"></audio>
+                                    <a *ngSwitchCase="'file'" class="msg-file" href="javascript:void(0)" (click)="openMedia(message)">
+                                        <i class="fa-solid fa-file me-2"></i>{{ fileName(message) }}
+                                    </a>
+                                    <a *ngSwitchCase="'document'" class="msg-file" href="javascript:void(0)" (click)="openMedia(message)">
+                                        <i class="fa-solid fa-file me-2"></i>{{ fileName(message) }}
+                                    </a>
+                                    <div *ngSwitchDefault class="msg-text">{{ message.messageText }}</div>
+                                </ng-container>
+                                <div class="msg-time" *ngIf="message.timestamp">
+                                    {{ message.timestamp | date: 'dd/MM/yyyy HH:mm' }}
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+
+                <div class="thread-composer border-top">
+                    <div class="composer-row">
+                        <input
+                            class="form-control"
+                            [(ngModel)]="whisper"
+                            (keyup.enter)="sendWhisper()"
+                            [placeholder]="'chat.whisper-to-agent' | translate"
+                        />
+                        <button type="button" class="btn btn-warning flex-shrink-0" (click)="sendWhisper()">
+                            {{ 'chat.whisper' | translate }}
+                        </button>
+                    </div>
                 </div>
             </ng-container>
-            <ng-template #empty>
-                <div class="m-auto text-muted">{{ 'chat.select-active-conversation' | translate }}</div>
+            <ng-template #emptyThread>
+                <div class="empty-thread">{{ 'chat.select-active-conversation' | translate }}</div>
             </ng-template>
         </section>
     </div>

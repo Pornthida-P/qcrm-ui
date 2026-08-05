@@ -1,19 +1,39 @@
 @import 'src/app/styles/table-shared';
 
+// Fit inside navbar content area (100vh - 66px navbar - parent .p-4).
+:host {
+    display: block;
+    height: 100%;
+}
+
 .chat-page {
-    min-height: calc(100vh - 80px);
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    height: calc(100vh - 66px - 3rem);
+    max-height: calc(100vh - 66px - 3rem);
+    overflow: hidden;
+}
+
+.chat-page > app-chat-subnav {
+    flex-shrink: 0;
 }
 
 .chat-shell {
-    min-height: calc(100vh - 150px);
+    flex: 1 1 0;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .chat-side {
     display: flex;
     flex-direction: row;
     flex-shrink: 0;
+    align-self: stretch;
+    height: 100%;
     min-height: 0;
     min-width: 0;
+    overflow: hidden;
 }
 
 .chat-side.stacked {
@@ -50,10 +70,13 @@
 .chat-pane {
     width: 260px;
     min-width: 220px;
+    max-width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     background: var(--color-surface);
     transition: width 0.15s ease, min-width 0.15s ease;
+    overflow: hidden;
 }
 
 .chat-side:not(.stacked) .chat-pane.collapsed {
@@ -85,7 +108,11 @@
 }
 
 .pane-title {
+    flex: 1 1 0;
     min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .pane-chevron {
@@ -113,8 +140,10 @@
 }
 
 .pane-body {
-    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
     flex: 1;
+    min-width: 0;
     min-height: 0;
 }
 
@@ -152,8 +181,12 @@
     font-size: 1rem;
 }
 
+// Truncation must live on inner divs — overflow/ellipsis on <button> is unreliable in browsers.
 .chat-item {
+    display: block;
+    box-sizing: border-box;
     width: 100%;
+    max-width: 100%;
     text-align: left;
     border: 0;
     border-bottom: 1px solid #eceff1;
@@ -166,13 +199,60 @@
     background: var(--color-blue-chat-hover);
 }
 
-.chat-item-meta {
+.chat-item-static {
+    cursor: default;
+    pointer-events: none;
+}
+
+.chat-item-static:hover {
+    background: transparent;
+}
+
+.chat-item-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 100%;
     min-width: 0;
+    overflow: hidden;
+}
+
+.chat-item-body {
+    flex: 1 1 0%;
+    width: 0;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.chat-item-name {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.chat-item-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+    overflow: hidden;
 }
 
 .chat-item-meta .channel-badge {
-    flex-shrink: 0;
+    flex: 0 0 auto;
     max-width: 110px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.chat-item-preview {
+    display: block;
+    flex: 1 1 0%;
+    width: 0;
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -184,17 +264,23 @@
 
 .chat-thread {
     min-width: 0;
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
 }
 
 .thread-header,
 .thread-composer {
     padding: 0.75rem 1rem;
     background: #fff;
+    flex-shrink: 0;
 }
 
 .thread-messages {
-    flex: 1;
-    overflow: auto;
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
     padding: 1rem;
     background: var(--color-chat-thread);
 }
@@ -271,6 +357,18 @@
 
 .msg-file:hover {
     text-decoration: underline;
+}
+
+.msg-time {
+    margin-top: 0.35rem;
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+    text-align: right;
+    line-height: 1.2;
+}
+
+.message-row.in .msg-time {
+    text-align: left;
 }
 
 .transfer-overlay {
@@ -424,17 +522,26 @@
 @media (max-width: 992px) {
     .chat-shell {
         flex-direction: column;
+        overflow: auto;
     }
 
     .chat-side,
     .chat-side.stacked {
         width: 100%;
+        height: auto;
+        max-height: 40%;
         flex-direction: column;
     }
 
     .chat-pane {
         width: 100%;
-        min-height: 180px;
+        min-height: 0;
+        height: auto;
+    }
+
+    .chat-thread {
+        flex: 1 1 0;
+        min-height: 280px;
     }
 
     .chat-side .chat-pane.collapsed,

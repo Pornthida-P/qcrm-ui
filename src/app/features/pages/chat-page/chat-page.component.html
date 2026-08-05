@@ -1,4 +1,4 @@
-<div class="chat-page h-full p-3">
+<div class="chat-page p-3">
     <app-chat-subnav active="inbox"></app-chat-subnav>
     <div class="chat-shell bg-white rounded shadow d-flex overflow-hidden" [class.case-open]="showCasePanel">
         <div
@@ -24,28 +24,33 @@
                     ></i>
                 </button>
                 <div class="pane-body" *ngIf="!queueCollapsed">
-                    <div class="pane-search">
+                    <div class="pane-search d-flex gap-2 align-items-center">
                         <input
                             class="form-control form-control-sm"
                             type="search"
                             [(ngModel)]="queueSearch"
                             [placeholder]="'chat.search-queue' | translate"
                         />
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-blue flex-shrink-0"
+                            (click)="assignOldestFromQueue()"
+                            [disabled]="!queue.length || assigningFromQueue"
+                        >
+                            {{ 'chat.assign' | translate }}
+                        </button>
                     </div>
-                    <button
-                        type="button"
-                        class="chat-item"
-                        *ngFor="let item of filteredQueue; trackBy: trackByRoom"
-                        (click)="takeFromQueue(item)"
-                    >
-                        <div class="d-flex align-items-center gap-2">
+                    <div class="chat-item chat-item-static" *ngFor="let item of filteredQueue; trackBy: trackByRoom">
+                        <div class="chat-item-row">
                             <div class="chat-avatar flex-shrink-0">
                                 <img *ngIf="avatarUrl(item) as src" [src]="src" alt="" />
                                 <span *ngIf="!avatarUrl(item)">{{ avatarInitial(item) }}</span>
                             </div>
-                            <div class="min-w-0 flex-grow-1">
-                                <div class="fw-semibold text-truncate">{{ item.displayName || item.chatRoomId }}</div>
-                                <div class="chat-item-meta d-flex align-items-center gap-2">
+                            <div class="chat-item-body">
+                                <div class="chat-item-name fw-semibold" [title]="item.displayName || item.chatRoomId">
+                                    {{ item.displayName || item.chatRoomId }}
+                                </div>
+                                <div class="chat-item-meta">
                                     <span
                                         *ngIf="channelLabel(item) as channel"
                                         class="channel-badge"
@@ -53,11 +58,14 @@
                                     >
                                         <i [class]="statusService.getChannelIcon(channel)" class="me-1"></i>{{ channel }}
                                     </span>
-                                    <span class="small text-muted text-truncate">{{ item.lastMessage || '' }}</span>
+                                    <span
+                                        class="chat-item-preview small text-muted"
+                                        [title]="item.lastMessage || ''"
+                                    >{{ item.lastMessage || '' }}</span>
                                 </div>
                             </div>
                         </div>
-                    </button>
+                    </div>
                     <div class="empty-state" *ngIf="!filteredQueue.length">
                         {{ (queueSearch.trim() ? 'chat.no-matching-chats' : 'chat.no-waiting-chats') | translate }}
                     </div>
@@ -91,24 +99,27 @@
                         [class.active]="selected?.chatRoomId === item.chatRoomId"
                         (click)="selectConversation(item)"
                     >
-                        <div class="d-flex justify-content-between gap-2 align-items-start">
-                            <div class="d-flex align-items-center gap-2 min-w-0">
-                                <div class="chat-avatar flex-shrink-0">
-                                    <img *ngIf="avatarUrl(item) as src" [src]="src" alt="" />
-                                    <span *ngIf="!avatarUrl(item)">{{ avatarInitial(item) }}</span>
+                        <div class="chat-item-row">
+                            <div class="chat-avatar flex-shrink-0">
+                                <img *ngIf="avatarUrl(item) as src" [src]="src" alt="" />
+                                <span *ngIf="!avatarUrl(item)">{{ avatarInitial(item) }}</span>
+                            </div>
+                            <div class="chat-item-body">
+                                <div class="chat-item-name fw-semibold" [title]="item.displayName || item.chatRoomId">
+                                    {{ item.displayName || item.chatRoomId }}
                                 </div>
-                                <div class="min-w-0">
-                                    <div class="fw-semibold text-truncate">{{ item.displayName || item.chatRoomId }}</div>
-                                    <div class="chat-item-meta d-flex align-items-center gap-2 mt-1">
-                                        <span
-                                            *ngIf="channelLabel(item) as channel"
-                                            class="channel-badge"
-                                            [style.background-color]="statusService.getChannelBgColor(channel)"
-                                        >
-                                            <i [class]="statusService.getChannelIcon(channel)" class="me-1"></i>{{ channel }}
-                                        </span>
-                                        <span class="small text-muted text-truncate">{{ item.lastMessage || '' }}</span>
-                                    </div>
+                                <div class="chat-item-meta mt-1">
+                                    <span
+                                        *ngIf="channelLabel(item) as channel"
+                                        class="channel-badge"
+                                        [style.background-color]="statusService.getChannelBgColor(channel)"
+                                    >
+                                        <i [class]="statusService.getChannelIcon(channel)" class="me-1"></i>{{ channel }}
+                                    </span>
+                                    <span
+                                        class="chat-item-preview small text-muted"
+                                        [title]="item.lastMessage || ''"
+                                    >{{ item.lastMessage || '' }}</span>
                                 </div>
                             </div>
                             <span class="badge text-bg-danger flex-shrink-0" *ngIf="item.unread">{{ item.unread }}</span>
@@ -147,7 +158,12 @@
                             </div>
                         </div>
                         <div class="d-flex gap-2 flex-shrink-0 flex-wrap justify-content-end">
-                            <button type="button" class="btn btn-sm btn-outline-blue" (click)="openTransferModal()">
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-outline-blue"
+                                *ngIf="canTransfer"
+                                (click)="openTransferModal()"
+                            >
                                 {{ 'chat.transfer' | translate }}
                             </button>
                             <button
@@ -200,7 +216,10 @@
                     <ng-container *ngFor="let message of messages; trackBy: trackByMessage">
                         <div class="system-divider" *ngIf="isSystemMessage(message)">
                             <span class="system-divider-line"></span>
-                            <span class="system-divider-text">{{ systemMessageLabel(message) }}</span>
+                            <span class="system-divider-text">
+                                {{ systemMessageLabel(message) }}
+                                <span *ngIf="message.timestamp"> · {{ message.timestamp | date: 'dd/MM/yyyy HH:mm' }}</span>
+                            </span>
                             <span class="system-divider-line"></span>
                         </div>
                         <div
@@ -243,6 +262,7 @@
                                     </a>
                                     <div *ngSwitchDefault class="msg-text">{{ message.messageText }}</div>
                                 </ng-container>
+                                <div class="msg-time" *ngIf="message.timestamp">{{ message.timestamp | date: 'dd/MM/yyyy HH:mm' }}</div>
                             </div>
                         </div>
                     </ng-container>
@@ -270,7 +290,31 @@
                                     {{ message.senderName || ('chat.supervisor' | translate) }}
                                     <span *ngIf="message.timestamp"> · {{ message.timestamp | date: 'HH:mm' }}</span>
                                 </div>
-                                <div class="monitor-text">{{ message.messageText }}</div>
+                                <ng-container [ngSwitch]="messageTypeOf(message)">
+                                    <img
+                                        *ngSwitchCase="'image'"
+                                        class="msg-media msg-image"
+                                        [src]="mediaSrc(message)"
+                                        alt="image"
+                                        (click)="openMedia(message)"
+                                    />
+                                    <img *ngSwitchCase="'sticker'" class="msg-media msg-sticker" [src]="mediaSrc(message)" alt="sticker" />
+                                    <video *ngSwitchCase="'video'" class="msg-media msg-video" controls [src]="mediaSrc(message)"></video>
+                                    <audio *ngSwitchCase="'audio'" class="msg-audio" controls [src]="mediaSrc(message)"></audio>
+                                    <a *ngSwitchCase="'file'" class="msg-file" href="javascript:void(0)" (click)="openMedia(message)">
+                                        <i class="fa-solid fa-file me-2"></i>{{ fileName(message) }}
+                                    </a>
+                                    <a *ngSwitchCase="'document'" class="msg-file" href="javascript:void(0)" (click)="openMedia(message)">
+                                        <i class="fa-solid fa-file me-2"></i>{{ fileName(message) }}
+                                    </a>
+                                    <div *ngSwitchDefault class="monitor-text">{{ message.messageText }}</div>
+                                </ng-container>
+                                <div
+                                    class="monitor-text small text-muted mt-1"
+                                    *ngIf="messageTypeOf(message) !== 'text' && message.messageText"
+                                >
+                                    {{ message.messageText }}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -295,7 +339,13 @@
 
                 <div class="thread-composer border-top">
                     <div class="template-panel border rounded mb-2 p-2" *ngIf="showTemplates">
-                        <button type="button" class="btn btn-sm btn-light me-1 mb-1" *ngFor="let t of templates" (click)="applyTemplate(t)">
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-light me-1 mb-1"
+                            *ngFor="let t of templates"
+                            (click)="applyTemplate(t)"
+                            [title]="templatePreview(t)"
+                        >
                             {{ t.name }}
                         </button>
                         <div class="small text-muted" *ngIf="!templates.length">{{ 'chat.no-templates' | translate }}</div>

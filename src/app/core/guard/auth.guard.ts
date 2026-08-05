@@ -3,7 +3,7 @@ import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/ro
 import { LoginService } from 'src/app/services/login/login.service';
 import { TokenService } from 'src/app/services/token/token.service';
 import { UserService } from 'src/app/services/user/user.service';
-import { Observable, of, map, from, switchMap, catchError } from 'rxjs';
+import { Observable, of, map, catchError, take } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -36,6 +36,7 @@ export class AuthGuard {
         }
 
         return this.loginService.isLogined().pipe(
+            take(1),
             map((isLogined) => {
                 if (!isLogined) {
                     this.handleUnauthorized();

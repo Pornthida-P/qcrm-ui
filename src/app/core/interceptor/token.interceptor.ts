@@ -38,10 +38,19 @@ export class TokenInterceptor implements HttpInterceptor {
             });
         }
 
+        // Capture the token used for this request so a late 401 after re-login is ignored.
+        const tokenUsedForRequest = token;
+
         return next.handle(request).pipe(
             catchError((error: HttpErrorResponse) => {
                 if ((error.status === 401 || error.status === 403) && !shouldSkipTokenCheck) {
-                    this.handleAuthError();
+                    const currentToken = this.tokenServices.getDataToken();
+                    const url = this.router.url || '';
+                    const onAuthPage = url.includes('/login') || url.includes('/logout');
+                    // Stale in-flight requests (old token) must not wipe a newly logged-in session.
+                    if (!onAuthPage && tokenUsedForRequest && tokenUsedForRequest === currentToken) {
+                        this.handleAuthError();
+                    }
                 }
                 return throwError(() => error);
             }),

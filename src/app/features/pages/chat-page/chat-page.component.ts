@@ -11,6 +11,7 @@ import { UserService } from 'src/app/services/user/user.service';
 import { ChatConversation, ChatMessage } from 'src/app/shared/interface/chat.interface';
 import { User } from 'src/app/shared/interface/user.interface';
 import { environment } from 'src/environments/environment';
+import { isChatPrivileged } from './chat-access';
 
 @Component({
     selector: 'app-chat-page',
@@ -53,6 +54,7 @@ export class ChatPageComponent implements OnInit, OnDestroy {
     selectedTransferAgentId = '';
     transferring = false;
     loadingAgents = false;
+    assigningFromQueue = false;
 
     private subs: Subscription[] = [];
     private notiAudio?: HTMLAudioElement;
@@ -93,12 +95,25 @@ export class ChatPageComponent implements OnInit, OnDestroy {
             this.userService.getDataUser().subscribe((user) => {
                 this.user = user;
                 if (user?.userId) {
-                    this.socketIoService.socket.emit('chat:join', user.userId);
+                    this.socketIoService.joinChat(user.userId);
                     this.refreshLists();
                     this.chatService.listTagDictionary().subscribe((tags) => (this.tagDictionary = tags || []));
                     if (this.pendingChatRoomId) {
                         this.openDeepLinkedConversation(this.pendingChatRoomId);
                     }
+                }
+            }),
+        );
+
+        this.subs.push(
+            this.socketIoService.reconnect$.subscribe(() => {
+                if (!this.user?.userId) {
+                    return;
+                }
+                this.socketIoService.joinChat(this.user.userId);
+                this.refreshLists();
+                if (this.selected?.chatRoomId) {
+                    this.reloadSelectedHistory();
                 }
             }),
         );
@@ -113,6 +128,10 @@ export class ChatPageComponent implements OnInit, OnDestroy {
         this.socketIoService.socket.off('chat:conversation');
         this.socketIoService.socket.off('chat:conversations');
         this.socketIoService.socket.off('chat:error');
+    }
+
+    get canTransfer(): boolean {
+        return isChatPrivileged(this.user);
     }
 
     get filteredQueue(): ChatConversation[] {
@@ -164,9 +183,24 @@ export class ChatPageComponent implements OnInit, OnDestroy {
 
     applyTemplate(template: any): void {
         if (template?.messageText) {
-            this.draft = template.messageText;
+            this.draft = this.replaceTemplatePlaceholders(template.messageText);
             this.showTemplates = false;
         }
+    }
+
+    templatePreview(template: any): string {
+        return this.replaceTemplatePlaceholders(template?.messageText || '');
+    }
+
+    private replaceTemplatePlaceholders(text: string): string {
+        if (!text) {
+            return '';
+        }
+        const customerName = this.selected?.displayName || this.selected?.externalUserId || '';
+        const agentName = this.user?.username || '';
+        return text
+            .replace(/\{\{\s*(name|customer_name|customerName|1)\s*\}\}/gi, customerName)
+            .replace(/\{\{\s*(agent|agent_name|agentName)\s*\}\}/gi, agentName);
     }
 
     addTag(): void {
@@ -197,9 +231,10 @@ export class ChatPageComponent implements OnInit, OnDestroy {
     }
 
     takeFromQueue(item: ChatConversation): void {
-        if (!this.user?.userId) {
+        if (!this.user?.userId || this.assigningFromQueue) {
             return;
         }
+        this.assigningFromQueue = true;
         this.chatService
             .assignChat({
                 chatRoomId: item.chatRoomId,
@@ -209,10 +244,23 @@ export class ChatPageComponent implements OnInit, OnDestroy {
             })
             .subscribe({
                 next: (conversation) => {
+                    this.assigningFromQueue = false;
                     this.refreshLists();
                     this.selectConversation(conversation);
                 },
+                error: () => {
+                    this.assigningFromQueue = false;
+                },
             });
+    }
+
+    /** FIFO: always take the oldest waiting chat (cannot pick a later one). */
+    assignOldestFromQueue(): void {
+        const oldest = this.queue[0];
+        if (!oldest) {
+            return;
+        }
+        this.takeFromQueue(oldest);
     }
 
     send(): void {
@@ -274,7 +322,7 @@ export class ChatPageComponent implements OnInit, OnDestroy {
     }
 
     openTransferModal(): void {
-        if (!this.selected || !this.user) {
+        if (!this.selected || !this.user || !this.canTransfer) {
             return;
         }
         this.showTransferModal = true;
@@ -374,19 +422,23 @@ export class ChatPageComponent implements OnInit, OnDestroy {
         if (!this.selected || !this.user || this.sendingMonitor) {
             return;
         }
-        const body = message.messageText || this.mediaPreviewText(message.messageType);
-        if (!body) {
+        const messageType = this.messageTypeOf(message);
+        const data = this.resolveMessageData(message);
+        const hasMedia = ['image', 'video', 'audio', 'file', 'document', 'sticker'].includes(messageType) && !!this.mediaSrc(message);
+        const body = message.messageText || this.mediaPreviewText(messageType, this.fileName(message));
+        if (!body && !hasMedia) {
             return;
         }
         this.showSupervisorPanel = true;
         this.sendingMonitor = true;
-        const quoted = `[Forwarded from customer]\n${body}`;
+        const quoted = `[Forwarded from customer]\n${body || this.mediaPreviewText(messageType)}`;
         this.chatService
             .sendMessage({
                 chatRoomId: this.selected.chatRoomId,
                 direction: 'out',
-                messageType: 'text',
+                messageType: hasMedia ? messageType : 'text',
                 messageText: quoted,
+                messageData: hasMedia ? data : undefined,
                 secretType: 'monitor',
                 channelKey: this.selected.channelKey,
                 channelType: this.selected.channelType,
@@ -742,6 +794,22 @@ export class ChatPageComponent implements OnInit, OnDestroy {
         } catch {
             // autoplay may be blocked until user interacts
         }
+    }
+
+    /** Catch messages missed while the socket was down. */
+    private reloadSelectedHistory(): void {
+        if (!this.selected?.chatRoomId) {
+            return;
+        }
+        this.chatService.getHistory(this.selected.chatRoomId, true).subscribe({
+            next: (messages) => {
+                const all = messages || [];
+                this.messages = all.filter((m) => !this.isMonitorMessage(m));
+                this.monitorMessages = all.filter((m) => this.isMonitorMessage(m));
+                this.scrollToBottom();
+                this.scrollMonitorToBottom();
+            },
+        });
     }
 
     private appendMessage(message: ChatMessage): void {

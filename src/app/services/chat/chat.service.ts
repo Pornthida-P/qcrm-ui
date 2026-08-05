@@ -21,6 +21,10 @@ export class ChatService {
         return this.http.get(`${this.baseUrl}${config.api.path.chat.channels}`).pipe(map((res) => this.parse(res) || []));
     }
 
+    listChannelsAdmin(): Observable<any[]> {
+        return this.http.get(`${this.baseUrl}${config.api.path.chat.channels}/admin`).pipe(map((res) => this.parse(res) || []));
+    }
+
     saveChannel(body: any): Observable<any> {
         return this.http.post(`${this.baseUrl}${config.api.path.chat.channels}`, body).pipe(map((res) => this.parse(res)));
     }
@@ -57,6 +61,11 @@ export class ChatService {
         return this.http
             .post(`${this.baseUrl}${config.api.path.chat.history}`, { chatRoomId, includeMonitor })
             .pipe(map((res) => this.parse(res) || []));
+    }
+
+    getDailyHistory(date?: string): Observable<ChatConversation[]> {
+        const q = date ? `?date=${encodeURIComponent(date)}` : '';
+        return this.http.get(`${this.baseUrl}/history/daily${q}`).pipe(map((res) => this.parse(res) || []));
     }
 
     sendMessage(message: ChatMessage): Observable<ChatMessage> {

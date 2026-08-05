@@ -1,9 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { TranslateModule } from '@ngx-translate/core';
-import { NgSelectModule } from '@ng-select/ng-select';
 import { ChatPageComponent } from './chat-page.component';
 import { ChatCreateCasePanelComponent } from '../chat-create-case-panel/chat-create-case-panel.component';
 import { ChatSharedModule } from './chat-shared.module';
@@ -13,8 +15,11 @@ import { ChatSharedModule } from './chat-shared.module';
     imports: [
         CommonModule,
         FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatAutocompleteModule,
         TranslateModule,
-        NgSelectModule,
         ChatSharedModule,
         RouterModule.forChild([
             {

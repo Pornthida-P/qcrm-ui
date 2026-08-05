@@ -89,6 +89,11 @@ const routes: Routes = [
                 title: 'Chat Monitor',
             },
             {
+                path: 'chat/history',
+                loadChildren: () => import('../../pages/chat-history/chat-history.module').then((m) => m.ChatHistoryModule),
+                title: 'Chat History',
+            },
+            {
                 path: 'chat/broadcast',
                 loadChildren: () => import('../../pages/chat-broadcast/chat-broadcast.module').then((m) => m.ChatBroadcastModule),
                 title: 'Chat Broadcast',

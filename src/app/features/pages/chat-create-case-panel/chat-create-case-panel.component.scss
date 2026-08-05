@@ -58,13 +58,58 @@
 
 .form-label-sm {
     margin-bottom: 0.2rem;
-    font-size: 0.8rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #495057;
 }
 
-:host ::ng-deep {
-    .ng-select.ng-select-single .ng-select-container {
-        min-height: 31px;
+.case-panel-body {
+    .form-control-sm,
+    .form-select-sm {
         font-size: 0.875rem;
+        padding: 8px 12px;
+        border-radius: 6px;
+        border: 1px solid #ced4da;
+        transition: all 0.2s ease;
+
+        &:focus {
+            border-color: var(--color-blue-dark);
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+        }
+    }
+}
+
+.color-red {
+    color: #dc3545;
+}
+
+:host ::ng-deep .compact-field {
+    &.mat-mdc-form-field {
+        .mat-mdc-text-field-wrapper {
+            background: #fff;
+        }
+
+        .mat-mdc-form-field-flex {
+            height: 36px;
+            align-items: center;
+        }
+
+        .mat-mdc-form-field-infix {
+            min-height: 36px;
+            padding-top: 8px;
+            padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        input.mat-mdc-input-element {
+            font-size: 14px;
+            margin-top: 0;
+        }
+
+        .mat-mdc-form-field-subscript-wrapper {
+            display: none;
+        }
     }
 }
 

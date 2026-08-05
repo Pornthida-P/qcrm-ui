@@ -36,13 +36,14 @@ export class ChatSettingsPageComponent implements OnInit {
     tags: any[] = [];
     badwords: any[] = [];
 
-    channelForm: any = { channelType: '', isActive: 1 };
+    channelForm: any = { channelType: '', isActive: 1, credentials: {} };
     scheduleForm: any = { type: 'normal', day: 'Mon', canQueue: 1, canReplyWelcome: 1, canAbandon: 1, isActive: 1 };
     autoForm: any = { tagName: 'welcome', lang: 'TH', messageType: 'text', sortIndex: 0, isActive: 1 };
     endForm: any = { isActive: 1 };
     templateForm: any = { channelType: 'all', messageType: 'text', sortOrder: 0, isActive: 1 };
     tagForm: any = {};
     badwordForm: any = {};
+    readonly apiBaseUrl = environment.api.url;
 
     constructor(
         private chatService: ChatService,
@@ -78,7 +79,7 @@ export class ChatSettingsPageComponent implements OnInit {
                 this.channelForm.channelType = this.channelTypeValue(list[0]);
             }
         });
-        this.chatService.listChannels().subscribe((r) => (this.channels = r || []));
+        this.chatService.listChannelsAdmin().subscribe((r) => (this.channels = r || []));
         this.chatService.listSchedules().subscribe((r) => (this.schedules = r || []));
         this.chatService.listAutoMessages().subscribe((r) => (this.autoMessages = r || []));
         this.chatService.listEndMessages().subscribe((r) => (this.endMessages = r || []));
@@ -101,10 +102,33 @@ export class ChatSettingsPageComponent implements OnInit {
         return found?.name || type;
     }
 
+    isLineChannel(type?: string): boolean {
+        return String(type || this.channelForm.channelType || '')
+            .toLowerCase()
+            .includes('line');
+    }
+
+    isFacebookChannel(type?: string): boolean {
+        const t = String(type || this.channelForm.channelType || '').toLowerCase();
+        return t.includes('facebook') || t === 'fb';
+    }
+
+    webhookUrl(channelKey: string, type: string): string {
+        const key = encodeURIComponent(channelKey || '');
+        if (this.isLineChannel(type)) {
+            return `${this.apiBaseUrl}/chat/webhook/line/${key}`;
+        }
+        if (this.isFacebookChannel(type)) {
+            return `${this.apiBaseUrl}/chat/webhook/facebook/${key}`;
+        }
+        return '';
+    }
+
     resetChannelForm(): void {
         this.channelForm = {
             channelType: this.channelTypeOptions.length ? this.channelTypeValue(this.channelTypeOptions[0]) : '',
             isActive: 1,
+            credentials: {},
         };
     }
 
@@ -117,15 +141,22 @@ export class ChatSettingsPageComponent implements OnInit {
             return;
         }
         const channelKey = this.channelForm.channelKey.trim();
+        const credentials = { ...(this.channelForm.credentials || {}) };
+        Object.keys(credentials).forEach((k) => {
+            if (credentials[k] === '' || credentials[k] == null) {
+                delete credentials[k];
+            }
+        });
         const payload = {
             ...this.channelForm,
             channelKey,
             channelName: this.channelForm.channelName || channelKey,
             displayName: this.channelForm.displayName || this.channelForm.channelName || channelKey,
+            credentials: Object.keys(credentials).length ? credentials : this.channelForm.id ? undefined : null,
         };
         this.chatService.saveChannel(payload).subscribe(() => {
             this.resetChannelForm();
-            this.chatService.listChannels().subscribe((r) => (this.channels = r || []));
+            this.chatService.listChannelsAdmin().subscribe((r) => (this.channels = r || []));
         });
     }
 
@@ -133,11 +164,12 @@ export class ChatSettingsPageComponent implements OnInit {
         this.channelForm = {
             ...item,
             channelType: String(item?.channelType || '').toLowerCase(),
+            credentials: { ...(item?.credentials || {}) },
         };
     }
 
     deleteChannel(id: number): void {
-        this.chatService.deleteChannel(id).subscribe(() => this.chatService.listChannels().subscribe((r) => (this.channels = r || [])));
+        this.chatService.deleteChannel(id).subscribe(() => this.chatService.listChannelsAdmin().subscribe((r) => (this.channels = r || [])));
     }
 
     saveSchedule(): void {

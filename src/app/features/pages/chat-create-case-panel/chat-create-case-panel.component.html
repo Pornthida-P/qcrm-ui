@@ -55,19 +55,19 @@
         <div class="section-title">{{ 'chat.contact' | translate }}</div>
         <div class="row g-2 mb-3">
             <div class="col-6">
-                <label class="form-label form-label-sm">{{ 'contact.firstName' | translate }}</label>
+                <label class="form-label form-label-sm fw-semibold mb-1">{{ 'contact.firstName' | translate }}</label>
                 <input class="form-control form-control-sm" [(ngModel)]="firstName" name="firstName" />
             </div>
             <div class="col-6">
-                <label class="form-label form-label-sm">{{ 'contact.lastName' | translate }}</label>
+                <label class="form-label form-label-sm fw-semibold mb-1">{{ 'contact.lastName' | translate }}</label>
                 <input class="form-control form-control-sm" [(ngModel)]="lastName" name="lastName" />
             </div>
             <div class="col-12">
-                <label class="form-label form-label-sm">{{ 'contact.phoneNumber' | translate }}</label>
+                <label class="form-label form-label-sm fw-semibold mb-1">{{ 'contact.phoneNumber' | translate }}</label>
                 <input class="form-control form-control-sm" [(ngModel)]="phone" name="phone" />
             </div>
             <div class="col-12">
-                <label class="form-label form-label-sm">{{ 'chat.chat-id' | translate }}</label>
+                <label class="form-label form-label-sm fw-semibold mb-1">{{ 'chat.chat-id' | translate }}</label>
                 <input class="form-control form-control-sm" [value]="conversation?.chatRoomId || ''" disabled />
             </div>
         </div>
@@ -75,86 +75,139 @@
         <div class="section-title">{{ 'chat.case' | translate }}</div>
         <div class="row g-2 mb-3">
             <div class="col-12">
-                <label class="form-label form-label-sm">{{ 'contact.channel' | translate }}</label>
-                <ng-select
-                    [items]="channels"
-                    bindLabel="name"
-                    bindValue="channelId"
-                    [(ngModel)]="selectedChannels"
-                    (change)="onChannelChange()"
-                    [clearable]="false"
+                <label class="form-label form-label-sm fw-semibold mb-1">{{ 'contact.channel' | translate }}</label>
+                <select
+                    class="form-select form-select-sm"
                     name="channel"
-                ></ng-select>
+                    [(ngModel)]="selectedChannels"
+                    (ngModelChange)="onChannelChange()"
+                >
+                    <option disabled value="">{{ 'common.pleaseSelect' | translate }}</option>
+                    <option *ngFor="let channel of channels" [value]="channel.channelId">{{ channel.name }}</option>
+                </select>
             </div>
             <div class="col-12" *ngIf="!isSocialChannel">
-                <label class="form-label form-label-sm">{{ 'menu.caseCode' | translate }} <span class="text-danger">*</span></label>
-                <ng-select
-                    [items]="caseCodes"
-                    bindLabel="code"
-                    [(ngModel)]="selectedCaseCode"
-                    [clearable]="true"
-                    name="caseCode"
-                ></ng-select>
+                <label class="form-label form-label-sm fw-semibold mb-1">
+                    {{ 'contact.code' | translate }}<span class="color-red">*</span>
+                </label>
+                <mat-form-field class="w-100 compact-field" appearance="outline">
+                    <input
+                        type="text"
+                        matInput
+                        [formControl]="codeControl"
+                        [matAutocomplete]="autoCode"
+                        (input)="filterCodes()"
+                        (focus)="filterCodes()"
+                        [placeholder]="'contact.searchCode' | translate"
+                    />
+                    <mat-autocomplete #autoCode="matAutocomplete" [displayWith]="displayCodeFn" (optionSelected)="onCodeSelected($event)">
+                        <mat-option *ngFor="let code of filteredCodes" [value]="code">{{ code.code }}</mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
             </div>
             <div class="col-12">
-                <label class="form-label form-label-sm">{{ 'contact.caseType' | translate }}</label>
-                <ng-select
-                    [items]="caseTypes"
-                    bindLabel="name"
-                    [(ngModel)]="selectedCaseType"
-                    [clearable]="true"
-                    name="caseType"
-                ></ng-select>
+                <label class="form-label form-label-sm fw-semibold mb-1">{{ 'contact.caseType' | translate }}</label>
+                <mat-form-field class="w-100 compact-field" appearance="outline">
+                    <input
+                        type="text"
+                        matInput
+                        [formControl]="caseTypeControl"
+                        [matAutocomplete]="autoCaseType"
+                        (input)="filterCaseTypes()"
+                        (focus)="filterCaseTypes()"
+                        [placeholder]="'contact.searchCaseType' | translate"
+                    />
+                    <mat-autocomplete
+                        #autoCaseType="matAutocomplete"
+                        [displayWith]="displayCaseTypeFn"
+                        (optionSelected)="onCaseTypeSelected($event)"
+                    >
+                        <mat-option *ngFor="let caseType of filteredCaseTypes" [value]="caseType">{{ caseType.name }}</mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
             </div>
             <div class="col-12">
-                <label class="form-label form-label-sm">{{ 'contact.serviceGroup' | translate }}</label>
-                <ng-select
-                    [items]="serviceGroups"
-                    bindLabel="name"
-                    [(ngModel)]="selectedServiceGroup"
-                    (change)="onServiceGroupChange()"
-                    [clearable]="true"
-                    name="serviceGroup"
-                ></ng-select>
+                <label class="form-label form-label-sm fw-semibold mb-1">{{ 'contact.serviceGroup' | translate }}</label>
+                <mat-form-field class="w-100 compact-field" appearance="outline">
+                    <input
+                        type="text"
+                        matInput
+                        [formControl]="serviceGroupControl"
+                        [matAutocomplete]="autoServiceGroup"
+                        (input)="filterServiceGroups()"
+                        (focus)="filterServiceGroups()"
+                        [placeholder]="'contact.searchServiceGroup' | translate"
+                    />
+                    <mat-autocomplete
+                        #autoServiceGroup="matAutocomplete"
+                        [displayWith]="displayServiceGroupFn"
+                        (optionSelected)="onServiceGroupSelected($event)"
+                    >
+                        <mat-option *ngFor="let serviceGroup of filteredServiceGroups" [value]="serviceGroup">
+                            {{ serviceGroup.name }}
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
             </div>
             <div class="col-12">
-                <label class="form-label form-label-sm">{{ 'contact.serviceType' | translate }}</label>
-                <ng-select
-                    [items]="serviceTypes"
-                    bindLabel="name"
-                    [(ngModel)]="selectedServiceType"
-                    (change)="onServiceTypeChange()"
-                    [clearable]="true"
-                    name="serviceType"
-                ></ng-select>
+                <label class="form-label form-label-sm fw-semibold mb-1">{{ 'contact.serviceType' | translate }}</label>
+                <mat-form-field class="w-100 compact-field" appearance="outline">
+                    <input
+                        type="text"
+                        matInput
+                        [formControl]="serviceTypeControl"
+                        [matAutocomplete]="autoServiceType"
+                        (input)="filterServiceTypes()"
+                        (focus)="filterServiceTypes()"
+                        [placeholder]="'contact.searchServiceType' | translate"
+                    />
+                    <mat-autocomplete
+                        #autoServiceType="matAutocomplete"
+                        [displayWith]="displayServiceTypeFn"
+                        (optionSelected)="onServiceTypeSelected($event)"
+                    >
+                        <mat-option *ngFor="let serviceType of filteredServiceTypes" [value]="serviceType">
+                            {{ serviceType.name }}
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
             </div>
             <div class="col-12">
-                <label class="form-label form-label-sm">{{ 'contact.serviceSubType' | translate }}</label>
-                <ng-select
-                    [items]="serviceSubTypes"
-                    bindLabel="name"
-                    [(ngModel)]="selectedServiceSubType"
-                    [clearable]="true"
-                    name="serviceSubType"
-                ></ng-select>
+                <label class="form-label form-label-sm fw-semibold mb-1">{{ 'contact.serviceSubType' | translate }}</label>
+                <mat-form-field class="w-100 compact-field" appearance="outline">
+                    <input
+                        type="text"
+                        matInput
+                        [formControl]="serviceSubTypeControl"
+                        [matAutocomplete]="autoServiceSubType"
+                        (input)="filterServiceSubTypes()"
+                        (focus)="filterServiceSubTypes()"
+                        [placeholder]="'contact.searchServiceSubType' | translate"
+                    />
+                    <mat-autocomplete
+                        #autoServiceSubType="matAutocomplete"
+                        [displayWith]="displayServiceSubTypeFn"
+                        (optionSelected)="onServiceSubTypeSelected($event)"
+                    >
+                        <mat-option *ngFor="let serviceSubType of filteredServiceSubTypes" [value]="serviceSubType">
+                            {{ serviceSubType.name }}
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
             </div>
             <div class="col-12">
-                <label class="form-label form-label-sm">{{ 'common.status' | translate }}</label>
-                <ng-select
-                    [items]="statusList"
-                    bindLabel="status"
-                    bindValue="id"
-                    [(ngModel)]="selectedStatus"
-                    [clearable]="false"
-                    name="status"
-                ></ng-select>
+                <label class="form-label form-label-sm fw-semibold mb-1">{{ 'common.status' | translate }}</label>
+                <select class="form-select form-select-sm" name="status" [(ngModel)]="selectedStatus">
+                    <option disabled value="">{{ 'common.pleaseSelect' | translate }}</option>
+                    <option *ngFor="let item of statusList" [value]="item.id ?? item.statusId">{{ item.status }}</option>
+                </select>
             </div>
             <div class="col-12">
-                <label class="form-label form-label-sm">{{ 'contact.description' | translate }}</label>
+                <label class="form-label form-label-sm fw-semibold mb-1">{{ 'contact.description' | translate }}</label>
                 <textarea class="form-control form-control-sm" rows="3" [(ngModel)]="description" name="description"></textarea>
             </div>
             <div class="col-12">
-                <label class="form-label form-label-sm">{{ 'chat.solution' | translate }}</label>
+                <label class="form-label form-label-sm fw-semibold mb-1">{{ 'chat.solution' | translate }}</label>
                 <textarea class="form-control form-control-sm" rows="2" [(ngModel)]="solutions" name="solutions"></textarea>
             </div>
         </div>

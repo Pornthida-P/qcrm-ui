@@ -35,19 +35,63 @@
                     <button class="btn btn-outline-secondary" type="button" *ngIf="channelForm.id" (click)="resetChannelForm()">{{ 'common.cancel' | translate }}</button>
                 </div>
             </div>
+
+            <div class="border rounded p-3 mb-3 bg-light" *ngIf="isLineChannel() || isFacebookChannel()">
+                <div class="fw-semibold mb-2">{{ 'chat.connector.credentials' | translate }}</div>
+                <div class="row g-2" *ngIf="isLineChannel()">
+                    <div class="col-md-4">
+                        <input class="form-control form-control-sm" [placeholder]="'chat.connector.line-token' | translate" [(ngModel)]="channelForm.credentials.channelAccessToken" />
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-control form-control-sm" [placeholder]="'chat.connector.line-secret' | translate" [(ngModel)]="channelForm.credentials.channelSecret" />
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-control form-control-sm" [placeholder]="'chat.connector.line-channel-id' | translate" [(ngModel)]="channelForm.credentials.channelId" />
+                    </div>
+                </div>
+                <div class="row g-2" *ngIf="isFacebookChannel()">
+                    <div class="col-md-4">
+                        <input class="form-control form-control-sm" [placeholder]="'chat.connector.fb-page-token' | translate" [(ngModel)]="channelForm.credentials.pageAccessToken" />
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-control form-control-sm" [placeholder]="'chat.connector.fb-verify-token' | translate" [(ngModel)]="channelForm.credentials.validationToken" />
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-control form-control-sm" [placeholder]="'chat.connector.fb-page-id' | translate" [(ngModel)]="channelForm.credentials.pageID" />
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-control form-control-sm" [placeholder]="'chat.connector.fb-app-secret' | translate" [(ngModel)]="channelForm.credentials.appSecret" />
+                    </div>
+                    <div class="col-md-4">
+                        <input class="form-control form-control-sm" [placeholder]="'chat.connector.fb-app-id' | translate" [(ngModel)]="channelForm.credentials.appID" />
+                    </div>
+                </div>
+                <div class="small text-muted mt-2" *ngIf="channelForm.channelKey">
+                    {{ 'chat.connector.webhook-url' | translate }}:
+                    <code class="user-select-all">{{ webhookUrl(channelForm.channelKey, channelForm.channelType) }}</code>
+                </div>
+            </div>
+
             <table class="table table-sm">
                 <thead>
                     <tr>
                         <th>{{ 'chat.channel-key' | translate }}</th>
                         <th>{{ 'form.type' | translate }}</th>
+                        <th>{{ 'chat.connector.credentials' | translate }}</th>
                         <th>{{ 'component.account-profile.isActive' | translate }}</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor="let c of channels">
-                        <td>{{ c.channelKey }}</td>
+                        <td>
+                            <div>{{ c.channelKey }}</div>
+                            <div class="small text-muted text-break" *ngIf="webhookUrl(c.channelKey, c.channelType)">
+                                {{ webhookUrl(c.channelKey, c.channelType) }}
+                            </div>
+                        </td>
                         <td>{{ channelTypeLabel(c.channelType) }}</td>
+                        <td>{{ c.hasCredentials || c.credentials ? ('common.yes' | translate) : ('common.no' | translate) }}</td>
                         <td>{{ isChannelActive(c) ? ('common.yes' | translate) : ('common.no' | translate) }}</td>
                         <td class="text-nowrap">
                             <button class="btn btn-sm btn-link" type="button" (click)="editChannel(c)">{{ 'common.edit' | translate }}</button>
@@ -55,7 +99,7 @@
                         </td>
                     </tr>
                     <tr *ngIf="!channels.length">
-                        <td colspan="4" class="text-muted">{{ 'component.account-profile.noChannels' | translate }}</td>
+                        <td colspan="5" class="text-muted">{{ 'component.account-profile.noChannels' | translate }}</td>
                     </tr>
                 </tbody>
             </table>

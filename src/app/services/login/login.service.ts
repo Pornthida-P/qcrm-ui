@@ -14,6 +14,8 @@ import { SocketIoService } from '../socket-io/socket-io.service';
 export class LoginService {
     private isLoginedSubject = new BehaviorSubject<boolean>(false);
     private keyIsLogined = 'isLogined';
+    /** Bumps on each successful login so a late logout HTTP response cannot wipe the new session. */
+    private authGeneration = 0;
 
     constructor(private router: Router, private http: HttpClient, private socketIO: SocketIoService) {
         this.updateIsLogined();
@@ -23,7 +25,7 @@ export class LoginService {
 
     private updateIsLogined() {
         const statusLogin = localStorage.getItem(this.keyIsLogined);
-        this.isLoginedSubject.next(statusLogin ? true : false);
+        this.isLoginedSubject.next(statusLogin === 'true');
     }
 
     isLogined(): Observable<boolean> {
@@ -32,6 +34,12 @@ export class LoginService {
 
     setLogined(status: boolean) {
         localStorage.setItem(this.keyIsLogined, JSON.stringify(status));
+        this.isLoginedSubject.next(status);
+    }
+
+    clearLoginState(): void {
+        localStorage.removeItem(this.keyIsLogined);
+        this.isLoginedSubject.next(false);
     }
 
     login(username: string, password: string): Observable<any> {
@@ -48,21 +56,24 @@ export class LoginService {
                 if (res.user) {
                     res.user.profile = res.user.profile ? `${environment.api.url}${res.user.profile}` : '';
                 }
+                this.authGeneration += 1;
                 this.setLogined(true);
-                this.updateIsLogined();
-
                 this.socketIO.login(res.user);
             }),
         );
     }
 
     logout(user: User): Observable<any> {
+        const generationAtLogout = this.authGeneration;
         return this.http.post(`${this.baseUrl}${config.api.path.logout}`, { userId: user?.userId }).pipe(
             tap(() => {
-                this.isLoginedSubject.next(false);
-                localStorage.removeItem(this.keyIsLogined);
-                this.socketIO.logout(user);
+                // Ignore if the user already logged in again before this response arrived.
+                if (this.authGeneration !== generationAtLogout) {
+                    return;
+                }
+                this.clearLoginState();
             }),
+            catchError((error) => throwError(() => error)),
         );
     }
 
@@ -72,8 +83,8 @@ export class LoginService {
                 if (res.user) {
                     res.user.profile = res.user.profile ? `${environment.api.url}${res.user.profile}` : '';
                 }
+                this.authGeneration += 1;
                 this.setLogined(true);
-                this.updateIsLogined();
             }),
         );
     }
