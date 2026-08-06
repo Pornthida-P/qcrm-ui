@@ -18,11 +18,24 @@
                     <option *ngFor="let t of tags" [value]="t.tagName"></option>
                 </datalist>
             </div>
-            <div class="col-md-10">
+            <div class="col-md-2">
+                <select class="form-select" [(ngModel)]="form.messageType">
+                    <option value="text">{{ 'chat.message-type.text' | translate }}</option>
+                    <option value="image">{{ 'chat.message-type.image' | translate }}</option>
+                    <option value="flex">{{ 'chat.message-type.flex' | translate }}</option>
+                </select>
+            </div>
+            <div class="col-md-8">
                 <textarea class="form-control" rows="2" [placeholder]="'chat.message-text' | translate" [(ngModel)]="form.messageText"></textarea>
             </div>
             <div class="col-md-2">
                 <button type="button" class="btn btn-primary w-100 h-100" (click)="create()">{{ 'chat.schedule' | translate }}</button>
+            </div>
+            <div class="col-md-6" *ngIf="form.messageType === 'image'">
+                <input class="form-control" [placeholder]="'chat.image-url' | translate" [(ngModel)]="form.imageUrl" />
+            </div>
+            <div class="col-md-12" *ngIf="form.messageType === 'flex'">
+                <textarea class="form-control" rows="3" [placeholder]="'chat.flex-json' | translate" [(ngModel)]="form.flexJson"></textarea>
             </div>
         </div>
 

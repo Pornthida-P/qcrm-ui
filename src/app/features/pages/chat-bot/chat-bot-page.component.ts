@@ -78,8 +78,37 @@ export class ChatBotPageComponent implements OnInit {
     }
 
     saveResponse(): void {
-        if (!this.responseForm.keywordGroupId || !this.responseForm.messageText?.trim()) return;
-        this.chatService.saveBotResponse({ ...this.responseForm, createdById: this.userId }).subscribe(() => {
+        if (!this.responseForm.keywordGroupId) return;
+        const type = String(this.responseForm.messageType || 'text').toLowerCase();
+        if (type === 'text' && !this.responseForm.messageText?.trim()) return;
+
+        const payload: any = {
+            ...this.responseForm,
+            createdById: this.userId,
+            messageType: type,
+        };
+        if (type === 'image') {
+            const url = String(this.responseForm.imageUrl || this.responseForm.messageText || '').trim();
+            payload.messageData = url ? { originalContentUrl: url, previewImageUrl: url, url } : null;
+            payload.messageText = payload.messageText || '[Image]';
+        } else if (type === 'flex') {
+            const raw = String(this.responseForm.flexJson || '').trim();
+            if (raw) {
+                try {
+                    const parsed = JSON.parse(raw);
+                    payload.messageData = parsed?.contents ? parsed : { altText: payload.messageText || 'Flex', contents: parsed };
+                } catch {
+                    return;
+                }
+            }
+            payload.messageText = payload.messageText || 'Flex';
+        } else {
+            payload.messageData = null;
+        }
+        delete payload.imageUrl;
+        delete payload.flexJson;
+
+        this.chatService.saveBotResponse(payload).subscribe(() => {
             this.responseForm = {
                 messageType: 'text',
                 messageIndex: 0,

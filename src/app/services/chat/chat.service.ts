@@ -83,7 +83,7 @@ export class ChatService {
         return this.http.post(`${this.baseUrl}${config.api.path.chat.assign}`, body).pipe(map((res) => this.parse(res)));
     }
 
-    endChat(body: { chatRoomId: string; agentUserId?: string }): Observable<ChatConversation> {
+    endChat(body: { chatRoomId: string; agentUserId?: string; sendSurvey?: boolean }): Observable<ChatConversation> {
         return this.http.post(`${this.baseUrl}${config.api.path.chat.end}`, body).pipe(map((res) => this.parse(res)));
     }
 

@@ -220,13 +220,27 @@
                         <option *ngFor="let opt of channelTypeOptions" [value]="channelTypeValue(opt)">{{ opt.name }}</option>
                     </select>
                 </div>
+                <div class="col-md-2">
+                    <select class="form-select" [(ngModel)]="templateForm.messageType">
+                        <option value="text">{{ 'chat.message-type.text' | translate }}</option>
+                        <option value="image">{{ 'chat.message-type.image' | translate }}</option>
+                        <option value="flex">{{ 'chat.message-type.flex' | translate }}</option>
+                    </select>
+                </div>
                 <div class="col-md-4"><input class="form-control" [placeholder]="'chat.message-text' | translate" [(ngModel)]="templateForm.messageText" /></div>
+                <div class="col-md-6" *ngIf="templateForm.messageType === 'image'">
+                    <input class="form-control" [placeholder]="'chat.image-url' | translate" [(ngModel)]="templateForm.imageUrl" />
+                </div>
+                <div class="col-md-12" *ngIf="templateForm.messageType === 'flex'">
+                    <textarea class="form-control" rows="4" [placeholder]="'chat.flex-json' | translate" [(ngModel)]="templateForm.flexJson"></textarea>
+                </div>
                 <div class="col-md-2"><button class="btn btn-primary w-100" type="button" (click)="saveTemplate()">{{ 'common.save' | translate }}</button></div>
             </div>
             <table class="table table-sm">
                 <thead>
                     <tr>
                         <th>{{ 'form.name' | translate }}</th>
+                        <th>{{ 'chat.message-type' | translate }}</th>
                         <th>{{ 'contact.channel' | translate }}</th>
                         <th>{{ 'chat.text' | translate }}</th>
                         <th></th>
@@ -235,6 +249,7 @@
                 <tbody>
                     <tr *ngFor="let t of templates">
                         <td>{{ t.name }}</td>
+                        <td>{{ t.messageType || 'text' }}</td>
                         <td>{{ t.channelType === 'all' ? ('chat.channel-type.all' | translate) : channelTypeLabel(t.channelType) }}</td>
                         <td>{{ t.messageText }}</td>
                         <td>

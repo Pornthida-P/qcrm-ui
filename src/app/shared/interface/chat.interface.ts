@@ -24,6 +24,7 @@ export interface ChatConversation {
     issue?: string;
     contactType?: string;
     contactId?: string;
+    isRude?: number;
 }
 
 export interface ChatMessage {
@@ -44,4 +45,5 @@ export interface ChatMessage {
     messageData?: any;
     timestamp?: number;
     readStatus?: number;
+    isDeleted?: number;
 }

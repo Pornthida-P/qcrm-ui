@@ -389,10 +389,50 @@ export class ChatCreateCasePanelComponent implements OnInit, OnChanges {
         if (!this.channels?.length) {
             return;
         }
-        const hint = (conv.channelType || conv.channelKey || conv.channelName || '').toLowerCase();
+
+        const chatRoomId = String(conv.chatRoomId || '');
+        const typeHint = String(conv.channelType || conv.channelKey || '').toLowerCase().trim();
+        const kind =
+            chatRoomId.startsWith('line_') || typeHint === 'line'
+                ? 'line'
+                : chatRoomId.startsWith('fb_') || typeHint === 'facebook' || typeHint === 'fb'
+                  ? 'facebook'
+                  : '';
+
+        if (kind === 'line') {
+            const matched = this.channels.find((ch) => {
+                const n = String(ch.name || '')
+                    .toLowerCase()
+                    .trim();
+                return n === 'line' || n.startsWith('line ') || (n.includes('line') && !n.includes('online'));
+            });
+            if (matched) {
+                this.selectedChannels = matched.channelId;
+                return;
+            }
+        }
+
+        if (kind === 'facebook') {
+            const matched = this.channels.find((ch) => {
+                const n = String(ch.name || '')
+                    .toLowerCase()
+                    .trim();
+                return n.includes('facebook') || n.includes('messenger') || n === 'fb';
+            });
+            if (matched) {
+                this.selectedChannels = matched.channelId;
+                return;
+            }
+        }
+
+        const hint = (conv.channelName || typeHint || '').toLowerCase();
         const matched = this.channels.find((ch) => {
             const name = (ch.name || '').toLowerCase();
-            return hint && (name.includes(hint) || hint.includes(name));
+            if (!hint || !name) {
+                return false;
+            }
+            // Exact / prefix only — avoid "online".includes("line")
+            return name === hint || name.startsWith(hint + ' ') || hint.startsWith(name + ' ');
         });
         if (matched) {
             this.selectedChannels = matched.channelId;
@@ -446,7 +486,7 @@ export class ChatCreateCasePanelComponent implements OnInit, OnChanges {
     }
 
     private createContact() {
-        const chatType = this.conversation?.channelType || this.conversation?.channelKey || '';
+        const chatType = this.selectedChannels || this.conversation?.channelType || this.conversation?.channelKey || '';
         const payload = {
             firstName: this.firstName.trim(),
             lastName: this.lastName.trim(),

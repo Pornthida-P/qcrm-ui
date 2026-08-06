@@ -161,9 +161,9 @@ export class ChatPageComponent implements OnInit, OnDestroy {
         this.monitorMessages = [];
         this.chatService.listTemplates(item.channelType).subscribe((list) => (this.templates = list || []));
         this.chatService.listRoomTags(item.chatRoomId).subscribe((tags) => (this.roomTags = tags || []));
-        this.chatService.getHistory(item.chatRoomId, true).subscribe({
+                this.chatService.getHistory(item.chatRoomId, true).subscribe({
             next: (messages) => {
-                const all = messages || [];
+                const all = (messages || []).filter((m) => !this.isSurveyFlexMessage(m));
                 this.messages = all.filter((m) => !this.isMonitorMessage(m));
                 this.monitorMessages = all.filter((m) => this.isMonitorMessage(m));
                 this.loadingHistory = false;
@@ -181,14 +181,14 @@ export class ChatPageComponent implements OnInit, OnDestroy {
         });
     }
 
-    applyTemplate(template: any): void {
-        if (template?.messageText) {
-            this.draft = this.replaceTemplatePlaceholders(template.messageText);
-            this.showTemplates = false;
-        }
-    }
-
     templatePreview(template: any): string {
+        const type = String(template?.messageType || 'text').toLowerCase();
+        if (type === 'image') {
+            return `[Image] ${template?.messageText || ''}`.trim();
+        }
+        if (type === 'flex') {
+            return `[Flex] ${template?.messageText || ''}`.trim();
+        }
         return this.replaceTemplatePlaceholders(template?.messageText || '');
     }
 
@@ -461,22 +461,6 @@ export class ChatPageComponent implements OnInit, OnDestroy {
             });
     }
 
-    endChat(): void {
-        if (!this.selected || !this.user?.userId) {
-            return;
-        }
-        this.chatService.endChat({ chatRoomId: this.selected.chatRoomId, agentUserId: this.user.userId }).subscribe({
-            next: () => {
-                this.selected = null;
-                this.messages = [];
-                this.monitorMessages = [];
-                this.showSupervisorPanel = false;
-                this.closeCasePanel();
-                this.refreshLists();
-            },
-        });
-    }
-
     createCase(): void {
         if (!this.selected) {
             return;
@@ -535,9 +519,19 @@ export class ChatPageComponent implements OnInit, OnDestroy {
         return type === 'system' || this.isSystemMessageText(text);
     }
 
+    /** QIM hides outbound rating flex from the agent transcript. */
+    isSurveyFlexMessage(message: ChatMessage): boolean {
+        if ((message.messageType || '').toLowerCase() !== 'flex') {
+            return false;
+        }
+        const data = this.resolveMessageData(message);
+        const raw = JSON.stringify(data || {});
+        return raw.includes('rating=') && raw.includes('chat_room_id');
+    }
+
     private isSystemMessageText(text: string): boolean {
         const normalized = (text || '').toLowerCase().trim();
-        return normalized === 'assignchat' || normalized === 'endchat';
+        return normalized === 'assignchat' || normalized === 'endchat' || normalized === 'surveysubmitted';
     }
 
     isMonitorMessage(message: ChatMessage): boolean {
@@ -553,7 +547,70 @@ export class ChatPageComponent implements OnInit, OnDestroy {
         if (text === 'endchat') {
             return this.translate.instant('chat.ended');
         }
+        if (text === 'surveysubmitted') {
+            return this.translate.instant('chat.survey-submitted');
+        }
         return message.messageText || this.translate.instant('chat.system');
+    }
+
+    isCustomerRude(item: ChatConversation | null | undefined): boolean {
+        return Number(item?.isRude || 0) === 1;
+    }
+
+    endChat(sendSurvey = false): void {
+        if (!this.selected || !this.user?.userId) {
+            return;
+        }
+        this.chatService
+            .endChat({ chatRoomId: this.selected.chatRoomId, agentUserId: this.user.userId, sendSurvey })
+            .subscribe({
+                next: () => {
+                    this.selected = null;
+                    this.messages = [];
+                    this.monitorMessages = [];
+                    this.showSupervisorPanel = false;
+                    this.closeCasePanel();
+                    this.refreshLists();
+                },
+            });
+    }
+
+    applyTemplate(template: any): void {
+        if (!template) {
+            return;
+        }
+        const type = String(template.messageType || 'text').toLowerCase();
+        this.showTemplates = false;
+        if (type === 'text' || !type) {
+            if (template.messageText) {
+                this.draft = this.replaceTemplatePlaceholders(template.messageText);
+            }
+            return;
+        }
+        // Image / flex — send immediately
+        if (!this.selected) {
+            return;
+        }
+        let messageData = template.messageData;
+        if (typeof messageData === 'string') {
+            try {
+                messageData = JSON.parse(messageData);
+            } catch {
+                /* keep string */
+            }
+        }
+        if (type === 'image' && !messageData) {
+            messageData = {
+                originalContentUrl: template.messageText,
+                previewImageUrl: template.messageText,
+                url: template.messageText,
+            };
+        }
+        this.sendChatMessage({
+            messageType: type,
+            messageText: this.replaceTemplatePlaceholders(template.messageText || (type === 'image' ? '[Image]' : 'Flex')),
+            messageData,
+        }).subscribe();
     }
 
     messageTypeOf(message: ChatMessage): string {
@@ -803,7 +860,7 @@ export class ChatPageComponent implements OnInit, OnDestroy {
         }
         this.chatService.getHistory(this.selected.chatRoomId, true).subscribe({
             next: (messages) => {
-                const all = messages || [];
+                const all = (messages || []).filter((m) => !this.isSurveyFlexMessage(m));
                 this.messages = all.filter((m) => !this.isMonitorMessage(m));
                 this.monitorMessages = all.filter((m) => this.isMonitorMessage(m));
                 this.scrollToBottom();
@@ -813,6 +870,9 @@ export class ChatPageComponent implements OnInit, OnDestroy {
     }
 
     private appendMessage(message: ChatMessage): void {
+        if (this.isSurveyFlexMessage(message)) {
+            return;
+        }
         if (this.isMonitorMessage(message)) {
             this.appendToList('monitorMessages', message);
             this.scrollMonitorToBottom();
@@ -828,7 +888,11 @@ export class ChatPageComponent implements OnInit, OnDestroy {
             this[key] = [...list, message];
             return;
         }
-        if (list.some((m) => m.messageId === message.messageId)) {
+        const idx = list.findIndex((m) => m.messageId === message.messageId);
+        if (idx >= 0) {
+            const next = [...list];
+            next[idx] = { ...next[idx], ...message };
+            this[key] = next;
             return;
         }
         this[key] = [...list, message];

@@ -214,14 +214,60 @@ export class ChatSettingsPageComponent implements OnInit {
     }
 
     saveTemplate(): void {
-        this.chatService.saveTemplate({ ...this.templateForm, createdById: this.userId }).subscribe(() => {
+        const payload = this.buildRichMessagePayload(this.templateForm);
+        this.chatService.saveTemplate({ ...payload, createdById: this.userId }).subscribe(() => {
             this.templateForm = { channelType: 'all', messageType: 'text', sortOrder: 0, isActive: 1 };
             this.chatService.listTemplates(undefined, true).subscribe((r) => (this.templates = r || []));
         });
     }
 
     editTemplate(item: any): void {
-        this.templateForm = { ...item };
+        this.templateForm = this.hydrateRichMessageForm({ ...item });
+    }
+
+    private buildRichMessagePayload(form: any): any {
+        const payload = { ...form };
+        const type = String(form.messageType || 'text').toLowerCase();
+        if (type === 'image') {
+            const url = String(form.imageUrl || form.messageText || '').trim();
+            payload.messageData = url
+                ? { originalContentUrl: url, previewImageUrl: url, url }
+                : form.messageData || null;
+        } else if (type === 'flex') {
+            const raw = String(form.flexJson || '').trim();
+            if (raw) {
+                try {
+                    const parsed = JSON.parse(raw);
+                    payload.messageData = parsed?.contents ? parsed : { altText: form.messageText || 'Flex', contents: parsed };
+                } catch {
+                    payload.messageData = form.messageData || null;
+                }
+            }
+        } else {
+            payload.messageData = null;
+        }
+        delete payload.imageUrl;
+        delete payload.flexJson;
+        return payload;
+    }
+
+    private hydrateRichMessageForm(item: any): any {
+        const form = { ...item, imageUrl: '', flexJson: '' };
+        let data = item.messageData;
+        if (typeof data === 'string') {
+            try {
+                data = JSON.parse(data);
+            } catch {
+                data = null;
+            }
+        }
+        const type = String(item.messageType || 'text').toLowerCase();
+        if (type === 'image') {
+            form.imageUrl = data?.originalContentUrl || data?.url || '';
+        } else if (type === 'flex' && data) {
+            form.flexJson = JSON.stringify(data.contents || data, null, 2);
+        }
+        return form;
     }
 
     deleteTemplate(id: number): void {

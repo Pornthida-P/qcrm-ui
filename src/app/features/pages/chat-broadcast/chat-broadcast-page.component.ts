@@ -19,7 +19,10 @@ export class ChatBroadcastPageComponent implements OnInit {
         scheduledAt: '',
         channelKeys: '',
         tagFilter: '',
+        messageType: 'text',
         messageText: '',
+        imageUrl: '',
+        flexJson: '',
     };
 
     constructor(
@@ -50,9 +53,37 @@ export class ChatBroadcastPageComponent implements OnInit {
     }
 
     create(): void {
-        if (!this.form.broadcastName?.trim() || !this.form.messageText?.trim() || !this.form.scheduledAt) {
+        if (!this.form.broadcastName?.trim() || !this.form.scheduledAt) {
             return;
         }
+        const type = String(this.form.messageType || 'text').toLowerCase();
+        if (type === 'text' && !this.form.messageText?.trim()) {
+            return;
+        }
+
+        let messageData: any = null;
+        let messageText = this.form.messageText || '';
+        if (type === 'image') {
+            const url = String(this.form.imageUrl || this.form.messageText || '').trim();
+            if (!url) {
+                return;
+            }
+            messageData = { originalContentUrl: url, previewImageUrl: url, url };
+            messageText = messageText || '[Image]';
+        } else if (type === 'flex') {
+            const raw = String(this.form.flexJson || '').trim();
+            if (!raw) {
+                return;
+            }
+            try {
+                const parsed = JSON.parse(raw);
+                messageData = parsed?.contents ? parsed : { altText: messageText || 'Flex', contents: parsed };
+            } catch {
+                return;
+            }
+            messageText = messageText || 'Flex';
+        }
+
         const channels = String(this.form.channelKeys || '')
             .split(',')
             .map((s: string) => s.trim())
@@ -69,11 +100,20 @@ export class ChatBroadcastPageComponent implements OnInit {
                 scheduledAt: this.form.scheduledAt.replace('T', ' ') + ':00',
                 broadcastChannels: channels,
                 broadcastFilter: tags.length ? { tags } : null,
-                messages: [{ messageType: 'text', messageText: this.form.messageText }],
+                messages: [{ messageType: type, messageText, messageData }],
                 createdById: this.userId,
             })
             .subscribe(() => {
-                this.form = { broadcastName: '', scheduledAt: '', channelKeys: '', tagFilter: '', messageText: '' };
+                this.form = {
+                    broadcastName: '',
+                    scheduledAt: '',
+                    channelKeys: '',
+                    tagFilter: '',
+                    messageType: 'text',
+                    messageText: '',
+                    imageUrl: '',
+                    flexJson: '',
+                };
                 this.reload();
             });
     }

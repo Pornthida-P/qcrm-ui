@@ -24,16 +24,10 @@
                     ></i>
                 </button>
                 <div class="pane-body" *ngIf="!queueCollapsed">
-                    <div class="pane-search d-flex gap-2 align-items-center">
-                        <input
-                            class="form-control form-control-sm"
-                            type="search"
-                            [(ngModel)]="queueSearch"
-                            [placeholder]="'chat.search-queue' | translate"
-                        />
+                    <div class="pane-search">
                         <button
                             type="button"
-                            class="btn btn-sm btn-blue flex-shrink-0"
+                            class="btn btn-sm btn-blue w-100"
                             (click)="assignOldestFromQueue()"
                             [disabled]="!queue.length || assigningFromQueue"
                         >
@@ -49,6 +43,11 @@
                             <div class="chat-item-body">
                                 <div class="chat-item-name fw-semibold" [title]="item.displayName || item.chatRoomId">
                                     {{ item.displayName || item.chatRoomId }}
+                                    <i
+                                        *ngIf="isCustomerRude(item)"
+                                        class="fa-solid fa-triangle-exclamation text-danger ms-1"
+                                        [title]="'chat.customer-rude' | translate"
+                                    ></i>
                                 </div>
                                 <div class="chat-item-meta">
                                     <span
@@ -58,10 +57,9 @@
                                     >
                                         <i [class]="statusService.getChannelIcon(channel)" class="me-1"></i>{{ channel }}
                                     </span>
-                                    <span
-                                        class="chat-item-preview small text-muted"
-                                        [title]="item.lastMessage || ''"
-                                    >{{ item.lastMessage || '' }}</span>
+                                    <span class="chat-item-preview small text-muted" [title]="item.lastMessage || ''">{{
+                                        item.lastMessage || ''
+                                    }}</span>
                                 </div>
                             </div>
                         </div>
@@ -107,6 +105,11 @@
                             <div class="chat-item-body">
                                 <div class="chat-item-name fw-semibold" [title]="item.displayName || item.chatRoomId">
                                     {{ item.displayName || item.chatRoomId }}
+                                    <i
+                                        *ngIf="isCustomerRude(item)"
+                                        class="fa-solid fa-triangle-exclamation text-danger ms-1"
+                                        [title]="'chat.customer-rude' | translate"
+                                    ></i>
                                 </div>
                                 <div class="chat-item-meta mt-1">
                                     <span
@@ -116,10 +119,9 @@
                                     >
                                         <i [class]="statusService.getChannelIcon(channel)" class="me-1"></i>{{ channel }}
                                     </span>
-                                    <span
-                                        class="chat-item-preview small text-muted"
-                                        [title]="item.lastMessage || ''"
-                                    >{{ item.lastMessage || '' }}</span>
+                                    <span class="chat-item-preview small text-muted" [title]="item.lastMessage || ''">{{
+                                        item.lastMessage || ''
+                                    }}</span>
                                 </div>
                             </div>
                             <span class="badge text-bg-danger flex-shrink-0" *ngIf="item.unread">{{ item.unread }}</span>
@@ -145,6 +147,13 @@
                                 <div class="d-flex align-items-center gap-2 flex-wrap">
                                     <div class="fw-semibold text-truncate">{{ selected.displayName || selected.chatRoomId }}</div>
                                     <span
+                                        *ngIf="isCustomerRude(selected)"
+                                        class="badge text-bg-danger"
+                                        [title]="'chat.customer-rude' | translate"
+                                    >
+                                        <i class="fa-solid fa-triangle-exclamation me-1"></i>{{ 'chat.customer-rude' | translate }}
+                                    </span>
+                                    <span
                                         *ngIf="channelLabel(selected) as channel"
                                         class="channel-badge"
                                         [style.background-color]="statusService.getChannelBgColor(channel)"
@@ -158,19 +167,14 @@
                             </div>
                         </div>
                         <div class="d-flex gap-2 flex-shrink-0 flex-wrap justify-content-end">
-                            <button
-                                type="button"
-                                class="btn btn-sm btn-outline-blue"
-                                *ngIf="canTransfer"
-                                (click)="openTransferModal()"
-                            >
+                            <button type="button" class="btn btn-sm btn-outline-blue" *ngIf="canTransfer" (click)="openTransferModal()">
                                 {{ 'chat.transfer' | translate }}
                             </button>
                             <button
                                 type="button"
                                 class="btn btn-sm"
-                                [class.btn-blue]="showSupervisorPanel"
-                                [class.btn-outline-blue]="!showSupervisorPanel"
+                                [class.btn-info]="showSupervisorPanel"
+                                [class.btn-outline-info]="!showSupervisorPanel"
                                 (click)="toggleSupervisorPanel()"
                             >
                                 {{ (showSupervisorPanel ? 'chat.close-supervisor' : 'chat.supervisor') | translate }}
@@ -178,13 +182,16 @@
                             <button
                                 type="button"
                                 class="btn btn-sm"
-                                [class.btn-blue]="showCasePanel"
-                                [class.btn-outline-blue]="!showCasePanel"
+                                [class.btn-success]="showCasePanel"
+                                [class.btn-outline-success]="!showCasePanel"
                                 (click)="createCase()"
                             >
                                 {{ (showCasePanel ? 'chat.close-case' : 'chat.create-case') | translate }}
                             </button>
-                            <button type="button" class="btn btn-sm btn-outline-danger" (click)="endChat()">
+                            <button type="button" class="btn btn-sm btn-warning" (click)="endChat(true)">
+                                {{ 'chat.end-chat-survey' | translate }}
+                            </button>
+                            <button type="button" class="btn btn-sm btn-danger" (click)="endChat(false)">
                                 {{ 'chat.end-chat' | translate }}
                             </button>
                         </div>
@@ -260,6 +267,7 @@
                                     <a *ngSwitchCase="'document'" class="msg-file" href="javascript:void(0)" (click)="openMedia(message)">
                                         <i class="fa-solid fa-file me-2"></i>{{ fileName(message) }}
                                     </a>
+                                    <div *ngSwitchCase="'flex'" class="msg-text">{{ message.messageText || '[Flex]' }}</div>
                                     <div *ngSwitchDefault class="msg-text">{{ message.messageText }}</div>
                                 </ng-container>
                                 <div class="msg-time" *ngIf="message.timestamp">{{ message.timestamp | date: 'dd/MM/yyyy HH:mm' }}</div>
@@ -377,9 +385,8 @@
                         />
                         <textarea
                             class="form-control composer-input"
-                            rows="2"
+                            rows="1"
                             [(ngModel)]="draft"
-                            (keydown.enter)="$event.preventDefault(); send()"
                             [placeholder]="'chat.type-message' | translate"
                             [disabled]="sending || uploading"
                         ></textarea>

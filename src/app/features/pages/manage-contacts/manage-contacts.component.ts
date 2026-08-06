@@ -2027,10 +2027,15 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
         this.contactsService.getContactChatId(chatId).subscribe((res: any) => {
             if (res && res.length > 0) {
                 this.contactChatId = res[0].contactChatId;
+                const linkedChatId = String(res[0].chatId || chatId || '');
                 const channelName = res[0].channelName?.toLowerCase() || '';
-                if (channelName.includes('facebook')) {
+                if (linkedChatId.startsWith('fb_') || channelName.includes('facebook') || channelName.includes('messenger')) {
                     this.facebookDisplayName = res[0].displayName || '';
-                } else if (channelName.includes('line')) {
+                } else if (
+                    linkedChatId.startsWith('line_') ||
+                    channelName === 'line' ||
+                    (channelName.includes('line') && !channelName.includes('online'))
+                ) {
                     this.lineDisplayName = res[0].displayName || '';
                 }
                 this.contactChatDisplayName = res[0].displayName || '';
@@ -2174,14 +2179,15 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
         if (!chat) {
             return 'Chat';
         }
-        if (chat.channelName) {
-            return chat.channelName;
+        const kind = this.resolveChatChannelKind(chat);
+        if (kind === 'line') {
+            return 'LINE';
         }
-        if (this.isFacebookChat(chat)) {
+        if (kind === 'facebook') {
             return 'Facebook';
         }
-        if (this.isLineChat(chat)) {
-            return 'LINE';
+        if (chat.channelName) {
+            return chat.channelName;
         }
         return chat.chatType || 'Chat';
     }
@@ -2194,13 +2200,38 @@ export class ManageContactsComponent implements OnInit, OnDestroy {
     }
 
     private isFacebookChat(chat: any): boolean {
-        const haystack = `${chat?.chatType || ''} ${chat?.channelName || ''} ${chat?.chatId || ''}`.toLowerCase();
-        return haystack.includes('facebook') || haystack.includes('fb') || String(chat?.chatId || '').startsWith('fb_');
+        return this.resolveChatChannelKind(chat) === 'facebook';
     }
 
     private isLineChat(chat: any): boolean {
-        const haystack = `${chat?.chatType || ''} ${chat?.channelName || ''} ${chat?.chatId || ''}`.toLowerCase();
-        return haystack.includes('line') || String(chat?.chatId || '').startsWith('line_');
+        return this.resolveChatChannelKind(chat) === 'line';
+    }
+
+    /**
+     * Prefer chatId prefix (line_ / fb_) over channelName — channel JOIN can be wrong
+     * when chatType is not a channels.channelId, and names like "Online" match "%line%".
+     */
+    private resolveChatChannelKind(chat: any): 'line' | 'facebook' | 'other' {
+        const chatId = String(chat?.chatId || '');
+        if (chatId.startsWith('line_')) {
+            return 'line';
+        }
+        if (chatId.startsWith('fb_')) {
+            return 'facebook';
+        }
+
+        const name = String(chat?.channelName || '').toLowerCase().trim();
+        const type = String(chat?.chatType || '').toLowerCase().trim();
+        const blob = `${name} ${type}`;
+
+        if (blob.includes('facebook') || blob.includes('messenger') || type === 'fb' || name === 'fb') {
+            return 'facebook';
+        }
+        // Avoid false positive: "Online".includes("line") / LIKE '%line%'
+        if (type === 'line' || name === 'line' || /(^|[^a-z])line([^a-z]|$)/.test(name)) {
+            return 'line';
+        }
+        return 'other';
     }
 
     /** Inspection companies with group = 1 only (Reply CI). API uses "gruop" (typo). */
