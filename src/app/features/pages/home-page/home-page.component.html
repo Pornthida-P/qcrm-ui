@@ -62,14 +62,14 @@
                         [class.active]="selectedStatus === status.name"
                         [style.background]="
                             'linear-gradient(135deg, ' +
-                            getStatusColorAndIcon(status.id - 1).color +
+                            getStatusColorAndIcon(status.name).color +
                             '40 0%, ' +
-                            getStatusColorAndIcon(status.id - 1).color +
+                            getStatusColorAndIcon(status.name).color +
                             '18 50%, transparent 100%)'
                         "
                     >
-                        <div class="circle" [style.background-color]="getStatusColorAndIcon(status.id - 1).color">
-                            <span [innerHTML]="getStatusColorAndIcon(status.id - 1).icon"></span>
+                        <div class="circle" [style.background-color]="getStatusColorAndIcon(status.name).color">
+                            <span [innerHTML]="getStatusColorAndIcon(status.name).icon"></span>
                         </div>
                         <div class="content">
                             <p>{{ status.name }}</p>
@@ -222,7 +222,7 @@
                 </ng-template>
                 <div class="channel-legend d-flex flex-wrap gap-2 gap-md-3 mt-3 justify-content-center justify-content-md-center">
                     <div *ngFor="let item of channelPercentage; let i = index" class="channel-item">
-                        <div class="channel-indicator" [style.background-color]="getChannelColor(i)"></div>
+                        <div class="channel-indicator" [style.background-color]="getChannelColor(item.name)"></div>
                         <div class="channel-info">
                             <p class="channel-name mb-0">{{ item.name }}</p>
                             <p class="channel-value mb-0">{{ item.value.toFixed(2) }}%</p>

@@ -10,7 +10,7 @@ import { CallListService } from 'src/app/services/call-list/call-list.service';
 import { Router } from '@angular/router';
 import * as Highcharts from 'highcharts';
 import { TranslateService } from '@ngx-translate/core';
-import { chartPalette, colors } from 'src/app/shared/theme/colors';
+import { chartPalette } from 'src/app/shared/theme/colors';
 
 @Component({
     selector: 'app-home-page',
@@ -176,7 +176,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
                 borderWidth: 0,
             },
         },
-        colors: [colors.gold, colors.blueDark, colors.primary],
+        colors: [...chartPalette],
         series: [
             {
                 name: '',
@@ -250,7 +250,11 @@ export class HomePageComponent implements OnInit, OnDestroy {
     }
 
     initChart(caseChannelCount: any[], caseCodeCount: any[]) {
-        (this.caseChartOptions.series as any)[0].data = caseChannelCount.map((item) => ({ name: item.name, y: item.value }));
+        (this.caseChartOptions.series as any)[0].data = caseChannelCount.map((item) => ({
+            name: item.name,
+            y: item.value,
+            color: this.statusService.getChannelBgColor(item.name),
+        }));
         (this.contactChartOptions.xAxis as any).categories = caseCodeCount.map((item) => item.code);
         (this.contactChartOptions.series as any)[0].data = caseCodeCount.map((item) => item.value);
         this.updateFlag = true;
@@ -277,9 +281,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
         const pageSize = this.pageSize;
         const sortId = 'createdAt,DESC';
         const searchTextParam =
-            this.valueSearch != null && String(this.valueSearch).trim() !== ''
-                ? String(this.valueSearch).trim()
-                : 'undefined';
+            this.valueSearch != null && String(this.valueSearch).trim() !== '' ? String(this.valueSearch).trim() : 'undefined';
         const dateFilterType = this.dateFilterType || 'toDay';
         let startDate = '';
         let endDate = '';
@@ -474,8 +476,8 @@ export class HomePageComponent implements OnInit, OnDestroy {
         return series?.data && Array.isArray(series.data) && series.data.length > 0;
     }
 
-    getChannelColor(index: number): string {
-        return chartPalette[index % chartPalette.length];
+    getChannelColor(channelName: string): string {
+        return this.statusService.getChannelBgColor(channelName);
     }
 
     calculatePages(): void {
@@ -531,9 +533,11 @@ export class HomePageComponent implements OnInit, OnDestroy {
         }
     }
 
-    getStatusColorAndIcon(id: number) {
-        const style = this.statusService.getStatusColorByIndex(id);
-        return { color: style.backgroundColor, icon: `<i class="${style.icon}"></i>` };
+    getStatusColorAndIcon(statusName: string) {
+        return {
+            color: this.statusService.getStatusBgColor(statusName),
+            icon: `<i class="${this.statusService.getStatusIcon(statusName)}"></i>`,
+        };
     }
 
     getStatusColor(statusName: string): string {

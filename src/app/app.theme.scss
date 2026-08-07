@@ -1,25 +1,31 @@
 // ===========================================
-// QCRM Theme — single source of truth for colors
+// QCRM Theme — Soft slate-blue (กลางๆ · สบายตา · ไม่จืด)
+// #1E3A5F · #3B82A0 · #2F6F8F · #F4F7FA · #334155
 // Change values here; SCSS uses var(--token), TS uses colors.ts
 // ===========================================
 
 :root {
     // Brand
-    --primary: #fb5f20;
-    --primary-active-color: #ff8040;
-    --primary-soft: #fff0e9;
+    --primary: #1e3a5f;
+    --primary-active-color: #2a4f73;
+    --primary-soft: #e3eef3;
 
     // Blues
-    --color-blue-dark: #010966;
-    --color-blue-dark-hover: #020b80;
-    --color-blue-mid: #3066be;
-    --color-blue-soft: #f0f4ff;
-    --color-blue-soft-alt: #e8ecff;
-    --color-blue-whisper: #eef5ff;
-    --color-blue-chat-bubble: #d7e8ff;
-    --color-blue-chat-hover: #e9f2ff;
-    --color-light-sky: #20a0ff;
-    --color-bootstrap-blue: #0d6efd;
+    --color-blue-dark: #1e3a5f;
+    --color-blue-dark-hover: #2a4f73;
+    --color-blue-mid: #3b82a0;
+    --color-blue-soft: #e3eef3;
+    --color-blue-soft-alt: #d0e4ec;
+    --color-blue-whisper: #eef4f7;
+    --color-blue-chat-bubble: #d6e8f0;
+    --color-blue-chat-hover: #e3eef3;
+    --color-light-sky: #3b82a0;
+    --color-bootstrap-blue: #3b82a0;
+
+    // สีเน้น / CTA — ฟ้าอมเทา สดกว่าสีหลักนิด
+    --accent: #3b82a0;
+    --accent-active: #2f6f8f;
+    --accent-soft: #e3eef3;
 
     // Accents / status
     --color-lighter-red: #ec5365;
@@ -30,37 +36,39 @@
     --color-success-dark: #006400;
     --color-warning: #ffc107;
     --color-gold: #ffd700;
-    --color-info: #17a2b8;
+    --color-info: #3b82a0;
 
-    // Channels
-    --color-channel-voice: #17a2b8;
-    --color-channel-line: #06c755;
-    --color-channel-facebook: #1877f2;
-    --color-channel-facebook-comment: #6a6ce2;
+    // Channels — brand-inspired แต่ปรับเฉดให้เข้า soft slate-blue
+    --color-channel-voice: #1e3a5f;
+    --color-channel-line: #4aab72;
+    --color-channel-facebook: #4a72a8;
+    --color-channel-facebook-comment: #6b7fa8;
+    --color-channel-whatsapp: #3b82a0;
+    --color-channel-tiktok: #a67a8a;
 
-    // Neutrals
+    // Neutrals — สบายตา
     --color-white: #ffffff;
     --color-black: #000000;
-    --color-gray: #acabab;
-    --color-text: #212529;
-    --color-text-secondary: #495057;
-    --color-text-muted: #6c757d;
-    --color-border: #dee2e6;
-    --color-border-light: #e9ecef;
-    --color-surface: #f8f9fa;
-    --color-surface-hover: #e9ecef;
-    --color-chat-thread: #f3f5f7;
-    --background-color: #f8f7f7a2;
+    --color-gray: #94a3b8;
+    --color-text: #334155;
+    --color-text-secondary: #475569;
+    --color-text-muted: #64748b;
+    --color-border: #d5e0e8;
+    --color-border-light: #e8eef2;
+    --color-surface: #f4f7fa;
+    --color-surface-hover: #e8eef2;
+    --color-chat-thread: #eef4f7;
+    --background-color: #f4f7fa;
 
-    // Shadows (brand-tinted)
-    --shadow-blue-soft: 0 2px 8px rgba(1, 9, 102, 0.08);
-    --shadow-blue-strong: 0 12px 32px rgba(1, 9, 102, 0.15);
-    --shadow-primary-soft: 0 2px 8px rgba(251, 95, 32, 0.3);
-    --shadow-primary-strong: 0 4px 12px rgba(251, 95, 32, 0.4);
-    --focus-primary-ring: 0 0 0 3px rgba(251, 95, 32, 0.15);
-    --bg-primary-soft: rgba(251, 95, 32, 0.05);
-    --bg-primary-soft-strong: rgba(251, 95, 32, 0.1);
-    --text-shadow-blue: 0 2px 4px rgba(1, 9, 102, 0.1);
+    // Shadows
+    --shadow-blue-soft: 0 2px 8px rgba(30, 58, 95, 0.08);
+    --shadow-blue-strong: 0 12px 32px rgba(30, 58, 95, 0.14);
+    --shadow-primary-soft: 0 2px 8px rgba(30, 58, 95, 0.22);
+    --shadow-primary-strong: 0 4px 12px rgba(30, 58, 95, 0.3);
+    --focus-primary-ring: 0 0 0 3px rgba(59, 130, 160, 0.28);
+    --bg-primary-soft: rgba(59, 130, 160, 0.06);
+    --bg-primary-soft-strong: rgba(59, 130, 160, 0.12);
+    --text-shadow-blue: 0 2px 4px rgba(30, 58, 95, 0.1);
 }
 
 // ---------- Text utilities ----------
@@ -104,23 +112,25 @@
 }
 
 // ---------- Buttons ----------
-// Brand orange (existing primary CTA)
+// CTA — soft slate-teal (#3B82A0)
 .btn-primary-color,
 .btn-primary {
     border: none !important;
-    background: var(--primary) !important;
+    background: var(--accent) !important;
     color: var(--color-white) !important;
 }
 
 .btn-primary-color {
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
 }
 
 .btn-primary-color:hover,
 .btn-primary:hover,
 .btn-primary:focus,
 .btn-primary:active {
-    background-color: var(--primary-active-color) !important;
+    background-color: var(--accent-active) !important;
     color: var(--color-white) !important;
 }
 
@@ -160,19 +170,19 @@
     border-color: var(--color-blue-dark) !important;
 }
 
-// When a page needs filled primary to be navy instead of orange
+// When a page needs filled primary to stay dark navy (not mid CTA)
 .theme-blue-primary {
     .btn-primary {
-        background: var(--color-blue-dark) !important;
-        border-color: var(--color-blue-dark) !important;
+        background: var(--primary) !important;
+        border-color: var(--primary) !important;
         color: var(--color-white) !important;
     }
 
     .btn-primary:hover,
     .btn-primary:focus,
     .btn-primary:active {
-        background: var(--color-blue-dark-hover) !important;
-        border-color: var(--color-blue-dark-hover) !important;
+        background: var(--primary-active-color) !important;
+        border-color: var(--primary-active-color) !important;
         color: var(--color-white) !important;
     }
 }
@@ -180,6 +190,101 @@
 .btn-red-color {
     border: none !important;
     background: var(--color-lighter-red) !important;
+}
+
+// Semantic buttons — soft slate-blue (info/success/warning/danger)
+.btn-info {
+    border: none !important;
+    background: var(--accent) !important;
+    color: var(--color-white) !important;
+}
+
+.btn-info:hover,
+.btn-info:focus,
+.btn-info:active {
+    background: var(--accent-active) !important;
+    color: var(--color-white) !important;
+}
+
+.btn-outline-info {
+    color: var(--accent) !important;
+    border-color: var(--accent) !important;
+    background-color: transparent !important;
+}
+
+.btn-outline-info:hover,
+.btn-outline-info:focus,
+.btn-outline-info:active {
+    color: var(--color-white) !important;
+    background-color: var(--accent) !important;
+    border-color: var(--accent) !important;
+}
+
+.btn-success {
+    border: none !important;
+    background: #4a9a8a !important;
+    color: var(--color-white) !important;
+}
+
+.btn-success:hover,
+.btn-success:focus,
+.btn-success:active {
+    background: #3d8577 !important;
+    color: var(--color-white) !important;
+}
+
+.btn-outline-success {
+    color: #4a9a8a !important;
+    border-color: #4a9a8a !important;
+    background-color: transparent !important;
+}
+
+.btn-outline-success:hover,
+.btn-outline-success:focus,
+.btn-outline-success:active {
+    color: var(--color-white) !important;
+    background-color: #4a9a8a !important;
+    border-color: #4a9a8a !important;
+}
+
+.btn-warning {
+    border: none !important;
+    background: #c9a227 !important;
+    color: var(--color-white) !important;
+}
+
+.btn-warning:hover,
+.btn-warning:focus,
+.btn-warning:active {
+    background: #b08e20 !important;
+    color: var(--color-white) !important;
+}
+
+.btn-outline-warning {
+    color: #c9a227 !important;
+    border-color: #c9a227 !important;
+    background-color: transparent !important;
+}
+
+.btn-outline-warning:hover,
+.btn-outline-warning:focus,
+.btn-outline-warning:active {
+    color: var(--color-white) !important;
+    background-color: #c9a227 !important;
+    border-color: #c9a227 !important;
+}
+
+.btn-danger {
+    border: none !important;
+    background: #c45c6a !important;
+    color: var(--color-white) !important;
+}
+
+.btn-danger:hover,
+.btn-danger:focus,
+.btn-danger:active {
+    background: #a84d59 !important;
+    color: var(--color-white) !important;
 }
 
 // ---------- Base ----------

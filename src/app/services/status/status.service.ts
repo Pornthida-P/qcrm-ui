@@ -14,28 +14,47 @@ export class StatusService {
     private statusColors: { [key: string]: StatusStyle } = {
         open: {
             color: colors.white,
-            backgroundColor: colors.primary,
+            // ทองอ่อน — เคสใหม่ ต้องมาจัดการ
+            backgroundColor: '#c9a227',
             icon: 'fa-solid fa-folder-open',
         },
         pending: {
             color: colors.white,
-            backgroundColor: colors.blueDark,
+            // ส้มอมน้ำตาล — รอดำเนินการ / ติดตาม
+            backgroundColor: '#c17f4a',
             icon: 'fa-solid fa-hourglass-end',
         },
         closed: {
             color: colors.white,
-            backgroundColor: colors.successDark,
+            // เขียวอมฟ้า — เสร็จแล้ว
+            backgroundColor: '#4a9a8a',
             icon: 'fa-solid fa-folder-closed',
         },
         cancelled: {
             color: colors.white,
-            backgroundColor: colors.textMuted,
+            // เทา — ยกเลิก ไม่ต้องทำอะไร
+            backgroundColor: '#64748b',
+            icon: 'fa-solid fa-ban',
+        },
+        canceled: {
+            color: colors.white,
+            backgroundColor: '#64748b',
             icon: 'fa-solid fa-ban',
         },
     };
 
     private channelColors: { [key: string]: StatusStyle } = {
         voice: {
+            color: colors.white,
+            backgroundColor: colors.channelVoice,
+            icon: 'fa-solid fa-phone',
+        },
+        call: {
+            color: colors.white,
+            backgroundColor: colors.channelVoice,
+            icon: 'fa-solid fa-phone',
+        },
+        phone: {
             color: colors.white,
             backgroundColor: colors.channelVoice,
             icon: 'fa-solid fa-phone',
@@ -55,11 +74,36 @@ export class StatusService {
             backgroundColor: colors.channelFacebookComment,
             icon: 'fa-brands fa-facebook-f',
         },
+        whatsapp: {
+            color: colors.white,
+            backgroundColor: colors.channelWhatsapp,
+            icon: 'fa-brands fa-whatsapp',
+        },
+        tiktok: {
+            color: colors.white,
+            backgroundColor: colors.channelTiktok,
+            icon: 'fa-brands fa-tiktok',
+        },
     };
 
     private defaultColors = [...statusPalette];
 
     constructor() {}
+
+    /** Map free-text channel name → known brand key */
+    private resolveChannelKey(channelName: string): string | null {
+        const n = channelName.toLowerCase().trim();
+        if (!n) return null;
+
+        if (n.includes('whatsapp') || n === 'wa') return 'whatsapp';
+        if (n.includes('tiktok')) return 'tiktok';
+        if (n.includes('facebook') && n.includes('comment')) return 'facebook (comment)';
+        if (n.includes('facebook') || n.includes('messenger') || n.startsWith('fb')) return 'facebook';
+        if (n.includes('line') && !n.includes('online')) return 'line';
+        if (n.includes('voice') || n.includes('call') || n.includes('phone')) return 'voice';
+
+        return this.channelColors[n] ? n : null;
+    }
 
     getStatusStyle(statusName: string): StatusStyle {
         if (!statusName) {
@@ -81,8 +125,17 @@ export class StatusService {
     }
 
     getStatusColorByIndex(index: number): StatusStyle {
-        const palette = [colors.primary, colors.blueDark, colors.successDark];
-        const icons = ['fa-solid fa-folder-open', 'fa-solid fa-hourglass-end', 'fa-solid fa-folder-closed'];
+        const palette = [...statusPalette];
+        const icons = [
+            'fa-solid fa-folder-open',
+            'fa-solid fa-hourglass-end',
+            'fa-solid fa-folder-closed',
+            'fa-solid fa-ban',
+            'fa-solid fa-circle-pause',
+            'fa-solid fa-spinner',
+            'fa-solid fa-circle-check',
+            'fa-solid fa-circle',
+        ];
 
         return {
             color: colors.white,
@@ -104,13 +157,12 @@ export class StatusService {
             return this.getDefaultChannelStyle();
         }
 
-        const normalizedName = channelName.toLowerCase().trim();
-
-        if (this.channelColors[normalizedName]) {
-            return this.channelColors[normalizedName];
+        const key = this.resolveChannelKey(channelName);
+        if (key && this.channelColors[key]) {
+            return this.channelColors[key];
         }
 
-        const colorIndex = this.hashString(normalizedName) % this.defaultColors.length;
+        const colorIndex = this.hashString(channelName.toLowerCase().trim()) % this.defaultColors.length;
         return {
             color: colors.white,
             backgroundColor: this.defaultColors[colorIndex],

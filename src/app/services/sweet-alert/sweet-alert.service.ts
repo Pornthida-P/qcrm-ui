@@ -16,7 +16,7 @@ export class SweetAlertService {
             title: title,
             text: text,
             showConfirmButton: showButton,
-            confirmButtonColor: colors.primary,
+            confirmButtonColor: colors.accent,
             timer: 1000,
             timerProgressBar: true,
         }).then(() => {
@@ -36,7 +36,7 @@ export class SweetAlertService {
             title: title,
             text: text,
             showCancelButton: true,
-            confirmButtonColor: colors.primary,
+            confirmButtonColor: colors.accent,
             confirmButtonText: confirmButtonText,
             cancelButtonText: cancelButtonText,
         });
