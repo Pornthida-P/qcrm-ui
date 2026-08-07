@@ -50,43 +50,7 @@
                     </div>
                     <div class="section-content">
                         <div class="row g-2">
-                            <!-- Row 1: Code & Case Type -->
-                            <div class="col-12 col-md-6">
-                                <label class="form-label form-label-sm fw-semibold mb-1">
-                                    {{ 'contact.code' | translate }}<span class="color-red">*</span>
-                                </label>
-                                <mat-form-field class="w-100 compact-field" appearance="outline" *ngIf="!isSocialChannelSelected">
-                                    <input
-                                        type="text"
-                                        matInput
-                                        [formControl]="codeControl"
-                                        [matAutocomplete]="autoCode"
-                                        (input)="filterCodes()"
-                                        (focus)="filterCodes()"
-                                        [placeholder]="'contact.searchCode' | translate"
-                                    />
-                                    <mat-autocomplete
-                                        #autoCode="matAutocomplete"
-                                        [displayWith]="displayCodeFn"
-                                        (optionSelected)="onCodeSelected($event)"
-                                    >
-                                        <ng-container *ngFor="let code of filteredCodes">
-                                            <mat-option [value]="code">
-                                                {{ code.code }}
-                                            </mat-option>
-                                        </ng-container>
-                                    </mat-autocomplete>
-                                </mat-form-field>
-                                <mat-form-field class="w-100 compact-field disabled-field" appearance="outline" *ngIf="isSocialChannelSelected">
-                                    <input
-                                        type="text"
-                                        matInput
-                                        [value]="displayCodeFn(codeControl.value)"
-                                        [placeholder]="'contact.searchCode' | translate"
-                                        [disabled]="true"
-                                    />
-                                </mat-form-field>
-                            </div>
+                            <!-- Row 1: Case Type -->
                             <div class="col-12 col-md-6">
                                 <label class="form-label form-label-sm fw-semibold mb-1">
                                     {{ 'contact.caseType' | translate }}<span class="color-red">*</span>
@@ -115,29 +79,29 @@
                                 </mat-form-field>
                             </div>
 
-                            <!-- Row 2: Service Group & Service Type -->
+                            <!-- Row 2: Topic & Subject -->
                             <div class="col-12 col-md-6">
                                 <label class="form-label form-label-sm fw-semibold mb-1">
-                                    {{ 'contact.serviceGroup' | translate }}<span class="color-red">*</span>
+                                    {{ 'contact.caseTopic' | translate }}<span class="color-red">*</span>
                                 </label>
                                 <mat-form-field class="w-100 compact-field" appearance="outline">
                                     <input
                                         type="text"
                                         matInput
-                                        [formControl]="serviceGroupControl"
-                                        [matAutocomplete]="autoServiceGroup"
-                                        (input)="filterServiceGroups()"
-                                        (focus)="filterServiceGroups()"
-                                        [placeholder]="'contact.searchServiceGroup' | translate"
+                                        [formControl]="caseTopicControl"
+                                        [matAutocomplete]="autoCaseTopic"
+                                        (input)="filterCaseTopics()"
+                                        (focus)="filterCaseTopics()"
+                                        [placeholder]="'contact.searchCaseTopic' | translate"
                                     />
                                     <mat-autocomplete
-                                        #autoServiceGroup="matAutocomplete"
-                                        [displayWith]="displayServiceGroupFn"
-                                        (optionSelected)="onServiceGroupSelected($event)"
+                                        #autoCaseTopic="matAutocomplete"
+                                        [displayWith]="displayCaseTopicFn"
+                                        (optionSelected)="onCaseTopicSelected($event)"
                                     >
-                                        <ng-container *ngFor="let serviceGroup of filteredServiceGroups">
-                                            <mat-option [value]="serviceGroup">
-                                                {{ serviceGroup.name }}
+                                        <ng-container *ngFor="let caseTopic of filteredCaseTopics">
+                                            <mat-option [value]="caseTopic">
+                                                {{ caseTopic.name }}
                                             </mat-option>
                                         </ng-container>
                                     </mat-autocomplete>
@@ -145,82 +109,28 @@
                             </div>
                             <div class="col-12 col-md-6">
                                 <label class="form-label form-label-sm fw-semibold mb-1">
-                                    {{ 'contact.serviceType' | translate }}<span class="color-red">*</span>
+                                    {{ 'contact.caseSubject' | translate }}<span class="color-red">*</span>
                                 </label>
                                 <mat-form-field class="w-100 compact-field" appearance="outline">
                                     <input
                                         type="text"
                                         matInput
-                                        [formControl]="serviceTypeControl"
-                                        [matAutocomplete]="autoServiceType"
-                                        (input)="filterServiceTypes()"
-                                        (focus)="filterServiceTypes()"
-                                        [placeholder]="'contact.searchServiceType' | translate"
+                                        [formControl]="caseSubjectControl"
+                                        [matAutocomplete]="autoCaseSubject"
+                                        (input)="filterCaseSubjects()"
+                                        (focus)="filterCaseSubjects()"
+                                        [placeholder]="'contact.searchCaseSubject' | translate"
                                     />
                                     <mat-autocomplete
-                                        #autoServiceType="matAutocomplete"
-                                        [displayWith]="displayServiceTypeFn"
-                                        (optionSelected)="onServiceTypeSelected($event)"
+                                        #autoCaseSubject="matAutocomplete"
+                                        [displayWith]="displayCaseSubjectFn"
+                                        (optionSelected)="onCaseSubjectSelected($event)"
                                     >
-                                        <ng-container *ngFor="let serviceType of filteredServiceTypes">
-                                            <mat-option [value]="serviceType">
-                                                {{ serviceType.name }}
+                                        <ng-container *ngFor="let caseSubject of filteredCaseSubjects">
+                                            <mat-option [value]="caseSubject">
+                                                {{ caseSubject.name }}
                                             </mat-option>
                                         </ng-container>
-                                    </mat-autocomplete>
-                                </mat-form-field>
-                            </div>
-
-                            <!-- Row 3: Service Sub Type -->
-                            <div class="col-12 col-md-6">
-                                <label class="form-label form-label-sm fw-semibold mb-1">
-                                    {{ 'contact.serviceSubType' | translate }}<span class="color-red">*</span>
-                                </label>
-                                <mat-form-field class="w-100 compact-field" appearance="outline">
-                                    <input
-                                        type="text"
-                                        matInput
-                                        [formControl]="serviceSubTypeControl"
-                                        [matAutocomplete]="autoServiceSubType"
-                                        (input)="filterServiceSubTypes()"
-                                        (focus)="filterServiceSubTypes()"
-                                        [placeholder]="'contact.searchServiceSubType' | translate"
-                                    />
-                                    <mat-autocomplete
-                                        #autoServiceSubType="matAutocomplete"
-                                        [displayWith]="displayServiceSubTypeFn"
-                                        (optionSelected)="onServiceSubTypeSelected($event)"
-                                    >
-                                        <ng-container *ngFor="let serviceSubType of filteredServiceSubTypes">
-                                            <mat-option [value]="serviceSubType">
-                                                {{ serviceSubType.name }}
-                                            </mat-option>
-                                        </ng-container>
-                                    </mat-autocomplete>
-                                </mat-form-field>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <label class="form-label form-label-sm fw-semibold mb-1">{{
-                                    'contact.caseGroup' | translate
-                                }}</label>
-                                <mat-form-field class="w-100 compact-field" appearance="outline">
-                                    <input
-                                        type="text"
-                                        matInput
-                                        [formControl]="caseGroupControl"
-                                        [matAutocomplete]="autoCaseGroup"
-                                        (input)="filterCaseGroups()"
-                                        (focus)="filterCaseGroups()"
-                                        [placeholder]="'common.pleaseSelect' | translate"
-                                    />
-                                    <mat-autocomplete
-                                        #autoCaseGroup="matAutocomplete"
-                                        [displayWith]="displayCaseGroupFn"
-                                        (optionSelected)="onCaseGroupSelected($event)"
-                                    >
-                                        <mat-option *ngFor="let group of filteredCaseGroups" [value]="group">
-                                            {{ group.name }}
-                                        </mat-option>
                                     </mat-autocomplete>
                                 </mat-form-field>
                             </div>
@@ -250,210 +160,6 @@
                                     <option disabled value="">{{ 'common.pleaseSelect' | translate }}</option>
                                     <option *ngFor="let status of statusList" [value]="status.id">{{ status.status }}</option>
                                 </select>
-                            </div>
-
-                            <div class="col-12 col-md-6" *ngIf="isPendingStatus() && casePriorities && casePriorities.length > 0">
-                                <label class="form-label form-label-sm fw-semibold mb-1">{{
-                                    'contact.priority' | translate
-                                }}</label>
-                                <select
-                                    class="form-select form-select-sm"
-                                    name="selectedCasePriority"
-                                    [(ngModel)]="selectedCasePriority"
-                                >
-                                    <option [ngValue]="null" disabled>ไม่ระบุ</option>
-                                    <option
-                                        *ngFor="let priority of casePriorities"
-                                        [value]="priority.id || priority.priorityId || priority.casePriorityId"
-                                    >
-                                        {{ priority.name || priority.priority || priority.priorityName }}
-                                    </option>
-                                </select>
-                            </div>
-
-                            <!-- Inspection Company (Send To / Reply CI & TTB) - below Priority, shown when Pending -->
-                            <div
-                                class="col-12"
-                                *ngIf="isPendingStatus() && inspectionCompany && inspectionCompany.length > 0"
-                            >
-                                <div class="row g-2 mt-2">
-                                    <!-- Send To + Date -->
-                                    <div class="col-12">
-                                        <label class="form-label form-label-sm fw-semibold mb-1">{{ 'contact.sendTo' | translate }}</label>
-                                        <div class="row g-2 align-items-end">
-                                            <div class="col-md-7">
-                                                <ng-select
-                                                    id="inputSendTo"
-                                                    [(ngModel)]="selectedInspectionCompanies"
-                                                    name="selectedInspectionCompanies"
-                                                    [multiple]="true"
-                                                    [placeholder]="'contact.selectMultipleOptions' | translate"
-                                                >
-                                                    <ng-option
-                                                        *ngFor="let company of inspectionCompany"
-                                                        [value]="company.id || company.companyId || company.inspectionCompanyId"
-                                                    >
-                                                        {{ company.name || company.company || company.inspectionCompanyName }}
-                                                    </ng-option>
-                                                </ng-select>
-                                            </div>
-                                            <div class="col-md-5">
-                                                <div class="datetime-inline-wrapper compact">
-                                                    <div class="date-input-section">
-                                                        <div class="input-group input-group-sm">
-                                                            <input
-                                                                matInput
-                                                                [matDatepicker]="pickerInspection"
-                                                                name="inspectionCompanyDate"
-                                                                [(ngModel)]="inspectionCompanyDate"
-                                                                class="form-control form-control-sm"
-                                                                [placeholder]="'common.selectDate' | translate"
-                                                            />
-                                                            <span class="input-group-text">
-                                                                <mat-datepicker-toggle matSuffix [for]="pickerInspection"></mat-datepicker-toggle>
-                                                                <mat-datepicker #pickerInspection></mat-datepicker>
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="time-input-section">
-                                                        <ngb-timepicker
-                                                            name="inspectionCompanyTime"
-                                                            [(ngModel)]="inspectionCompanyTime"
-                                                            [seconds]="seconds"
-                                                            [ngModelOptions]="{ standalone: true }"
-                                                            class="time-picker-inline compact"
-                                                        ></ngb-timepicker>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div
-                                            *ngIf="inspectionCompanySendNames"
-                                            class="mt-2 mb-2 ps-2 small border-start border-2 border-secondary"
-                                            style="color: #009e9d"
-                                        >
-                                            <span class="fw-medium">{{ 'contact.sent' | translate }}:</span> {{ inspectionCompanySendNames }}
-                                        </div>
-                                    </div>
-                                    <!-- Reply (CI) + Date -->
-                                    <div class="col-12">
-                                        <label class="form-label form-label-sm fw-semibold mb-1"
-                                            >{{ 'contact.reply' | translate }} ({{ 'contact.ci' | translate }})</label
-                                        >
-                                        <div class="row g-2 align-items-center">
-                                            <div class="col-md-7">
-                                                <select
-                                                    class="form-select form-select-sm form-select-reply"
-                                                    name="selectedInspectionCompany"
-                                                    [(ngModel)]="selectedInspectionCompany"
-                                                >
-                                                    <option [ngValue]="''">ไม่ระบุ</option>
-                                                    <option
-                                                        *ngFor="let company of inspectionCompanyGroup1"
-                                                        [value]="company.id || company.companyId || company.inspectionCompanyId"
-                                                    >
-                                                        {{ company.name || company.company || company.inspectionCompanyName }}
-                                                    </option>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-5">
-                                                <div class="datetime-inline-wrapper compact">
-                                                    <div class="date-input-section">
-                                                        <div class="input-group input-group-sm">
-                                                            <input
-                                                                matInput
-                                                                [matDatepicker]="pickerReply"
-                                                                name="inspectionCompanyReplyDate"
-                                                                [(ngModel)]="inspectionCompanyReplyDate"
-                                                                class="form-control form-control-sm"
-                                                                [placeholder]="'common.selectDate' | translate"
-                                                            />
-                                                            <span class="input-group-text">
-                                                                <mat-datepicker-toggle matSuffix [for]="pickerReply"></mat-datepicker-toggle>
-                                                                <mat-datepicker #pickerReply></mat-datepicker>
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="time-input-section">
-                                                        <ngb-timepicker
-                                                            name="inspectionCompanyReplyTime"
-                                                            [(ngModel)]="inspectionCompanyReplyTime"
-                                                            [seconds]="seconds"
-                                                            [ngModelOptions]="{ standalone: true }"
-                                                            class="time-picker-inline compact"
-                                                        ></ngb-timepicker>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div
-                                            *ngIf="inspectionCompanyReplyNamesGroup1"
-                                            class="mt-2 mb-2 ps-2 small border-start border-2 border-secondary"
-                                            style="color: #009e9d"
-                                        >
-                                            <span class="fw-medium">{{ 'contact.replied' | translate }}:</span> {{ inspectionCompanyReplyNamesGroup1 }}
-                                        </div>
-                                    </div>
-                                    <!-- Reply (TTB) + Date -->
-                                    <div class="col-12">
-                                        <label class="form-label form-label-sm fw-semibold mb-1"
-                                            >{{ 'contact.reply' | translate }} ({{ 'contact.ttb' | translate }})</label
-                                        >
-                                        <div class="row g-2 align-items-center">
-                                            <div class="col-md-7">
-                                                <select
-                                                    class="form-select form-select-sm form-select-reply"
-                                                    name="selectedInspectionCompanyTtb"
-                                                    [(ngModel)]="selectedInspectionCompanyTtb"
-                                                >
-                                                    <option [ngValue]="''">ไม่ระบุ</option>
-                                                    <option
-                                                        *ngFor="let company of inspectionCompanyGroup2"
-                                                        [value]="company.id || company.companyId || company.inspectionCompanyId"
-                                                    >
-                                                        {{ company.name || company.company || company.inspectionCompanyName }}
-                                                    </option>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-5">
-                                                <div class="datetime-inline-wrapper compact">
-                                                    <div class="date-input-section">
-                                                        <div class="input-group input-group-sm">
-                                                            <input
-                                                                matInput
-                                                                [matDatepicker]="pickerReplyTtb"
-                                                                name="inspectionCompanyReplyDateTtb"
-                                                                [(ngModel)]="inspectionCompanyReplyDateTtb"
-                                                                class="form-control form-control-sm"
-                                                                [placeholder]="'common.selectDate' | translate"
-                                                            />
-                                                            <span class="input-group-text">
-                                                                <mat-datepicker-toggle matSuffix [for]="pickerReplyTtb"></mat-datepicker-toggle>
-                                                                <mat-datepicker #pickerReplyTtb></mat-datepicker>
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="time-input-section">
-                                                        <ngb-timepicker
-                                                            name="inspectionCompanyReplyTimeTtb"
-                                                            [(ngModel)]="inspectionCompanyReplyTimeTtb"
-                                                            [seconds]="seconds"
-                                                            [ngModelOptions]="{ standalone: true }"
-                                                            class="time-picker-inline compact"
-                                                        ></ngb-timepicker>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div
-                                            *ngIf="inspectionCompanyReplyNamesGroup2"
-                                            class="mt-2 mb-2 ps-2 small border-start border-2 border-secondary"
-                                            style="color: #009e9d"
-                                        >
-                                            <span class="fw-medium">{{ 'contact.replied' | translate }}:</span> {{ inspectionCompanyReplyNamesGroup2 }}
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
 
                             <!-- Channel -->

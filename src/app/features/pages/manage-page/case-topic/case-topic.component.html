@@ -4,7 +4,6 @@
             <h2 class="fs-5 m-0">{{ 'title.' + title | translate }}</h2>
         </div>
 
-        <!-- Tab Navigation -->
         <div class="col-md-12">
             <ul class="nav nav-tabs flex-nowrap overflow-auto">
                 <li class="nav-item" *ngFor="let tab of tabs">
@@ -21,14 +20,11 @@
             </ul>
         </div>
 
-        <!-- Tab Content -->
         <div class="col-md-12">
             <div [ngSwitch]="activeTab">
-                <app-case-code-tab *ngSwitchCase="'case-code'"></app-case-code-tab>
+                <app-case-topic-tab *ngSwitchCase="'case-topic'"></app-case-topic-tab>
+                <app-case-subject-tab *ngSwitchCase="'case-subject'"></app-case-subject-tab>
                 <app-case-type-tab *ngSwitchCase="'case-type'"></app-case-type-tab>
-                <app-service-group-tab *ngSwitchCase="'service-group'"></app-service-group-tab>
-                <app-service-type-tab *ngSwitchCase="'service-type'"></app-service-type-tab>
-                <app-service-sub-type-tab *ngSwitchCase="'service-sub-type'"></app-service-sub-type-tab>
                 <app-sentiment-tab *ngSwitchCase="'sentiment'"></app-sentiment-tab>
             </div>
         </div>

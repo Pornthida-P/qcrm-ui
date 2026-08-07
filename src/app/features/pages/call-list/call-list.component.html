@@ -11,17 +11,13 @@
                         <tr>
                             <th class="text-nowrap">{{ 'contact.caseIdForReport' | translate }}</th>
                             <th class="text-nowrap">{{ 'contact-import-management.created-date' | translate }}</th>
-                            <th class="text-nowrap">{{ 'contact-import-management.dealer-name' | translate }}</th>
+                            <th class="text-nowrap">{{ 'contact.name' | translate }}</th>
                             <th class="text-nowrap">{{ 'contact-import-management.contact-email' | translate }}</th>
                             <th class="text-nowrap">{{ 'contact-import-management.contact-mobile' | translate }}</th>
-                            <th class="text-nowrap">{{ 'contact-import-management.dealer-id' | translate }}</th>
-                            <th class="text-nowrap">{{ 'contact-import-management.code' | translate }}</th>
-                            <th class="text-nowrap">{{ 'contact-import-management.license-plate' | translate }}</th>
-                            <th class="text-nowrap">{{ 'contact-import-management.car-brand-model' | translate }}</th>
-                            <th class="text-nowrap">{{ 'contact-import-management.car-status' | translate }}</th>
+                            <th class="text-nowrap">{{ 'contact.caseTopic' | translate }}</th>
+                            <th class="text-nowrap">{{ 'contact.caseSubject' | translate }}</th>
                             <th class="text-nowrap">{{ 'contact.callStatus' | translate }}</th>
                             <th class="text-nowrap">{{ 'common.status' | translate }}</th>
-                            <th class="text-nowrap">{{ 'contact.sla' | translate }}</th>
                             <th class="text-center text-nowrap">{{ 'callList.attempts' | translate }}</th>
                             <th class="text-nowrap">{{ 'contact.assignUser' | translate }}</th>
                             <th class="text-center text-nowrap">{{ 'callList.action' | translate }}</th>
@@ -32,7 +28,7 @@
                             <tr *ngFor="let caseList of paginatedCalls; let i = index">
                                 <td>{{ caseList.caseIdForReport || '-' }}</td>
                                 <td>{{ caseList.requestDateTime | date : 'dd/MM/yyyy HH:mm' }}</td>
-                                <td>{{ caseList.dealerName || caseList.fullname || '-' }}</td>
+                                <td>{{ caseList.fullname || '-' }}</td>
                                 <td>{{ caseList.email || '-' }}</td>
                                 <td class="font-monospace">
                                     <span *ngIf="caseList.contactNumber" class="phone-text">
@@ -40,20 +36,8 @@
                                     </span>
                                     <span *ngIf="!caseList.contactNumber">-</span>
                                 </td>
-                                <td class="font-monospace small">{{ caseList.dealerId || caseList.partnerCode || '-' }}</td>
-                                <td class="font-monospace">{{ caseList.casecode || caseList.carCode || '-' }}</td>
-                                <td class="font-monospace small">{{ caseList.licensePlateNumber || '-' }}</td>
-                                <td>
-                                    <span *ngIf="caseList.carBrand || caseList.carModel">
-                                        {{
-                                            (caseList.carBrand || '') +
-                                                (caseList.carBrand && caseList.carModel ? ' ' : '') +
-                                                (caseList.carModel || '')
-                                        }}
-                                    </span>
-                                    <span *ngIf="!caseList.carBrand && !caseList.carModel">-</span>
-                                </td>
-                                <td>{{ caseList.carStatusDescription || '-' }}</td>
+                                <td>{{ caseList.caseTopic || '-' }}</td>
+                                <td>{{ caseList.caseSubject || '-' }}</td>
                                 <td>
                                     <span
                                         *ngIf="caseList.callStatus; else noCallStatus"
@@ -78,21 +62,6 @@
                                         {{ caseList.status }}
                                     </span>
                                     <ng-template #noCaseStatus>
-                                        <span class="text-muted">-</span>
-                                    </ng-template>
-                                </td>
-                                <td>
-                                    <span
-                                        *ngIf="isPendingCase(caseList); else noSla"
-                                        class="badge ms-1"
-                                        [ngClass]="{
-                                            'bg-danger': getSlaRemainingMinutes(caseList) !== null && getSlaRemainingMinutes(caseList)! <= 0,
-                                            'bg-warning': getSlaRemainingMinutes(caseList) !== null && getSlaRemainingMinutes(caseList)! > 0
-                                        }"
-                                    >
-                                        {{ formatSlaRemaining(caseList) }}
-                                    </span>
-                                    <ng-template #noSla>
                                         <span class="text-muted">-</span>
                                     </ng-template>
                                 </td>
@@ -122,7 +91,7 @@
                         </ng-container>
                         <ng-template #noDataTemplate>
                             <tr>
-                                <td colspan="15" class="text-center py-5">
+                                <td colspan="14" class="text-center py-5">
                                     <div class="empty-state">
                                         <i class="fa-solid fa-inbox fa-3x text-muted mb-3"></i>
                                         <p class="text-muted mb-0">{{ 'common.dataNotFound' | translate }}</p>

@@ -8,30 +8,22 @@ import { CaseTopicComponent } from './case-topic.component';
 import { RouterModule } from '@angular/router';
 import { MatDialogModule } from '@angular/material/dialog';
 
-// Tab Components
-import { CaseCodeTabComponent } from './tabs/case-code-tab/case-code-tab.component';
+import { CaseTopicTabComponent } from './tabs/case-topic-tab/case-topic-tab.component';
+import { CaseSubjectTabComponent } from './tabs/case-subject-tab/case-subject-tab.component';
 import { CaseTypeTabComponent } from './tabs/case-type-tab/case-type-tab.component';
-import { ServiceGroupTabComponent } from './tabs/service-group-tab/service-group-tab.component';
-import { ServiceTypeTabComponent } from './tabs/service-type-tab/service-type-tab.component';
-import { ServiceSubTypeTabComponent } from './tabs/service-sub-type-tab/service-sub-type-tab.component';
 import { SentimentTabComponent } from './tabs/sentiment-tab/sentiment-tab.component';
 
-// Modal Modules
-import { CaseCodeManagementModule } from 'src/app/features/modals/case-code-management/case-code-management.module';
+import { CaseTopicManagementModule } from 'src/app/features/modals/case-topic-management/case-topic-management.module';
+import { CaseSubjectManagementModule } from 'src/app/features/modals/case-subject-management/case-subject-management.module';
 import { CaseTypeManagementModule } from 'src/app/features/modals/case-type-management/case-type-management.module';
-import { ServiceGroupManagementModule } from 'src/app/features/modals/service-group-management/service-group-management.module';
-import { ServiceTypeManagementModule } from 'src/app/features/modals/service-type-management/service-type-management.module';
-import { ServiceSubTypeManagementModule } from 'src/app/features/modals/service-sub-type-management/service-sub-type-management.module';
 import { SentimentManagementModule } from 'src/app/features/modals/sentiment-management/sentiment-management.module';
 
 @NgModule({
     declarations: [
         CaseTopicComponent,
-        CaseCodeTabComponent,
+        CaseTopicTabComponent,
+        CaseSubjectTabComponent,
         CaseTypeTabComponent,
-        ServiceGroupTabComponent,
-        ServiceTypeTabComponent,
-        ServiceSubTypeTabComponent,
         SentimentTabComponent,
     ],
     imports: [
@@ -41,11 +33,9 @@ import { SentimentManagementModule } from 'src/app/features/modals/sentiment-man
         FontAwesomeModule,
         MatDialogModule,
         TableListModule,
-        CaseCodeManagementModule,
+        CaseTopicManagementModule,
+        CaseSubjectManagementModule,
         CaseTypeManagementModule,
-        ServiceGroupManagementModule,
-        ServiceTypeManagementModule,
-        ServiceSubTypeManagementModule,
         SentimentManagementModule,
         TranslateModule,
         RouterModule.forChild([

@@ -19,8 +19,6 @@ export class CallListComponent implements OnInit {
     userData: any = JSON.parse(localStorage.getItem('userData') || '{}');
     userId: string = '';
     statusList: any[] = [];
-    private slaTimerId: any;
-    private slaNowMs: number = Date.now();
 
     constructor(private callListService: CallListService, private router: Router, public statusService: StatusService) {}
 
@@ -33,11 +31,6 @@ export class CallListComponent implements OnInit {
         } else {
             this.getCaseListByUserId(this.userData.userId);
         }
-
-        this.slaNowMs = Date.now();
-        this.slaTimerId = setInterval(() => {
-            this.slaNowMs = Date.now();
-        }, 60000);
     }
 
     pageChange(page: number) {
@@ -127,70 +120,6 @@ export class CallListComponent implements OnInit {
             this.calculatePages();
         });
         console.log(this.caseListByUserId);
-    }
-
-    ngOnDestroy(): void {
-        if (this.slaTimerId) {
-            clearInterval(this.slaTimerId);
-        }
-    }
-
-  isPendingCase(caseItem: any): boolean {
-        if (!caseItem) {
-            return false;
-        }
-        const status = typeof caseItem.status === 'string' ? caseItem.status.trim().toLowerCase() : caseItem.status;
-        const statusId = caseItem.statusId ?? caseItem.statusID ?? caseItem.status_id;
-
-        return status === 'pending' || status === '2' || statusId === 2 || statusId === '2';
-    }
-
-    getSlaRemainingMinutes(caseItem: any): number | null {
-        if (!caseItem || !this.isPendingCase(caseItem)) {
-            return null;
-        }
-
-      if (caseItem.slaDueAt) {
-        console.log('slaDueAt', caseItem.slaDueAt);
-            const dueMs = new Date(caseItem.slaDueAt).getTime();
-            if (!Number.isNaN(dueMs)) {
-                return Math.ceil((dueMs - this.slaNowMs) / 60000);
-            }
-        }
-
-        if (caseItem.slaMinutes && (caseItem.pendingAt || caseItem.requestDateTime)) {
-            const baseTime = caseItem.pendingAt || caseItem.requestDateTime;
-            const baseMs = new Date(baseTime).getTime();
-            const slaMinutes = Number(caseItem.slaMinutes);
-            if (!Number.isNaN(baseMs) && !Number.isNaN(slaMinutes)) {
-                const dueMs = baseMs + slaMinutes * 60000;
-                return Math.ceil((dueMs - this.slaNowMs) / 60000);
-            }
-        }
-
-        if (caseItem.slaRemainingMinutes !== null && caseItem.slaRemainingMinutes !== undefined && caseItem.slaRemainingMinutes !== '') {
-            const fallback = Number(caseItem.slaRemainingMinutes);
-            return Number.isNaN(fallback) ? null : fallback;
-        }
-
-        return null;
-    }
-
-    formatSlaRemaining(caseItem: any): string {
-        const value = this.getSlaRemainingMinutes(caseItem);
-        if (value === null) {
-            return '-';
-        }
-        const isOverdue = value <= 0;
-        const absValue = Math.abs(value);
-        const hours = Math.floor(absValue / 60);
-        const mins = absValue % 60;
-        const prefix = isOverdue ? 'เกิน' : 'เหลือ';
-
-        if (hours > 0) {
-            return `${prefix} ${hours} ชม ${mins} นาที`;
-        }
-        return `${prefix} ${mins} นาที`;
     }
 
     clickCall(caseId: string, contactId: string) {

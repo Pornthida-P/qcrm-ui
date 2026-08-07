@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { end } from '@popperjs/core';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { config } from 'src/app/config/config';
 import { environment } from 'src/environments/environment';
 
@@ -150,25 +150,52 @@ export class CallService {
         return this.http.post(`${this.baseUrl}${config.api.path.callList.baseUrl}`, data);
     }
 
-    // Case Code
-    getCaseCode() {
-        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-code`);
+    // Case Topic
+    getCaseTopics() {
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-topic`);
     }
 
-    getCaseCodeById(id: string) {
-        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-code/${id}`);
+    getCaseTopicById(id: string) {
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-topic/${id}`);
     }
 
-    createCaseCode(data: any) {
-        return this.http.post(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-code`, data);
+    createCaseTopic(data: any) {
+        return this.http.post(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-topic`, data);
     }
 
-    updateCaseCode(id: string, data: any) {
-        return this.http.put(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-code/${id}`, data);
+    updateCaseTopic(id: string, data: any) {
+        return this.http.put(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-topic/${id}`, data);
     }
 
-    deleteCaseCode(id: string, modifiedById: string) {
-        return this.http.delete(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-code/${id}`, {
+    deleteCaseTopic(id: string, modifiedById: string) {
+        return this.http.delete(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-topic/${id}`, {
+            body: { modifiedById },
+        });
+    }
+
+    // Case Subject
+    getCaseSubjects(caseTopicId?: string | number) {
+        const params: Record<string, string> = {};
+        if (caseTopicId !== undefined && caseTopicId !== null && caseTopicId !== '') {
+            params['caseTopicId'] = String(caseTopicId);
+        }
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-subject`, { params });
+    }
+
+    getCaseSubjectById(id: string) {
+        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-subject/${id}`);
+    }
+
+    createCaseSubject(data: any) {
+        return this.http.post(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-subject`, data);
+    }
+
+    updateCaseSubject(id: string, data: any) {
+        return this.http.put(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-subject/${id}`, data);
+    }
+
+    deleteCaseSubject(id: string, modifiedById: string) {
+        return this.http.delete(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-subject/${id}`, {
             body: { modifiedById },
         });
     }
@@ -188,139 +215,6 @@ export class CallService {
 
     deleteCaseType(id: string, modifiedById: string) {
         return this.http.delete(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-type/${id}`, {
-            body: { modifiedById },
-        });
-    }
-
-    // Service Group
-    getCaseServiceGroup() {
-        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-group`);
-    }
-
-    createCaseServiceGroup(data: any) {
-        return this.http.post(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-group`, data);
-    }
-
-    updateCaseServiceGroup(id: string, data: any) {
-        return this.http.put(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-group/${id}`, data);
-    }
-
-    deleteCaseServiceGroup(id: string, modifiedById: string) {
-        return this.http.delete(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-group/${id}`, {
-            body: { modifiedById },
-        });
-    }
-
-    // Service Type
-    getCaseServiceType(caseServiceGroupId?: string | number) {
-        const params: Record<string, string> = {};
-        if (caseServiceGroupId !== undefined && caseServiceGroupId !== null && caseServiceGroupId !== '') {
-            params['caseServiceGroupId'] = String(caseServiceGroupId);
-        }
-        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-type`, { params });
-    }
-
-    getCaseServiceTypeByGroupId(caseServiceGroupId: string | number) {
-        return this.getCaseServiceType(caseServiceGroupId);
-    }
-
-    createCaseServiceType(data: any) {
-        return this.http.post(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-type`, data);
-    }
-
-    updateCaseServiceType(id: string, data: any) {
-        return this.http.put(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-type/${id}`, data);
-    }
-
-    deleteCaseServiceType(id: string, modifiedById: string) {
-        return this.http.delete(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-type/${id}`, {
-            body: { modifiedById },
-        });
-    }
-
-    // Service Sub-Type
-    getServiceSubType(caseServiceTypeId?: string | number) {
-        const params: Record<string, string> = {};
-        if (caseServiceTypeId !== undefined && caseServiceTypeId !== null && caseServiceTypeId !== '') {
-            params['caseServiceTypeId'] = String(caseServiceTypeId);
-        }
-        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}/service-sub-type`, { params });
-    }
-
-    getServiceSubTypeByTypeId(caseServiceTypeId: string | number) {
-        return this.getServiceSubType(caseServiceTypeId);
-    }
-
-    validateCaseServiceHierarchy(
-        caseServiceGroupId?: string | number | null,
-        caseServiceTypeId?: string | number | null,
-        caseServiceSubTypeId?: string | number | null,
-    ) {
-        const params: Record<string, string> = {};
-        if (caseServiceGroupId !== undefined && caseServiceGroupId !== null && caseServiceGroupId !== '') {
-            params['caseServiceGroupId'] = String(caseServiceGroupId);
-        }
-        if (caseServiceTypeId !== undefined && caseServiceTypeId !== null && caseServiceTypeId !== '') {
-            params['caseServiceTypeId'] = String(caseServiceTypeId);
-        }
-        if (caseServiceSubTypeId !== undefined && caseServiceSubTypeId !== null && caseServiceSubTypeId !== '') {
-            params['caseServiceSubTypeId'] = String(caseServiceSubTypeId);
-        }
-        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}/validate-service-hierarchy`, { params });
-    }
-
-    getCaseServiceTypeSubType(caseServiceTypeId?: string | number, caseServiceSubTypeId?: string | number) {
-        const params: Record<string, string> = {};
-        if (caseServiceTypeId !== undefined && caseServiceTypeId !== null && caseServiceTypeId !== '') {
-            params['caseServiceTypeId'] = String(caseServiceTypeId);
-        }
-        if (caseServiceSubTypeId !== undefined && caseServiceSubTypeId !== null && caseServiceSubTypeId !== '') {
-            params['caseServiceSubTypeId'] = String(caseServiceSubTypeId);
-        }
-        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-type-sub-type`, { params });
-    }
-
-    syncCaseServiceTypeSubTypes(caseServiceTypeId: string | number, data: any) {
-        return this.http.put(
-            `${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-type/${caseServiceTypeId}/sub-types`,
-            data,
-        );
-    }
-
-    getCaseServiceGroupType(caseServiceGroupId?: string | number, caseServiceTypeId?: string | number) {
-        const params: Record<string, string> = {};
-        if (caseServiceGroupId !== undefined && caseServiceGroupId !== null && caseServiceGroupId !== '') {
-            params['caseServiceGroupId'] = String(caseServiceGroupId);
-        }
-        if (caseServiceTypeId !== undefined && caseServiceTypeId !== null && caseServiceTypeId !== '') {
-            params['caseServiceTypeId'] = String(caseServiceTypeId);
-        }
-        return this.http.get(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-group-type`, { params });
-    }
-
-    syncCaseServiceGroupTypes(caseServiceTypeId: string | number, data: any) {
-        return this.http.put(
-            `${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-type/${caseServiceTypeId}/groups`,
-            data,
-        );
-    }
-
-    deleteCaseServiceTypeSubType(data: any) {
-        return this.http.delete(`${this.baseUrl}${config.api.path.callList.baseUrl}/case-service-type-sub-type`, {
-            body: data,
-        });
-    }
-
-    createServiceSubType(data: any) {
-        return this.http.post(`${this.baseUrl}${config.api.path.callList.baseUrl}/service-sub-type`, data);
-    }
-
-    updateServiceSubType(id: string, data: any) {
-        return this.http.put(`${this.baseUrl}${config.api.path.callList.baseUrl}/service-sub-type/${id}`, data);
-    }
-
-    deleteServiceSubType(id: string, modifiedById: string) {
-        return this.http.delete(`${this.baseUrl}${config.api.path.callList.baseUrl}/service-sub-type/${id}`, {
             body: { modifiedById },
         });
     }

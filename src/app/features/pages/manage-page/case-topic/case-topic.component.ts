@@ -7,16 +7,14 @@ import { Component } from '@angular/core';
     styleUrl: './case-topic.component.scss',
 })
 export class CaseTopicComponent {
-    title: string = 'case-code-type';
+    title: string = 'case-topic';
 
-    activeTab: 'case-code' | 'case-type' | 'service-group' | 'service-type' | 'service-sub-type' | 'sentiment' = 'case-code';
+    activeTab: 'case-topic' | 'case-subject' | 'case-type' | 'sentiment' = 'case-topic';
 
     tabs = [
-        { id: 'case-code', label: 'menu.caseCode', icon: 'fa-code' },
+        { id: 'case-topic', label: 'menu.caseTopic', icon: 'fa-bookmark' },
+        { id: 'case-subject', label: 'menu.caseSubject', icon: 'fa-file-lines' },
         { id: 'case-type', label: 'menu.caseType', icon: 'fa-folder' },
-        { id: 'service-group', label: 'menu.serviceGroup', icon: 'fa-layer-group' },
-        { id: 'service-type', label: 'menu.serviceType', icon: 'fa-cog' },
-        { id: 'service-sub-type', label: 'menu.serviceSubType', icon: 'fa-cogs' },
         { id: 'sentiment', label: 'menu.sentiment', icon: 'fa-face-smile' },
     ];
 

@@ -99,14 +99,11 @@
                             <input type="checkbox" [(ngModel)]="selectAll" (change)="toggleSelectAll()" class="form-check-input" />
                         </th>
                         <th class="text-nowrap">{{ 'contact-import-management.created-date' | translate }}</th>
-                        <th class="text-nowrap">{{ 'contact-import-management.dealer-name' | translate }}</th>
+                        <th class="text-nowrap">{{ 'contact.name' | translate }}</th>
                         <th class="text-nowrap">{{ 'contact-import-management.contact-email' | translate }}</th>
                         <th class="text-nowrap">{{ 'contact-import-management.contact-mobile' | translate }}</th>
-                        <th class="text-nowrap">{{ 'contact-import-management.dealer-id' | translate }}</th>
-                        <th class="text-nowrap">{{ 'contact-import-management.code' | translate }}</th>
-                        <th class="text-nowrap">{{ 'contact-import-management.license-plate' | translate }}</th>
-                        <th class="text-nowrap">{{ 'contact-import-management.car-brand-model' | translate }}</th>
-                        <th class="text-nowrap">{{ 'contact-import-management.car-status' | translate }}</th>
+                        <th class="text-nowrap">{{ 'contact.caseTopic' | translate }}</th>
+                        <th class="text-nowrap">{{ 'contact.caseSubject' | translate }}</th>
                         <th class="text-nowrap">{{ 'contact.callStatus' | translate }}</th>
                         <th class="text-center text-nowrap">{{ 'callList.attempts' | translate }}</th>
                         <th class="text-nowrap">{{ 'contact.assignUser' | translate }}</th>
@@ -124,7 +121,7 @@
                             />
                         </td>
                         <td>{{ lead.requestDateTime | date : 'dd/MM/yyyy HH:mm' }}</td>
-                        <td>{{ lead.dealerName || lead.fullname || '-' }}</td>
+                        <td>{{ lead.fullname || '-' }}</td>
                         <td>{{ lead.email || '-' }}</td>
                         <td class="font-monospace">
                             <span *ngIf="lead.contactNumber" class="phone-text">
@@ -132,16 +129,8 @@
                             </span>
                             <span *ngIf="!lead.contactNumber">-</span>
                         </td>
-                        <td class="font-monospace small">{{ lead.dealerId || lead.partnerCode || '-' }}</td>
-                        <td class="font-monospace">{{ lead.casecode || lead.carCode || '-' }}</td>
-                        <td class="font-monospace small">{{ lead.licensePlateNumber || '-' }}</td>
-                        <td>
-                            <span *ngIf="lead.carBrand || lead.carModel">
-                                {{ (lead.carBrand || '') + (lead.carBrand && lead.carModel ? ' ' : '') + (lead.carModel || '') }}
-                            </span>
-                            <span *ngIf="!lead.carBrand && !lead.carModel">-</span>
-                        </td>
-                        <td>{{ lead.carStatusDescription || '-' }}</td>
+                        <td>{{ lead.caseTopic || '-' }}</td>
+                        <td>{{ lead.caseSubject || '-' }}</td>
                         <td>
                             <span *ngIf="lead.callStatus" class="call-status-badge" [ngClass]="getCallStatusClass(lead.callStatus)">
                                 {{ lead.callStatus }}

@@ -102,29 +102,4 @@ export class CallListService {
         });
     }
 
-    getCasePriority(caseId?: string) {
-        const suffix = caseId ? `/${caseId}` : '';
-        return this.http.get(`${this.baseUrl}${config.api.path.callList.casePriority}${suffix}`);
-    }
-
-    getCasePriorityOverDue(body: any) {
-        return this.http.post(`${this.baseUrl}${config.api.path.callList.casePriorityOverDue}`, body);
-    }
-
-    getInspectionCompany() {
-        return this.http.get(`${this.baseUrl}${config.api.path.callList.inspectionCompany}`);
-    }
-
-    getInspectionCompanyById(caseId: string) {
-      return this.http.get(`${this.baseUrl}${config.api.path.callList.inspectionCompanyById}/${caseId}`);
-    }
-
-    getInspectionCompanySendReply(caseId: string) {
-      return this.http.get(`${this.baseUrl}${config.api.path.callList.inspectionCompanySendReply}/${caseId}`);
-    }
-
-    getCaseGroupReport() {
-        return this.http.get(`${this.baseUrl}${config.api.path.callList.caseGroupReport}`);
-    }
-
 }

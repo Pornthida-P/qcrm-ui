@@ -38,10 +38,10 @@
                 <div class="d-flex justify-content-between gap-2 align-items-start">
                     <div class="min-w-0">
                         <div class="fw-semibold text-truncate">
-                            {{ item.caseIdForReport || item.casecode || item.caseId || '-' }}
+                            {{ item.caseIdForReport || item.caseTopic || item.caseId || '-' }}
                             <span class="text-muted fw-normal" *ngIf="item.casetype"> · {{ item.casetype }}</span>
                         </div>
-                        <div class="small text-muted text-truncate">{{ item.description || item.caseServiceGroup || '—' }}</div>
+                        <div class="small text-muted text-truncate">{{ item.description || item.caseSubject || '—' }}</div>
                     </div>
                     <span class="history-status flex-shrink-0" *ngIf="item.status">{{ item.status }}</span>
                 </div>
@@ -88,20 +88,26 @@
             </div>
             <div class="col-12" *ngIf="!isSocialChannel">
                 <label class="form-label form-label-sm fw-semibold mb-1">
-                    {{ 'contact.code' | translate }}<span class="color-red">*</span>
+                    {{ 'contact.caseTopic' | translate }}<span class="color-red">*</span>
                 </label>
                 <mat-form-field class="w-100 compact-field" appearance="outline">
                     <input
                         type="text"
                         matInput
-                        [formControl]="codeControl"
-                        [matAutocomplete]="autoCode"
-                        (input)="filterCodes()"
-                        (focus)="filterCodes()"
-                        [placeholder]="'contact.searchCode' | translate"
+                        [formControl]="caseTopicControl"
+                        [matAutocomplete]="autoCaseTopic"
+                        (input)="filterCaseTopics()"
+                        (focus)="filterCaseTopics()"
+                        [placeholder]="'contact.searchCaseTopic' | translate"
                     />
-                    <mat-autocomplete #autoCode="matAutocomplete" [displayWith]="displayCodeFn" (optionSelected)="onCodeSelected($event)">
-                        <mat-option *ngFor="let code of filteredCodes" [value]="code">{{ code.code }}</mat-option>
+                    <mat-autocomplete
+                        #autoCaseTopic="matAutocomplete"
+                        [displayWith]="displayCaseTopicFn"
+                        (optionSelected)="onCaseTopicSelected($event)"
+                    >
+                        <mat-option *ngFor="let caseTopic of filteredCaseTopics" [value]="caseTopic">
+                            {{ caseTopic.name || caseTopic.code }}
+                        </mat-option>
                     </mat-autocomplete>
                 </mat-form-field>
             </div>
@@ -127,70 +133,24 @@
                 </mat-form-field>
             </div>
             <div class="col-12">
-                <label class="form-label form-label-sm fw-semibold mb-1">{{ 'contact.serviceGroup' | translate }}</label>
+                <label class="form-label form-label-sm fw-semibold mb-1">{{ 'contact.caseSubject' | translate }}</label>
                 <mat-form-field class="w-100 compact-field" appearance="outline">
                     <input
                         type="text"
                         matInput
-                        [formControl]="serviceGroupControl"
-                        [matAutocomplete]="autoServiceGroup"
-                        (input)="filterServiceGroups()"
-                        (focus)="filterServiceGroups()"
-                        [placeholder]="'contact.searchServiceGroup' | translate"
+                        [formControl]="caseSubjectControl"
+                        [matAutocomplete]="autoCaseSubject"
+                        (input)="filterCaseSubjects()"
+                        (focus)="filterCaseSubjects()"
+                        [placeholder]="'contact.searchCaseSubject' | translate"
                     />
                     <mat-autocomplete
-                        #autoServiceGroup="matAutocomplete"
-                        [displayWith]="displayServiceGroupFn"
-                        (optionSelected)="onServiceGroupSelected($event)"
+                        #autoCaseSubject="matAutocomplete"
+                        [displayWith]="displayCaseSubjectFn"
+                        (optionSelected)="onCaseSubjectSelected($event)"
                     >
-                        <mat-option *ngFor="let serviceGroup of filteredServiceGroups" [value]="serviceGroup">
-                            {{ serviceGroup.name }}
-                        </mat-option>
-                    </mat-autocomplete>
-                </mat-form-field>
-            </div>
-            <div class="col-12">
-                <label class="form-label form-label-sm fw-semibold mb-1">{{ 'contact.serviceType' | translate }}</label>
-                <mat-form-field class="w-100 compact-field" appearance="outline">
-                    <input
-                        type="text"
-                        matInput
-                        [formControl]="serviceTypeControl"
-                        [matAutocomplete]="autoServiceType"
-                        (input)="filterServiceTypes()"
-                        (focus)="filterServiceTypes()"
-                        [placeholder]="'contact.searchServiceType' | translate"
-                    />
-                    <mat-autocomplete
-                        #autoServiceType="matAutocomplete"
-                        [displayWith]="displayServiceTypeFn"
-                        (optionSelected)="onServiceTypeSelected($event)"
-                    >
-                        <mat-option *ngFor="let serviceType of filteredServiceTypes" [value]="serviceType">
-                            {{ serviceType.name }}
-                        </mat-option>
-                    </mat-autocomplete>
-                </mat-form-field>
-            </div>
-            <div class="col-12">
-                <label class="form-label form-label-sm fw-semibold mb-1">{{ 'contact.serviceSubType' | translate }}</label>
-                <mat-form-field class="w-100 compact-field" appearance="outline">
-                    <input
-                        type="text"
-                        matInput
-                        [formControl]="serviceSubTypeControl"
-                        [matAutocomplete]="autoServiceSubType"
-                        (input)="filterServiceSubTypes()"
-                        (focus)="filterServiceSubTypes()"
-                        [placeholder]="'contact.searchServiceSubType' | translate"
-                    />
-                    <mat-autocomplete
-                        #autoServiceSubType="matAutocomplete"
-                        [displayWith]="displayServiceSubTypeFn"
-                        (optionSelected)="onServiceSubTypeSelected($event)"
-                    >
-                        <mat-option *ngFor="let serviceSubType of filteredServiceSubTypes" [value]="serviceSubType">
-                            {{ serviceSubType.name }}
+                        <mat-option *ngFor="let caseSubject of filteredCaseSubjects" [value]="caseSubject">
+                            {{ caseSubject.name }}
                         </mat-option>
                     </mat-autocomplete>
                 </mat-form-field>

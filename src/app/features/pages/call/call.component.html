@@ -117,18 +117,15 @@
                                 <th scope="col">{{ 'common.time' | translate }}</th>
                                 <th scope="col">{{ 'contact.channel' | translate }}</th>
                                 <th scope="col">{{ 'contact.callType' | translate }}</th>
-                                <th scope="col">{{ 'contact.code' | translate }}</th>
                                 <th scope="col">{{ 'contact.assignDate' | translate }}</th>
                                 <th scope="col">{{ 'contact.assignUser' | translate }}</th>
                                 <th scope="col">{{ 'contact.caseType' | translate }}</th>
-                                <th scope="col">{{ 'contact.serviceGroup' | translate }}</th>
-                                <th scope="col">{{ 'contact.serviceType' | translate }}</th>
-                                <th scope="col">{{ 'contact.serviceSubType' | translate }}</th>
+                                <th scope="col">{{ 'contact.caseTopic' | translate }}</th>
+                                <th scope="col">{{ 'contact.caseSubject' | translate }}</th>
                                 <th scope="col">{{ 'contact.description' | translate }}</th>
                                 <th scope="col">{{ 'contact.comment' | translate }}</th>
                                 <th scope="col">{{ 'contact.contact' | translate }}</th>
                                 <th scope="col">{{ 'contact.callStatus' | translate }}</th>
-                                <th scope="col">{{ 'contact.sla' | translate }}</th>
                                 <th scope="col">{{ 'common.status' | translate }}</th>
                                 <th scope="col" class="text-center" *ngIf="checkSupRole()">{{ 'common.manage' | translate }}</th>
                             </tr>
@@ -164,30 +161,16 @@
                                     </td>
                                     <!-- Contact Type (Call Type) -->
                                     <td>{{ calls.type || '-' }}</td>
-                                    <!-- Case Code -->
-                                    <td
-                                        class="cursor-pointer"
-                                        (click)="editCall(calls.caseId, calls.contactId)"
-                                        data-bs-toggle="offcanvas"
-                                        data-bs-target="#offcanvasRight"
-                                        aria-controls="offcanvasRight"
-                                    >
-                                        <span [ngbTooltip]="'common.view' | translate" placement="bottom" class="text-primary fw-semibold">
-                                            {{ calls.casecode || '-' }}
-                                        </span>
-                                    </td>
                                     <!-- Assign Date -->
                                     <td>{{ calls.assignDate ? (calls.assignDate | date: 'dd/MM/yyyy HH:mm') : '-' }}</td>
                                     <!-- Assign User -->
                                     <td>{{ calls.agent || '-' }}</td>
                                     <!-- Case Type -->
                                     <td class="text-truncate" style="max-width: 120px">{{ calls.casetype || '-' }}</td>
-                                    <!-- Service Group -->
-                                    <td class="text-truncate" style="max-width: 120px">{{ calls.caseServiceGroup || '-' }}</td>
-                                    <!-- Service Type -->
-                                    <td class="text-truncate" style="max-width: 120px">{{ calls.caseServiceType || '-' }}</td>
-                                    <!-- Service Sub Type -->
-                                    <td class="text-truncate" style="max-width: 120px">{{ calls.caseServiceSubType || '-' }}</td>
+                                    <!-- Case Topic -->
+                                    <td class="text-truncate" style="max-width: 120px">{{ calls.caseTopic || '-' }}</td>
+                                    <!-- Case Subject -->
+                                    <td class="text-truncate" style="max-width: 120px">{{ calls.caseSubject || '-' }}</td>
                                     <!-- Description -->
                                     <td
                                         class="text-truncate"
@@ -250,19 +233,6 @@
                                         <ng-template #noCaseStatus>
                                             <span class="text-muted">-</span>
                                         </ng-template>
-                                    </td>
-                                    <!-- Sla -->
-                                    <td>
-                                        <span
-                                            *ngIf="calls.status === 'Pending'"
-                                            class="badge ms-1"
-                                            [ngClass]="{
-                                                'bg-danger': getSlaRemainingMinutes(calls) !== null && getSlaRemainingMinutes(calls)! <= 0,
-                                                'bg-warning': getSlaRemainingMinutes(calls) !== null && getSlaRemainingMinutes(calls)! > 0,
-                                            }"
-                                        >
-                                            {{ formatSlaRemaining(calls) }}
-                                        </span>
                                     </td>
                                     <!-- Manage Button -->
                                     <td class="text-center d-flex gap-2" *ngIf="checkSupRole()">
@@ -363,8 +333,8 @@
                             <div
                                 class="edit-contact-column"
                                 [ngClass]="{
-                                    'col-12 col-lg-6': !attachmentShowing && (selectedCaseCodeObject?.script || chatHistory.length),
-                                    'col-12': attachmentShowing || (!selectedCaseCodeObject?.script && !chatHistory.length),
+                                    'col-12 col-lg-6': !attachmentShowing && chatHistory.length,
+                                    'col-12': attachmentShowing || !chatHistory.length,
                                 }"
                             >
                                 <div class="edit-contact-form-scroll">
@@ -377,39 +347,6 @@
                                             </div>
                                             <div class="section-content">
                                                 <div class="row g-2">
-                                                    <!-- Row 1: Code & Case Type -->
-                                                    <div class="col-6">
-                                                        <label class="form-label form-label-sm fw-semibold mb-1">
-                                                            {{ 'contact.code' | translate }}<span class="color-red">*</span>
-                                                        </label>
-                                                        <mat-form-field
-                                                            class="w-100 compact-field"
-                                                            appearance="outline"
-                                                            [class.mat-form-field-disabled]="isAgent()"
-                                                        >
-                                                            <input
-                                                                type="text"
-                                                                matInput
-                                                                [formControl]="codeControl"
-                                                                [matAutocomplete]="autoCode"
-                                                                (input)="!isAgent() && filterCodes()"
-                                                                (focus)="!isAgent() && filterCodes()"
-                                                                [placeholder]="'contact.searchCode' | translate"
-                                                                [readonly]="isAgent()"
-                                                            />
-                                                            <mat-autocomplete
-                                                                #autoCode="matAutocomplete"
-                                                                [displayWith]="displayCodeFn"
-                                                                (optionSelected)="!isAgent() && onCodeSelected($event)"
-                                                            >
-                                                                <ng-container *ngFor="let code of filteredCodes">
-                                                                    <mat-option [value]="code">
-                                                                        {{ code.code }}
-                                                                    </mat-option>
-                                                                </ng-container>
-                                                            </mat-autocomplete>
-                                                        </mat-form-field>
-                                                    </div>
                                                     <div class="col-6">
                                                         <label class="form-label form-label-sm fw-semibold mb-1">
                                                             {{ 'contact.caseType' | translate }}<span class="color-red">*</span>
@@ -443,10 +380,9 @@
                                                         </mat-form-field>
                                                     </div>
 
-                                                    <!-- Row 2: Service Group & Service Type -->
                                                     <div class="col-6">
                                                         <label class="form-label form-label-sm fw-semibold mb-1">
-                                                            {{ 'contact.serviceGroup' | translate }}<span class="color-red">*</span>
+                                                            {{ 'contact.caseTopic' | translate }}<span class="color-red">*</span>
                                                         </label>
                                                         <mat-form-field
                                                             class="w-100 compact-field"
@@ -456,21 +392,21 @@
                                                             <input
                                                                 type="text"
                                                                 matInput
-                                                                [formControl]="serviceGroupControl"
-                                                                [matAutocomplete]="autoServiceGroup"
-                                                                (input)="!isAgent() && filterServiceGroups()"
-                                                                (focus)="!isAgent() && filterServiceGroups()"
-                                                                [placeholder]="'contact.searchServiceGroup' | translate"
+                                                                [formControl]="caseTopicControl"
+                                                                [matAutocomplete]="autoCaseTopic"
+                                                                (input)="!isAgent() && filterCaseTopics()"
+                                                                (focus)="!isAgent() && filterCaseTopics()"
+                                                                [placeholder]="'contact.searchCaseTopic' | translate"
                                                                 [readonly]="isAgent()"
                                                             />
                                                             <mat-autocomplete
-                                                                #autoServiceGroup="matAutocomplete"
-                                                                [displayWith]="displayServiceGroupFn"
-                                                                (optionSelected)="!isAgent() && onServiceGroupSelected($event)"
+                                                                #autoCaseTopic="matAutocomplete"
+                                                                [displayWith]="displayCaseTopicFn"
+                                                                (optionSelected)="!isAgent() && onCaseTopicSelected($event)"
                                                             >
-                                                                <ng-container *ngFor="let serviceGroup of filteredServiceGroups">
-                                                                    <mat-option [value]="serviceGroup">
-                                                                        {{ serviceGroup.name }}
+                                                                <ng-container *ngFor="let caseTopic of filteredCaseTopics">
+                                                                    <mat-option [value]="caseTopic">
+                                                                        {{ caseTopic.name }}
                                                                     </mat-option>
                                                                 </ng-container>
                                                             </mat-autocomplete>
@@ -478,7 +414,7 @@
                                                     </div>
                                                     <div class="col-6">
                                                         <label class="form-label form-label-sm fw-semibold mb-1">
-                                                            {{ 'contact.serviceType' | translate }}<span class="color-red">*</span>
+                                                            {{ 'contact.caseSubject' | translate }}<span class="color-red">*</span>
                                                         </label>
                                                         <mat-form-field
                                                             class="w-100 compact-field"
@@ -488,55 +424,21 @@
                                                             <input
                                                                 type="text"
                                                                 matInput
-                                                                [formControl]="serviceTypeControl"
-                                                                [matAutocomplete]="autoServiceType"
-                                                                (input)="!isAgent() && filterServiceTypes()"
-                                                                (focus)="!isAgent() && filterServiceTypes()"
-                                                                [placeholder]="'contact.searchServiceType' | translate"
+                                                                [formControl]="caseSubjectControl"
+                                                                [matAutocomplete]="autoCaseSubject"
+                                                                (input)="!isAgent() && filterCaseSubjects()"
+                                                                (focus)="!isAgent() && filterCaseSubjects()"
+                                                                [placeholder]="'contact.searchCaseSubject' | translate"
                                                                 [readonly]="isAgent()"
                                                             />
                                                             <mat-autocomplete
-                                                                #autoServiceType="matAutocomplete"
-                                                                [displayWith]="displayServiceTypeFn"
-                                                                (optionSelected)="!isAgent() && onServiceTypeSelected($event)"
+                                                                #autoCaseSubject="matAutocomplete"
+                                                                [displayWith]="displayCaseSubjectFn"
+                                                                (optionSelected)="!isAgent() && onCaseSubjectSelected($event)"
                                                             >
-                                                                <ng-container *ngFor="let serviceType of filteredServiceTypes">
-                                                                    <mat-option [value]="serviceType">
-                                                                        {{ serviceType.name }}
-                                                                    </mat-option>
-                                                                </ng-container>
-                                                            </mat-autocomplete>
-                                                        </mat-form-field>
-                                                    </div>
-
-                                                    <!-- Row 3: Service Sub Type & Status -->
-                                                    <div class="col-6">
-                                                        <label class="form-label form-label-sm fw-semibold mb-1">
-                                                            {{ 'contact.serviceSubType' | translate }}<span class="color-red">*</span>
-                                                        </label>
-                                                        <mat-form-field
-                                                            class="w-100 compact-field"
-                                                            appearance="outline"
-                                                            [class.mat-form-field-disabled]="isAgent()"
-                                                        >
-                                                            <input
-                                                                type="text"
-                                                                matInput
-                                                                [formControl]="serviceSubTypeControl"
-                                                                [matAutocomplete]="autoServiceSubType"
-                                                                (input)="!isAgent() && filterServiceSubTypes()"
-                                                                (focus)="!isAgent() && filterServiceSubTypes()"
-                                                                [placeholder]="'contact.searchServiceSubType' | translate"
-                                                                [readonly]="isAgent()"
-                                                            />
-                                                            <mat-autocomplete
-                                                                #autoServiceSubType="matAutocomplete"
-                                                                [displayWith]="displayServiceSubTypeFn"
-                                                                (optionSelected)="!isAgent() && onServiceSubTypeSelected($event)"
-                                                            >
-                                                                <ng-container *ngFor="let serviceSubType of filteredServiceSubTypes">
-                                                                    <mat-option [value]="serviceSubType">
-                                                                        {{ serviceSubType.name }}
+                                                                <ng-container *ngFor="let caseSubject of filteredCaseSubjects">
+                                                                    <mat-option [value]="caseSubject">
+                                                                        {{ caseSubject.name }}
                                                                     </mat-option>
                                                                 </ng-container>
                                                             </mat-autocomplete>
@@ -557,36 +459,6 @@
                                                                 {{ status.status }}
                                                             </option>
                                                         </select>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <label class="form-label form-label-sm fw-semibold mb-1">{{
-                                                            'contact.caseGroup' | translate
-                                                        }}</label>
-                                                        <mat-form-field
-                                                            class="w-100 compact-field"
-                                                            appearance="outline"
-                                                            [class.mat-form-field-disabled]="isAgent()"
-                                                        >
-                                                            <input
-                                                                type="text"
-                                                                matInput
-                                                                [formControl]="caseGroupControl"
-                                                                [matAutocomplete]="autoCaseGroup"
-                                                                (input)="!isAgent() && filterCaseGroups()"
-                                                                (focus)="!isAgent() && filterCaseGroups()"
-                                                                [placeholder]="'common.pleaseSelect' | translate"
-                                                                [readonly]="isAgent()"
-                                                            />
-                                                            <mat-autocomplete
-                                                                #autoCaseGroup="matAutocomplete"
-                                                                [displayWith]="displayCaseGroupFn"
-                                                                (optionSelected)="!isAgent() && onCaseGroupSelected($event)"
-                                                            >
-                                                                <mat-option *ngFor="let group of filteredCaseGroups" [value]="group">
-                                                                    {{ group.name }}
-                                                                </mat-option>
-                                                            </mat-autocomplete>
-                                                        </mat-form-field>
                                                     </div>
                                                 </div>
                                             </div>
@@ -768,244 +640,6 @@
                                                 <i class="fa-solid fa-pen-to-square me-2"></i>
                                                 <span class="fw-semibold">{{ 'contact.notes' | translate }}</span>
                                             </div>
-                                            <div
-                                                class="row g-2 mb-2"
-                                                *ngIf="isPendingStatus() && casePriorities && casePriorities.length > 0"
-                                            >
-                                                <div class="col-12">
-                                                    <label class="form-label form-label-sm fw-semibold mb-1">{{
-                                                        'contact.priority' | translate
-                                                    }}</label>
-                                                    <select
-                                                        class="form-select form-select-sm"
-                                                        name="selectedCasePriority"
-                                                        [(ngModel)]="selectedCasePriority"
-                                                        [disabled]="isAgent()"
-                                                    >
-                                                        <option [ngValue]="null" disabled>ไม่ระบุ</option>
-                                                        <option
-                                                            *ngFor="let priority of casePriorities"
-                                                            [ngValue]="
-                                                                toNumber(priority.id || priority.priorityId || priority.casePriorityId)
-                                                            "
-                                                        >
-                                                            {{ priority.name || priority.priority || priority.priorityName }}
-                                                        </option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <!-- Send To + Date -->
-                                            <div
-                                                class="col-12"
-                                                *ngIf="
-                                                    isPendingStatus() &&
-                                                    (inspectionCompany || (inspectionCompany && inspectionCompany.length > 0))
-                                                "
-                                            >
-                                                <label class="form-label form-label-sm fw-semibold mb-1">{{
-                                                    'contact.sendTo' | translate
-                                                }}</label>
-                                                <div class="row g-2 align-items-end">
-                                                    <div class="col-md-7">
-                                                        <ng-select
-                                                            id="inputSendTo"
-                                                            [(ngModel)]="selectedInspectionCompanies"
-                                                            name="selectedInspectionCompanies"
-                                                            [multiple]="true"
-                                                            [placeholder]="'contact.selectMultipleOptions' | translate"
-                                                        >
-                                                            <ng-option
-                                                                *ngFor="let company of inspectionCompany"
-                                                                [value]="company.id || company.companyId || company.inspectionCompanyId"
-                                                            >
-                                                                {{ company.name || company.company || company.inspectionCompanyName }}
-                                                            </ng-option>
-                                                        </ng-select>
-                                                    </div>
-                                                    <div class="col-md-5">
-                                                        <div class="datetime-inline-wrapper compact">
-                                                            <div class="date-input-section">
-                                                                <div class="input-group input-group-sm">
-                                                                    <input
-                                                                        matInput
-                                                                        [matDatepicker]="pickerInspection"
-                                                                        name="inspectionCompanyDate"
-                                                                        [(ngModel)]="inspectionCompanyDate"
-                                                                        class="form-control form-control-sm"
-                                                                        [placeholder]="'common.selectDate' | translate"
-                                                                    />
-                                                                    <span class="input-group-text">
-                                                                        <mat-datepicker-toggle
-                                                                            matSuffix
-                                                                            [for]="pickerInspection"
-                                                                        ></mat-datepicker-toggle>
-                                                                        <mat-datepicker #pickerInspection></mat-datepicker>
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="time-input-section">
-                                                                <ngb-timepicker
-                                                                    name="inspectionCompanyTime"
-                                                                    [(ngModel)]="inspectionCompanyTime"
-                                                                    [seconds]="seconds"
-                                                                    [ngModelOptions]="{ standalone: true }"
-                                                                    class="time-picker-inline compact"
-                                                                ></ngb-timepicker>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div
-                                                    *ngIf="inspectionCompanySendNames"
-                                                    class="mt-2 mb-3 ps-2 small border-start border-2 border-secondary"
-                                                    style="color: #009e9d"
-                                                >
-                                                    <span class="fw-medium">{{ 'contact.sent' | translate }}:</span>
-                                                    {{ inspectionCompanySendNames }}
-                                                </div>
-                                            </div>
-
-                                            <!-- Reply (options = group 1 only) + Date -->
-                                            <div
-                                                class="col-12"
-                                                *ngIf="
-                                                    isPendingStatus() &&
-                                                    (inspectionCompany || (inspectionCompany && inspectionCompany.length > 0))
-                                                "
-                                            >
-                                                <label class="form-label form-label-sm fw-semibold mb-1"
-                                                    >{{ 'contact.reply' | translate }} ({{ 'contact.ci' | translate }})</label
-                                                >
-                                                <div class="row g-2 align-items-center reply-date-row">
-                                                    <div class="col-md-7">
-                                                        <select
-                                                            class="form-select form-select-sm form-select-reply"
-                                                            name="selectedInspectionCompany"
-                                                            [(ngModel)]="selectedInspectionCompany"
-                                                        >
-                                                            <option [ngValue]="''">ไม่ระบุ</option>
-                                                            <option
-                                                                *ngFor="let company of inspectionCompanyGroup1"
-                                                                [value]="company.id || company.companyId || company.inspectionCompanyId"
-                                                            >
-                                                                {{ company.name || company.company || company.inspectionCompanyName }}
-                                                            </option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-md-5">
-                                                        <div class="datetime-inline-wrapper compact">
-                                                            <div class="date-input-section">
-                                                                <div class="input-group input-group-sm">
-                                                                    <input
-                                                                        matInput
-                                                                        [matDatepicker]="pickerReply"
-                                                                        name="inspectionCompanyReplyDate"
-                                                                        [(ngModel)]="inspectionCompanyReplyDate"
-                                                                        class="form-control form-control-sm"
-                                                                        [placeholder]="'common.selectDate' | translate"
-                                                                    />
-                                                                    <span class="input-group-text">
-                                                                        <mat-datepicker-toggle
-                                                                            matSuffix
-                                                                            [for]="pickerReply"
-                                                                        ></mat-datepicker-toggle>
-                                                                        <mat-datepicker #pickerReply></mat-datepicker>
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="time-input-section">
-                                                                <ngb-timepicker
-                                                                    name="inspectionCompanyReplyTime"
-                                                                    [(ngModel)]="inspectionCompanyReplyTime"
-                                                                    [seconds]="seconds"
-                                                                    [ngModelOptions]="{ standalone: true }"
-                                                                    class="time-picker-inline compact"
-                                                                ></ngb-timepicker>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div
-                                                    *ngIf="inspectionCompanyReplyNamesGroup1"
-                                                    class="mt-2 mb-3 ps-2 small border-start border-2 border-secondary"
-                                                    style="color: #009e9d"
-                                                >
-                                                    <span class="fw-medium">{{ 'contact.replied' | translate }}:</span>
-                                                    {{ inspectionCompanyReplyNamesGroup1 }}
-                                                </div>
-                                            </div>
-
-                                            <!-- Reply TTB (options = group 2 only) + Date -->
-                                            <div
-                                                class="col-12 mt-2"
-                                                *ngIf="
-                                                    isPendingStatus() &&
-                                                    (inspectionCompany || (inspectionCompany && inspectionCompany.length > 0))
-                                                "
-                                            >
-                                                <label class="form-label form-label-sm fw-semibold mb-1"
-                                                    >{{ 'contact.reply' | translate }} ({{ 'contact.ttb' | translate }})</label
-                                                >
-                                                <div class="row g-2 align-items-center reply-date-row">
-                                                    <div class="col-md-7">
-                                                        <select
-                                                            class="form-select form-select-sm form-select-reply"
-                                                            name="selectedInspectionCompanyTtb"
-                                                            [(ngModel)]="selectedInspectionCompanyTtb"
-                                                        >
-                                                            <option [ngValue]="''">ไม่ระบุ</option>
-                                                            <option
-                                                                *ngFor="let company of inspectionCompanyGroup2"
-                                                                [value]="company.id || company.companyId || company.inspectionCompanyId"
-                                                            >
-                                                                {{ company.name || company.company || company.inspectionCompanyName }}
-                                                            </option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-md-5">
-                                                        <div class="datetime-inline-wrapper compact">
-                                                            <div class="date-input-section">
-                                                                <div class="input-group input-group-sm">
-                                                                    <input
-                                                                        matInput
-                                                                        [matDatepicker]="pickerReplyTtb"
-                                                                        name="inspectionCompanyReplyDateTtb"
-                                                                        [(ngModel)]="inspectionCompanyReplyDateTtb"
-                                                                        class="form-control form-control-sm"
-                                                                        [placeholder]="'common.selectDate' | translate"
-                                                                    />
-                                                                    <span class="input-group-text">
-                                                                        <mat-datepicker-toggle
-                                                                            matSuffix
-                                                                            [for]="pickerReplyTtb"
-                                                                        ></mat-datepicker-toggle>
-                                                                        <mat-datepicker #pickerReplyTtb></mat-datepicker>
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="time-input-section">
-                                                                <ngb-timepicker
-                                                                    name="inspectionCompanyReplyTimeTtb"
-                                                                    [(ngModel)]="inspectionCompanyReplyTimeTtb"
-                                                                    [seconds]="seconds"
-                                                                    [ngModelOptions]="{ standalone: true }"
-                                                                    class="time-picker-inline compact"
-                                                                ></ngb-timepicker>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div
-                                                    *ngIf="inspectionCompanyReplyNamesGroup2"
-                                                    class="mt-2 mb-3 ps-2 small border-start border-2 border-secondary"
-                                                    style="color: #009e9d"
-                                                >
-                                                    <span class="fw-medium">{{ 'contact.replied' | translate }}:</span>
-                                                    {{ inspectionCompanyReplyNamesGroup2 }}
-                                                </div>
-                                            </div>
-
                                             <div class="section-content">
                                                 <div class="row g-2">
                                                     <div class="col-12">
@@ -1146,27 +780,10 @@
                                 </div>
                             </div>
 
-                            <!-- Script Only -->
+                            <!-- Chat History -->
                             <div
                                 class="col-12 col-lg-6 mt-3 mt-lg-0 script-chat-column"
-                                *ngIf="!attachmentShowing && selectedCaseCodeObject?.script && !chatHistory.length"
-                            >
-                                <div class="card h-100 d-flex flex-column">
-                                    <div
-                                        class="card-header text-sm text-white"
-                                        [ngStyle]="{ 'background-color': 'var(--color-blue-dark)' }"
-                                    >
-                                        <p class="mb-0"><i class="fa-solid fa-file-lines me-2"></i>{{ 'contact.script' | translate }}</p>
-                                    </div>
-                                    <div class="card-body script-container flex-grow-1">
-                                        <div [innerHTML]="selectedCaseCodeObject?.script"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Chat History Only -->
-                            <div
-                                class="col-12 col-lg-6 mt-3 mt-lg-0 script-chat-column"
-                                *ngIf="!attachmentShowing && !selectedCaseCodeObject?.script && chatHistory.length"
+                                *ngIf="!attachmentShowing && chatHistory.length"
                             >
                                 <div class="card h-100 d-flex flex-column">
                                     <div
@@ -1282,176 +899,6 @@
                                                     </div>
                                                 </div>
                                             </ng-container>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Both Script and Chat History -->
-                            <div
-                                class="col-12 col-lg-6 mt-3 mt-lg-0 script-chat-column"
-                                *ngIf="!attachmentShowing && selectedCaseCodeObject?.script && chatHistory.length"
-                            >
-                                <div class="card h-100 d-flex flex-column">
-                                    <div
-                                        class="card-header text-sm text-white"
-                                        [ngStyle]="{ 'background-color': 'var(--color-blue-dark)' }"
-                                    >
-                                        <ul class="nav nav-tabs card-header-tabs" role="tablist">
-                                            <li class="nav-item" role="presentation">
-                                                <button
-                                                    class="nav-link"
-                                                    [ngClass]="activeScriptTab === 'script' ? 'text-blue-dark bg-white' : 'text-white'"
-                                                    (click)="activeScriptTab = 'script'"
-                                                    type="button"
-                                                    role="tab"
-                                                >
-                                                    <i class="fa-solid fa-file-lines me-2"></i>{{ 'contact.script' | translate }}
-                                                </button>
-                                            </li>
-                                            <li class="nav-item" role="presentation">
-                                                <button
-                                                    class="nav-link"
-                                                    [ngClass]="activeScriptTab === 'chat' ? 'text-blue-dark bg-white' : 'text-white'"
-                                                    (click)="activeScriptTab = 'chat'"
-                                                    type="button"
-                                                    role="tab"
-                                                >
-                                                    <i class="fa-solid fa-comments me-2"></i>{{ 'contact.chatHistory' | translate }}
-                                                </button>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div class="card-body flex-grow-1">
-                                        <div class="tab-content h-100">
-                                            <div
-                                                class="tab-pane h-100 script-container"
-                                                [ngClass]="{ 'active show': activeScriptTab === 'script' }"
-                                                id="script-content"
-                                                role="tabpanel"
-                                            >
-                                                <div [innerHTML]="selectedCaseCodeObject?.script"></div>
-                                            </div>
-                                            <div
-                                                class="tab-pane h-100 chat-history-container"
-                                                [ngClass]="{ 'active show': activeScriptTab === 'chat' }"
-                                                id="chat-content"
-                                                role="tabpanel"
-                                            >
-                                                <div class="chat-messages">
-                                                    <ng-container *ngFor="let chat of chatHistory">
-                                                        <div
-                                                            *ngIf="chat.message_type === 'system-text' && !isRatingMessage(chat)"
-                                                            class="system-message"
-                                                        >
-                                                            <hr class="system-line" />
-                                                            <span class="system-text">{{ chat.message_text }}</span>
-                                                            <span class="system-time">{{ chat.timestamp | date: 'HH:mm' }}</span>
-                                                        </div>
-                                                        <div
-                                                            *ngIf="chat.message_type !== 'system-text' && !isRatingMessage(chat)"
-                                                            class="message-row"
-                                                            [ngClass]="{ me: chat.direction === 'out', contact: chat.direction === 'in' }"
-                                                        >
-                                                            <div class="bubble">
-                                                                <ng-container [ngSwitch]="chat.message_type">
-                                                                    <ng-container *ngSwitchDefault
-                                                                        ><div class="message">{{ chat.message_text }}</div></ng-container
-                                                                    >
-                                                                    <ng-container *ngSwitchCase="'image'">
-                                                                        <div class="message image-content" *ngIf="chat.message_text">
-                                                                            {{ chat.message_text }}
-                                                                        </div>
-                                                                        <img
-                                                                            *ngIf="chat.message_data?.originalContentUrl"
-                                                                            class="message image-content"
-                                                                            style="max-width: 100%; height: auto; border-radius: 8px"
-                                                                            [src]="chat.message_data.originalContentUrl"
-                                                                            alt=""
-                                                                        />
-                                                                    </ng-container>
-                                                                    <ng-container *ngSwitchCase="'sticker'">
-                                                                        <label
-                                                                            *ngIf="!chat.message_data?.originalContentUrl"
-                                                                            class="message sticker-content"
-                                                                            >Sticker</label
-                                                                        >
-                                                                        <img
-                                                                            *ngIf="chat.message_data?.originalContentUrl"
-                                                                            class="message sticker-content"
-                                                                            style="max-width: 100%; height: auto; border-radius: 8px"
-                                                                            [src]="chat.message_data.originalContentUrl"
-                                                                            alt=""
-                                                                        />
-                                                                    </ng-container>
-                                                                    <ng-container *ngSwitchCase="'video'">
-                                                                        <video
-                                                                            *ngIf="chat.message_data?.originalContentUrl"
-                                                                            controls
-                                                                            class="message video-content"
-                                                                            style="max-width: 100%; border-radius: 8px"
-                                                                        >
-                                                                            <source
-                                                                                [src]="chat.message_data.originalContentUrl"
-                                                                                type="video/mp4"
-                                                                            />
-                                                                        </video>
-                                                                    </ng-container>
-                                                                    <ng-container *ngSwitchCase="'file'">
-                                                                        <div class="message" *ngIf="chat.message_text">
-                                                                            {{ chat.message_text }}
-                                                                        </div>
-                                                                        <div class="message d-flex flex-column align-items-center gap-2">
-                                                                            <span
-                                                                                *ngIf="chat.message_data?.file_name"
-                                                                                class="text-start w-100"
-                                                                                style="overflow-wrap: anywhere"
-                                                                                >{{ chat.message_data.file_name }}</span
-                                                                            >
-                                                                            <a
-                                                                                *ngIf="chat.message_data?.originalContentUrl"
-                                                                                [href]="chat.message_data.originalContentUrl"
-                                                                                target="_blank"
-                                                                                rel="noopener noreferrer"
-                                                                                download
-                                                                                class="btn btn-sm btn-outline-primary"
-                                                                                ><i class="fa-solid fa-cloud-download me-1"></i>Download</a
-                                                                            >
-                                                                        </div>
-                                                                    </ng-container>
-                                                                    <ng-container *ngSwitchCase="'document'">
-                                                                        <div class="message" *ngIf="chat.message_text">
-                                                                            {{ chat.message_text }}
-                                                                        </div>
-                                                                        <div class="message d-flex flex-column align-items-center gap-2">
-                                                                            <span
-                                                                                *ngIf="chat.message_data?.file_name"
-                                                                                class="text-start w-100"
-                                                                                style="overflow-wrap: anywhere"
-                                                                                >{{ chat.message_data.file_name }}</span
-                                                                            >
-                                                                            <a
-                                                                                *ngIf="chat.message_data?.originalContentUrl"
-                                                                                [href]="chat.message_data.originalContentUrl"
-                                                                                target="_blank"
-                                                                                rel="noopener noreferrer"
-                                                                                download
-                                                                                class="btn btn-sm btn-outline-primary"
-                                                                                ><i class="fa-solid fa-cloud-download me-1"></i>Download</a
-                                                                            >
-                                                                        </div>
-                                                                    </ng-container>
-                                                                </ng-container>
-                                                            </div>
-                                                            <div class="message-info" [ngClass]="{ 'text-end': chat.direction === 'out' }">
-                                                                <span class="sender-name">{{ chat.sender_name }}</span>
-                                                                <span class="timestamp">{{
-                                                                    chat.timestamp | date: 'dd/MM/yyyy HH:mm'
-                                                                }}</span>
-                                                            </div>
-                                                        </div>
-                                                    </ng-container>
-                                                </div>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>

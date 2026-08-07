@@ -31,20 +31,20 @@ export class HomePageComponent implements OnInit, OnDestroy {
     totalPages = 1;
     totalCount = 0;
     createdById = '';
-    selectedCaseCode = '';
+    selectedCaseTopic = '';
     selectedCaseChannel = '';
     dateFilterType: string = 'toDay';
     dateRangeStart: string = '';
     dateRangeEnd: string = '';
     dateRangeForm!: FormGroup;
     filterDateOptions: { name: string; type: string }[] = [];
-    caseCodeList: any[] = [];
+    caseTopicList: any[] = [];
     caseChannelList: any[] = [];
     caseChannel: any[] = [];
-    caseCode: any[] = [];
+    caseTopic: any[] = [];
     contactCount: number = 0;
     caseChannelCount: number = 0;
-    caseCodeCount: number = 0;
+    caseTopicCount: number = 0;
     channelPercentage: any[] = [];
     statusList: any[] = [];
     allContactCount: number = 0;
@@ -57,8 +57,6 @@ export class HomePageComponent implements OnInit, OnDestroy {
     private searchTimeout: any;
     private langChangeSub: any;
     updateFlag: boolean = false;
-    private slaTimerId: any;
-    private slaNowMs: number = Date.now();
 
     Highcharts: typeof Highcharts = Highcharts;
     caseChartOptions: Highcharts.Options = {
@@ -68,57 +66,6 @@ export class HomePageComponent implements OnInit, OnDestroy {
         credits: {
             enabled: false,
         },
-        // legend: {
-        //     enabled: false,
-        // },
-        // chart: {
-        //     events: {
-        //         render() {
-        //             const chart = this,
-        //                 series = chart.series[0];
-
-        //             if (!series || !series.data || series.data.length === 0) {
-        //                 return;
-        //             }
-
-        //             let customLabel = (chart.options.chart as any).custom?.label;
-        //             let total = 0;
-        //             for (let i = 0; i < series.data.length; i++) {
-        //                 total += series.data[i]?.y ?? 0;
-        //             }
-
-        //             if (!(chart.options.chart as any).custom) {
-        //                 (chart.options.chart as any).custom = {};
-        //             }
-
-        //             if (!customLabel) {
-        //                 customLabel = (chart.options.chart as any).custom.label = chart.renderer
-        //                     .label('Total<br/>' + '<strong> ' + total + '</strong>', 0, 0, 'middle')
-        //                     .css({
-        //                         color: '#000',
-        //                         textAnchor: 'middle',
-        //                     })
-        //                     .add();
-        //             } else {
-        //                 customLabel.attr({
-        //                     text: 'Total<br/>' + '<strong> ' + total + '</strong>',
-        //                 });
-        //             }
-
-        //             const x = series.center[0] + chart.plotLeft;
-        //             const y = series.center[1] + chart.plotTop - customLabel.attr('height') / 2;
-
-        //             customLabel.attr({
-        //                 x,
-        //                 y,
-        //             });
-
-        //             customLabel.css({
-        //                 fontSize: `${series.center[2] / 12}px`,
-        //             });
-        //         },
-        //     },
-        // },
         plotOptions: {
             pie: {
                 borderWidth: 0,
@@ -220,23 +167,15 @@ export class HomePageComponent implements OnInit, OnDestroy {
             this.dateRangeEnd = value ? moment(value).format('YYYY-MM-DD') : '';
             this.onDateRangeChange();
         });
-        this.getCaseCode();
+        this.getCaseTopics();
         this.getCaseChannel();
-        this.initChart(this.caseChannel, this.caseCode);
+        this.initChart(this.caseChannel, this.caseTopic);
         this.getAllContactCount();
-
-        this.slaNowMs = Date.now();
-        this.slaTimerId = setInterval(() => {
-            this.slaNowMs = Date.now();
-        }, 60000);
     }
 
     ngOnDestroy(): void {
         if (this.langChangeSub) {
             this.langChangeSub.unsubscribe();
-        }
-        if (this.slaTimerId) {
-            clearInterval(this.slaTimerId);
         }
     }
 
@@ -249,14 +188,14 @@ export class HomePageComponent implements OnInit, OnDestroy {
         ];
     }
 
-    initChart(caseChannelCount: any[], caseCodeCount: any[]) {
+    initChart(caseChannelCount: any[], caseTopicCount: any[]) {
         (this.caseChartOptions.series as any)[0].data = caseChannelCount.map((item) => ({
             name: item.name,
             y: item.value,
             color: this.statusService.getChannelBgColor(item.name),
         }));
-        (this.contactChartOptions.xAxis as any).categories = caseCodeCount.map((item) => item.code);
-        (this.contactChartOptions.series as any)[0].data = caseCodeCount.map((item) => item.value);
+        (this.contactChartOptions.xAxis as any).categories = caseTopicCount.map((item) => item.code);
+        (this.contactChartOptions.series as any)[0].data = caseTopicCount.map((item) => item.value);
         this.updateFlag = true;
     }
 
@@ -319,21 +258,20 @@ export class HomePageComponent implements OnInit, OnDestroy {
                         value: (item.value / this.allCases.length) * 100,
                     }));
 
-                    // Calculate and store case code counts
-                    this.caseCode = Object.values(
+                    this.caseTopic = Object.values(
                         this.allCases.reduce((acc, item) => {
-                            const code = item.casecode;
-                            if (code) {
-                                if (!acc[code]) {
-                                    acc[code] = { code: code, name: code, value: 0 };
+                            const topic = item.caseTopic;
+                            if (topic) {
+                                if (!acc[topic]) {
+                                    acc[topic] = { code: topic, name: topic, value: 0 };
                                 }
 
-                                acc[code].value += 1;
+                                acc[topic].value += 1;
                             }
                             return acc;
                         }, {}),
                     );
-                    this.caseCodeCount = this.caseCode.length;
+                    this.caseTopicCount = this.caseTopic.length;
                     this.contactCount = [...new Set(this.allCases.map((item) => item.contactId))].length;
 
                     // เรียก filterCases เพื่อ filter และ paginate จาก allCases
@@ -357,9 +295,9 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
             const matchesChannel = !this.selectedCaseChannel || caseItem.channel === this.selectedCaseChannel;
 
-            const matchesCode = !this.selectedCaseCode || caseItem.casecode === this.selectedCaseCode;
+            const matchesTopic = !this.selectedCaseTopic || caseItem.caseTopic === this.selectedCaseTopic;
 
-            const hasAnyFilter = this.selectedStatus || this.selectedCaseChannel || this.selectedCaseCode;
+            const hasAnyFilter = this.selectedStatus || this.selectedCaseChannel || this.selectedCaseTopic;
 
             if (!hasAnyFilter) {
                 return true;
@@ -373,8 +311,8 @@ export class HomePageComponent implements OnInit, OnDestroy {
             if (this.selectedCaseChannel) {
                 matches = matches && matchesChannel;
             }
-            if (this.selectedCaseCode) {
-                matches = matches && matchesCode;
+            if (this.selectedCaseTopic) {
+                matches = matches && matchesTopic;
             }
 
             return matches;
@@ -384,7 +322,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
         this.totalPages = Math.ceil(this.totalCount / this.pageSize);
         this.calculatePages();
 
-        if (this.selectedStatus && !this.selectedCaseChannel && !this.selectedCaseCode) {
+        if (this.selectedStatus && !this.selectedCaseChannel && !this.selectedCaseTopic) {
             this.getStatusList(this.allCases);
         } else {
             this.getStatusList(filteredAllCases);
@@ -413,22 +351,22 @@ export class HomePageComponent implements OnInit, OnDestroy {
             value: filteredAllCases.length > 0 ? (item.value / filteredAllCases.length) * 100 : 0,
         }));
 
-        let caseCode = Object.values(
+        let caseTopic = Object.values(
             filteredAllCases.reduce((acc, item) => {
-                const code = item.casecode;
-                if (code) {
-                    if (!acc[code]) {
-                        acc[code] = { code: code, name: code, value: 0 };
+                const topic = item.caseTopic;
+                if (topic) {
+                    if (!acc[topic]) {
+                        acc[topic] = { code: topic, name: topic, value: 0 };
                     }
 
-                    acc[code].value += 1;
+                    acc[topic].value += 1;
                 }
                 return acc;
             }, {}),
         );
-        this.caseCodeCount = caseCode.length;
+        this.caseTopicCount = caseTopic.length;
         this.contactCount = [...new Set(filteredAllCases.map((item) => item.contactId))].length;
-        this.initChart(caseChannel, caseCode);
+        this.initChart(caseChannel, caseTopic);
     }
 
     isOverOneDay(createdAt: string): boolean {
@@ -449,13 +387,13 @@ export class HomePageComponent implements OnInit, OnDestroy {
         }, 300);
     }
 
-    getCaseCode() {
-        this.callService.getCaseCode().subscribe((res: any) => {
-            this.caseCodeList = res.map((item: any) => ({
-                id: item.id,
+    getCaseTopics() {
+        this.callService.getCaseTopics().subscribe((res: any) => {
+            this.caseTopicList = res.map((item: any) => ({
+                id: item.caseTopicId ?? item.id,
                 code: item.code,
-                name: item.code,
-                value: item.code,
+                name: item.name || item.code,
+                value: item.name || item.code,
             }));
         });
     }
@@ -625,42 +563,6 @@ export class HomePageComponent implements OnInit, OnDestroy {
         this.router.navigate(['/contacts/edit'], {
             queryParams: { caseId, key: contactId },
         });
-    }
-
-    getSlaRemainingMinutes(caseItem: any): number | null {
-        if (!caseItem || caseItem.status !== 'Pending') {
-            return null;
-        }
-        if (caseItem.slaDueAt) {
-            const dueMs = new Date(caseItem.slaDueAt).getTime();
-            if (!Number.isNaN(dueMs)) {
-                return Math.ceil((dueMs - this.slaNowMs) / 60000);
-            }
-        }
-
-        if (caseItem.slaRemainingMinutes !== null && caseItem.slaRemainingMinutes !== undefined && caseItem.slaRemainingMinutes !== '') {
-            const fallback = Number(caseItem.slaRemainingMinutes);
-            return Number.isNaN(fallback) ? null : fallback;
-        }
-
-        return null;
-    }
-
-    formatSlaRemaining(caseItem: any): string {
-        const value = this.getSlaRemainingMinutes(caseItem);
-        if (value === null) {
-            return '-';
-        }
-        const isOverdue = value <= 0;
-        const absValue = Math.abs(value);
-        const hours = Math.floor(absValue / 60);
-        const mins = absValue % 60;
-        const prefix = isOverdue ? 'เกิน' : 'เหลือ';
-
-        if (hours > 0) {
-            return `${prefix} ${hours} ชม ${mins} นาที`;
-        }
-        return `${prefix} ${mins} นาที`;
     }
 
     search(): void {

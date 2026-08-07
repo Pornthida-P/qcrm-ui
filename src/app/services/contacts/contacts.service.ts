@@ -131,10 +131,6 @@ export class ContactsService {
         );
     }
 
-    getContactGroup() {
-        return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}${config.api.path.contacts.contactGroup}`);
-    }
-
     getContactChatId(chatId: string) {
         return this.http.get(`${this.baseUrl}${config.api.path.contacts.baseUrl}${config.api.path.contacts.contactChatId}/${chatId}`);
     }

@@ -47,8 +47,6 @@
                                 <th scope="col">{{ 'contact.name' | translate }}</th>
                                 <th scope="col">{{ 'contact.displayName' | translate }}</th>
                                 <th scope="col">{{ 'contact.phoneNumber' | translate }}</th>
-                                <th scope="col">{{ 'contact.contactGroup' | translate }}</th>
-                                <th scope="col">{{ 'contact.partner' | translate }}</th>
                                 <th scope="col" class="text-center" *ngIf="checkRole()">{{ 'common.manage' | translate }}</th>
                             </tr>
                         </thead>
@@ -98,10 +96,6 @@
                                     </td>
                                     <!-- เบอร์โทรศัพท์ -->
                                     <td>{{ contact?.contactNumber || '-' }}</td>
-                                    <!-- Contact Group -->
-                                    <td>{{ contact?.contactGroupName || '-' }}</td>
-                                    <!-- Partner Code -->
-                                    <td>{{ contact?.partnerCode || '-' }}</td>
                                     <!-- จัดการ -->
                                     <td class="text-center" *ngIf="checkRole()">
                                         <button
@@ -118,7 +112,7 @@
                             </ng-container>
                             <ng-template #noDataTemplate>
                                 <tr>
-                                    <td [attr.colspan]="checkRole() ? 6 : 5" class="text-center py-5">
+                                    <td [attr.colspan]="checkRole() ? 4 : 3" class="text-center py-5">
                                         <div class="empty-state">
                                             <i class="fa-solid fa-inbox fa-3x text-muted mb-3"></i>
                                             <p class="text-muted mb-0">{{ 'common.dataNotFound' | translate }}</p>

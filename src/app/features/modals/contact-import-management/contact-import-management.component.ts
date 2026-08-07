@@ -6,15 +6,12 @@ import { ContactsService } from 'src/app/services/contacts/contacts.service';
 import * as XLSX from 'xlsx';
 import { UserService } from 'src/app/services/user/user.service';
 import { CallService } from 'src/app/services/call/call.service';
-import { CaseServiceHierarchyService } from 'src/app/services/case-service-hierarchy/case-service-hierarchy.service';
-import { CarService } from 'src/app/services/car/car.service';
 import { firstValueFrom, forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { SweetAlertService } from 'src/app/services/sweet-alert/sweet-alert.service';
 import { StatusService } from 'src/app/services/status/status.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { config } from 'src/app/config/config';
-import * as moment from 'moment';
 @Component({
     selector: 'app-contact-import-management',
     standalone: false,
@@ -30,6 +27,7 @@ export class ContactImportManagementComponent implements OnInit {
     agentAll: any[] = [];
     caseList: any[] = [];
     isLoading = false;
+    isDragOver = false;
     mode: string = '';
     form!: FormGroup;
     assignUser: string = '';
@@ -45,8 +43,6 @@ export class ContactImportManagementComponent implements OnInit {
         private translate: TranslateService,
         private userService: UserService,
         private callService: CallService,
-        private caseServiceHierarchyService: CaseServiceHierarchyService,
-        private carService: CarService,
         private sweetAlertService: SweetAlertService,
         public statusService: StatusService,
     ) {}
@@ -97,6 +93,7 @@ export class ContactImportManagementComponent implements OnInit {
             if (this.contactObjects.length > 0) {
                 this.isProcessing = true;
                 await this.checkContactData();
+                await this.validateTopicAndSubject();
                 this.isProcessing = false;
             }
             this.isLoading = false;
@@ -162,6 +159,7 @@ export class ContactImportManagementComponent implements OnInit {
                 if (this.contactObjects.length > 0) {
                     this.isProcessing = true;
                     await this.checkContactData();
+                    await this.validateTopicAndSubject();
                     this.isProcessing = false;
                 }
             } catch (error) {
@@ -173,14 +171,153 @@ export class ContactImportManagementComponent implements OnInit {
         reader.readAsText(file, 'UTF-8');
     }
 
+    private isPhoneHeader(header: string): boolean {
+        const h = String(header || '')
+            .toLowerCase()
+            .trim();
+        return (
+            h.includes('phone') ||
+            h.includes('mobile') ||
+            h.includes('number') ||
+            h.includes('โทร') ||
+            h.includes('เบอร์')
+        );
+    }
+
+    /** Normalize Thai mobile numbers from Excel/CSV (e.g. 957088486, '0957088486). */
+    private normalizePhoneNumber(raw: any): string | null {
+        if (raw === undefined || raw === null || raw === '') {
+            return null;
+        }
+
+        let phone = String(raw).trim();
+        // Excel text/formula wrappers: '0957..., ="0957..., ="0957..."
+        phone = phone.replace(/^'+/, '').replace(/^="+|"+$/g, '').replace(/^=/, '').trim();
+        // Keep digits only (drop spaces, dashes, parentheses)
+        phone = phone.replace(/[^\d]/g, '');
+
+        if (!phone) {
+            return null;
+        }
+
+        // +66 / 66 country code → local 0xxxxxxxxx
+        if (phone.startsWith('66') && phone.length >= 11) {
+            phone = '0' + phone.slice(2);
+        }
+
+        // 9 digits starting 6-9 (missing leading 0) → 0xxxxxxxxx
+        if (/^[6-9]\d{8}$/.test(phone)) {
+            phone = '0' + phone;
+        }
+        // 8 digits → pad leading 0 (legacy)
+        else if (/^[1-9]\d{7}$/.test(phone)) {
+            phone = '0' + phone;
+        }
+
+        return phone || null;
+    }
+
+    private pad2(n: number): string {
+        return String(n).padStart(2, '0');
+    }
+
+    private toMysqlDateTime(date: Date): string {
+        return (
+            `${date.getFullYear()}-${this.pad2(date.getMonth() + 1)}-${this.pad2(date.getDate())} ` +
+            `${this.pad2(date.getHours())}:${this.pad2(date.getMinutes())}:${this.pad2(date.getSeconds())}`
+        );
+    }
+
+    /** Parse Excel/CSV Created Date into MySQL datetime string. */
+    private parseImportDateTime(raw: any): string | null {
+        if (raw === undefined || raw === null || raw === '') {
+            return null;
+        }
+
+        if (raw instanceof Date && !isNaN(raw.getTime())) {
+            return this.toMysqlDateTime(raw);
+        }
+
+        // Excel serial date (e.g. 45841.4167)
+        if (typeof raw === 'number' && isFinite(raw)) {
+            try {
+                const parsed = (XLSX as any).SSF?.parse_date_code?.(raw);
+                if (parsed) {
+                    const date = new Date(
+                        parsed.y,
+                        (parsed.m || 1) - 1,
+                        parsed.d || 1,
+                        parsed.H || 0,
+                        parsed.M || 0,
+                        Math.floor(parsed.S || 0),
+                    );
+                    if (!isNaN(date.getTime())) {
+                        return this.toMysqlDateTime(date);
+                    }
+                }
+            } catch {
+                // fall through
+            }
+            // Fallback: Excel epoch (1899-12-30)
+            const excelEpoch = Date.UTC(1899, 11, 30);
+            const date = new Date(excelEpoch + raw * 24 * 60 * 60 * 1000);
+            if (!isNaN(date.getTime())) {
+                return this.toMysqlDateTime(date);
+            }
+            return null;
+        }
+
+        const str = String(raw).trim();
+        if (!str) {
+            return null;
+        }
+
+        // dd/MM/yyyy [HH:mm[:ss]]
+        const dmy = str.match(
+            /^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:[ T](\d{1,2}):(\d{2})(?::(\d{2}))?)?$/,
+        );
+        if (dmy) {
+            const date = new Date(
+                Number(dmy[3]),
+                Number(dmy[2]) - 1,
+                Number(dmy[1]),
+                Number(dmy[4] || 0),
+                Number(dmy[5] || 0),
+                Number(dmy[6] || 0),
+            );
+            return isNaN(date.getTime()) ? null : this.toMysqlDateTime(date);
+        }
+
+        // yyyy-MM-dd [HH:mm[:ss]] or ISO
+        const ymd = str.match(
+            /^(\d{4})-(\d{1,2})-(\d{1,2})(?:[ T](\d{1,2}):(\d{2})(?::(\d{2}))?(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?)?$/,
+        );
+        if (ymd) {
+            const date = new Date(
+                Number(ymd[1]),
+                Number(ymd[2]) - 1,
+                Number(ymd[3]),
+                Number(ymd[4] || 0),
+                Number(ymd[5] || 0),
+                Number(ymd[6] || 0),
+            );
+            return isNaN(date.getTime()) ? null : this.toMysqlDateTime(date);
+        }
+
+        const native = new Date(str);
+        if (!isNaN(native.getTime())) {
+            return this.toMysqlDateTime(native);
+        }
+
+        return null;
+    }
+
     private processContactData(data: any[]): any[] {
         if (!data || data.length === 0) return data;
 
         // First row is header
         const headers = data[0];
-        const phoneNumberIndex = headers.findIndex(
-            (h: string) => h && (h.toLowerCase().includes('phone') || h.toLowerCase().includes('number')),
-        );
+        const phoneNumberIndex = headers.findIndex((h: string) => this.isPhoneHeader(h));
 
         if (phoneNumberIndex === -1) {
             console.warn('Phone number column not found');
@@ -191,22 +328,8 @@ export class ContactImportManagementComponent implements OnInit {
         return data.map((row: any[], rowIndex: number) => {
             if (rowIndex === 0) return row; // Keep header as is
 
-            if (row[phoneNumberIndex] !== undefined && row[phoneNumberIndex] !== null) {
-                let phoneNumber = String(row[phoneNumberIndex]).trim();
-
-                // Remove any non-digit characters except leading +
-                phoneNumber = phoneNumber.replace(/[^\d+]/g, '');
-
-                // If phone number is 9 digits and starts with 6-9, add leading 0 (Thai phone number)
-                if (/^[6-9]\d{8}$/.test(phoneNumber)) {
-                    phoneNumber = '0' + phoneNumber;
-                }
-                // If phone number is 8 digits and starts with 1-9, add leading 0
-                else if (/^[1-9]\d{7}$/.test(phoneNumber)) {
-                    phoneNumber = '0' + phoneNumber;
-                }
-
-                row[phoneNumberIndex] = phoneNumber;
+            if (row[phoneNumberIndex] !== undefined && row[phoneNumberIndex] !== null && row[phoneNumberIndex] !== '') {
+                row[phoneNumberIndex] = this.normalizePhoneNumber(row[phoneNumberIndex]);
             }
 
             return row;
@@ -214,26 +337,98 @@ export class ContactImportManagementComponent implements OnInit {
     }
 
     onUploadFile(event: any) {
-        const file = event.target.files[0];
+        const file = event?.target?.files?.[0];
         if (file) {
-            const fileName = file.name.toLowerCase();
-            const fileExtension = fileName.substring(fileName.lastIndexOf('.'));
-            const fileType = file.type;
-
-            if (fileExtension === '.csv' || fileType === 'text/csv') {
-                this.readCsvFile(file);
-            } else if (
-                fileExtension === '.xlsx' ||
-                fileExtension === '.xls' ||
-                fileType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
-                fileType === 'application/vnd.ms-excel'
-            ) {
-                this.readExcelFile(file);
-            } else {
-                console.warn('Unsupported file type:', fileType);
-                return;
-            }
+            this.handleUploadedFile(file);
         }
+        if (event?.target) {
+            event.target.value = '';
+        }
+    }
+
+    onDragOver(event: DragEvent) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.isDragOver = true;
+    }
+
+    onDragLeave(event: DragEvent) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.isDragOver = false;
+    }
+
+    onDropFile(event: DragEvent) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.isDragOver = false;
+
+        const file = event.dataTransfer?.files?.[0];
+        if (file) {
+            this.handleUploadedFile(file);
+        }
+    }
+
+    private handleUploadedFile(file: File) {
+        const fileName = file.name.toLowerCase();
+        const fileExtension = fileName.substring(fileName.lastIndexOf('.'));
+        const fileType = file.type;
+
+        if (fileExtension === '.csv' || fileType === 'text/csv') {
+            this.readCsvFile(file);
+        } else if (
+            fileExtension === '.xlsx' ||
+            fileExtension === '.xls' ||
+            fileType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+            fileType === 'application/vnd.ms-excel'
+        ) {
+            this.readExcelFile(file);
+        } else {
+            console.warn('Unsupported file type:', fileType);
+        }
+    }
+
+    downloadTemplate() {
+        const headers = [
+            'First Name',
+            'Last Name',
+            'Contact Email',
+            'Contact Mobile',
+            'Topic',
+            'Subject',
+            'description',
+            'Created Date',
+            'province',
+        ];
+        const sampleRows = [
+            [
+                'สมชาย',
+                'ใจดี',
+                'somchai@example.com',
+                '0812345678',
+                'หัวข้อตัวอย่าง',
+                'เรื่องตัวอย่าง',
+                'รายละเอียดเคสตัวอย่าง',
+                '07/08/2026 10:00',
+                'กรุงเทพมหานคร',
+            ],
+            [
+                'สมหญิง',
+                'รักดี',
+                'somying@example.com',
+                '0898765432',
+                'หัวข้อตัวอย่าง',
+                'เรื่องตัวอย่าง',
+                'ติดตามผล',
+                '07/08/2026 11:30',
+                'เชียงใหม่',
+            ],
+        ];
+        const worksheet = XLSX.utils.aoa_to_sheet([headers, ...sampleRows]);
+        worksheet['!cols'] = headers.map((header) => ({ wch: Math.max(14, header.length + 2) }));
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Import');
+        XLSX.writeFile(workbook, 'case-import-template.xlsx');
     }
 
     private convertToContactObjects(data: any[]): any[] {
@@ -261,9 +456,9 @@ export class ContactImportManagementComponent implements OnInit {
                     if (value === undefined || value === null || value === '') {
                         contactObj[header] = null;
                     } else {
-                        // For phone_number, keep as string (already processed)
-                        if (header.toLowerCase().includes('phone') || header.toLowerCase().includes('number')) {
-                            contactObj[header] = String(value).trim();
+                        // For phone columns, keep as normalized string
+                        if (this.isPhoneHeader(header)) {
+                            contactObj[header] = this.normalizePhoneNumber(value);
                         } else {
                             // For other fields, keep original type or convert to string
                             contactObj[header] = typeof value === 'string' ? value.trim() : value;
@@ -272,60 +467,52 @@ export class ContactImportManagementComponent implements OnInit {
                 }
             });
 
-            // Add name field by combining firstname + lastname or use Dealer Name
-            const firstName = contactObj['firstname'] || contactObj['firstName'] || '';
-            const lastName = contactObj['lastname'] || contactObj['lastName'] || '';
-            const dealerName = contactObj['Dealer Name'] || contactObj['dealerName'] || '';
-            const fullName = [firstName, lastName].filter(Boolean).join(' ').trim() || dealerName;
+            // Name: first + last, or a single name column
+            const firstName = contactObj['firstname'] || contactObj['firstName'] || contactObj['First Name'] || '';
+            const lastName = contactObj['lastname'] || contactObj['lastName'] || contactObj['Last Name'] || '';
+            const singleName =
+                contactObj['name'] || contactObj['Name'] || contactObj['fullname'] || contactObj['Contact Name'] || '';
+            const fullName = [firstName, lastName].filter(Boolean).join(' ').trim() || String(singleName || '').trim();
             contactObj['name'] = fullName || null;
-
-            // Parse date for car (handle both formats: "30/12/2025 09:53" and "2026-01-07 15:39")
-            if (contactObj['Created Date']) {
-                const createdDate = contactObj['Created Date'];
-                let parsedDate: string;
-                if (createdDate.includes('/')) {
-                    // Format: "30/12/2025 09:53"
-                    const [datePart, timePart] = createdDate.split(' ');
-                    const [day, month, year] = datePart.split('/');
-                    parsedDate = `${year}-${month}-${day} ${timePart || '00:00:00'}`;
-                } else {
-                    // Format: "2026-01-07 15:39" or ISO format
-                    parsedDate = createdDate;
-                }
-                contactObj['parsedCreatedDate'] = parsedDate;
+            if (firstName) {
+                contactObj['firstName'] = String(firstName).trim();
+            } else if (fullName) {
+                const parts = fullName.split(/\s+/);
+                contactObj['firstName'] = parts[0];
+                contactObj['lastName'] = parts.slice(1).join(' ') || null;
+            }
+            if (lastName) {
+                contactObj['lastName'] = String(lastName).trim();
             }
 
-            // Clean phone number (remove ="" wrapper)
-            if (contactObj['Contact Mobile']) {
-                let phone = String(contactObj['Contact Mobile'])
-                    .replace(/^="|"$/g, '')
-                    .replace(/=/g, '')
-                    .trim();
+            if (
+                contactObj['Created Date'] !== undefined &&
+                contactObj['Created Date'] !== null &&
+                contactObj['Created Date'] !== ''
+            ) {
+                contactObj['parsedCreatedDate'] = this.parseImportDateTime(contactObj['Created Date']);
+            } else if (contactObj['createdDate'] || contactObj['created_date'] || contactObj['createdAt']) {
+                contactObj['parsedCreatedDate'] = this.parseImportDateTime(
+                    contactObj['createdDate'] || contactObj['created_date'] || contactObj['createdAt'],
+                );
+            }
+
+            const phoneRaw =
+                contactObj['Contact Mobile'] ||
+                contactObj['phone_number'] ||
+                contactObj['phoneNumber'] ||
+                contactObj['Phone'] ||
+                contactObj['Mobile'] ||
+                null;
+            if (phoneRaw) {
+                const phone = this.normalizePhoneNumber(phoneRaw);
                 contactObj['Contact Mobile'] = phone;
-                contactObj['phone_number'] = phone; // For compatibility
+                contactObj['phone_number'] = phone;
             }
 
-            // Clean AL Phone Number (remove ="" wrapper)
-            if (contactObj['AL Phone Number']) {
-                let alPhone = String(contactObj['AL Phone Number'])
-                    .replace(/^="|"$/g, '')
-                    .replace(/=/g, '')
-                    .trim();
-                contactObj['AL Phone Number'] = alPhone;
-            }
-
-            // Parse price fields (remove commas and convert to number)
-            if (contactObj['ราคาประกาศขาย']) {
-                const price = String(contactObj['ราคาประกาศขาย']).replace(/,/g, '');
-                contactObj['asking_price'] = price ? parseFloat(price) : null;
-            }
-            if (contactObj['ราคา bluebook']) {
-                const price = String(contactObj['ราคา bluebook']).replace(/,/g, '');
-                contactObj['bluebook_price'] = price ? parseFloat(price) : null;
-            }
-            if (contactObj['ราคาแนะนำ']) {
-                const price = String(contactObj['ราคาแนะนำ']).replace(/,/g, '');
-                contactObj['msrp_price'] = price ? parseFloat(price) : null;
+            const emailRaw = contactObj['Contact Email'] || contactObj['email'] || contactObj['Email'] || null;
+            if (emailRaw) {
+                contactObj['email'] = String(emailRaw).trim();
             }
 
             contactObjects.push(contactObj);
@@ -338,29 +525,17 @@ export class ContactImportManagementComponent implements OnInit {
     async checkContactData() {
         for (const contactObject of this.contactObjects) {
             try {
-                // Check if has car data (for lead import)
-                const hasCarData = contactObject['Dealer ID'] || contactObject['dealerId'];
-                if (hasCarData) {
-                    contactObject['hasCarData'] = true;
-                }
-
                 const phone = contactObject['phone_number'] || contactObject['Contact Mobile'];
                 if (phone) {
                     const phoneRes: any = await this.contactService.getContactsByParamPhone(phone).toPromise();
                     const phoneContacts = typeof phoneRes === 'string' ? JSON.parse(phoneRes) : phoneRes;
                     if (phoneContacts && Array.isArray(phoneContacts) && phoneContacts.length > 0) {
                         contactObject['contact'] = phoneContacts[0];
-                        // Check if partnerCode or email is different
-                        const dealerId = contactObject['Dealer ID'] || contactObject['dealerId'] || null;
-                        const existingPartnerCode = phoneContacts[0].partnerCode || null;
                         const newEmail = contactObject['Contact Email'] || contactObject['email'] || null;
                         const existingEmail = phoneContacts[0].email || null;
-                        // PartnerCode different: CSV has value and it's different from DB, or CSV has value but DB doesn't
-                        const partnerCodeDifferent = dealerId !== null && dealerId !== existingPartnerCode;
-                        // Email different: both have values and they're different
                         const emailDifferent = newEmail !== null && existingEmail !== null && newEmail !== existingEmail;
 
-                        if (partnerCodeDifferent || emailDifferent) {
+                        if (emailDifferent) {
                             contactObject['import-status'] = 'update';
                         } else {
                             contactObject['import-status'] = 'found';
@@ -374,21 +549,10 @@ export class ContactImportManagementComponent implements OnInit {
                 const email = contactObject['Contact Email'] || contactObject['email'];
 
                 if (email) {
-                    // Try to find by email first
                     const emailContacts = await this.searchContactByEmail(email);
                     if (emailContacts && emailContacts.length > 0) {
                         contactObject['contact'] = emailContacts[0];
-                        // Check if partnerCode is different (email should be same since we found by email)
-                        const dealerId = contactObject['Dealer ID'] || contactObject['dealerId'] || null;
-                        const existingPartnerCode = emailContacts[0].partnerCode || null;
-                        // PartnerCode different: CSV has value and it's different from DB, or CSV has value but DB doesn't
-                        const partnerCodeDifferent = dealerId !== null && dealerId !== existingPartnerCode;
-
-                        if (partnerCodeDifferent) {
-                            contactObject['import-status'] = 'update';
-                        } else {
-                            contactObject['import-status'] = 'found';
-                        }
+                        contactObject['import-status'] = 'found';
                         continue;
                     }
                 }
@@ -397,18 +561,12 @@ export class ContactImportManagementComponent implements OnInit {
                     const nameContacts = await this.searchContactByName(name);
                     if (nameContacts && nameContacts.length > 0) {
                         contactObject['contact'] = nameContacts[0];
-                        // Check if phone number, partnerCode, or email is different
                         const phoneDifferent = nameContacts[0].contactNumber !== contactObject['phone_number'];
-                        const dealerId = contactObject['Dealer ID'] || contactObject['dealerId'] || null;
-                        const existingPartnerCode = nameContacts[0].partnerCode || null;
-                        // PartnerCode different: CSV has value and it's different from DB, or CSV has value but DB doesn't
-                        const partnerCodeDifferent = dealerId !== null && dealerId !== existingPartnerCode;
                         const newEmail = contactObject['Contact Email'] || contactObject['email'] || null;
                         const existingEmail = nameContacts[0].email || null;
-                        // Email different: both have values and they're different
                         const emailDifferent = newEmail !== null && existingEmail !== null && newEmail !== existingEmail;
 
-                        if (phoneDifferent || partnerCodeDifferent || emailDifferent) {
+                        if (phoneDifferent || emailDifferent) {
                             contactObject['import-status'] = 'update';
                         } else {
                             contactObject['import-status'] = 'found';
@@ -448,6 +606,18 @@ export class ContactImportManagementComponent implements OnInit {
     async onClickConfirm() {
         if (this.isImporting) return;
 
+        const invalidRows = this.contactObjects.filter((row) => row['topicSubjectInvalid'] || row['import-status'] === 'warning');
+        if (invalidRows.length > 0) {
+            this.sweetAlertService.getSwal(
+                'warning',
+                this.translate.instant('alert.warning') || 'Warning',
+                this.topicSubjectWarningMessage(invalidRows.length),
+                true,
+                '',
+            );
+            return;
+        }
+
         this.isImporting = true;
         let successCount = 0;
         let errorCount = 0;
@@ -456,19 +626,7 @@ export class ContactImportManagementComponent implements OnInit {
             for (const contactObject of this.contactObjects) {
                 let importStatus = contactObject['import-status'];
                 try {
-                    // Create or update car first (if has car data)
-                    if (contactObject['hasCarData']) {
-                        const car = await this.createOrUpdateCar(contactObject);
-                        if (car && car.id) {
-                            contactObject['car'] = car;
-                            contactObject['carId'] = car.id;
-                        } else {
-                            console.warn('Failed to create/update car for', contactObject['Dealer ID']);
-                        }
-                    }
-
                     if (importStatus === 'found') {
-                        // Already exists, skip contact creation but ensure car is created
                         successCount++;
                         continue;
                     }
@@ -534,18 +692,17 @@ export class ContactImportManagementComponent implements OnInit {
         const contact = contactObject['contact'] || {};
         const data = {
             contactId: contact.contactId,
-            firstName: contactObject['firstname'] || contactObject['firstName'] || contact.firstName || '',
-            lastName: contactObject['lastname'] || contactObject['lastName'] || contact.lastName || '',
+            firstName: contactObject['firstName'] || contactObject['firstname'] || contact.firstName || '',
+            lastName: contactObject['lastName'] || contactObject['lastname'] || contact.lastName || '',
             gender: contactObject['gender'] || contact.gender || 'unknown',
             organizationId: contactObject['organizationId'] || contact.organizationId || null,
-            contactType: contactObject['contactType'] || contact.contactType || 'Seller',
+            contactType: contactObject['contactType'] || contact.contactType || null,
             contactNumber: contact.contactNumber || '',
             contactNumber2: contactObject['contactNumber2'] || contact.contactNumber2 || '',
-            province: contactObject['License Plate Province'] || contactObject['licensePlateProvince'] || contact.province || null,
+            province: contactObject['province'] || contactObject['Province'] || contact.province || null,
             modifiedById: userId,
             contactNumNew: contactObject['phone_number'] || contactObject['phoneNumber'] || contactObject['Contact Mobile'] || '',
-            partnerCode: contactObject['Dealer ID'] || contactObject['dealerId'] || null, // Dealer ID is partnerCode
-            email: contactObject['Contact Email'] || contactObject['email'] || null,
+            email: contactObject['email'] || contactObject['Contact Email'] || null,
         };
 
         try {
@@ -561,32 +718,24 @@ export class ContactImportManagementComponent implements OnInit {
         const currentUser = await firstValueFrom(this.userService.getDataUser());
         const userId = currentUser?.userId ?? '';
 
-        // Split dealer name into first and last name if available
-        const dealerName = contactObject['Dealer Name'] || contactObject['dealerName'] || '';
-        let firstName = contactObject['firstname'] || contactObject['firstName'] || '';
-        let lastName = contactObject['lastname'] || contactObject['lastName'] || '';
-
-        if (!firstName && dealerName) {
-            const nameParts = dealerName.trim().split(/\s+/);
-            firstName = nameParts[0] || 'ไม่ทราบชื่อ';
-            lastName = nameParts.slice(1).join(' ') || null;
-        }
+        const firstName = contactObject['firstName'] || contactObject['firstname'] || '';
+        const lastName = contactObject['lastName'] || contactObject['lastname'] || '';
+        const displayName = contactObject['name'] || [firstName, lastName].filter(Boolean).join(' ').trim() || 'ไม่ทราบชื่อ';
 
         const data = {
-            firstName: firstName || 'ไม่ทราบชื่อ',
-            lastName: lastName || null,
+            firstName: firstName || displayName.split(/\s+/)[0] || 'ไม่ทราบชื่อ',
+            lastName: lastName || displayName.split(/\s+/).slice(1).join(' ') || null,
             gender: contactObject['gender'] || 'unknown',
             organizationId: contactObject['organizationId'] || null,
-            contactType: 'Seller',
+            contactType: contactObject['contactType'] || null,
             contactNumber: contactObject['phone_number'] || contactObject['phoneNumber'] || contactObject['Contact Mobile'] || '',
             contactNumber2: contactObject['contactNumber2'] || '',
             chatId: contactObject['chatId'] || '',
             chatType: contactObject['chatType'] || '',
-            displayName: contactObject['displayName'] || dealerName || firstName || 'ไม่ทราบชื่อ',
-            province: contactObject['License Plate Province'] || contactObject['licensePlateProvince'] || null,
+            displayName,
+            province: contactObject['province'] || contactObject['Province'] || null,
             createdById: userId,
-            partnerCode: contactObject['Dealer ID'] || contactObject['dealerId'] || null, // Dealer ID is partnerCode
-            email: contactObject['Contact Email'] || contactObject['email'] || null,
+            email: contactObject['email'] || contactObject['Contact Email'] || null,
         };
 
         try {
@@ -601,68 +750,6 @@ export class ContactImportManagementComponent implements OnInit {
             return null;
         } catch (error) {
             console.error('Error creating contact:', error);
-            return null;
-        }
-    }
-
-    /**
-     * Create or update car from contact object
-     */
-    async createOrUpdateCar(contactObject: any): Promise<any> {
-        const currentUser = await firstValueFrom(this.userService.getDataUser());
-        const userId = currentUser?.userId ?? null;
-
-        const dealerId = contactObject['Dealer ID'] || contactObject['dealerId'];
-        const carId = contactObject['Car ID'] || contactObject['carId'];
-
-        // Don't create car record if no dealerId or no carId
-        if (!dealerId || !carId) {
-            return null;
-        }
-
-        const carData = {
-            id: contactObject['Car ID'] || contactObject['carId'] || null,
-            licensePlateNumber: contactObject['License Plate Number'] || contactObject['licensePlateNumber'] || null,
-            licensePlateProvince: contactObject['License Plate Province'] || contactObject['licensePlateProvince'] || null,
-            dealerId: dealerId,
-            dealerName: contactObject['Dealer Name'] || contactObject['dealerName'] || '',
-            contactEmail: contactObject['Contact Email'] || contactObject['contactEmail'] || '',
-            contactMobile: contactObject['Contact Mobile'] || contactObject['contactMobile'] || '',
-            quickSaleId: contactObject['Quick Sale ID'] || contactObject['quickSaleId'] || null,
-            code: contactObject['Code'] || contactObject['code'] || '',
-            carStatusDescription: contactObject['Car Status Description'] || contactObject['carStatusDescription'] || null,
-            carBrand: contactObject['Car Brand'] || contactObject['carBrand'] || null,
-            carModel: contactObject['Car Model'] || contactObject['carModel'] || null,
-            asking_price:
-                contactObject['asking_price'] !== undefined
-                    ? contactObject['asking_price']
-                    : contactObject['ราคาประกาศขาย']
-                      ? parseFloat(String(contactObject['ราคาประกาศขาย']).replace(/,/g, '')) || null
-                      : null,
-            bluebook_price:
-                contactObject['bluebook_price'] !== undefined
-                    ? contactObject['bluebook_price']
-                    : contactObject['ราคา bluebook']
-                      ? parseFloat(String(contactObject['ราคา bluebook']).replace(/,/g, '')) || null
-                      : null,
-            msrp_price:
-                contactObject['msrp_price'] !== undefined
-                    ? contactObject['msrp_price']
-                    : contactObject['ราคาแนะนำ']
-                      ? parseFloat(String(contactObject['ราคาแนะนำ']).replace(/,/g, '')) || null
-                      : null,
-            alName: contactObject['AL Name'] || contactObject['alName'] || null,
-            alPhoneNumber: contactObject['AL Phone Number'] || contactObject['alPhoneNumber'] || null,
-            createdAt: contactObject['parsedCreatedDate'] || contactObject['Created Date'] || new Date().toISOString(),
-            createById: userId, // ID of user who imports the data (QCRM user, รองรับ cross-auth จาก QIM)
-        };
-
-        try {
-            const res: any = await firstValueFrom(this.carService.createOrUpdateCar(carData));
-            const result = typeof res === 'string' ? JSON.parse(res) : res;
-            return result;
-        } catch (error) {
-            console.error('Error creating/updating car:', error);
             return null;
         }
     }
@@ -697,6 +784,11 @@ export class ContactImportManagementComponent implements OnInit {
         });
     }
     getStatusLabel(status: string): string {
+        if (status === 'warning') {
+            const key = 'contact-import-management.status.warning';
+            const translated = this.translate.instant(key);
+            return !translated || translated === key ? 'แจ้งเตือน' : translated;
+        }
         const statusKey = `contact-import-management.status.${status}`;
         const defaultKey = 'contact-import-management.status.pending';
         return this.translate.instant(statusKey) || this.translate.instant(defaultKey);
@@ -713,6 +805,138 @@ export class ContactImportManagementComponent implements OnInit {
 
     getStatusCount(status: string): number {
         return this.contactObjects.filter((contact) => contact['import-status'] === status).length;
+    }
+
+    hasTopicSubjectErrors(): boolean {
+        return this.contactObjects.some((row) => row['topicSubjectInvalid'] || row['import-status'] === 'warning');
+    }
+
+    private getTopicKey(row: any): string {
+        const raw = row?.['Topic'] || row?.['topic'] || row?.['Code'] || row?.['code'] || row?.['caseTopic'] || '';
+        return String(raw || '').trim();
+    }
+
+    private getSubjectKey(row: any): string {
+        const raw = row?.['Subject'] || row?.['subject'] || row?.['caseSubject'] || row?.['เรื่อง'] || '';
+        return String(raw || '').trim();
+    }
+
+    private async loadTopicSubjectMaps(): Promise<{
+        topicMap: { [key: string]: string };
+        subjectMap: { [key: string]: { id: string; caseTopicId: string | null } };
+    }> {
+        const topicMap: { [key: string]: string } = {};
+        const subjectMap: { [key: string]: { id: string; caseTopicId: string | null } } = {};
+
+        try {
+            const caseTopics: any = await firstValueFrom(this.callService.getCaseTopics());
+            const parsedTopics = typeof caseTopics === 'string' ? JSON.parse(caseTopics) : caseTopics;
+            const existingTopics = Array.isArray(parsedTopics) ? parsedTopics : [];
+
+            existingTopics.forEach((topic: any) => {
+                const topicId = topic.caseTopicId ?? topic.id;
+                if (!topicId) {
+                    return;
+                }
+                if (topic.code) {
+                    topicMap[String(topic.code).trim().toLowerCase()] = String(topicId);
+                }
+                if (topic.name) {
+                    topicMap[String(topic.name).trim().toLowerCase()] = String(topicId);
+                }
+            });
+
+            const caseSubjects: any = await firstValueFrom(this.callService.getCaseSubjects());
+            const parsedSubjects = typeof caseSubjects === 'string' ? JSON.parse(caseSubjects) : caseSubjects;
+            const existingSubjects = Array.isArray(parsedSubjects) ? parsedSubjects : [];
+            existingSubjects.forEach((subject: any) => {
+                const subjectId = subject.caseSubjectId ?? subject.id;
+                if (!subjectId || !subject.name) {
+                    return;
+                }
+                subjectMap[String(subject.name).trim().toLowerCase()] = {
+                    id: String(subjectId),
+                    caseTopicId: subject.caseTopicId != null ? String(subject.caseTopicId) : null,
+                };
+            });
+        } catch (error) {
+            console.error('Error getting case topics/subjects:', error);
+        }
+
+        return { topicMap, subjectMap };
+    }
+
+    private resolveTopicSubject(
+        row: any,
+        topicMap: { [key: string]: string },
+        subjectMap: { [key: string]: { id: string; caseTopicId: string | null } },
+    ): { caseTopicId: string | null; caseSubjectId: string | null; warning: string | null } {
+        const topicKey = this.getTopicKey(row);
+        const subjectKey = this.getSubjectKey(row);
+        const pleaseFill = this.pleaseEnterTopicSubjectMessage();
+
+        if (!topicKey || !subjectKey) {
+            return { caseTopicId: null, caseSubjectId: null, warning: pleaseFill };
+        }
+
+        const caseTopicId = topicMap[topicKey.toLowerCase()] || null;
+        const subject = subjectMap[subjectKey.toLowerCase()] || null;
+        const caseSubjectId = subject?.id || null;
+
+        if (!caseTopicId || !caseSubjectId || (subject?.caseTopicId && subject.caseTopicId !== caseTopicId)) {
+            return { caseTopicId: null, caseSubjectId: null, warning: pleaseFill };
+        }
+
+        return { caseTopicId, caseSubjectId, warning: null };
+    }
+
+    private async validateTopicAndSubject(): Promise<void> {
+        const { topicMap, subjectMap } = await this.loadTopicSubjectMaps();
+        let invalidCount = 0;
+
+        this.contactObjects.forEach((row) => {
+            const resolved = this.resolveTopicSubject(row, topicMap, subjectMap);
+            row['resolvedCaseTopicId'] = resolved.caseTopicId;
+            row['resolvedCaseSubjectId'] = resolved.caseSubjectId;
+
+            if (resolved.warning) {
+                invalidCount++;
+                row['topicSubjectInvalid'] = true;
+                row['import-error'] = resolved.warning;
+                row['import-status'] = 'warning';
+            } else {
+                row['topicSubjectInvalid'] = false;
+                row['import-error'] = null;
+            }
+        });
+
+        if (invalidCount > 0) {
+            this.sweetAlertService.getSwal(
+                'warning',
+                this.translate.instant('alert.warning') || 'Warning',
+                this.topicSubjectWarningMessage(invalidCount),
+                true,
+                '',
+            );
+        }
+    }
+
+    private pleaseEnterTopicSubjectMessage(): string {
+        const key = 'contact-import-management.please-enter-topic-subject';
+        const translated = this.translate.instant(key);
+        if (!translated || translated === key) {
+            return 'กรุณาใส่หัวข้อและเรื่อง';
+        }
+        return translated;
+    }
+
+    private topicSubjectWarningMessage(count: number): string {
+        const key = 'contact-import-management.invalid-topic-subject';
+        const translated = this.translate.instant(key, { count });
+        if (!translated || translated === key) {
+            return `พบ ${count} รายการ กรุณาใส่หัวข้อและเรื่องให้ตรงกับในระบบก่อนยืนยันนำเข้า`;
+        }
+        return translated;
     }
 
     getAgentAll() {
@@ -760,198 +984,74 @@ export class ContactImportManagementComponent implements OnInit {
             );
             return;
         }
-        const nowISO = new Date().toISOString();
         const casePromises: any[] = [];
 
-        // Filter only contacts that have been successfully imported (have contactId)
-        // For lead import: must have contactId and Dealer ID (carId is optional - lead can exist without car)
+        // Filter only contacts that have been successfully imported (have contactId + valid topic/subject)
         const validContacts = contactObjects.filter((contactObj: any) => {
             const contact = contactObj['contact'] || contactObj;
-            const hasContactId = contact && contact.contactId;
-            const hasDealerId = contactObj['Dealer ID'] || contactObj['dealerId'];
-
-            // For lead import: must have contactId and dealerId (carId is optional)
-            // For regular contact import: just need contactId
-            if (hasDealerId) {
-                // This is a lead - must have contactId (carId is optional)
-                return hasContactId;
-            } else {
-                // Regular contact import - just need contactId
-                return hasContactId;
-            }
+            return (
+                contact &&
+                contact.contactId &&
+                !contactObj['topicSubjectInvalid'] &&
+                contactObj['import-status'] !== 'warning' &&
+                contactObj['import-status'] !== 'error' &&
+                contactObj['resolvedCaseTopicId'] &&
+                contactObj['resolvedCaseSubjectId']
+            );
         });
 
         if (validContacts.length === 0) {
-            console.warn('No valid contacts with contactId found');
+            console.warn('No valid contacts with contactId/topic/subject found');
             return;
         }
 
-        // Pre-process: Collect all unique codes and create caseCode mapping to prevent duplicates
-        const codeToCaseCodeIdMap: { [key: string]: string | null } = {};
-        const uniqueCodes = new Set<string>();
-
-        // Collect all unique codes from valid contacts
-        validContacts.forEach((contactObj: any) => {
-            const code = contactObj['Code'] || contactObj['code'];
-            if (code && code.trim()) {
-                uniqueCodes.add(code.trim());
-            }
-        });
-
-        // Get all existing caseCodes and create mapping
-        try {
-            const caseCodes: any = await firstValueFrom(this.callService.getCaseCode());
-            const parsedCodes = typeof caseCodes === 'string' ? JSON.parse(caseCodes) : caseCodes;
-            const existingCodes = Array.isArray(parsedCodes) ? parsedCodes : [];
-
-            // Map existing codes
-            existingCodes.forEach((cc: any) => {
-                if (cc.code && cc.id) {
-                    codeToCaseCodeIdMap[cc.code] = cc.id.toString();
-                }
-            });
-
-            // Create missing caseCodes sequentially to prevent duplicates
-            for (const code of uniqueCodes) {
-                if (!codeToCaseCodeIdMap[code]) {
-                    try {
-                        // Check again before creating (in case it was created by another process)
-                        const caseCodesCheck: any = await firstValueFrom(this.callService.getCaseCode());
-                        const parsedCodesCheck = typeof caseCodesCheck === 'string' ? JSON.parse(caseCodesCheck) : caseCodesCheck;
-                        const existingCodesCheck = Array.isArray(parsedCodesCheck) ? parsedCodesCheck : [];
-                        const matchedCode = existingCodesCheck.find((cc: any) => cc.code === code);
-
-                        if (matchedCode && matchedCode.id) {
-                            codeToCaseCodeIdMap[code] = matchedCode.id.toString();
-                        } else {
-                            // Create new caseCode if still not exists
-                            const newCaseCode = await firstValueFrom(
-                                this.callService.createCaseCode({ code, script: '', createdById: userId }),
-                            );
-                            const parsedNewCode = typeof newCaseCode === 'string' ? JSON.parse(newCaseCode) : newCaseCode;
-                            if (parsedNewCode && parsedNewCode.id) {
-                                codeToCaseCodeIdMap[code] = parsedNewCode.id.toString();
-                            }
-                        }
-                    } catch (error) {
-                        console.error(`Error creating caseCode for code ${code}:`, error);
-                        // Continue with other codes even if one fails
-                    }
-                }
-            }
-        } catch (error) {
-            console.error('Error getting caseCodes:', error);
-        }
-
-        let serviceTypes: any[] = [];
-        let junctionRows: any[] = [];
-        try {
-            const [serviceTypesRes, junctionRes]: any[] = await Promise.all([
-                firstValueFrom(this.callService.getCaseServiceType()),
-                firstValueFrom(this.callService.getCaseServiceTypeSubType()),
-            ]);
-            const parsedServiceTypes = typeof serviceTypesRes === 'string' ? JSON.parse(serviceTypesRes) : serviceTypesRes;
-            const parsedJunctionRows = typeof junctionRes === 'string' ? JSON.parse(junctionRes) : junctionRes;
-            serviceTypes = Array.isArray(parsedServiceTypes) ? parsedServiceTypes : [];
-            junctionRows = Array.isArray(parsedJunctionRows) ? parsedJunctionRows : [];
-        } catch (error) {
-            console.error('Error loading service hierarchy master data for import:', error);
-        }
-
-        // Round Robin: distribute leads to agents in rotation
+        // Round Robin: distribute cases to agents
         await Promise.all(
             validContacts.map(async (contactObj: any, index: number) => {
                 const contact = contactObj['contact'] || contactObj;
 
-                // Round Robin: cycle through agents
                 const agentIndex = index % this.agentAll.length;
                 const assignedAgent = this.agentAll[agentIndex];
 
-                // Map contact data to case data
                 const result = await firstValueFrom(
                     this.contactService.getContactNumberIdByPhone(contactObj['phone_number'] || contact['phone_number'] || null),
                 );
                 const contactNumberId = (result as any[])[0]?.contactNumberId ?? null;
 
-                // Get caseCodeId from Code using pre-built mapping
-                let caseCodeId: string | null = null;
-                const code = contactObj['Code'] || contactObj['code'];
-                if (code && code.trim()) {
-                    caseCodeId = codeToCaseCodeIdMap[code.trim()] || null;
-                }
+                const caseTopicId = contactObj['resolvedCaseTopicId'] || null;
+                const caseSubjectId = contactObj['resolvedCaseSubjectId'] || null;
 
-                // Parse requestDateTime - use car's createdAt if available, otherwise use parsedCreatedDate
-                let requestDateTime = contactObj['requestDateTime'] || contact['requestDateTime'] || nowISO;
+                const nowMysql = this.toMysqlDateTime(new Date());
+                let requestDateTime = nowMysql;
                 if (contactObj['parsedCreatedDate']) {
-                    requestDateTime = moment(contactObj['parsedCreatedDate']).toISOString();
-                } else if (contactObj['car']?.createdAt) {
-                    requestDateTime = moment(contactObj['car'].createdAt).toISOString();
+                    requestDateTime = contactObj['parsedCreatedDate'];
                 }
 
-                // Get carId - prioritize from car object, then from contactObj
-                const carId = contactObj['car']?.id || contactObj['carId'] || null;
-
-                // Build description for lead (include car info if available)
-                let description = contactObj['description'] || contact['description'] || '';
-                if (contactObj['hasCarData'] && carId) {
-                    const carInfo = [];
-                    if (contactObj['License Plate Number']) {
-                        carInfo.push(`ทะเบียน: ${contactObj['License Plate Number']}`);
-                    }
-                    if (contactObj['Car Brand'] && contactObj['Car Model']) {
-                        carInfo.push(`รถ: ${contactObj['Car Brand']} ${contactObj['Car Model']}`);
-                    }
-                    if (contactObj['Car Status Description']) {
-                        carInfo.push(`สถานะ: ${contactObj['Car Status Description']}`);
-                    }
-                    if (carInfo.length > 0) {
-                        description = description ? `${description}\n${carInfo.join(', ')}` : carInfo.join(', ');
-                    }
-                }
-
-                const rawHierarchy = {
-                    caseServiceGroupId: contactObj['caseServiceGroupId'] || contact['caseServiceGroupId'] || null,
-                    caseServiceTypeId: contactObj['caseServiceTypeId'] || contact['caseServiceTypeId'] || null,
-                    caseServiceSubTypeId: contactObj['caseServiceSubTypeId'] || contact['caseServiceSubTypeId'] || null,
-                };
-                const sanitizedHierarchy = this.caseServiceHierarchyService.sanitizeForImport(rawHierarchy, serviceTypes, junctionRows);
-                if (sanitizedHierarchy.warningKeys.length > 0) {
-                    contactObj['serviceHierarchyWarnings'] = sanitizedHierarchy.warningKeys;
-                    console.warn('Contact import service hierarchy adjusted', {
-                        contactId: contact.contactId,
-                        rawHierarchy,
-                        sanitizedHierarchy: sanitizedHierarchy.ids,
-                        warnings: sanitizedHierarchy.warningKeys,
-                    });
-                }
+                const description = contactObj['description'] || contact['description'] || contactObj['Description'] || '';
 
                 const caseData = {
                     caseId: null,
                     contactId: contact.contactId,
-                    carId: carId, // Link case to car for lead management
-                    channelId: contactObj['channelId'] || contact['channelId'] || 1, // 1 = Voice channel for leads
+                    channelId: contactObj['channelId'] || contact['channelId'] || 1,
                     requestDateTime: requestDateTime,
                     description: description,
-                    caseCodeId: caseCodeId, // From Code column
+                    caseTopicId,
+                    caseSubjectId,
                     caseTypeId: contactObj['caseTypeId'] || contact['caseTypeId'] || null,
-                    caseServiceGroupId: sanitizedHierarchy.ids.caseServiceGroupId,
-                    caseServiceTypeId: sanitizedHierarchy.ids.caseServiceTypeId,
-                    caseServiceSubTypeId: sanitizedHierarchy.ids.caseServiceSubTypeId,
-                    operationType: contactObj['operationType'] || contact['operationType'] || this.outbound, // Outbound for leads
-                    priority: contactObj['priority'] || contact['priority'] || null,
-                    status: contactObj['status'] || contact['status'] || 1, // Default status = 1 (Open)
+                    operationType: contactObj['operationType'] || contact['operationType'] || this.outbound,
+                    status: contactObj['status'] || contact['status'] || 1,
                     solution: contactObj['solution'] || contact['solution'] || null,
                     contactNumber: contactNumberId,
                     source: contactObj['source'] || contact['source'] || 'Excel Import',
-                    assignedAt: nowISO,
-                    createdAt: nowISO,
+                    assignedAt: nowMysql,
+                    createdAt: nowMysql,
                     createdById: userId,
-                    modifiedAt: nowISO,
+                    modifiedAt: nowMysql,
                     modifiedById: userId,
                     isDeleted: 0,
-                    assignedUserId: assignedAgent.userId, // Round Robin assignment
-                    callStatus: null, // Initial call status is null (not called yet)
-                    attemptCount: 0, // Initial attempt count is 0
+                    assignedUserId: assignedAgent.userId,
+                    callStatus: null,
+                    attemptCount: 0,
                     attachment: contactObj['attachment'] || contact['attachment'] || null,
                 };
 
@@ -977,15 +1077,10 @@ export class ContactImportManagementComponent implements OnInit {
             const errorCount = results?.filter((r: any) => r?.error).length || 0;
 
             if (errorCount === 0) {
-                const hierarchyWarningCount = this.contactObjects.filter((item) => item['serviceHierarchyWarnings']?.length > 0).length;
-                const successMessage =
-                    hierarchyWarningCount > 0
-                        ? `${this.translate.instant('contact-import-management.success-message', { count: successCount })}\n${this.translate.instant('alert.serviceHierarchyImportAdjusted', { count: hierarchyWarningCount })}`
-                        : this.translate.instant('contact-import-management.success-message', { count: successCount });
                 this.sweetAlertService.getSwal(
-                    hierarchyWarningCount > 0 ? 'warning' : 'success',
+                    'success',
                     this.translate.instant('contact-import-management.success'),
-                    successMessage,
+                    this.translate.instant('contact-import-management.success-message', { count: successCount }),
                     true,
                     '',
                     {

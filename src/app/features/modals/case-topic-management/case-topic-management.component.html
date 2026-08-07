@@ -1,0 +1,51 @@
+<div class="case-topic-modal">
+    <div class="modal-header-section">
+        <div class="row align-items-center">
+            <div class="col-12 col-md-8">
+                <h5 class="modal-title mb-0">
+                    {{ 'title.' + title | translate }}
+                    <span class="badge bg-secondary ms-2">{{ 'mode.' + data.mode | translate }}</span>
+                </h5>
+            </div>
+            <div class="col-12 col-md-4 text-end mt-2 mt-md-0">
+                <button type="button" class="btn-close-modal" (click)="onClickClose()" aria-label="Close">
+                    <fa-icon [icon]="faXmark"></fa-icon>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-content-section">
+        <form [formGroup]="caseTopicForm" (ngSubmit)="saveCaseTopic()">
+            <div class="form-section">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label for="name" class="form-label"
+                            >{{ 'form.name' | translate }} <span class="text-danger">*</span></label
+                        >
+                        <input type="text" class="form-control" id="name" formControlName="name" [readonly]="data.mode === 'view'" />
+                    </div>
+                    <div class="col-12">
+                        <label for="code" class="form-label">{{ 'form.code' | translate }}</label>
+                        <input type="text" class="form-control" id="code" formControlName="code" [readonly]="data.mode === 'view'" />
+                    </div>
+                    <div class="col-12">
+                        <label for="script" class="form-label">{{ 'form.script' | translate }}</label>
+                        <textarea class="form-control" id="script" rows="3" formControlName="script" [readonly]="data.mode === 'view'"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-actions" *ngIf="data.mode !== 'view'">
+                <div class="d-flex justify-content-end gap-2">
+                    <button type="button" class="btn btn-secondary" (click)="onClickClose()">
+                        {{ 'common.cancel' | translate }}
+                    </button>
+                    <button type="submit" class="btn btn-primary" [disabled]="caseTopicForm.invalid">
+                        {{ 'common.save' | translate }}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

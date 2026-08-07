@@ -58,25 +58,93 @@
 .upload-section {
     flex: 1 1 auto;
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: center;
     min-height: 300px;
+}
+
+.upload-panel {
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    &__template {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }
+
+    &__download {
+        flex-shrink: 0;
+        white-space: nowrap;
+    }
+}
+
+.upload-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 240px;
+    padding: 2.5rem 1.5rem;
+    cursor: pointer;
+    background-color: #fff;
+    border: 2px dashed #ced4da;
+    border-radius: 0.5rem;
+    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover,
+    &:focus-within,
+    &--dragover {
+        border-color: #1e3a5f;
+        background-color: #e3eef3;
+        box-shadow: inset 0 0 0 1px rgba(30, 58, 95, 0.08);
+    }
+
+    &--dragover {
+        border-style: solid;
+    }
+
+    .upload-icon {
+        font-size: 2.75rem;
+        color: #1e3a5f;
+        opacity: 0.85;
+    }
+
+    &__title {
+        margin: 0;
+        text-align: center;
+        color: #212529;
+        font-size: 1rem;
+    }
+
+    &__meta {
+        margin: 0;
+        text-align: center;
+        color: #6c757d;
+        font-size: 0.8125rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .upload-panel {
+        &__template {
+            justify-content: stretch;
+        }
+
+        &__download {
+            flex: 1 1 auto;
+            width: 100%;
+        }
+    }
 
     .upload-area {
-        padding: 3rem 2rem;
-        background-color: #fff;
-        border-color: #dee2e6;
-        transition: all 0.3s ease-in-out;
-
-        &:hover {
-            border-color: var(--color-blue-dark);
-            background-color: #f8f9fa;
-        }
-
-        .upload-icon {
-            font-size: 3rem;
-            color: #6c757d;
-        }
+        min-height: 200px;
+        padding: 2rem 1rem;
     }
 }
 
@@ -155,10 +223,20 @@
         color: #41464b;
     }
 
+    &.status-warning {
+        background-color: #fff3cd;
+        color: #664d03;
+    }
+
     &.status-error {
         background-color: #f8d7da;
         color: #842029;
     }
+}
+
+.import-warning-text {
+    font-size: 0.75rem;
+    color: #997404;
 }
 
 .summary-section {

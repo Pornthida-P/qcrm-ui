@@ -13,8 +13,6 @@ import { environment } from 'src/environments/environment';
 const CONTACT_SEARCH_KEYS = [
     'fullname',
     'contactNumber',
-    'contactGroupName',
-    'partnerCode',
     'facebookDisplayName',
     'lineDisplayName',
     'organization',
